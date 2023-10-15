@@ -1,0 +1,111 @@
+module.exports = {
+  root: true,
+  parser: '@typescript-eslint/parser',
+  extends: [
+    'prettier',
+    'plugin:react/recommended',
+    'plugin:react-hooks/recommended',
+    'plugin:jsx-a11y/strict',
+    // 'plugin:tailwindcss/recommended',
+    'plugin:@typescript-eslint/recommended',
+  ],
+  ignorePatterns: ['dist', '.eslintrc.cjs'],
+  plugins: [
+    'jsx-a11y',
+    'react',
+    'react-hooks',
+    '@typescript-eslint',
+    // 'tailwindcss',
+    'simple-import-sort',
+    'import',
+    'prettier',
+  ],
+  env: {
+    es2020: true,
+    browser: true,
+    node: true,
+  },
+  rules: {
+    'react-hooks/rules-of-hooks': 2,
+    'react-hooks/exhaustive-deps': 0,
+    'react/react-in-jsx-scope': 0,
+    'react/display-name': 1,
+    'react/prop-types': 0,
+    'react/jsx-newline': [0],
+    'react/no-unescaped-entities': 0,
+    'react/self-closing-comp': [
+      2,
+      {
+        component: true,
+        html: true,
+      },
+    ],
+
+    'jsx-a11y/anchor-is-valid': 0,
+    'jsx-a11y/no-static-element-interactions': 0,
+    'jsx-a11y/click-events-have-key-events': 0,
+    'jsx-a11y/label-has-for': 0,
+    'jsx-a11y/no-noninteractive-tabindex': 0,
+    '@typescript-eslint/no-unused-vars': [
+      2,
+      {
+        vars: 'all',
+        args: 'none',
+        argsIgnorePattern: '^_',
+        varsIgnorePattern: '^_',
+        caughtErrorsIgnorePattern: '^_',
+        ignoreRestSiblings: false,
+      },
+    ],
+    '@typescript-eslint/explicit-member-accessibility': 0,
+    '@typescript-eslint/indent': 0,
+    '@typescript-eslint/member-delimiter-style': 0,
+    '@typescript-eslint/no-var-requires': 0,
+    '@typescript-eslint/no-use-before-define': 0,
+    '@typescript-eslint/explicit-function-return-type': 0,
+    '@typescript-eslint/no-explicit-any': 'off',
+    '@typescript-eslint/no-non-null-assertion': 0,
+    'no-undef': 0,
+    'no-console': process.env.NODE_ENV === 'production' ? 1 : 1,
+    'no-unused-vars': [
+      2,
+      {
+        vars: 'all',
+        args: 'none',
+        varsIgnorePattern: '^_',
+        argsIgnorePattern: '^_',
+      },
+    ],
+    'prettier/prettier': 0,
+    // 'tailwindcss/classnames-order': [
+    //   2,
+    //   {
+    //     officialSorting: true,
+    //   },
+    // ],
+    // 'tailwindcss/enforces-negative-arbitrary-values': [
+    //   2,
+    //   {
+    //     callees: ['classnames', 'clsx', 'ctl'],
+    //     config: 'tailwind.config.js',
+    //     tags: [],
+    //   },
+    // ],
+    // 'tailwindcss/no-custom-classname': 0,
+    'simple-import-sort/exports': 2,
+    'simple-import-sort/imports': 2,
+    'import/order': [2, { 'newlines-between': 'always' }],
+    'import/no-duplicates': 2,
+    '@next/next/no-html-link-for-pages': 'off',
+  },
+  parserOptions: {
+    sourceType: 'module',
+  },
+  settings: {
+    'import/resolver': {
+      node: {
+        extensions: ['.ts', '.tsx'],
+      },
+    },
+  },
+};
