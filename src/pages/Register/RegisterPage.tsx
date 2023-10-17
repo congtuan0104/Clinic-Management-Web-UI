@@ -1,14 +1,16 @@
-import React from 'react';
-import { useForm, Controller, SubmitHandler, SubmitErrorHandler } from 'react-hook-form';
-import { Button, Checkbox, Form, Input, List, Space } from 'antd';
+import { LockOutlined, UserOutlined, MailOutlined } from '@ant-design/icons';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { Button, Checkbox, Form, Input } from 'antd';
+import { useForm } from 'react-hook-form';
+import { FormItem } from 'react-hook-form-antd';
+import { FcGoogle } from "react-icons/fc";
+import { Link } from 'react-router-dom';
 import * as yup from 'yup';
-import { FcGoogle } from 'react-icons/fc';
 
 
-interface FormData {
-  fullName: string;
-  email: string;
+interface IRegisterFormData {
+  fullname: string;
+  username: string;
   password: string;
   confirmPassword: string;
   isRemember?: boolean;
@@ -16,158 +18,88 @@ interface FormData {
 
 
 const schema = yup.object().shape({
-  fullName: yup.string().required('Plese input your full name'),
-  email: yup.string().email('Invalid email').required('Please input a valid email address'),
+  fullname: yup.string().required('Bạn chưa nhập họ và tên'),
+  username: yup.string().required('Bạn chưa nhập email').email('Email không hợp lệ'),
   password: yup.string().min(8).required('Please input your password!'),
   confirmPassword: yup.string().required('Plese confirm password'),
   isRemember: yup.boolean(),
 });
 
 const RegisterPage = () => {
-  const { control, handleSubmit, getValues } = useForm<FormData>({
-    resolver: yupResolver(schema),
-    defaultValues: {
-      fullName:'',
-      email:'',
+  // tích hợp react-hook-form với antd form
+  const { control, handleSubmit } = useForm<IRegisterFormData>({
+    resolver: yupResolver(schema),  // gắn điều kiện xác định input hợp lệ vào form
+    defaultValues: {  // giá trị mặc định của các field
+      fullname:'',
+      username:'',
       password:'',
       confirmPassword:'',
       isRemember:false
     }
   });
-  const validateAndRegister = async () => {
-    const isValid = await schema.isValid(getValues());
-
-    if (isValid) {
-      const {fullName, email, password, confirmPassword, isRemember } = getValues();
-      if(password === confirmPassword){
-        console.log('Ho va ten:', fullName, 'Email:', email, 'Password:', password, 'Remember', isRemember);
-      } else {
-          console.log('Xác nhận mật khẩu thất bại')
-      }
-    } else {
-        console.log('Form validation failed');
-      }
-  };
-
-  const handleRegisterClick = () => {
-    validateAndRegister();
-  };
+  const handleLogin = (data: IRegisterFormData) => {
+    console.log(data);
+    //TO DO
+  }
   
 
 
   return (
-    <div style={{
-      display: 'flex',
-      height: '550px',
-      width: '650px',
-      border: 'groove',
-      borderRadius: '15px',
-      alignItems: 'left',
-      justifyContent: 'left',
-      margin: 'auto',
-    }}>
+    <div id='login-page'>
       <Form
-        name="basic"
-        labelCol={{ span: 8 }}
-        wrapperCol={{ span: 16 }}
-        style={{ maxWidth: 650 }}
-        initialValues={{ isRemember: false }}
+        name="login-form"
         autoComplete="off"
+        size='large'
+        onFinish={handleSubmit((data) => handleLogin(data))}
+        style={{
+          padding: '20px 30px',
+          maxWidth: '450px',
+          width: '100%',
+          border: 'groove',
+          borderRadius: '15px',
+          margin: 'auto',
+          backgroundColor: 'white',
+        }}
       >
-        <div style={{
-          padding: '20px',
-          textAlign: 'center',
-          marginLeft:'-110px'
-        }}>
-          <h1>Đăng ký</h1>
+       
+        <div style={{marginBottom: '16px'}}>
+          <h1>Đăng ký</h1>   
         </div>
 
-        <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-          <Button
-            type="default"
-            htmlType="button"
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center', 
-              width: '265%',
-              marginLeft: '-60px',
-            }}
-            icon={<FcGoogle size={20} />}
-          >
-            <span style={{ marginLeft: '8px' }}>Đăng nhập với Google</span>
+        <Form.Item>
+          <Button htmlType="button" icon={<FcGoogle/>} style={{display:'flex', justifyContent:'center', alignItems: 'center', width: '100%'}}>
+           Đăng nhập với Google
           </Button>
         </Form.Item>
 
-        <span style={{display: 'flex', justifyContent: 'center', width: '200%', height: '8%', color: '#808080'}}>hoặc</span>
+        <div style={{margin: '-10px 0 10px 0'}}>
+          <span style={{display:'flex', justifyContent: 'center', color: '#808080', filter: 'grayscale(100%)'}}>hoặc</span>    
+        </div>
 
-        <Form.Item
-          label="Họ và tên"
-          name="fullName"
-          rules={[{ required: true }]}
-          style={{ marginLeft: '30px' }}
-        >
-          <Controller
-            render={({ field }) => <Input {...field} placeholder='Nhập họ và tên của bạn' style={{ width: '250%' }} />}
-            control={control}
-            name="fullName"
-          />
-        </Form.Item>
+        <FormItem control={control} name="fullname">
+          <Input prefix={<UserOutlined className="site-form-item-icon" />} placeholder='Nhập họ và tên'/>
+        </FormItem>
     
-        <Form.Item
-          label="Email"
-          name="email"
-          rules={[{ required: true }]}
-          style={{ marginLeft: '-10px' }}
-        >
-          <Controller
-            render={({ field }) => <Input {...field} placeholder='Nhập email của bạn' style={{ width: '220%', marginLeft: '25px' }} />}
-            control={control}
-            name="email"
-          />
-        </Form.Item>
-    
-        <Form.Item
-          label="Mật khẩu"
-          name="password"
-          rules={[{ required: true, message: 'Vui lòng nhập mật khẩu!' }]}
-          style={{ marginLeft: '30px' }}
-        >
-          <Controller
-            render={({ field }) => <Input.Password {...field} placeholder='Nhập mật khẩu' style={{ width: '250%' }} />}
-            control={control}
-            name="password"
-          />
-        </Form.Item>
+        <FormItem control={control} name="username">
+          <Input prefix={<MailOutlined className="site-form-item-icon"/>} placeholder='Nhập email '/>
+        </FormItem>
 
-        <Form.Item
-          label="Xác nhận"
-          name="confirmPassword"
-          rules={[{ required: true, message: 'Vui lòng xác nhận lại mật khẩu!' }]}
-          style={{ marginLeft: '30px' }}
-        >
-          <Controller
-            render={({ field }) => <Input.Password {...field} placeholder='Nhập lại mật khẩu' style={{ width: '250%' }} />}
-            control={control}
-            name="confirmPassword"
-          />
-        </Form.Item>
+        <FormItem control={control} name="password">
+          <Input.Password prefix={<LockOutlined className="site-form-item-icon" />} placeholder='Mật khẩu' />
+        </FormItem>
+
+        <FormItem control={control} name="confirmPassword">
+          <Input.Password prefix={<LockOutlined className="site-form-item-icon" />} placeholder='Xác nhận lại mật khẩu' />
+        </FormItem>
     
-    
-        <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-          <Button type="primary" htmlType="button" style={{width: '265%', marginLeft: '-60px'}} onClick={handleRegisterClick}>
+        <Form.Item>
+          <Button type="primary" block htmlType="submit">
             Đăng ký
           </Button>
         </Form.Item>
-    
-        
-    
-        <div style={{ display: 'flex', justifyContent: 'center', marginTop: '10px', width: '200%' }}>
-          <span>Đã có tài khoản?&nbsp;</span>
-          <span style={{ color: 'blue' }}>Đăng nhập</span>
+        <div style={{display: 'flex', justifyContent: 'center'}}>
+          <span>Đã có tài khoản?&nbsp;<Link to={'#'}>Đăng nhập</Link></span>    
         </div>
-
-
       </Form>
     </div>
     

@@ -1,4 +1,4 @@
-import { LockOutlined, UserOutlined } from '@ant-design/icons';
+import { LockOutlined, UserOutlined, MailOutlined } from '@ant-design/icons';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Button, Checkbox, Form, Input } from 'antd';
 import { useForm } from 'react-hook-form';
@@ -64,7 +64,7 @@ const LoginPage = () => {
         </div>
     
         <FormItem control={control} name="username">
-          <Input prefix={<UserOutlined className="site-form-item-icon" />} placeholder='Nhập email của bạn'/>
+          <Input prefix={<MailOutlined className="site-form-item-icon"/>} placeholder='Nhập email '/>
         </FormItem>
 
         <FormItem control={control} name="password">
