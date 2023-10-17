@@ -36,6 +36,13 @@ const DefaultLayout = ({ children }: { children: JSX.Element }) => {
               },
             },
             {
+              key: '/login',
+              label: 'Login',
+              onClick: () => {
+                navigate(PATHS.LOGIN);
+              },
+            },
+            {
               key: '/posts',
               label: 'Post',
               onClick: () => {
