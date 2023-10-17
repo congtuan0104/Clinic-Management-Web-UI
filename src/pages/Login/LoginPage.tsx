@@ -3,6 +3,7 @@ import { useForm, Controller, SubmitHandler, SubmitErrorHandler } from 'react-ho
 import { Button, Checkbox, Form, Input, List, Space } from 'antd';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
+import { FcGoogle } from 'react-icons/fc';
 
 
 interface FormData {
@@ -119,9 +120,20 @@ const LoginPage = () => {
           </Button>
         </Form.Item>
     
-        <Form.Item wrapperCol={{ offset: 8, span: 16 }} >
-          <Button htmlType="button" style={{width: '265%', marginLeft: '-60px'}}>
-            Đăng nhập với Google
+        <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
+          <Button
+            type="default"
+            htmlType="button"
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center', 
+              width: '265%',
+              marginLeft: '-60px',
+            }}
+            icon={<FcGoogle size={20} />}
+          >
+            <span style={{ marginLeft: '8px' }}>Đăng nhập với Google</span>
           </Button>
         </Form.Item>
     
