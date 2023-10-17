@@ -43,6 +43,13 @@ const DefaultLayout = ({ children }: { children: JSX.Element }) => {
               },
             },
             {
+              key: '/register',
+              label: 'Register',
+              onClick: () => {
+                navigate(PATHS.REGISTER);
+              },
+            },
+            {
               key: '/posts',
               label: 'Post',
               onClick: () => {

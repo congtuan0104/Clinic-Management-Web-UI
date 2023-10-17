@@ -6,40 +6,51 @@ import * as yup from 'yup';
 
 
 interface FormData {
+  fullName: string;
   email: string;
   password: string;
+  confirmPassword: string;
   isRemember?: boolean;
 }
 
 
 const schema = yup.object().shape({
+  fullName: yup.string().required('Plese input your full name'),
   email: yup.string().email('Invalid email').required('Please input a valid email address'),
   password: yup.string().min(8).required('Please input your password!'),
+  confirmPassword: yup.string().required('Plese confirm password'),
   isRemember: yup.boolean(),
 });
 
-const LoginPage = () => {
+const RegisterPage = () => {
   const { control, handleSubmit, getValues } = useForm<FormData>({
     resolver: yupResolver(schema),
     defaultValues: {
+      fullName:'',
       email:'',
       password:'',
+      confirmPassword:'',
       isRemember:false
     }
   });
-  const validateAndLogin = async () => {
+  const validateAndRegister = async () => {
     const isValid = await schema.isValid(getValues());
 
     if (isValid) {
-      const { email, password, isRemember } = getValues();
-      console.log('Email:', email, 'Password:', password, 'Remember', isRemember);
+      const {fullName, email, password, confirmPassword, isRemember } = getValues();
+      const isconfirmPasswordSuccess = password === confirmPassword;
+      if(isconfirmPasswordSuccess){
+        console.log('Ho va ten:', fullName, 'Email:', email, 'Password:', password, 'Remember', isRemember);
+      } else {
+          console.log('Xác nhận mật khẩu thất bại')
+      }
     } else {
-      console.log('Form validation failed');
-    }
+        console.log('Form validation failed');
+      }
   };
 
-  const handleLoginClick = () => {
-    validateAndLogin();
+  const handleRegisterClick = () => {
+    validateAndRegister();
   };
   
 
@@ -47,7 +58,7 @@ const LoginPage = () => {
   return (
     <div style={{
       display: 'flex',
-      height: '480px',
+      height: '550px',
       width: '650px',
       border: 'groove',
       borderRadius: '15px',
@@ -59,21 +70,38 @@ const LoginPage = () => {
         name="basic"
         labelCol={{ span: 8 }}
         wrapperCol={{ span: 16 }}
-        style={{ maxWidth: 600 }}
+        style={{ maxWidth: 650 }}
         initialValues={{ isRemember: false }}
         autoComplete="off"
       >
         <div style={{
           padding: '20px',
           textAlign: 'center',
-          marginLeft:'-80px'
+          marginLeft:'-110px'
         }}>
-          <h1>Đăng nhập</h1>
-          <div style={{padding: '10px'}}>
-            <span>hoặc </span>
-            <span style={{ color: 'blue' }}>Tạo mới tài khoản</span>
-          </div>
+          <h1>Đăng ký</h1>
         </div>
+
+        <Form.Item wrapperCol={{ offset: 8, span: 16 }} >
+          <Button htmlType="button" style={{width: '265%', marginLeft: '-60px'}}>
+            Đăng nhập với Google
+          </Button>
+        </Form.Item>
+
+        <span style={{display: 'flex', justifyContent: 'center', width: '200%', height: '8%', color: '#808080'}}>hoặc</span>
+
+        <Form.Item
+          label="Họ và tên"
+          name="fullName"
+          rules={[{ required: true }]}
+          style={{ marginLeft: '30px' }}
+        >
+          <Controller
+            render={({ field }) => <Input {...field} placeholder='Nhập họ và tên của bạn' style={{ width: '250%' }} />}
+            control={control}
+            name="fullName"
+          />
+        </Form.Item>
     
         <Form.Item
           label="Email"
@@ -100,33 +128,32 @@ const LoginPage = () => {
             name="password"
           />
         </Form.Item>
-    
+
         <Form.Item
-          name="isRemember"
-          valuePropName="checked"
-          wrapperCol={{ offset: 3, span: 20 }}
+          label="Xác nhận"
+          name="confirmPassword"
+          rules={[{ required: true, message: 'Vui lòng xác nhận lại mật khẩu!' }]}
+          style={{ marginLeft: '30px' }}
         >
           <Controller
-            render={({ field }) => <Checkbox {...field}>Ghi nhớ thông tin đăng nhập</Checkbox>}
+            render={({ field }) => <Input.Password {...field} placeholder='Nhập lại mật khẩu' style={{ width: '250%' }} />}
             control={control}
-            name="isRemember"
+            name="password"
           />
         </Form.Item>
     
+    
         <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-          <Button type="primary" htmlType="button" style={{width: '265%', marginLeft: '-60px'}} onClick={handleLoginClick}>
-            Đăng nhập
+          <Button type="primary" htmlType="button" style={{width: '265%', marginLeft: '-60px'}} onClick={handleRegisterClick}>
+            Đăng ký
           </Button>
         </Form.Item>
     
-        <Form.Item wrapperCol={{ offset: 8, span: 16 }} >
-          <Button htmlType="button" style={{width: '265%', marginLeft: '-60px'}}>
-            Đăng nhập với Google
-          </Button>
-        </Form.Item>
+        
     
         <div style={{ display: 'flex', justifyContent: 'center', marginTop: '10px', width: '200%' }}>
-          <span style={{ color: 'blue' }}>Quên mật khẩu</span>
+          <span>Đã có tài khoản?&nbsp;</span>
+          <span style={{ color: 'blue' }}>Đăng nhập</span>
         </div>
 
 
@@ -137,4 +164,4 @@ const LoginPage = () => {
 };
 
 
-export default LoginPage;
+export default RegisterPage;
