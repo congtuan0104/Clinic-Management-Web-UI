@@ -3,6 +3,7 @@ import { useForm, Controller, SubmitHandler, SubmitErrorHandler } from 'react-ho
 import { Button, Checkbox, Form, Input, List, Space } from 'antd';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
+import { FcGoogle } from 'react-icons/fc';
 
 
 interface FormData {
@@ -38,8 +39,7 @@ const RegisterPage = () => {
 
     if (isValid) {
       const {fullName, email, password, confirmPassword, isRemember } = getValues();
-      const isconfirmPasswordSuccess = password === confirmPassword;
-      if(isconfirmPasswordSuccess){
+      if(password === confirmPassword){
         console.log('Ho va ten:', fullName, 'Email:', email, 'Password:', password, 'Remember', isRemember);
       } else {
           console.log('Xác nhận mật khẩu thất bại')
@@ -82,9 +82,20 @@ const RegisterPage = () => {
           <h1>Đăng ký</h1>
         </div>
 
-        <Form.Item wrapperCol={{ offset: 8, span: 16 }} >
-          <Button htmlType="button" style={{width: '265%', marginLeft: '-60px'}}>
-            Đăng nhập với Google
+        <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
+          <Button
+            type="default"
+            htmlType="button"
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center', 
+              width: '265%',
+              marginLeft: '-60px',
+            }}
+            icon={<FcGoogle size={20} />}
+          >
+            <span style={{ marginLeft: '8px' }}>Đăng nhập với Google</span>
           </Button>
         </Form.Item>
 
@@ -138,7 +149,7 @@ const RegisterPage = () => {
           <Controller
             render={({ field }) => <Input.Password {...field} placeholder='Nhập lại mật khẩu' style={{ width: '250%' }} />}
             control={control}
-            name="password"
+            name="confirmPassword"
           />
         </Form.Item>
     
