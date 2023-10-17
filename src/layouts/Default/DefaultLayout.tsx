@@ -36,16 +36,22 @@ const DefaultLayout = ({ children }: { children: JSX.Element }) => {
               },
             },
             {
+              key: '/register',
+              label: 'Đăng ký',
+              onClick: () => {
+                navigate(PATHS.REGISTER);
+              },
+            },
+            {
               key: '/products',
-              label: 'Products',
+              label: 'Sản phẩm',
               onClick: () => {
                 navigate(PATHS.PRODUCT);
               },
-            },
-            
+            },               
             {
               key: '/posts',
-              label: 'Post',
+              label: 'Bài viết',
               onClick: () => {
                 navigate(PATHS.POST);
               },

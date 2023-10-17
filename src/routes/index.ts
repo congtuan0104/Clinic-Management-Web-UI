@@ -1,5 +1,5 @@
 import { DefaultLayout } from '@/layouts';
-import { HomePage, LoginPage,ProductPage } from '@/pages';
+import { HomePage, LoginPage,ProductPage, RegisterPage } from '@/pages';
 
 export const PATHS = {
   HOME: '/',
@@ -11,6 +11,7 @@ export const PATHS = {
   PRODUCT: '/products',
   PRODUCT_DETAIL: '/products/:id',
   LOGIN: '/login',
+  REGISTER: '/register',
 };
 
 const ROUTES = [
@@ -34,6 +35,14 @@ const ROUTES = [
     title: 'Đăng nhập',
     layout: DefaultLayout,
     element: LoginPage,
+    isProtected: true,
+    children: [],
+  },
+  {
+    path: PATHS.REGISTER,
+    title: 'Trang đăng ký',
+    layout: DefaultLayout,
+    element: RegisterPage,
     isProtected: true,
     children: [],
   },
