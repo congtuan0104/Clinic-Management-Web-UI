@@ -23,9 +23,16 @@ const DefaultLayout = ({ children }: { children: JSX.Element }) => {
           items={[
             {
               key: '/',
-              label: 'Home',
+              label: 'Trang chủ',
               onClick: () => {
                 navigate(PATHS.HOME);
+              },
+            },
+            {
+              key: '/login',
+              label: 'Đăng nhập',
+              onClick: () => {
+                navigate(PATHS.LOGIN);
               },
             },
             {
@@ -35,13 +42,7 @@ const DefaultLayout = ({ children }: { children: JSX.Element }) => {
                 navigate(PATHS.PRODUCT);
               },
             },
-            {
-              key: '/login',
-              label: 'Login',
-              onClick: () => {
-                navigate(PATHS.LOGIN);
-              },
-            },
+            
             {
               key: '/posts',
               label: 'Post',
@@ -53,11 +54,11 @@ const DefaultLayout = ({ children }: { children: JSX.Element }) => {
         />
       </Header>
       <Content style={{ marginTop: 20 }}>
-        <div className="site-layout-content" style={{ padding: '0 20px', margin: '0 15px' }}>
+        <div>
           {children}
         </div>
       </Content>
-      <Footer style={{ textAlign: 'center', backgroundColor: '#fff' }}>Footer</Footer>
+      <Footer style={{ textAlign: 'center', backgroundColor: '#fff', marginTop: '30px' }}>Footer</Footer>
     </Layout>
   );
 };

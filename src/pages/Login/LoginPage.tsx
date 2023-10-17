@@ -1,135 +1,97 @@
-import React from 'react';
-import { useForm, Controller, SubmitHandler, SubmitErrorHandler } from 'react-hook-form';
-import { Button, Checkbox, Form, Input, List, Space } from 'antd';
+import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { Button, Checkbox, Form, Input } from 'antd';
+import { useForm } from 'react-hook-form';
+import { FormItem } from 'react-hook-form-antd';
+import { FcGoogle } from "react-icons/fc";
+import { Link } from 'react-router-dom';
 import * as yup from 'yup';
 
 
-interface FormData {
-  email: string;
+interface ILoginFormData {
+  username: string;
   password: string;
   isRemember?: boolean;
 }
 
-
+// định nghĩa điều kiện xác định input hợp lệ
 const schema = yup.object().shape({
-  email: yup.string().email('Invalid email').required('Please input a valid email address'),
-  password: yup.string().min(8).required('Please input your password!'),
+  username: yup.string().required('Bạn chưa nhập email').email('Email không hợp lệ'),
+  password: yup.string().required('Bạn chưa nhập mật khẩu').min(8,'Mật khẩu phải có tối thiểu 8 ký tự'),
   isRemember: yup.boolean(),
 });
 
 const LoginPage = () => {
-  const { control, handleSubmit, getValues } = useForm<FormData>({
-    resolver: yupResolver(schema),
-    defaultValues: {
-      email:'',
+  // tích hợp react-hook-form với antd form
+  const { control, handleSubmit } = useForm<ILoginFormData>({
+    resolver: yupResolver(schema),  // gắn điều kiện xác định input hợp lệ vào form
+    defaultValues: {  // giá trị mặc định của các field
+      username:'',
       password:'',
       isRemember:false
     }
   });
-  const validateAndLogin = async () => {
-    const isValid = await schema.isValid(getValues());
 
-    if (isValid) {
-      const { email, password, isRemember } = getValues();
-      console.log('Email:', email, 'Password:', password, 'Remember', isRemember);
-    } else {
-      console.log('Form validation failed');
-    }
-  };
-
-  const handleLoginClick = () => {
-    validateAndLogin();
-  };
+  const handleLogin = (data: ILoginFormData) => {
+    console.log(data);
+    // gọi api đăng nhập
+    // nếu thành công, lưu access token vào cookie và thông tin user vào redux -> chuyển hướng về trang chủ
+    // nếu thất bại, hiển thị thông báo lỗi
+  }
   
 
-
   return (
-    <div style={{
-      display: 'flex',
-      height: '480px',
-      width: '650px',
-      border: 'groove',
-      borderRadius: '15px',
-      alignItems: 'left',
-      justifyContent: 'left',
-      margin: 'auto',
-    }}>
+    <div id='login-page'>
       <Form
-        name="basic"
-        labelCol={{ span: 8 }}
-        wrapperCol={{ span: 16 }}
-        style={{ maxWidth: 600 }}
-        initialValues={{ isRemember: false }}
+        name="login-form"
         autoComplete="off"
+        size='large'
+        onFinish={handleSubmit((data) => handleLogin(data))}
+        style={{
+          padding: '20px 30px',
+          maxWidth: '450px',
+          width: '100%',
+          border: 'groove',
+          borderRadius: '15px',
+          margin: 'auto',
+          backgroundColor: 'white',
+        }}
       >
-        <div style={{
-          padding: '20px',
-          textAlign: 'center',
-          marginLeft:'-80px'
-        }}>
+       
+        <div style={{marginBottom: '16px'}}>
           <h1>Đăng nhập</h1>
-          <div style={{padding: '10px'}}>
-            <span>hoặc </span>
-            <span style={{ color: 'blue' }}>Tạo mới tài khoản</span>
-          </div>
+          <span>hoặc <Link to={'#'}>Tạo tài khoản mới</Link></span>    
         </div>
     
-        <Form.Item
-          label="Email"
-          name="email"
-          rules={[{ required: true }]}
-          style={{ marginLeft: '-10px' }}
-        >
-          <Controller
-            render={({ field }) => <Input {...field} placeholder='Nhập email của bạn' style={{ width: '230%' }} />}
-            control={control}
-            name="email"
-          />
-        </Form.Item>
-    
-        <Form.Item
-          label="Mật khẩu"
-          name="password"
-          rules={[{ required: true, message: 'Vui lòng nhập mật khẩu!' }]}
-          style={{ marginLeft: '30px' }}
-        >
-          <Controller
-            render={({ field }) => <Input.Password {...field} placeholder='Nhập mật khẩu' style={{ width: '250%' }} />}
-            control={control}
-            name="password"
-          />
-        </Form.Item>
-    
-        <Form.Item
+        <FormItem control={control} name="username">
+          <Input prefix={<UserOutlined className="site-form-item-icon" />} placeholder='Nhập email của bạn'/>
+        </FormItem>
+
+        <FormItem control={control} name="password">
+          <Input.Password prefix={<LockOutlined className="site-form-item-icon" />} placeholder='Mật khẩu' />
+        </FormItem>
+         
+        <FormItem
+          control={control}
           name="isRemember"
           valuePropName="checked"
-          wrapperCol={{ offset: 3, span: 20 }}
         >
-          <Controller
-            render={({ field }) => <Checkbox {...field}>Ghi nhớ thông tin đăng nhập</Checkbox>}
-            control={control}
-            name="isRemember"
-          />
-        </Form.Item>
+          <Checkbox >Ghi nhớ thông tin đăng nhập</Checkbox>
+        </FormItem>
     
-        <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-          <Button type="primary" htmlType="button" style={{width: '265%', marginLeft: '-60px'}} onClick={handleLoginClick}>
+        <Form.Item>
+          <Button type="primary" block htmlType="submit">
             Đăng nhập
           </Button>
         </Form.Item>
     
-        <Form.Item wrapperCol={{ offset: 8, span: 16 }} >
-          <Button htmlType="button" style={{width: '265%', marginLeft: '-60px'}}>
-            Đăng nhập với Google
+        <Form.Item>
+          <Button htmlType="button" icon={<FcGoogle/>} style={{display:'flex', justifyContent:'center', alignItems: 'center', width: '100%'}}>
+           Đăng nhập với Google
           </Button>
         </Form.Item>
-    
-        <div style={{ display: 'flex', justifyContent: 'center', marginTop: '10px', width: '200%' }}>
-          <span style={{ color: 'blue' }}>Quên mật khẩu</span>
-        </div>
 
-
+        <Link style={{textAlign:'center', display:'block'}} to={'#'}>Quên mật khẩu</Link>
       </Form>
     </div>
     
