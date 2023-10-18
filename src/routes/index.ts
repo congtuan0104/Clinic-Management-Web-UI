@@ -40,7 +40,7 @@ const ROUTES = [
   },
   {
     path: PATHS.REGISTER,
-    title: 'Trang đăng ký',
+    title: 'Đăng ký',
     layout: DefaultLayout,
     element: RegisterPage,
     isProtected: true,

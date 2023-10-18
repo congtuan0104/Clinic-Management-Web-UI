@@ -20,8 +20,8 @@ interface IRegisterFormData {
 const schema = yup.object().shape({
   fullname: yup.string().required('Bạn chưa nhập họ và tên'),
   username: yup.string().required('Bạn chưa nhập email').email('Email không hợp lệ'),
-  password: yup.string().min(8).required('Please input your password!'),
-  confirmPassword: yup.string().required('Plese confirm password'),
+  password: yup.string().required('Bạn chưa nhập mật khẩu').min(8,'Mật khẩu phải có tối thiểu 8 ký tự'),
+  confirmPassword: yup.string().required('Vui lòng xác nhận lại mật khẩu'),
   isRemember: yup.boolean(),
 });
 
@@ -37,7 +37,7 @@ const RegisterPage = () => {
       isRemember:false
     }
   });
-  const handleLogin = (data: IRegisterFormData) => {
+  const handleRegister = (data: IRegisterFormData) => {
     console.log(data);
     //TO DO
   }
@@ -50,7 +50,7 @@ const RegisterPage = () => {
         name="login-form"
         autoComplete="off"
         size='large'
-        onFinish={handleSubmit((data) => handleLogin(data))}
+        onFinish={handleSubmit((data) => handleRegister(data))}
         style={{
           padding: '20px 30px',
           maxWidth: '450px',
