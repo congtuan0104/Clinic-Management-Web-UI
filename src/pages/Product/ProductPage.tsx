@@ -2,7 +2,7 @@ import { Col, Row, Spin, Typography } from 'antd';
 import { useQuery } from 'react-query';
 
 import { ProductCard } from '@/components';
-import { productApi } from '@/services/product';
+import { productApi } from '@/services/product.service';
 
 const ProductPage = () => {
   // cách 1: sử dụng useState và useEffect để lấy dữ liệu từ API

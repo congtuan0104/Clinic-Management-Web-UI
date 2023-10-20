@@ -1,11 +1,12 @@
 import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios';
 
-import { cookies } from './common';
+import { cookies } from '@/utils';
 
 export const REQUEST_TIMEOUT = 30000;
 
 export const axiosClient = axios.create({
-  baseURL: import.meta.env.VITE_DUMMY_API_URL || 'https://dummyjson.com/',
+  // host api được cấu hình trong vite.config.ts -> thay đổi theo env
+  baseURL: '/api/v1',
   timeout: REQUEST_TIMEOUT,
 });
 
@@ -14,9 +15,13 @@ const InterceptorsRequest = async (config: AxiosRequestConfig) => {
   const token = cookies.get('token');
   const username = cookies.get('username');
 
+  if (token === undefined || username === undefined) {
+    return config;
+  }
+
   const interceptorHeaders = {
     username: username,
-    accessToken: `Bearer ${token}`,
+    token: `Bearer ${token}`,
   };
 
   const headers = {

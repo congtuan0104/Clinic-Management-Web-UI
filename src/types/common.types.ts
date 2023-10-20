@@ -1,12 +1,13 @@
-import { AxiosHeaders } from 'axios';
-
 export interface IApiResponse<T> {
-  config: any;
-  header?: AxiosHeaders;
-  request: XMLHttpRequest;
+  // config: any;
+  // header?: AxiosHeaders;
+  // request: XMLHttpRequest;
   data?: T;
-  status: number;
-  statusText?: string;
+  message?: string;
+  success?: boolean;
+  errors?: boolean;
+  // status: number;
+  // statusText?: string;
 }
 
 export interface IListDataResponse {
