@@ -1,6 +1,7 @@
 import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios';
 
 import { cookies } from '@/utils';
+import { COOKIE_KEY } from '@/constants';
 
 export const REQUEST_TIMEOUT = 30000;
 
@@ -12,15 +13,13 @@ export const axiosClient = axios.create({
 
 const InterceptorsRequest = async (config: AxiosRequestConfig) => {
   // lấy token từ cookie và gắn vào header trước khi gửi request
-  const token = cookies.get('token');
-  const username = cookies.get('username');
+  const token = cookies.get(COOKIE_KEY.TOKEN);
 
-  if (token === undefined || username === undefined) {
+  if (token === undefined) {
     return config;
   }
 
   const interceptorHeaders = {
-    username: username,
     token: `Bearer ${token}`,
   };
 

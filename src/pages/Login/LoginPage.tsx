@@ -1,14 +1,22 @@
-import { LockOutlined, MailOutlined } from '@ant-design/icons';
+import { Anchor, Paper, Title, Text, Container, Group, Button } from '@mantine/core';
+import { TextInput, PasswordInput, Checkbox } from 'react-hook-form-mantine';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { Button, Checkbox, Form, Input } from 'antd';
-import { useForm } from 'react-hook-form';
-import { FormItem } from 'react-hook-form-antd';
+import { useForm, Form } from 'react-hook-form';
 import { FcGoogle } from 'react-icons/fc';
-import { Link } from 'react-router-dom';
+import { RiLockPasswordLine } from 'react-icons/ri';
+import { SiMaildotru } from 'react-icons/si';
+import { Link, useNavigate } from 'react-router-dom';
+
 import * as yup from 'yup';
 
 import { authApi } from '@/services/auth.service';
 import { cookies } from '@/utils';
+import { PATHS } from '@/config';
+import { useAppDispatch } from '@/hooks';
+import { setUserInfo } from '@/store';
+import { COOKIE_KEY } from '@/constants';
+import { notifications } from '@mantine/notifications';
+import { error } from 'console';
 
 interface ILoginFormData {
   email: string;
@@ -27,6 +35,9 @@ const schema = yup.object().shape({
 });
 
 const LoginPage = () => {
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+
   // tích hợp react-hook-form với antd form
   const { control, handleSubmit } = useForm<ILoginFormData>({
     resolver: yupResolver(schema), // gắn điều kiện xác định input hợp lệ vào form
@@ -38,98 +49,107 @@ const LoginPage = () => {
     },
   });
 
-  const handleLogin = async (data: ILoginFormData) => {
+  const handleLogin = (data: ILoginFormData) => {
     // gọi api đăng nhập
     // nếu thành công, lưu access token vào cookie và thông tin user vào redux -> chuyển hướng về trang chủ
     // nếu thất bại, hiển thị thông báo lỗi
-    await authApi
+    authApi
       .login({ email: data.email, password: data.password })
       .then(res => {
-        if (res.success && !res.errors) {
+        if (res.success && !res.errors && res.data) {
           const userInfo = res.data?.user;
           const token = res.data?.token;
 
-          // lưu vào cookie
-          cookies.set('token', token);
-          cookies.set('userInfo', userInfo);
+          // lưu vào token và thông tin user vào cookie
+          cookies.set(COOKIE_KEY.TOKEN, token);
+          cookies.set(COOKIE_KEY.USER_INFO, userInfo);
 
           // lưu thông tin user vào redux
-          // dispatch(setUserInfo(userInfo));
+          dispatch(setUserInfo(userInfo));
+
+          // Hiển thị thông báo
+          notifications.show({
+            message: 'Đăng nhập thành công',
+            color: 'green',
+          });
+
+          // chuyển hướng về trang chủ
+          navigate(PATHS.HOME);
         } else {
+          notifications.show({
+            message: res.message,
+            color: 'red',
+          });
           console.log('Loi dang nhap:', res.message);
         }
       })
-      .catch(err => {
-        console.log('Loi dang nhap:', err);
+      .catch(error => {
+        console.log(error.message);
+        notifications.show({
+          message: error.response.data.message,
+          color: 'red',
+        });
       });
   };
 
   return (
-    <div id="login-page">
-      <Form
-        name="login-form"
-        autoComplete="off"
-        size="large"
-        onFinish={handleSubmit(data => handleLogin(data))}
-        style={{
-          padding: '20px 30px',
-          maxWidth: '450px',
-          width: '100%',
-          border: 'groove',
-          borderRadius: '15px',
-          margin: 'auto',
-          backgroundColor: 'white',
-        }}>
-        <div style={{ marginBottom: '16px' }}>
-          <h1>Đăng nhập</h1>
-          <span>
-            hoặc <Link to={'#'}>Tạo tài khoản mới</Link>
-          </span>
-        </div>
-
-        <FormItem control={control} name="email">
-          <Input
-            prefix={<MailOutlined className="site-form-item-icon" />}
-            placeholder="Nhập email "
+    <Container size={500} my={40}>
+      <Paper withBorder shadow="md" p={30} mt={30} radius="md">
+        <Title>Đăng nhập</Title>
+        <Text c="dimmed" size="sm" mt={5} mb={15}>
+          hoặc{' '}
+          <Anchor size="sm" component={Link} to={PATHS.REGISTER}>
+            Tạo tài khoản mới
+          </Anchor>
+        </Text>
+        <Form control={control} onSubmit={e => handleLogin(e.data)} onError={e => console.log(e)}>
+          <TextInput
+            label="Email"
+            name="email"
+            placeholder="example@gmail.com"
+            required
+            size="md"
+            radius="sm"
+            control={control}
+            leftSection={<SiMaildotru size={16} />}
           />
-        </FormItem>
-
-        <FormItem control={control} name="password">
-          <Input.Password
-            prefix={<LockOutlined className="site-form-item-icon" />}
-            placeholder="Mật khẩu"
+          <PasswordInput
+            name="password"
+            label="Mật khẩu"
+            placeholder="Nhập mật khẩu của bạn"
+            required
+            mt="md"
+            size="md"
+            radius="sm"
+            control={control}
+            leftSection={<RiLockPasswordLine size={18} />}
           />
-        </FormItem>
-
-        <FormItem control={control} name="isRemember" valuePropName="checked">
-          <Checkbox>Ghi nhớ thông tin đăng nhập</Checkbox>
-        </FormItem>
-
-        <Form.Item>
-          <Button type="primary" block htmlType="submit">
+          <Group justify="space-between" mt="lg">
+            <Checkbox
+              label="Lưu thông tin đăng nhập"
+              radius="sm"
+              control={control}
+              name="isRemember"
+            />
+            <Anchor component="button" size="sm">
+              Quên mật khẩu?
+            </Anchor>
+          </Group>
+          <Button fullWidth mt="xl" radius="sm" size="md" type="submit">
             Đăng nhập
           </Button>
-        </Form.Item>
-
-        <Form.Item>
           <Button
-            htmlType="button"
-            icon={<FcGoogle />}
-            style={{
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              width: '100%',
-            }}>
-            Đăng nhập với Google
+            fullWidth
+            mt="sm"
+            radius="sm"
+            size="md"
+            variant="outline"
+            leftSection={<FcGoogle size={20} />}>
+            Đăng nhập bằng tài khoản Google
           </Button>
-        </Form.Item>
-
-        <Link style={{ textAlign: 'center', display: 'block' }} to={'#'}>
-          Quên mật khẩu
-        </Link>
-      </Form>
-    </div>
+        </Form>
+      </Paper>
+    </Container>
   );
 };
 

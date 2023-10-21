@@ -1,110 +1,189 @@
-import { LockOutlined, UserOutlined, MailOutlined } from '@ant-design/icons';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { Button, Checkbox, Form, Input } from 'antd';
-import { useForm } from 'react-hook-form';
-import { FormItem } from 'react-hook-form-antd';
-import { FcGoogle } from "react-icons/fc";
-import { Link } from 'react-router-dom';
+import { PATHS } from '@/config';
+import { Container, Paper, Title, Text, Anchor, Button, Grid } from '@mantine/core';
+import { useForm, Form } from 'react-hook-form';
+import { PasswordInput, TextInput } from 'react-hook-form-mantine';
+import { FcGoogle } from 'react-icons/fc';
+import { RiLockPasswordLine } from 'react-icons/ri';
+import { SiMaildotru } from 'react-icons/si';
+import { Link, useNavigate } from 'react-router-dom';
 import * as yup from 'yup';
-
+import { authApi } from '@/services/auth.service';
+import { cookies } from '@/utils';
+import { COOKIE_KEY } from '@/constants';
+import { setUserInfo } from '@/store';
+import { useAppDispatch } from '@/hooks';
+import { notifications } from '@mantine/notifications';
 
 interface IRegisterFormData {
-  fullname: string;
-  username: string;
+  firstName: string;
+  lastName: string;
+  email: string;
   password: string;
   confirmPassword: string;
-  isRemember?: boolean;
 }
 
-
 const schema = yup.object().shape({
-  fullname: yup.string().required('Bạn chưa nhập họ và tên'),
-  username: yup.string().required('Bạn chưa nhập email').email('Email không hợp lệ'),
-  password: yup.string().required('Bạn chưa nhập mật khẩu').min(8,'Mật khẩu phải có tối thiểu 8 ký tự'),
-  confirmPassword: yup.string().required('Vui lòng xác nhận lại mật khẩu').oneOf([yup.ref('password'), ''], 'Không trùng với mật khẩu đã nhập'),
-  isRemember: yup.boolean(),
+  firstName: yup.string().required('Bạn chưa nhập họ'),
+  lastName: yup.string().required('Bạn chưa nhập tên'),
+  email: yup.string().required('Thông tin email là bắt buộc').email('Email không hợp lệ'),
+  password: yup
+    .string()
+    .required('Bạn chưa nhập mật khẩu')
+    .min(8, 'Mật khẩu phải có tối thiểu 8 ký tự'),
+  confirmPassword: yup
+    .string()
+    .required('Vui lòng xác nhận lại mật khẩu')
+    .oneOf([yup.ref('password'), ''], 'Không trùng với mật khẩu đã nhập'),
 });
 
 const RegisterPage = () => {
-  // tích hợp react-hook-form với antd form
-  const { control, handleSubmit } = useForm<IRegisterFormData>({
-    resolver: yupResolver(schema),  // gắn điều kiện xác định input hợp lệ vào form
-    defaultValues: {  // giá trị mặc định của các field
-      fullname:'',
-      username:'',
-      password:'',
-      confirmPassword:'',
-      isRemember:false
-    }
-  });
-  const handleRegister = (data: IRegisterFormData) => {
-    console.log(data);
-    //TO DO
-  }
-  
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
 
+  // tích hợp react-hook-form với mantine form
+  const { control, handleSubmit } = useForm<IRegisterFormData>({
+    resolver: yupResolver(schema), // gắn điều kiện xác định input hợp lệ vào form
+    defaultValues: {
+      // giá trị mặc định của các field
+      firstName: '',
+      lastName: '',
+      email: '',
+      password: '',
+      confirmPassword: '',
+    },
+  });
+
+  const handleRegister = (data: IRegisterFormData) => {
+    const { confirmPassword, ...registerData } = data; // xóa thông tin xác nhận mật khẩu trước khi gửi api
+
+    // gọi api đăng ký
+    authApi
+      .register(registerData)
+      .then(res => {
+        if (res.success && !res.errors) {
+          const userInfo = res.data?.user;
+          const token = res.data?.token;
+
+          // lưu vào token và thông tin user vào cookie
+          cookies.set(COOKIE_KEY.TOKEN, token);
+          cookies.set(COOKIE_KEY.USER_INFO, userInfo);
+
+          // lưu thông tin user vào redux
+          dispatch(setUserInfo(userInfo));
+
+          // Hiển thị thông báo
+          notifications.show({
+            message: 'Đăng ký tài khoản thành công',
+            color: 'green',
+          });
+
+          // chuyển hướng về trang chủ
+          navigate(PATHS.HOME);
+        } else {
+          console.log('Đăng ký không thành công:', res.message);
+          notifications.show({
+            message: res.message,
+            color: 'red',
+          });
+        }
+      })
+      .catch(error => {
+        console.log(error.message);
+        notifications.show({
+          message: error.response.data.message,
+          color: 'red',
+        });
+      });
+  };
 
   return (
-    <div id='login-page'>
-      <Form
-        name="login-form"
-        autoComplete="off"
-        size='large'
-        onFinish={handleSubmit((data) => handleRegister(data))}
-        style={{
-          padding: '20px 30px',
-          maxWidth: '450px',
-          width: '100%',
-          border: 'groove',
-          borderRadius: '15px',
-          margin: 'auto',
-          backgroundColor: 'white',
-        }}
-      >
-       
-        <div style={{marginBottom: '16px'}}>
-          <h1>Đăng ký</h1>   
-        </div>
-
-        <Form.Item>
-          <Button htmlType="button" icon={<FcGoogle/>} style={{display:'flex', justifyContent:'center', alignItems: 'center', width: '100%'}}>
-           Đăng nhập với Google
-          </Button>
-        </Form.Item>
-
-        <div style={{margin: '-10px 0 10px 0'}}>
-          <span style={{display:'flex', justifyContent: 'center', color: '#808080', filter: 'grayscale(100%)'}}>hoặc</span>    
-        </div>
-
-        <FormItem control={control} name="fullname">
-          <Input prefix={<UserOutlined className="site-form-item-icon" />} placeholder='Nhập họ và tên'/>
-        </FormItem>
-    
-        <FormItem control={control} name="username">
-          <Input prefix={<MailOutlined className="site-form-item-icon"/>} placeholder='Nhập email '/>
-        </FormItem>
-
-        <FormItem control={control} name="password">
-          <Input.Password prefix={<LockOutlined className="site-form-item-icon" />} placeholder='Mật khẩu' />
-        </FormItem>
-
-        <FormItem control={control} name="confirmPassword">
-          <Input.Password prefix={<LockOutlined className="site-form-item-icon" />} placeholder='Xác nhận lại mật khẩu' />
-        </FormItem>
-    
-        <Form.Item>
-          <Button type="primary" block htmlType="submit">
+    <Container size={570} my={40}>
+      <Paper withBorder shadow="md" p={30} mt={30} radius="md">
+        <Title>Đăng ký</Title>
+        <Text c="dimmed" size="sm" mt={5} mb={15}>
+          Đã có tài khoản?{' '}
+          <Anchor size="sm" component={Link} to={PATHS.LOGIN}>
+            Đăng nhập
+          </Anchor>
+        </Text>
+        <Form
+          control={control}
+          onSubmit={e => handleRegister(e.data)}
+          onError={e => console.log(e)}>
+          <Grid>
+            <Grid.Col span={4}>
+              <TextInput
+                label="Họ"
+                name="firstName"
+                placeholder="Nguyễn"
+                required
+                size="md"
+                radius="sm"
+                control={control}
+              />
+            </Grid.Col>
+            <Grid.Col span={8}>
+              <TextInput
+                label="Tên"
+                name="lastName"
+                placeholder="Văn A"
+                required
+                size="md"
+                radius="sm"
+                control={control}
+              />
+            </Grid.Col>
+          </Grid>
+          <TextInput
+            label="Email"
+            name="email"
+            placeholder="example@gmail.com"
+            required
+            mt="md"
+            size="md"
+            radius="sm"
+            control={control}
+            leftSection={<SiMaildotru size={16} />}
+          />
+          <PasswordInput
+            name="password"
+            label="Mật khẩu"
+            placeholder="Nhập mật khẩu của bạn"
+            required
+            mt="md"
+            size="md"
+            radius="sm"
+            control={control}
+            leftSection={<RiLockPasswordLine size={18} />}
+          />
+          <PasswordInput
+            name="confirmPassword"
+            label="Xác nhận Mật khẩu"
+            placeholder="Xác nhận mật khẩu của bạn"
+            required
+            mt="md"
+            size="md"
+            radius="sm"
+            control={control}
+            leftSection={<RiLockPasswordLine size={18} />}
+          />
+          <Button fullWidth mt="xl" radius="sm" size="md" type="submit">
             Đăng ký
           </Button>
-        </Form.Item>
-        <div style={{display: 'flex', justifyContent: 'center'}}>
-          <span>Đã có tài khoản?&nbsp;<Link to={'#'}>Đăng nhập</Link></span>    
-        </div>
-      </Form>
-    </div>
-    
+          <Button
+            fullWidth
+            mt="sm"
+            radius="sm"
+            size="md"
+            variant="outline"
+            leftSection={<FcGoogle size={20} />}>
+            Đăng nhập bằng tài khoản Google
+          </Button>
+        </Form>
+      </Paper>
+    </Container>
   );
 };
-
 
 export default RegisterPage;
