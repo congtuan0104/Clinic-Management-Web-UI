@@ -1,7 +1,6 @@
-export const CookieKey = {
-  JWT_Token: 'token',
-  Location: 'location',
-  Language: 'lang',
-  Currency: 'cur',
-  ThemePrefer: 'theme',
+const PREFIX_COOKIE = 'cma_';
+export const COOKIE_KEY = {
+  TOKEN: PREFIX_COOKIE + 'token',
+  USER_INFO: PREFIX_COOKIE + 'us',
+  THEME: PREFIX_COOKIE + 'theme',
 };

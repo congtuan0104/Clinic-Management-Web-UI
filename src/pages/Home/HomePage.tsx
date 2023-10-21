@@ -1,26 +1,18 @@
-import { Button, Checkbox, Input } from 'antd';
-import { Link } from 'react-router-dom';
-
-import { PATHS } from '@/routes';
+import { useAppSelector } from '@/hooks';
+import { userInfoSelector } from '@/store';
+import { Box, Title, Text } from '@mantine/core';
 
 const HomePage = () => {
+  const userInfo = useAppSelector(userInfoSelector);
   return (
-    <div style={{ display: 'flex', flexDirection: 'column' }}>
-      <h1>HOME PAGE</h1>
-
-      <Button shape="round" size="large" type="primary">
-        Button
-      </Button>
-      <div>
-        <Checkbox>Checkbox 1</Checkbox>
-        <Checkbox>Checkbox 2</Checkbox>
-      </div>
-      <label style={{ fontSize: '16px' }} htmlFor="username">
-        Username
-      </label>
-      <Input style={{ maxWidth: '400px' }} id="username" size="large" placeholder="Username" />
-      <Link to={PATHS.PRODUCT}>Xem danh sách sản phẩm</Link>
-    </div>
+    <Box>
+      <Title ta="center">Trang chủ</Title>
+      {userInfo && (
+        <Text c="dimmed" size="lg" ta="center" mt="10">
+          Bạn đã đăng nhập bằng email: {userInfo.email}
+        </Text>
+      )}
+    </Box>
   );
 };
 

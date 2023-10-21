@@ -1,22 +1,26 @@
 import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios';
 
-import { cookies } from './common';
+import { cookies } from '@/utils';
+import { COOKIE_KEY } from '@/constants';
 
 export const REQUEST_TIMEOUT = 30000;
 
 export const axiosClient = axios.create({
-  baseURL: import.meta.env.VITE_DUMMY_API_URL || 'https://dummyjson.com/',
+  // host api được cấu hình trong vite.config.ts -> thay đổi theo env
+  baseURL: '/api/v1',
   timeout: REQUEST_TIMEOUT,
 });
 
 const InterceptorsRequest = async (config: AxiosRequestConfig) => {
   // lấy token từ cookie và gắn vào header trước khi gửi request
-  const token = cookies.get('token');
-  const username = cookies.get('username');
+  const token = cookies.get(COOKIE_KEY.TOKEN);
+
+  if (token === undefined) {
+    return config;
+  }
 
   const interceptorHeaders = {
-    username: username,
-    accessToken: `Bearer ${token}`,
+    token: `Bearer ${token}`,
   };
 
   const headers = {

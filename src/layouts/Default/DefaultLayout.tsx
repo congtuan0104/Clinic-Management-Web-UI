@@ -1,71 +1,15 @@
-import { Layout, Menu } from 'antd';
 import { useNavigate } from 'react-router-dom';
 
-import { PATHS } from '@/routes';
-
-const { Header, Content, Footer } = Layout;
+import { PATHS } from '@/config/routes';
+import { DefaultHeader } from '@/components';
 
 const DefaultLayout = ({ children }: { children: JSX.Element }) => {
   const navigate = useNavigate();
   return (
-    <Layout style={{ minHeight: '100vh' }}>
-      <Header
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          height: 40,
-          lineHeight: '40px',
-          backgroundColor: '#fff',
-        }}>
-        <Menu
-          mode="horizontal"
-          defaultSelectedKeys={['/']}
-          items={[
-            {
-              key: '/',
-              label: 'Trang chủ',
-              onClick: () => {
-                navigate(PATHS.HOME);
-              },
-            },
-            {
-              key: '/login',
-              label: 'Đăng nhập',
-              onClick: () => {
-                navigate(PATHS.LOGIN);
-              },
-            },
-            {
-              key: '/register',
-              label: 'Đăng ký',
-              onClick: () => {
-                navigate(PATHS.REGISTER);
-              },
-            },
-            {
-              key: '/products',
-              label: 'Sản phẩm',
-              onClick: () => {
-                navigate(PATHS.PRODUCT);
-              },
-            },               
-            {
-              key: '/posts',
-              label: 'Bài viết',
-              onClick: () => {
-                navigate(PATHS.POST);
-              },
-            },
-          ]}
-        />
-      </Header>
-      <Content style={{ marginTop: 20 }}>
-        <div>
-          {children}
-        </div>
-      </Content>
-      <Footer style={{ textAlign: 'center', backgroundColor: '#fff', marginTop: '30px' }}>Footer</Footer>
-    </Layout>
+    <div>
+      <DefaultHeader />
+      <main className="max-w-screen-xxl mx-auto">{children}</main>
+    </div>
   );
 };
 

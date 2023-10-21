@@ -1,17 +1,11 @@
 import { DefaultLayout } from '@/layouts';
-import { HomePage, LoginPage,ProductPage, RegisterPage } from '@/pages';
+import { HomePage, LoginPage, ProductPage, RegisterPage } from '@/pages';
 
 export const PATHS = {
   HOME: '/',
-  TODO: '/todos',
-  USER: '/users',
-  COMMENT: '/comments',
-  POST: '/posts',
-  IMAGE: '/images',
   PRODUCT: '/products',
-  PRODUCT_DETAIL: '/products/:id',
-  LOGIN: '/login',
-  REGISTER: '/register',
+  LOGIN: '/dang-nhap',
+  REGISTER: '/dang-ky',
 };
 
 const ROUTES = [

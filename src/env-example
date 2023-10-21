@@ -1,1 +1,1 @@
-VITE_DUMMY_API_URL=https://dummyjson.com/
+VITE_API_URL=http://localhost:2222/api/v1/
