@@ -42,7 +42,7 @@ const RegisterPage = () => {
   const navigate = useNavigate();
 
   // tích hợp react-hook-form với mantine form
-  const { control, handleSubmit } = useForm<IRegisterFormData>({
+  const { control } = useForm<IRegisterFormData>({
     resolver: yupResolver(schema), // gắn điều kiện xác định input hợp lệ vào form
     defaultValues: {
       // giá trị mặc định của các field

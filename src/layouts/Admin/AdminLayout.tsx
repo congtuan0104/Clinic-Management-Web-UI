@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { DefaultHeader } from '@/components';
 
-const DefaultLayout = ({ children }: { children: JSX.Element }) => {
+const AdminLayout = ({ children }: { children: JSX.Element }) => {
   const navigate = useNavigate();
   return (
     <div>
@@ -12,4 +12,4 @@ const DefaultLayout = ({ children }: { children: JSX.Element }) => {
   );
 };
 
-export default DefaultLayout;
+export default AdminLayout;

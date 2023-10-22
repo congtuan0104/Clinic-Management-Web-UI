@@ -4,6 +4,7 @@ import { Box, Title, Text } from '@mantine/core';
 
 const HomePage = () => {
   const userInfo = useAppSelector(userInfoSelector);
+
   return (
     <Box>
       <Title ta="center">Trang chủ</Title>

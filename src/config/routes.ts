@@ -3,12 +3,12 @@ import { HomePage, LoginPage, ProductPage, RegisterPage } from '@/pages';
 
 export const PATHS = {
   HOME: '/',
-  PRODUCT: '/products',
+  PRODUCT: '/san-pham',
   LOGIN: '/dang-nhap',
   REGISTER: '/dang-ky',
 };
 
-const ROUTES = [
+export const ROUTES = [
   {
     path: PATHS.HOME,
     title: 'Trang chủ',
@@ -48,5 +48,3 @@ const ROUTES = [
   //   children: [],
   // },
 ];
-
-export default ROUTES;

@@ -16,7 +16,6 @@ import { useAppDispatch } from '@/hooks';
 import { setUserInfo } from '@/store';
 import { COOKIE_KEY } from '@/constants';
 import { notifications } from '@mantine/notifications';
-import { error } from 'console';
 
 interface ILoginFormData {
   email: string;
