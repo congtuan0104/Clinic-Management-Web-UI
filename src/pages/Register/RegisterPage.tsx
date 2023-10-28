@@ -8,7 +8,7 @@ import { RiLockPasswordLine } from 'react-icons/ri';
 import { SiMaildotru } from 'react-icons/si';
 import { Link, useNavigate } from 'react-router-dom';
 import * as yup from 'yup';
-import { authApi } from '@/services/auth.service';
+import { authApi } from '@/services';
 import { cookies } from '@/utils';
 import { COOKIE_KEY } from '@/constants';
 import { setUserInfo } from '@/store';
@@ -61,12 +61,10 @@ const RegisterPage = () => {
     authApi
       .register(registerData)
       .then(res => {
-        if (res.success && !res.errors) {
+        if (res.status && !res.errors && res.data) {
           const userInfo = res.data?.user;
-          const token = res.data?.token;
 
-          // lưu vào token và thông tin user vào cookie
-          cookies.set(COOKIE_KEY.TOKEN, token);
+          // lưu vào thông tin user vào cookie
           cookies.set(COOKIE_KEY.USER_INFO, userInfo);
 
           // lưu thông tin user vào redux
@@ -79,7 +77,7 @@ const RegisterPage = () => {
           });
 
           // chuyển hướng về trang chủ
-          navigate(PATHS.HOME);
+          navigate(PATHS.VERIFY);
         } else {
           console.log('Đăng ký không thành công:', res.message);
           notifications.show({

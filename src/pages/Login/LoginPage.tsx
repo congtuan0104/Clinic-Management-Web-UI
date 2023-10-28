@@ -9,7 +9,7 @@ import { Link, useNavigate } from 'react-router-dom';
 
 import * as yup from 'yup';
 
-import { authApi } from '@/services/auth.service';
+import { authApi } from '@/services';
 import { cookies } from '@/utils';
 import { PATHS } from '@/config';
 import { useAppDispatch } from '@/hooks';
@@ -55,7 +55,7 @@ const LoginPage = () => {
     authApi
       .login({ email: data.email, password: data.password })
       .then(res => {
-        if (res.success && !res.errors && res.data) {
+        if (res.status && !res.errors && res.data) {
           const userInfo = res.data?.user;
           const token = res.data?.token;
 
@@ -89,6 +89,19 @@ const LoginPage = () => {
           color: 'red',
         });
       });
+  };
+
+  const handleLoginByGoogle = () => {
+    // authApi
+    //   .loginByGoogle()
+    //   .then(res => {
+    //     console.log(res);
+    //   })
+    //   .catch(err => {
+    //     console.log(err);
+    //   });
+    // var auth = window.open('http://localhost:2222/api/auth', '_blank');
+    // console.log(auth);
   };
 
   return (
@@ -143,6 +156,7 @@ const LoginPage = () => {
             radius="sm"
             size="md"
             variant="outline"
+            onClick={handleLoginByGoogle}
             leftSection={<FcGoogle size={20} />}>
             Đăng nhập bằng tài khoản Google
           </Button>

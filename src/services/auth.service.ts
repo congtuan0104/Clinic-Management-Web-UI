@@ -1,4 +1,10 @@
-import { IApiResponse, ILoginRequest, ILoginResponse, IRegisterRequest } from '@/types';
+import {
+  IApiResponse,
+  ILoginRequest,
+  ILoginResponse,
+  IRegisterRequest,
+  IRegisterResponse,
+} from '@/types';
 import { axiosClient } from '@/utils';
 
 export const authApi = {
@@ -6,7 +12,11 @@ export const authApi = {
     return axiosClient.post('/auth/login', data);
   },
 
-  register(data: IRegisterRequest): Promise<any> {
+  register(data: IRegisterRequest): Promise<IApiResponse<IRegisterResponse>> {
     return axiosClient.post('/auth/register', data);
+  },
+
+  loginByGoogle(): Promise<any> {
+    return axiosClient.get('/auth');
   },
 };

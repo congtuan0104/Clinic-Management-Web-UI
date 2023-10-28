@@ -20,7 +20,7 @@ const queryClient = new QueryClient(); // react-query client instance
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <ReduxProvider store={store}>
     <QueryClientProvider client={queryClient}>
-      <MantineProvider theme={theme}>
+      <MantineProvider theme={theme} defaultColorScheme="dark">
         <DatesProvider settings={{ locale: 'vi' }}>
           <Notifications autoClose={2000} limit={5} />
           <App />

@@ -1,11 +1,11 @@
 import { DefaultLayout } from '@/layouts';
-import { HomePage, LoginPage, ProductPage, RegisterPage } from '@/pages';
+import { HomePage, LoginPage, VerifyAccountPage, RegisterPage } from '@/pages';
 
 export const PATHS = {
   HOME: '/',
-  PRODUCT: '/san-pham',
   LOGIN: '/dang-nhap',
   REGISTER: '/dang-ky',
+  VERIFY: '/xac-minh-tai-khoan',
 };
 
 export const ROUTES = [
@@ -17,10 +17,10 @@ export const ROUTES = [
     children: [],
   },
   {
-    path: PATHS.PRODUCT,
-    title: 'Trang sản phẩm',
+    path: PATHS.VERIFY,
+    title: 'Xác minh tài khoản',
     layout: DefaultLayout,
-    element: ProductPage,
+    element: VerifyAccountPage,
     isProtected: true,
     children: [],
   },

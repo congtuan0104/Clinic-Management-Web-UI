@@ -1,6 +1,6 @@
 export * from './Home';
 export * from './Login';
 export * from './NotFound';
-export * from './Product';
+export * from './VerifyAccount';
 export * from './Register';
 export * from './DashboardAdmin';
