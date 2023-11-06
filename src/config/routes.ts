@@ -1,11 +1,18 @@
 import { DefaultLayout } from '@/layouts';
-import { HomePage, LoginPage, VerifyAccountPage, RegisterPage } from '@/pages';
+import {
+  HomePage,
+  LoginPage,
+  VerifyAccountPage,
+  RegisterPage,
+  RegisterByInvitation,
+} from '@/pages';
 
 export const PATHS = {
   HOME: '/',
   LOGIN: '/dang-nhap',
   REGISTER: '/dang-ky',
   VERIFY: '/xac-minh-tai-khoan',
+  REGISTER_BY_INVITATION: '/verify-account',
 };
 
 export const ROUTES = [
@@ -37,6 +44,14 @@ export const ROUTES = [
     title: 'Đăng ký',
     layout: DefaultLayout,
     element: RegisterPage,
+    isProtected: true,
+    children: [],
+  },
+  {
+    path: PATHS.REGISTER_BY_INVITATION,
+    title: 'Đăng ký',
+    layout: DefaultLayout,
+    element: RegisterByInvitation,
     isProtected: true,
     children: [],
   },
