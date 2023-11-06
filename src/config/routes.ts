@@ -1,11 +1,13 @@
 import { DefaultLayout } from '@/layouts';
 import { HomePage, LoginPage, ProductPage, RegisterPage } from '@/pages';
+import { ProFilePage } from '@/pages/ProFile';
 
 export const PATHS = {
   HOME: '/',
   PRODUCT: '/products',
   LOGIN: '/dang-nhap',
   REGISTER: '/dang-ky',
+  PROFILE: '/thong-tin-ca-nhan',
 };
 
 const ROUTES = [
@@ -37,6 +39,14 @@ const ROUTES = [
     title: 'Đăng ký',
     layout: DefaultLayout,
     element: RegisterPage,
+    isProtected: true,
+    children: [],
+  },
+  {
+    path: PATHS.PROFILE,
+    title: 'Thông tin cá nhân',
+    layout: DefaultLayout,
+    element: ProFilePage,
     isProtected: true,
     children: [],
   },

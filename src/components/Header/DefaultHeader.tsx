@@ -14,10 +14,16 @@ import {
   rem,
   Stack,
   Title,
+  UnstyledButton,
+  Avatar,
+  Text,
 } from '@mantine/core';
+import { IconChevronRight } from '@tabler/icons-react';
 import { useDisclosure } from '@mantine/hooks';
 import { notifications } from '@mantine/notifications';
 import { Link, useNavigate } from 'react-router-dom';
+
+import classes from './UserButton.module.css';
 
 // header cho các trang dành cho khách hàng chưa đăng nhập
 const Header = () => {
@@ -63,11 +69,34 @@ const Header = () => {
             </Link>
           </Group>
 
-          <Group visibleFrom="sm">
-            {userInfo ? (
-              <Button variant="light" color="red" onClick={handleLogout}>
+          <Group visibleFrom="md">
+            {true ? (
+              <><Button variant="light" color="red" onClick={handleLogout}>
                 Đăng xuất
               </Button>
+                <Group>
+                  <UnstyledButton className={classes.user} component={Link} to={PATHS.PROFILE}>
+                    <Group>
+                      <Avatar
+                        src="https://images.unsplash.com/photo-1633332755192-727a05c4013d?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=250&q=80"
+                        radius="xl"
+                      />
+
+                      <div style={{ flex: 1 }}>
+                        <Text size="sm" fw={500}>
+                          Vo Hoai An
+                        </Text>
+
+                        <Text c="dimmed" size="xs">
+                          vha62@gmail.com
+                        </Text>
+                      </div>
+
+                      <IconChevronRight style={{ width: rem(14), height: rem(14) }} stroke={1.5} />
+                    </Group>
+                  </UnstyledButton>
+                </Group>
+              </>
             ) : (
               <>
                 <Button variant="outline" component={Link} to={PATHS.LOGIN}>
@@ -80,10 +109,10 @@ const Header = () => {
             )}
           </Group>
 
+
           <Burger opened={drawerOpened} onClick={toggleDrawer} hiddenFrom="sm" />
         </Group>
       </header>
-
       <Drawer
         opened={drawerOpened}
         onClose={closeDrawer}
@@ -93,6 +122,30 @@ const Header = () => {
         hiddenFrom="sm"
         zIndex={1000000}>
         <ScrollArea h={`calc(100vh - ${rem(80)})`} mx="-md">
+          {userInfo ?  (
+              <Group style={{paddingLeft:'10px'}}>
+              <UnstyledButton className={classes.user} component={Link} to={PATHS.PROFILE}>
+                <Group>
+                  <Avatar
+                    src="https://images.unsplash.com/photo-1633332755192-727a05c4013d?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=250&q=80"
+                    radius="xl"
+                  />
+  
+                  <div style={{ flex: 1 }}>
+                    <Text size="sm" fw={500}>
+                      Vo Hoai An
+                    </Text>
+  
+                    <Text c="dimmed" size="xs">
+                      vha62@gmail.com
+                    </Text>
+                  </div>
+                </Group>
+              </UnstyledButton>
+            </Group>
+            ) : (
+              null
+            )}
           <Divider my="sm" />
 
           <Stack pl={20}>
