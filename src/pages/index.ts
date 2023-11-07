@@ -4,3 +4,4 @@ export * from './NotFound';
 export * from './VerifyAccount';
 export * from './Register';
 export * from './DashboardAdmin';
+export * from './RegisterByInvitation';
