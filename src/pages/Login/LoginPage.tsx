@@ -16,6 +16,9 @@ import { useAppDispatch } from '@/hooks';
 import { setUserInfo } from '@/store';
 import { COOKIE_KEY } from '@/constants';
 import { notifications } from '@mantine/notifications';
+import { useEffect } from 'react';
+import { useGoogleLogin } from '@react-oauth/google';
+import axios from 'axios';
 
 interface ILoginFormData {
   email: string;
@@ -91,18 +94,63 @@ const LoginPage = () => {
       });
   };
 
-  const handleLoginByGoogle = () => {
-    // authApi
-    //   .loginByGoogle()
-    //   .then(res => {
-    //     console.log(res);
-    //   })
-    //   .catch(err => {
-    //     console.log(err);
-    //   });
-    // var auth = window.open('http://localhost:2222/api/auth', '_blank');
-    // console.log(auth);
-  };
+  // đăng nhập bằng tài khoản google
+  const handleLoginByGoogle = useGoogleLogin({
+    onSuccess: async tokenResponse => {
+      console.log('token', tokenResponse);
+
+      // Lấy thông tin user từ máy chủ google bằng chuỗi token được trả về
+      const { data: userData } = await axios.get(
+        'https://www.googleapis.com/oauth2/v3/userinfo',
+        { headers: { Authorization: `Bearer ${tokenResponse.access_token}` } });
+
+      // gọi api đăng nhập
+      // nếu thành công, lưu access token vào cookie và thông tin user vào redux -> chuyển hướng về trang chủ
+      // nếu thất bại, hiển thị thông báo lỗi
+      authApi.loginGoogle({
+        email: userData.email,
+        firstName: userData.family_name,
+        lastName: userData.given_name,
+        picture: userData.picture
+      }).then(res => {
+        if (res.status && !res.errors && res.data) {
+          const userInfo = res.data?.user;
+          const token = res.data?.token;
+
+          // lưu vào token và thông tin user vào cookie
+          cookies.set(COOKIE_KEY.TOKEN, token);
+          cookies.set(COOKIE_KEY.USER_INFO, userInfo);
+
+          // lưu thông tin user vào redux
+          dispatch(setUserInfo(userInfo));
+
+          // Hiển thị thông báo
+          notifications.show({
+            message: 'Đăng nhập thành công',
+            color: 'green',
+          });
+
+          // chuyển hướng về trang chủ
+          navigate(PATHS.HOME);
+        } else {
+          notifications.show({
+            message: res.message,
+            color: 'red',
+          });
+          console.log('Loi dang nhap:', res.message);
+        }
+      })
+        .catch(error => {
+          console.log(error.message);
+          notifications.show({
+            message: error.response.message,
+            color: 'red',
+          });
+        });
+
+    },
+
+  });
 
   return (
     <Container size={500} my={40}>
@@ -156,7 +204,7 @@ const LoginPage = () => {
             radius="sm"
             size="md"
             variant="outline"
-            onClick={handleLoginByGoogle}
+            onClick={() => handleLoginByGoogle()}
             leftSection={<FcGoogle size={20} />}>
             Đăng nhập bằng tài khoản Google
           </Button>

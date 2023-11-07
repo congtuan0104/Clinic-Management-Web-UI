@@ -5,7 +5,7 @@ export const PATHS = {
   HOME: '/',
   LOGIN: '/dang-nhap',
   REGISTER: '/dang-ky',
-  VERIFY: '/xac-minh-tai-khoan',
+  VERIFY: '/verify-account',
 };
 
 export const ROUTES = [
