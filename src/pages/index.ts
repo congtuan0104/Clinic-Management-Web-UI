@@ -3,4 +3,4 @@ export * from './Login';
 export * from './NotFound';
 export * from './Product';
 export * from './Register';
-export * from './ProFile';
+export * from './UserProfile';

@@ -1,6 +1,5 @@
 import { DefaultLayout } from '@/layouts';
-import { HomePage, LoginPage, ProductPage, RegisterPage } from '@/pages';
-import { ProFilePage } from '@/pages/ProFile';
+import { HomePage, LoginPage, ProductPage, RegisterPage, UserProfile } from '@/pages';
 
 export const PATHS = {
   HOME: '/',
@@ -46,7 +45,7 @@ const ROUTES = [
     path: PATHS.PROFILE,
     title: 'Thông tin cá nhân',
     layout: DefaultLayout,
-    element: ProFilePage,
+    element: UserProfile,
     isProtected: true,
     children: [],
   },
