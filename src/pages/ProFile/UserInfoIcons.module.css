@@ -6,6 +6,6 @@
   font-family: Greycliff CF, var(--mantine-font-family);
 }
 
-.title {
-  padding: '1rem 0 2rem 0'
+.card {
+  height: 100%;
 }

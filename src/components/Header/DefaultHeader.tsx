@@ -70,7 +70,7 @@ const Header = () => {
           </Group>
 
           <Group visibleFrom="md">
-            {true ? (
+            {userInfo ? (
               <><Button variant="light" color="red" onClick={handleLogout}>
                 Đăng xuất
               </Button>
