@@ -79,51 +79,57 @@ const ProFilePage = () => {
           <Input.Wrapper label="SĐT" style={{ margin: '1rem 0' }}>
             <Input placeholder="098938696" readOnly />
           </Input.Wrapper>
-
-          <Modal opened={opened} onClose={close} title={"Đổi mật khẩu"} centered>
-            <Form
-              control={control}>
-              <PasswordInput
-                name="currentPassword"
-                label="Mật khẩu hiện tại"
-                placeholder="Nhập mật khẩu hiện tại của bạn"
-                required
-                mt="md"
-                size="md"
-                radius="sm"
-                control={control}
-                leftSection={<RiLockPasswordLine size={18} />}
-              />
-              <PasswordInput
-                name="newPassword"
-                label="Mật khẩu mới"
-                placeholder="Nhập mật khẩu mới của bạn"
-                required
-                mt="md"
-                size="md"
-                radius="sm"
-                control={control}
-                leftSection={<RiLockPasswordLine size={18} />}
-              />
-              <PasswordInput
-                name="confirmNewPassword"
-                label="Xác nhận lại mật khẩu"
-                placeholder="Xác nhận lại mật khẩu bạn vừa nhập"
-                required
-                mt="md"
-                size="md"
-                radius="sm"
-                control={control}
-                leftSection={<RiLockPasswordLine size={18} />}
-              />
-              <div style={{ display: 'flex', justifyContent: 'flex-end', }}>
-                <Button mt="xl" radius="sm" size="md" type="submit">
-                  Đổi mật khẩu
-                </Button>
-              </div>
-            </Form>
-          </Modal>
-
+          <Modal.Root opened={opened} onClose={close} centered>
+            <Modal.Overlay />
+            <Modal.Content>
+              <Modal.Header>
+                <Modal.Title fz="lg" fw={600}>Đổi mật khẩu</Modal.Title>
+                <Modal.CloseButton />
+              </Modal.Header>
+              <Modal.Body><Form
+                control={control}>
+                <PasswordInput
+                  name="currentPassword"
+                  label="Mật khẩu hiện tại"
+                  placeholder="Nhập mật khẩu hiện tại của bạn"
+                  required
+                  mt="md"
+                  size="md"
+                  radius="sm"
+                  control={control}
+                  leftSection={<RiLockPasswordLine size={18} />}
+                />
+                <PasswordInput
+                  name="newPassword"
+                  label="Mật khẩu mới"
+                  placeholder="Nhập mật khẩu mới của bạn"
+                  required
+                  mt="md"
+                  size="md"
+                  radius="sm"
+                  control={control}
+                  leftSection={<RiLockPasswordLine size={18} />}
+                />
+                <PasswordInput
+                  name="confirmNewPassword"
+                  label="Xác nhận lại mật khẩu"
+                  placeholder="Xác nhận lại mật khẩu bạn vừa nhập"
+                  required
+                  mt="md"
+                  size="md"
+                  radius="sm"
+                  control={control}
+                  leftSection={<RiLockPasswordLine size={18} />}
+                />
+                <div style={{ display: 'flex', justifyContent: 'flex-end', }}>
+                  <Button mt="xl" radius="sm" size="md" type="submit">
+                    Đổi mật khẩu
+                  </Button>
+                </div>
+              </Form>
+              </Modal.Body>
+            </Modal.Content>
+          </Modal.Root>
           <div style={{ display: 'flex', justifyContent: 'flex-end', }}>
             <Button mt="xl" radius="sm" size="md" type="submit" onClick={open}>
               Đổi mật khẩu
