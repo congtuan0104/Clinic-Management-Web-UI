@@ -1,11 +1,50 @@
-import { Paper, Text, Container, Group, Avatar, Input, Divider, Button, Flex } from '@mantine/core';
+import { Paper, Text, Group, Avatar, Input, Divider, Button, Flex, Modal } from '@mantine/core';
+import { PasswordInput } from 'react-hook-form-mantine';
+import { useDisclosure } from '@mantine/hooks';
+
+import { useForm, Form } from 'react-hook-form';
+import { RiLockPasswordLine } from 'react-icons/ri';
+
+
+import * as yup from 'yup';
+import { yupResolver } from '@hookform/resolvers/yup';
+
 import classes from './UserInfoIcons.module.css';
 
 const isGoogleLink = true;
 const isFacebookLink = false;
 
+interface ChangePasswordFormData {
+  currentPassword: string;
+  newPassword: string;
+  confirmNewPassword: string;
+}
+
+const schema = yup.object().shape({
+  currentPassword: yup.string().required('Bạn chưa nhập mật khẩu hiện tại'),
+  newPassword: yup
+    .string()
+    .required('Bạn chưa nhập mật khẩu mới')
+    .min(8, 'Mật khẩu phải có tối thiểu 8 ký tự'),
+  confirmNewPassword: yup
+    .string()
+    .required('Vui lòng xác nhận lại mật khẩu')
+    .oneOf([yup.ref('password'), ''], 'Không trùng với mật khẩu đã nhập'),
+});
+
 
 const ProFilePage = () => {
+  const [opened, { open, close }] = useDisclosure(false);
+
+  const { control } = useForm<ChangePasswordFormData>({
+    resolver: yupResolver(schema),
+    defaultValues: {
+      currentPassword: '',
+      newPassword: '',
+      confirmNewPassword: '',
+    },
+  });
+
   return (
     <Flex my={30} mx={{ base: 15, md: 0 }} gap={20} direction={{ base: 'column', md: 'row' }}>
       <Paper w='100%' withBorder shadow="md" p={30} radius="md">
@@ -40,8 +79,53 @@ const ProFilePage = () => {
           <Input.Wrapper label="SĐT" style={{ margin: '1rem 0' }}>
             <Input placeholder="098938696" readOnly />
           </Input.Wrapper>
+
+          <Modal opened={opened} onClose={close} title={"Đổi mật khẩu"} centered>
+            <Form
+              control={control}>
+              <PasswordInput
+                name="currentPassword"
+                label="Mật khẩu hiện tại"
+                placeholder="Nhập mật khẩu hiện tại của bạn"
+                required
+                mt="md"
+                size="md"
+                radius="sm"
+                control={control}
+                leftSection={<RiLockPasswordLine size={18} />}
+              />
+              <PasswordInput
+                name="newPassword"
+                label="Mật khẩu mới"
+                placeholder="Nhập mật khẩu mới của bạn"
+                required
+                mt="md"
+                size="md"
+                radius="sm"
+                control={control}
+                leftSection={<RiLockPasswordLine size={18} />}
+              />
+              <PasswordInput
+                name="confirmNewPassword"
+                label="Xác nhận lại mật khẩu"
+                placeholder="Xác nhận lại mật khẩu bạn vừa nhập"
+                required
+                mt="md"
+                size="md"
+                radius="sm"
+                control={control}
+                leftSection={<RiLockPasswordLine size={18} />}
+              />
+              <div style={{ display: 'flex', justifyContent: 'flex-end', }}>
+                <Button mt="xl" radius="sm" size="md" type="submit">
+                  Đổi mật khẩu
+                </Button>
+              </div>
+            </Form>
+          </Modal>
+
           <div style={{ display: 'flex', justifyContent: 'flex-end', }}>
-            <Button mt="xl" radius="sm" size="md" type="submit">
+            <Button mt="xl" radius="sm" size="md" type="submit" onClick={open}>
               Đổi mật khẩu
             </Button>
           </div>
