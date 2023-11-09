@@ -14,6 +14,7 @@ import { setUserInfo } from '@/store';
 import { useAppDispatch } from '@/hooks';
 import { notifications } from '@mantine/notifications';
 import React, { useEffect } from 'react';
+import { JwtPayload, jwtDecode } from 'jwt-decode';
 
 interface IRegisterFormData {
   firstName: string;
@@ -43,10 +44,17 @@ const schema = yup.object().shape({
 
 const decodeToken = (token: string) => {
   // function to decode token
-  // assume email and role after decode
+  console.log(token);
+  const decoded: {
+    email: string;
+    role: string;
+    iat: number;
+    exp: number;
+  } = jwtDecode(token);
+  console.log(decoded);
   const result = {
-    email: token + '@gmail.com',
-    role: 'user',
+    email: decoded?.email,
+    role: decoded?.role,
   };
   return result;
 };
@@ -77,7 +85,7 @@ const RegisterByInvitation = () => {
       password: '',
       confirmPassword: '',
       role: token_role,
-      emailVerified: false,
+      emailVerified: true,
     },
   });
 
@@ -103,8 +111,8 @@ const RegisterByInvitation = () => {
             color: 'green',
           });
 
-          // chuyển hướng về trang chủ
-          navigate(PATHS.VERIFY);
+          // Nếu đăng ký thành công thì sẽ cần đưa về trang Login
+          navigate(PATHS.LOGIN);
         } else {
           console.log('Đăng ký không thành công:', res.message);
           notifications.show({
