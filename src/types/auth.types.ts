@@ -17,6 +17,12 @@ export interface IRegisterRequest {
   email: string;
   password: string;
 }
+export interface IGoogleLoginRequest {
+  firstName: string;
+  lastName: string;
+  email: string;
+  picture: string;
+}
 
 export interface ILoginResponse {
   user: IUserInfo;

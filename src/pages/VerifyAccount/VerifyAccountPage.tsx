@@ -9,6 +9,7 @@ import { useNavigate } from 'react-router-dom';
 
 // import { productApi } from '@/services/product.service';
 
+
 const VerifyAccountPage = () => {
   const userInfo = useAppSelector(userInfoSelector);
 
@@ -25,7 +26,7 @@ const VerifyAccountPage = () => {
 
   return (
     <Stack h="90vh" align="center" justify="center">
-      <Text size="xl">Chúng tôi đã gửi một đường link xác thực đến {userInfo?.email}</Text>
+      <Text size="xl">Chúng tôi đã gửi một đường link xác thực đến email của bạn {userInfo?.email}</Text>
       <Text size="lg">Vui lòng xác thực để tiếp tục sử dụng ứng dụng</Text>
     </Stack>
   );

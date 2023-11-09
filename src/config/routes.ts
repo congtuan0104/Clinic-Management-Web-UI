@@ -11,7 +11,7 @@ export const PATHS = {
   HOME: '/',
   LOGIN: '/dang-nhap',
   REGISTER: '/dang-ky',
-  VERIFY: '/xac-minh-tai-khoan',
+  VERIFY: '/verify-account',
   REGISTER_BY_INVITATION: '/verify-account',
 };
 

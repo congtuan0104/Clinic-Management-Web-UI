@@ -1,5 +1,6 @@
 import {
   IApiResponse,
+  IGoogleLoginRequest,
   ILoginRequest,
   ILoginResponse,
   IRegisterRequest,
@@ -16,7 +17,11 @@ export const authApi = {
     return axiosClient.post('/auth/register', data);
   },
 
-  loginByGoogle(): Promise<any> {
-    return axiosClient.get('/auth');
+  loginGoogle(data: IGoogleLoginRequest): Promise<IApiResponse<ILoginResponse>> {
+    return axiosClient.post('/auth/account', data);
+  },
+
+  confirmEmail(email: string): Promise<IApiResponse<any>> {
+    return axiosClient.post('/auth/confirm', { email, role: 'user' });
   },
 };

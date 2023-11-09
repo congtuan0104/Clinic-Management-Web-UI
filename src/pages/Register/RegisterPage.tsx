@@ -51,6 +51,8 @@ const RegisterPage = () => {
       email: '',
       password: '',
       confirmPassword: '',
+      // emailVerified: false,
+      // role: 'user'
     },
   });
 
@@ -77,7 +79,7 @@ const RegisterPage = () => {
           });
 
           // chuyển hướng về trang chủ
-          navigate(PATHS.VERIFY);
+          navigate(PATHS.HOME);
         } else {
           console.log('Đăng ký không thành công:', res.message);
           notifications.show({
