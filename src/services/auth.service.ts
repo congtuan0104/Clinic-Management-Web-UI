@@ -1,4 +1,4 @@
-import { IApiResponse, ILoginRequest, ILoginResponse, IRegisterRequest } from '@/types';
+import { IApiResponse, ILoginRequest, ILoginResponse, IRegisterRequest, ILinkAccountRequest } from '@/types';
 import { axiosClient } from '@/utils';
 
 export const authApi = {
@@ -9,4 +9,8 @@ export const authApi = {
   register(data: IRegisterRequest): Promise<any> {
     return axiosClient.post('/auth/register', data);
   },
+
+  linkAccount(data: ILinkAccountRequest): Promise<any> {
+    return axiosClient.post('/auth/link-account', data);
+  }
 };

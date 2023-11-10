@@ -3,6 +3,7 @@ import { COOKIE_KEY } from '@/constants';
 import { useAppDispatch, useAppSelector } from '@/hooks';
 import { setUserInfo, userInfoSelector } from '@/store';
 import { cookies } from '@/utils';
+import { auth } from '@/pages/UserProfile/firebase';
 import {
   Group,
   Button,
@@ -29,13 +30,23 @@ import classes from './UserButton.module.css';
 const Header = () => {
   const userInfo = useAppSelector(userInfoSelector);
   const [drawerOpened, { toggle: toggleDrawer, close: closeDrawer }] = useDisclosure(false);
+  
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
   const handleLogout = () => {
     cookies.remove(COOKIE_KEY.TOKEN);
     cookies.remove(COOKIE_KEY.USER_INFO);
-
+    
+    auth.signOut()
+    .then(() => {
+      console.log('Đăng xuất thành công');
+      // Thực hiện các công việc khác sau khi đăng xuất nếu cần
+    })
+    .catch(error => {
+      console.error('Lỗi đăng xuất:', error);
+    });
+    
     dispatch(setUserInfo(undefined));
     notifications.show({
       message: 'Bạn đã đăng xuất',
@@ -88,7 +99,7 @@ const Header = () => {
                         </Text>
 
                         <Text c="dimmed" size="xs">
-                          vha62@gmail.com
+                          {userInfo.email}
                         </Text>
                       </div>
 

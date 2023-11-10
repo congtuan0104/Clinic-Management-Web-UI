@@ -53,17 +53,19 @@ const LoginPage = () => {
     // gọi api đăng nhập
     // nếu thành công, lưu access token vào cookie và thông tin user vào redux -> chuyển hướng về trang chủ
     // nếu thất bại, hiển thị thông báo lỗi
+    console.log(data)
     authApi
       .login({ email: data.email, password: data.password })
       .then(res => {
-        if (res.success && !res.errors && res.data) {
+
+        if (res.data) {
           const userInfo = res.data?.user;
           const token = res.data?.token;
 
           // lưu vào token và thông tin user vào cookie
           cookies.set(COOKIE_KEY.TOKEN, token);
           cookies.set(COOKIE_KEY.USER_INFO, userInfo);
-
+          console.log('dang nhap ', userInfo);
           // lưu thông tin user vào redux
           dispatch(setUserInfo(userInfo));
 

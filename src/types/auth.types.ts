@@ -22,3 +22,12 @@ export interface IRegisterRequest {
   email: string;
   password: string;
 }
+
+export interface ILinkAccountRequest {
+  key: string | null,
+  userId: string | null | undefined,
+  firstName: string | null,
+  lastName: string | null,
+  picture: string | null,
+  provider: string | null
+}
