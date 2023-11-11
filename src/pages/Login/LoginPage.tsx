@@ -3,7 +3,7 @@ import { TextInput, PasswordInput, Checkbox } from 'react-hook-form-mantine';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm, Form } from 'react-hook-form';
 import { FcGoogle } from 'react-icons/fc';
-import { RiLockPasswordLine } from 'react-icons/ri';
+import { RiFacebookBoxFill, RiLockPasswordLine } from 'react-icons/ri';
 import { SiMaildotru } from 'react-icons/si';
 import { Link, useNavigate } from 'react-router-dom';
 
@@ -11,14 +11,14 @@ import * as yup from 'yup';
 
 import { authApi } from '@/services';
 import { cookies } from '@/utils';
-import { PATHS } from '@/config';
+import { PATHS, facebookAuth, firebaseApp, firebaseAuth } from '@/config';
 import { useAppDispatch } from '@/hooks';
 import { setUserInfo } from '@/store';
 import { COOKIE_KEY } from '@/constants';
 import { notifications } from '@mantine/notifications';
-import { useEffect } from 'react';
 import { useGoogleLogin } from '@react-oauth/google';
 import axios from 'axios';
+import { signInWithPopup } from 'firebase/auth';
 
 interface ILoginFormData {
   email: string;
@@ -152,6 +152,11 @@ const LoginPage = () => {
 
   });
 
+  const handleLoginByFacebook = async () => {
+    const result = await signInWithPopup(firebaseAuth, facebookAuth);
+    console.log('result', result);
+  }
+
   return (
     <Container size={500} my={40}>
       <Paper withBorder shadow="md" p={30} mt={30} radius="md">
@@ -207,6 +212,16 @@ const LoginPage = () => {
             onClick={() => handleLoginByGoogle()}
             leftSection={<FcGoogle size={20} />}>
             Đăng nhập bằng tài khoản Google
+          </Button>
+          <Button
+            fullWidth
+            mt="sm"
+            radius="sm"
+            size="md"
+            variant="outline"
+            onClick={() => handleLoginByFacebook()}
+            leftSection={<RiFacebookBoxFill size={20} />}>
+            Đăng nhập bằng tài khoản Facebook
           </Button>
         </Form>
       </Paper>
