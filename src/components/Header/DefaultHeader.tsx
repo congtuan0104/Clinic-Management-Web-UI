@@ -30,23 +30,23 @@ import classes from './UserButton.module.css';
 const Header = () => {
   const userInfo = useAppSelector(userInfoSelector);
   const [drawerOpened, { toggle: toggleDrawer, close: closeDrawer }] = useDisclosure(false);
-  
+
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
   const handleLogout = () => {
     cookies.remove(COOKIE_KEY.TOKEN);
     cookies.remove(COOKIE_KEY.USER_INFO);
-    
+
     auth.signOut()
-    .then(() => {
-      console.log('Đăng xuất thành công');
-      // Thực hiện các công việc khác sau khi đăng xuất nếu cần
-    })
-    .catch(error => {
-      console.error('Lỗi đăng xuất:', error);
-    });
-    
+      .then(() => {
+        console.log('Đăng xuất thành công');
+        // Thực hiện các công việc khác sau khi đăng xuất nếu cần
+      })
+      .catch(error => {
+        console.error('Lỗi đăng xuất:', error);
+      });
+
     dispatch(setUserInfo(undefined));
     notifications.show({
       message: 'Bạn đã đăng xuất',
@@ -82,9 +82,7 @@ const Header = () => {
 
           <Group visibleFrom="md">
             {userInfo ? (
-              <><Button variant="light" color="red" onClick={handleLogout}>
-                Đăng xuất
-              </Button>
+              <>
                 <Group>
                   <UnstyledButton className={classes.user} component={Link} to={PATHS.PROFILE}>
                     <Group>
@@ -94,10 +92,6 @@ const Header = () => {
                       />
 
                       <div style={{ flex: 1 }}>
-                        <Text size="sm" fw={500}>
-                          Vo Hoai An
-                        </Text>
-
                         <Text c="dimmed" size="xs">
                           {userInfo.email}
                         </Text>
@@ -107,6 +101,9 @@ const Header = () => {
                     </Group>
                   </UnstyledButton>
                 </Group>
+                <Button variant="light" color="red" onClick={handleLogout}>
+                  Đăng xuất
+                </Button>
               </>
             ) : (
               <>
@@ -143,10 +140,6 @@ const Header = () => {
                   />
 
                   <div style={{ flex: 1 }}>
-                    <Text size="sm" fw={500}>
-                      Vo Hoai An
-                    </Text>
-
                     <Text c="dimmed" size="xs">
                       vha62@gmail.com
                     </Text>

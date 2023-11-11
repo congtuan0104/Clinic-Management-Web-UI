@@ -4,8 +4,8 @@ import { useDisclosure } from '@mantine/hooks';
 
 import { useForm, Form } from 'react-hook-form';
 import { RiLockPasswordLine } from 'react-icons/ri';
-import {auth,provider} from "./firebase";
-import {signInWithPopup} from "firebase/auth";
+import { auth, provider } from "./firebase";
+import { signInWithPopup } from "firebase/auth";
 import React, { useState, useEffect } from 'react';
 import { authApi } from '@/services/auth.service';
 import { notifications } from '@mantine/notifications';
@@ -44,8 +44,9 @@ const schema = yup.object().shape({
 
 const ProFilePage = () => {
   const [opened, { open, close }] = useDisclosure(false);
+  // const userInfo = useAppSelector(userInfoSelector);
 
-  const [googleAccout,setgoogleAccout] = useState('')
+  const [googleAccout, setgoogleAccout] = useState('')
   //const userInforedux = useSelector((state: RootState) => state.common.user);
 
   /* console.log('user info redux: ', userInforedux);
@@ -66,64 +67,64 @@ const ProFilePage = () => {
   useEffect(() => {
     const userInfo_cookies = cookies.get(COOKIE_KEY.USER_INFO);
 
-        console.log('user Info cookies: ',userInfo_cookies)
-        // Kiểm tra nếu userInfo tồn tại
-        if (userInfo_cookies) {
-          // Xử lý userInfo
-          const userInfoObject = JSON.parse(userInfo_cookies);
-          console.log('User Info id:', userInfoObject.id);
-          setUserInfo(userInfoObject);
-        }
+    console.log('user Info cookies: ', userInfo_cookies)
+    // Kiểm tra nếu userInfo tồn tại
+    if (userInfo_cookies) {
+      // Xử lý userInfo
+      const userInfoObject = JSON.parse(userInfo_cookies);
+      console.log('User Info id:', userInfoObject.id);
+      setUserInfo(userInfoObject);
+    }
   }, []);
 
-  const handleConnectGoogle =()=>{
-    
-    signInWithPopup(auth,provider).then((data)=>{
-        /* setValue(data.user.email)
-        localStorage.setItem("email",data.user.email) */
-        
-        const userInfo = cookies.get(COOKIE_KEY.USER_INFO);
+  const handleConnectGoogle = () => {
 
-        console.log('user Info cookies: ',userInfo)
-        // Kiểm tra nếu userInfo tồn tại
-        if (userInfo) {
-          // Xử lý userInfo
-          const userInfoObject = JSON.parse(userInfo);
-          console.log('User Info id:', userInfoObject.id);
+    signInWithPopup(auth, provider).then((data) => {
+      /* setValue(data.user.email)
+      localStorage.setItem("email",data.user.email) */
 
-          console.log(data)
+      const userInfo = cookies.get(COOKIE_KEY.USER_INFO);
+
+      console.log('user Info cookies: ', userInfo)
+      // Kiểm tra nếu userInfo tồn tại
+      if (userInfo) {
+        // Xử lý userInfo
+        const userInfoObject = JSON.parse(userInfo);
+        console.log('User Info id:', userInfoObject.id);
+
+        console.log(data)
         if (data.user.email) {
           setgoogleAccout(data.user.email);
         } else {
           console.log("Không nhận được email")
         }
         if (data.user)
-        authApi
-        .linkAccount({key: data.user.email, userId: userInfoObject?.id, firstName: data.user.displayName, lastName: data.user.displayName, picture: data.user.photoURL, provider: "Google"})
-        .then(res => {         
-          
-          // Hiển thị thông báo
-          notifications.show({
-            message: 'Liên kết tài khoản thành công',
-            color: 'green',
-          });
-  
-            
-          }
-        )
-        .catch(error => {
-          console.log(error.message);
-          notifications.show({
-            message: error.response.data.message,
-            color: 'red',
-          });
-        });
-        } else {
-          // Xử lý khi không tìm thấy userInfo trong cookies
-          console.log('User Info not found in cookies');
-        }
-        
-        
+          authApi
+            .linkAccount({ key: data.user.email, userId: userInfoObject?.id, firstName: data.user.displayName, lastName: data.user.displayName, picture: data.user.photoURL, provider: "Google" })
+            .then(res => {
+
+              // Hiển thị thông báo
+              notifications.show({
+                message: 'Liên kết tài khoản thành công',
+                color: 'green',
+              });
+
+
+            }
+            )
+            .catch(error => {
+              console.log(error.message);
+              notifications.show({
+                message: error.response.data.message,
+                color: 'red',
+              });
+            });
+      } else {
+        // Xử lý khi không tìm thấy userInfo trong cookies
+        console.log('User Info not found in cookies');
+      }
+
+
     }).catch((error) => {
       console.log(error);
     })
@@ -133,7 +134,7 @@ const ProFilePage = () => {
     <Flex my={30} mx={{ base: 15, md: 0 }} gap={20} direction={{ base: 'column', md: 'row' }}>
       <Paper w='100%' withBorder shadow="md" p={30} radius="md">
         <div>
-          <Group wrap="nowrap">
+          {/* <Group wrap="nowrap">
             <Avatar
               src="https://images.unsplash.com/photo-1633332755192-727a05c4013d?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=250&q=80"
               size={94}
@@ -147,7 +148,7 @@ const ProFilePage = () => {
                 Vo Hoai An
               </Text>
             </div>
-          </Group>
+          </Group> */}
 
           <div style={{ margin: '1rem 0' }}>
             <Text fz="lg" fw={700} className={classes.name}>
@@ -214,11 +215,7 @@ const ProFilePage = () => {
               </Modal.Body>
             </Modal.Content>
           </Modal.Root>
-          <div style={{ display: 'flex', justifyContent: 'flex-end', }}>
-            <Button mt="xl" radius="sm" size="md" type="submit" onClick={open}>
-              Đổi mật khẩu
-            </Button>
-          </div>
+
         </div>
       </Paper>
 
@@ -226,13 +223,15 @@ const ProFilePage = () => {
         <Text fz="xl" fw={700} className={classes.name}>
           Quản lý tài khoản đăng nhập
         </Text>
-        <div>
+        <div className='flex justify-between items-center w-full'>
           <Text pt={30} fz="md" fw={700} className={classes.name}>
             Mật khẩu
           </Text>
-          <Text pt={20} pb={20} c="grey" fz="md" fw={200} className={classes.name}>
-            Cập nhật lần cuối 19 phút trước
-          </Text>
+
+          <Button mt={30} radius="sm" variant='subtle' onClick={open}>
+            Đổi mật khẩu
+          </Button>
+
           <Divider />
         </div>
         <Text pt={30} fz="xl" fw={700} className={classes.name}>
