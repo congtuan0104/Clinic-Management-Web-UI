@@ -79,7 +79,7 @@ const ProFilePage = () => {
 
   const handleConnectGoogle = () => {
 
-    signInWithPopup(auth, provider).then((data) => {
+    signInWithPopup(auth, provider.google).then((data) => {
       /* setValue(data.user.email)
       localStorage.setItem("email",data.user.email) */
 
