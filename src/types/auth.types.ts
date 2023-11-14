@@ -11,14 +11,24 @@ export interface ILoginRequest {
   password: string;
 }
 
-export interface ILoginResponse {
-  user: IUserInfo;
-  token: string;
-}
-
 export interface IRegisterRequest {
   firstName: string;
   lastName: string;
   email: string;
   password: string;
+}
+export interface IGoogleLoginRequest {
+  firstName: string;
+  lastName: string;
+  email: string;
+  picture: string;
+}
+
+export interface ILoginResponse {
+  user: IUserInfo;
+  token: string;
+}
+
+export interface IRegisterResponse {
+  user: IUserInfo;
 }

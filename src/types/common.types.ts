@@ -4,7 +4,7 @@ export interface IApiResponse<T> {
   // request: XMLHttpRequest;
   data?: T;
   message?: string;
-  success?: boolean;
+  status?: boolean;
   errors?: boolean;
   // status: number;
   // statusText?: string;

@@ -13,19 +13,20 @@ import {
   rem,
   Stack,
   Image,
+  Text,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { Link } from 'react-router-dom';
 
 // header cho các trang dành cho khách hàng chưa đăng nhập
-const Header = () => {
+const AdminHeader = () => {
   const userInfo = useAppSelector(userInfoSelector);
   const [drawerOpened, { toggle: toggleDrawer, close: closeDrawer }] = useDisclosure(false);
 
   const { logout } = useAuth();
 
   return (
-    <Box h={60} bg='white' className="shadow-md">
+    <Box h={60} className="shadow-md">
       <header className="h-full max-w-screen-xxl mx-auto">
         <Group justify="space-between" h="100%">
           <Box w={userInfo ? undefined : 222}>
@@ -34,20 +35,7 @@ const Header = () => {
             </Link>
           </Box>
 
-          <Group h="100%" gap={35} visibleFrom="sm">
-            <Link className="hover:text-[#228BE6]" to={PATHS.HOME}>
-              Trang chủ
-            </Link>
-            <Link className="hover:text-[#228BE6]" to="#">
-              Giới thiệu
-            </Link>
-            <Link className="hover:text-[#228BE6]" to="#">
-              Bảng giá
-            </Link>
-            <Link className="hover:text-[#228BE6]" to="#">
-              Tin tức
-            </Link>
-          </Group>
+          <Text>Admin Layout</Text>
 
           <Group visibleFrom="sm">
             {userInfo ? (
@@ -79,14 +67,6 @@ const Header = () => {
         hiddenFrom="sm"
         zIndex={1000000}>
         <ScrollArea h={`calc(100vh - ${rem(80)})`} mx="-md">
-          <Divider my="sm" />
-
-          <Stack pl={20}>
-            <Link to={PATHS.HOME}>Trang chủ</Link>
-            <Link to="#">Giới thiệu</Link>
-            <Link to="#">Bảng giá</Link>
-            <Link to="#">Tin tức</Link>
-          </Stack>
 
           <Divider my="sm" />
 
@@ -112,4 +92,4 @@ const Header = () => {
   );
 };
 
-export default Header;
+export default AdminHeader;
