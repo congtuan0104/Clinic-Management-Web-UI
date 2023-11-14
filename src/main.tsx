@@ -14,21 +14,18 @@ import { Notifications } from '@mantine/notifications';
 
 import App from './App.tsx';
 import { DatesProvider } from '@mantine/dates';
-import { GoogleOAuthProvider } from '@react-oauth/google';
 
 const queryClient = new QueryClient(); // react-query client instance
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <ReduxProvider store={store}>
     <QueryClientProvider client={queryClient}>
-      <GoogleOAuthProvider clientId='1087876261618-736jt9okomsjkrl4ahmr7e06n7vj6a80.apps.googleusercontent.com'>
-        <MantineProvider theme={theme} defaultColorScheme="dark">
-          <DatesProvider settings={{ locale: 'vi' }}>
-            <Notifications autoClose={2000} limit={5} />
-            <App />
-          </DatesProvider>
-        </MantineProvider>
-      </GoogleOAuthProvider>
+      <MantineProvider theme={theme} defaultColorScheme="light">
+        <DatesProvider settings={{ locale: 'vi' }}>
+          <Notifications autoClose={2000} limit={5} />
+          <App />
+        </DatesProvider>
+      </MantineProvider>
     </QueryClientProvider>
   </ReduxProvider>,
 );

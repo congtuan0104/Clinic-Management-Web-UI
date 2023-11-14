@@ -1,10 +1,10 @@
 import { yupResolver } from '@hookform/resolvers/yup';
-import { PATHS } from '@/config';
-import { Container, Paper, Title, Text, Anchor, Button, Grid } from '@mantine/core';
+import { FirebaseAuthProvider, PATHS } from '@/config';
+import { Container, Paper, Title, Text, Anchor, Button, Grid, Divider, Flex, ActionIcon, Image } from '@mantine/core';
 import { useForm, Form } from 'react-hook-form';
 import { PasswordInput, TextInput } from 'react-hook-form-mantine';
 import { FcGoogle } from 'react-icons/fc';
-import { RiLockPasswordLine } from 'react-icons/ri';
+import { RiGithubFill, RiLockPasswordLine } from 'react-icons/ri';
 import { SiMaildotru } from 'react-icons/si';
 import { Link, useNavigate } from 'react-router-dom';
 import * as yup from 'yup';
@@ -12,8 +12,10 @@ import { authApi } from '@/services';
 import { cookies } from '@/utils';
 import { COOKIE_KEY } from '@/constants';
 import { setUserInfo } from '@/store';
-import { useAppDispatch } from '@/hooks';
+import { useAppDispatch, useAuth } from '@/hooks';
 import { notifications } from '@mantine/notifications';
+import { FaFacebookF } from 'react-icons/fa6';
+import MicrosoftLogo from '@/assets/icons/microsoft.svg'
 
 interface IRegisterFormData {
   firstName: string;
@@ -40,6 +42,7 @@ const schema = yup.object().shape({
 const RegisterPage = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const { loginByOAuth } = useAuth();
 
   // tích hợp react-hook-form với mantine form
   const { control } = useForm<IRegisterFormData>({
@@ -98,8 +101,8 @@ const RegisterPage = () => {
   };
 
   return (
-    <Container size={570} my={40}>
-      <Paper withBorder shadow="md" p={30} mt={30} radius="md">
+    <Container size={570} py={30}>
+      <Paper withBorder shadow="md" p={30} radius="md">
         <Title>Đăng ký</Title>
         <Text c="dimmed" size="sm" mt={5} mb={15}>
           Đã có tài khoản?{' '}
@@ -171,15 +174,61 @@ const RegisterPage = () => {
           <Button fullWidth mt="xl" radius="sm" size="md" type="submit">
             Đăng ký
           </Button>
-          <Button
-            fullWidth
-            mt="sm"
-            radius="sm"
-            size="md"
-            variant="outline"
-            leftSection={<FcGoogle size={20} />}>
-            Đăng nhập bằng tài khoản Google
-          </Button>
+          <Divider my='md' />
+
+          <Text c='gray' ta='center' mt='md' mb='sm'>Hoặc đăng ký bằng</Text>
+          <Flex gap='md' justify='space-between' px={70}>
+            <ActionIcon
+              radius="xl"
+              size="xl"
+              color='indigo'
+              variant="outline"
+              onClick={() => loginByOAuth(FirebaseAuthProvider.Google)}
+            >
+              <FcGoogle size={30} />
+            </ActionIcon>
+
+            <ActionIcon
+              radius="xl"
+              size="xl"
+              color='indigo'
+              variant="outline"
+              onClick={() => loginByOAuth(FirebaseAuthProvider.Facebook)}
+            >
+              <FaFacebookF size={30} />
+            </ActionIcon>
+
+            {/* <ActionIcon
+              radius="xl"
+              size="xl"
+              color='gray'
+              variant="outline"
+              onClick={() => loginByOAuth(FirebaseAuthProvider.Apple)}
+            >
+              <FaApple size={30} />
+            </ActionIcon> */}
+
+            <ActionIcon
+              radius="xl"
+              size="xl"
+              color='indigo'
+              variant="outline"
+              onClick={() => loginByOAuth(FirebaseAuthProvider.Microsoft)}
+            >
+              <Image src={MicrosoftLogo} width={25} height={25} />
+
+            </ActionIcon>
+
+            <ActionIcon
+              radius="xl"
+              size="xl"
+              color='black'
+              variant="outline"
+              onClick={() => loginByOAuth(FirebaseAuthProvider.Github)}
+            >
+              <RiGithubFill size={30} />
+            </ActionIcon>
+          </Flex>
         </Form>
       </Paper>
     </Container>

@@ -1,9 +1,10 @@
-import { Anchor, Paper, Title, Text, Container, Group, Button } from '@mantine/core';
+import { Anchor, Paper, Title, Text, Container, Group, Button, Flex, Divider, ActionIcon, Image } from '@mantine/core';
 import { TextInput, PasswordInput, Checkbox } from 'react-hook-form-mantine';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm, Form } from 'react-hook-form';
 import { FcGoogle } from 'react-icons/fc';
-import { RiFacebookBoxFill, RiLockPasswordLine } from 'react-icons/ri';
+import { RiGithubFill, RiLockPasswordLine } from 'react-icons/ri';
+import { FaFacebookF, FaApple } from 'react-icons/fa6';
 import { SiMaildotru } from 'react-icons/si';
 import { Link, useNavigate } from 'react-router-dom';
 
@@ -11,14 +12,12 @@ import * as yup from 'yup';
 
 import { authApi } from '@/services';
 import { cookies } from '@/utils';
-import { PATHS, facebookAuth, firebaseApp, firebaseAuth } from '@/config';
-import { useAppDispatch } from '@/hooks';
+import { PATHS, FirebaseAuthProvider, firebaseAuth } from '@/config';
+import { useAppDispatch, useAuth } from '@/hooks';
 import { setUserInfo } from '@/store';
 import { COOKIE_KEY } from '@/constants';
 import { notifications } from '@mantine/notifications';
-import { useGoogleLogin } from '@react-oauth/google';
-import axios from 'axios';
-import { signInWithPopup } from 'firebase/auth';
+import MicrosoftLogo from '@/assets/icons/microsoft.svg'
 
 interface ILoginFormData {
   email: string;
@@ -39,6 +38,7 @@ const schema = yup.object().shape({
 const LoginPage = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const { loginByOAuth } = useAuth(); // xử lý đăng nhập bằng tài khoản bên thứ 3 (Google, Facebook, ...)
 
   // tích hợp react-hook-form với antd form
   const { control, handleSubmit } = useForm<ILoginFormData>({
@@ -76,7 +76,9 @@ const LoginPage = () => {
           });
 
           // chuyển hướng về trang chủ
-          navigate(PATHS.HOME);
+          // navigate(PATHS.HOME);
+          navigate(PATHS.ADMIN_DASHBOARD);
+
         } else {
           notifications.show({
             message: res.message,
@@ -94,68 +96,8 @@ const LoginPage = () => {
       });
   };
 
-  // đăng nhập bằng tài khoản google
-  const handleLoginByGoogle = useGoogleLogin({
-    onSuccess: async tokenResponse => {
-      console.log('token', tokenResponse);
 
-      // Lấy thông tin user từ máy chủ google bằng chuỗi token được trả về
-      const { data: userData } = await axios.get(
-        'https://www.googleapis.com/oauth2/v3/userinfo',
-        { headers: { Authorization: `Bearer ${tokenResponse.access_token}` } });
 
-      // gọi api đăng nhập
-      // nếu thành công, lưu access token vào cookie và thông tin user vào redux -> chuyển hướng về trang chủ
-      // nếu thất bại, hiển thị thông báo lỗi
-      authApi.loginGoogle({
-        email: userData.email,
-        firstName: userData.family_name,
-        lastName: userData.given_name,
-        picture: userData.picture
-      }).then(res => {
-        if (res.status && !res.errors && res.data) {
-          const userInfo = res.data?.user;
-          const token = res.data?.token;
-
-          // lưu vào token và thông tin user vào cookie
-          cookies.set(COOKIE_KEY.TOKEN, token);
-          cookies.set(COOKIE_KEY.USER_INFO, userInfo);
-
-          // lưu thông tin user vào redux
-          dispatch(setUserInfo(userInfo));
-
-          // Hiển thị thông báo
-          notifications.show({
-            message: 'Đăng nhập thành công',
-            color: 'green',
-          });
-
-          // chuyển hướng về trang chủ
-          navigate(PATHS.HOME);
-        } else {
-          notifications.show({
-            message: res.message,
-            color: 'red',
-          });
-          console.log('Loi dang nhap:', res.message);
-        }
-      })
-        .catch(error => {
-          console.log(error.message);
-          notifications.show({
-            message: error.response.message,
-            color: 'red',
-          });
-        });
-
-    },
-
-  });
-
-  const handleLoginByFacebook = async () => {
-    const result = await signInWithPopup(firebaseAuth, facebookAuth);
-    console.log('result', result);
-  }
 
   return (
     <Container size={500} my={40}>
@@ -196,33 +138,68 @@ const LoginPage = () => {
               control={control}
               name="isRemember"
             />
-            <Anchor component="button" size="sm">
+            <Anchor component={Link} size="sm" to='#'>
               Quên mật khẩu?
             </Anchor>
           </Group>
           <Button fullWidth mt="xl" radius="sm" size="md" type="submit">
             Đăng nhập
           </Button>
-          <Button
-            fullWidth
-            mt="sm"
-            radius="sm"
-            size="md"
-            variant="outline"
-            onClick={() => handleLoginByGoogle()}
-            leftSection={<FcGoogle size={20} />}>
-            Đăng nhập bằng tài khoản Google
-          </Button>
-          <Button
-            fullWidth
-            mt="sm"
-            radius="sm"
-            size="md"
-            variant="outline"
-            onClick={() => handleLoginByFacebook()}
-            leftSection={<RiFacebookBoxFill size={20} />}>
-            Đăng nhập bằng tài khoản Facebook
-          </Button>
+
+          <Divider my='md' />
+
+          <Text c='gray' ta='center' mt='md' mb='sm'>Hoặc đăng nhập bằng</Text>
+          <Flex gap='md' justify='space-between' px={70}>
+            <ActionIcon
+              radius="xl"
+              size="xl"
+              color='primary'
+              variant="outline"
+              onClick={() => loginByOAuth(FirebaseAuthProvider.Google)}
+            >
+              <FcGoogle size={30} />
+            </ActionIcon>
+
+            <ActionIcon
+              radius="xl"
+              size="xl"
+              color='primary'
+              variant="outline"
+              onClick={() => loginByOAuth(FirebaseAuthProvider.Facebook)}
+            >
+              <FaFacebookF size={30} />
+            </ActionIcon>
+
+            {/* <ActionIcon
+              radius="xl"
+              size="xl"
+              color='gray'
+              variant="outline"
+              onClick={() => loginByOAuth(FirebaseAuthProvider.Apple)}
+            >
+              <FaApple size={30} />
+            </ActionIcon> */}
+
+            <ActionIcon
+              radius="xl"
+              size="xl"
+              color='primary'
+              variant="outline"
+              onClick={() => loginByOAuth(FirebaseAuthProvider.Microsoft)}
+            >
+              <Image src={MicrosoftLogo} width={25} height={25} />
+            </ActionIcon>
+
+            <ActionIcon
+              radius="xl"
+              size="xl"
+              color='black'
+              variant="outline"
+              onClick={() => loginByOAuth(FirebaseAuthProvider.Github)}
+            >
+              <RiGithubFill size={30} />
+            </ActionIcon>
+          </Flex>
         </Form>
       </Paper>
     </Container>

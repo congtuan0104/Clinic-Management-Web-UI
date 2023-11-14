@@ -1,14 +1,14 @@
 import { useNavigate } from 'react-router-dom';
 
 import { DefaultHeader } from '@/components';
+import { Box } from '@mantine/core';
 
 const DefaultLayout = ({ children }: { children: JSX.Element }) => {
-  const navigate = useNavigate();
   return (
-    <div>
+    <Box bg='primary.1' mih='100vh'>
       <DefaultHeader />
       <main className="max-w-screen-xxl mx-auto">{children}</main>
-    </div>
+    </Box>
   );
 };
 

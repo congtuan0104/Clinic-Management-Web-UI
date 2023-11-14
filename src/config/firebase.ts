@@ -1,5 +1,11 @@
 import * as firebase from 'firebase/app';
-import { getAuth, FacebookAuthProvider } from 'firebase/auth';
+import {
+  getAuth,
+  FacebookAuthProvider,
+  GoogleAuthProvider,
+  GithubAuthProvider,
+  OAuthProvider,
+} from 'firebase/auth';
 
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
@@ -14,7 +20,16 @@ export const firebaseConfig = {
 };
 
 // Initialize Firebase
-export const firebaseApp = firebase.initializeApp(firebaseConfig);
+export const firebaseApp = !firebase.getApps().length
+  ? firebase.initializeApp(firebaseConfig)
+  : firebase.getApps()[0];
+
 export const firebaseAuth = getAuth(firebaseApp);
 
-export const facebookAuth = new FacebookAuthProvider();
+export const FirebaseAuthProvider = {
+  Google: new GoogleAuthProvider(),
+  Facebook: new FacebookAuthProvider(),
+  Github: new GithubAuthProvider(),
+  Microsoft: new OAuthProvider('microsoft.com'),
+  Apple: new OAuthProvider('apple.com'),
+};

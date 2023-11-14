@@ -972,11 +972,6 @@
   resolved "https://registry.yarnpkg.com/@protobufjs/utf8/-/utf8-1.1.0.tgz#a777360b5b39a1a2e5106f8e858f2fd2d060c570"
   integrity sha512-Vvn3zZrhQZkkBE8LSuW3em98c0FwgO4nxzv6OdSxPKJIEKY2bGbHn+mhGIPerzI4twdxaP8/0+06HBpwf345Lw==
 
-"@react-oauth/google@^0.11.1":
-  version "0.11.1"
-  resolved "https://registry.yarnpkg.com/@react-oauth/google/-/google-0.11.1.tgz#f937c8d02bd37e3a6be7713b8212e9b9b9b3f914"
-  integrity sha512-tywZisXbsdaRBVbEu0VX6dRbOSL2I6DgY97woq5NMOOOz+xtDsm418vqq+Vx10KMtra3kdHMRMf0hXLWrk2RMg==
-
 "@reduxjs/toolkit@^1.9.7":
   version "1.9.7"
   resolved "https://registry.yarnpkg.com/@reduxjs/toolkit/-/toolkit-1.9.7.tgz#7fc07c0b0ebec52043f8cb43510cf346405f78a6"
@@ -3743,11 +3738,6 @@ react-transition-group@4.4.5:
     dom-helpers "^5.0.1"
     loose-envify "^1.4.0"
     prop-types "^15.6.2"
-
-react-with-firebase-auth@^1.4.1:
-  version "1.4.1"
-  resolved "https://registry.yarnpkg.com/react-with-firebase-auth/-/react-with-firebase-auth-1.4.1.tgz#dd572f0880200de3b132337cd569ca38b94b9eb8"
-  integrity sha512-IkhPlnSFwVu30f/m6tL7cno4SsVnq+yUSadk1ntuurLgVZjTFZLwYTnIzwM4Rc8sx+wgBl7mEGo8XPzWWLjg7A==
 
 react@^18.2.0:
   version "18.2.0"

@@ -1,10 +1,11 @@
-import { DefaultLayout } from '@/layouts';
+import { AdminLayout, DefaultLayout } from '@/layouts';
 import {
   HomePage,
   LoginPage,
   VerifyAccountPage,
   RegisterPage,
   RegisterByInvitation,
+  DashboardAdmin,
 } from '@/pages';
 
 export const PATHS = {
@@ -13,6 +14,7 @@ export const PATHS = {
   REGISTER: '/dang-ky',
   VERIFY: '/verify-account',
   REGISTER_BY_INVITATION: '/verify-account',
+  ADMIN_DASHBOARD: '/admin/dashboard',
 };
 
 export const ROUTES = [
@@ -28,7 +30,7 @@ export const ROUTES = [
     title: 'Xác minh tài khoản',
     layout: DefaultLayout,
     element: VerifyAccountPage,
-    isProtected: true,
+    isProtected: false,
     children: [],
   },
   {
@@ -36,7 +38,7 @@ export const ROUTES = [
     title: 'Đăng nhập',
     layout: DefaultLayout,
     element: LoginPage,
-    isProtected: true,
+    isProtected: false,
     children: [],
   },
   {
@@ -44,7 +46,7 @@ export const ROUTES = [
     title: 'Đăng ký',
     layout: DefaultLayout,
     element: RegisterPage,
-    isProtected: true,
+    isProtected: false,
     children: [],
   },
   {
@@ -52,6 +54,14 @@ export const ROUTES = [
     title: 'Đăng ký',
     layout: DefaultLayout,
     element: RegisterByInvitation,
+    isProtected: true,
+    children: [],
+  },
+  {
+    path: PATHS.ADMIN_DASHBOARD,
+    title: 'Dashboard',
+    layout: AdminLayout,
+    element: DashboardAdmin,
     isProtected: true,
     children: [],
   },
