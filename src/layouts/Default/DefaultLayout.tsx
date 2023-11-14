@@ -5,7 +5,7 @@ import { Box } from '@mantine/core';
 
 const DefaultLayout = ({ children }: { children: JSX.Element }) => {
   return (
-    <Box bg='primary.1' mih='100vh'>
+    <Box bg='gray.1' mih='100vh'>
       <DefaultHeader />
       <main className="max-w-screen-xxl mx-auto">{children}</main>
     </Box>

@@ -25,7 +25,7 @@ const Header = () => {
   const { logout } = useAuth();
 
   return (
-    <Box h={60} bg='secondary.3' className="shadow-md">
+    <Box h={60} bg='white' className="shadow-md">
       <header className="h-full max-w-screen-xxl mx-auto">
         <Group justify="space-between" h="100%">
           <Box w={userInfo ? undefined : 222}>

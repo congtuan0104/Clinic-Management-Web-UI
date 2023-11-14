@@ -174,60 +174,38 @@ const RegisterPage = () => {
           <Button fullWidth mt="xl" radius="sm" size="md" type="submit">
             Đăng ký
           </Button>
-          <Divider my='md' />
-
-          <Text c='gray' ta='center' mt='md' mb='sm'>Hoặc đăng ký bằng</Text>
-          <Flex gap='md' justify='space-between' px={70}>
-            <ActionIcon
-              radius="xl"
-              size="xl"
-              color='indigo'
+          <Text mt='md' mb='sm' fw='500' c='gray.7' ta='center'>Hoặc đăng nhập bằng tài khoản</Text>
+          <Flex gap='md' justify='space-between'>
+            <Button
+              radius='sm'
+              size='md'
               variant="outline"
+              fullWidth
+              leftSection={<FcGoogle size={20} />}
               onClick={() => loginByOAuth(FirebaseAuthProvider.Google)}
             >
-              <FcGoogle size={30} />
-            </ActionIcon>
-
-            <ActionIcon
-              radius="xl"
-              size="xl"
-              color='indigo'
+              Google
+            </Button>
+            <Button
+              radius='sm'
+              size='md'
               variant="outline"
+              fullWidth
+              leftSection={<FaFacebookF size={20} />}
               onClick={() => loginByOAuth(FirebaseAuthProvider.Facebook)}
             >
-              <FaFacebookF size={30} />
-            </ActionIcon>
-
-            {/* <ActionIcon
-              radius="xl"
-              size="xl"
-              color='gray'
+              Facebook
+            </Button>
+            <Button
+              radius='sm'
+              size='md'
               variant="outline"
-              onClick={() => loginByOAuth(FirebaseAuthProvider.Apple)}
-            >
-              <FaApple size={30} />
-            </ActionIcon> */}
-
-            <ActionIcon
-              radius="xl"
-              size="xl"
-              color='indigo'
-              variant="outline"
+              fullWidth
+              leftSection={<Image src={MicrosoftLogo} width={20} height={20} />}
               onClick={() => loginByOAuth(FirebaseAuthProvider.Microsoft)}
             >
-              <Image src={MicrosoftLogo} width={25} height={25} />
-
-            </ActionIcon>
-
-            <ActionIcon
-              radius="xl"
-              size="xl"
-              color='black'
-              variant="outline"
-              onClick={() => loginByOAuth(FirebaseAuthProvider.Github)}
-            >
-              <RiGithubFill size={30} />
-            </ActionIcon>
+              Microsoft
+            </Button>
           </Flex>
         </Form>
       </Paper>

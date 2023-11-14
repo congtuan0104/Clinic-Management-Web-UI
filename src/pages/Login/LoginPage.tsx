@@ -1,4 +1,4 @@
-import { Anchor, Paper, Title, Text, Container, Group, Button, Flex, Divider, ActionIcon, Image } from '@mantine/core';
+import { Anchor, Paper, Title, Text, Container, Group, Button, Flex, Divider, ActionIcon, Image, Box } from '@mantine/core';
 import { TextInput, PasswordInput, Checkbox } from 'react-hook-form-mantine';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm, Form } from 'react-hook-form';
@@ -100,7 +100,7 @@ const LoginPage = () => {
 
 
   return (
-    <Container size={500} my={40}>
+    <Container size={570} my={40}>
       <Paper withBorder shadow="md" p={30} mt={30} radius="md">
         <Title>Đăng nhập</Title>
         <Text c="dimmed" size="sm" mt={5} mb={15}>
@@ -146,62 +146,41 @@ const LoginPage = () => {
             Đăng nhập
           </Button>
 
-          <Divider my='md' />
-
-          <Text c='gray' ta='center' mt='md' mb='sm'>Hoặc đăng nhập bằng</Text>
-          <Flex gap='md' justify='space-between' px={70}>
-            <ActionIcon
-              radius="xl"
-              size="xl"
-              color='primary'
+          <Text mt='md' mb='sm' fw='500' c='gray.7' ta='center'>Hoặc đăng nhập bằng tài khoản</Text>
+          <Flex gap='md' justify='space-between'>
+            <Button
+              radius='sm'
+              size='md'
               variant="outline"
+              fullWidth
+              leftSection={<FcGoogle size={20} />}
               onClick={() => loginByOAuth(FirebaseAuthProvider.Google)}
             >
-              <FcGoogle size={30} />
-            </ActionIcon>
-
-            <ActionIcon
-              radius="xl"
-              size="xl"
-              color='primary'
+              Google
+            </Button>
+            <Button
+              radius='sm'
+              size='md'
               variant="outline"
+              fullWidth
+              leftSection={<FaFacebookF size={20} />}
               onClick={() => loginByOAuth(FirebaseAuthProvider.Facebook)}
             >
-              <FaFacebookF size={30} />
-            </ActionIcon>
-
-            {/* <ActionIcon
-              radius="xl"
-              size="xl"
-              color='gray'
+              Facebook
+            </Button>
+            <Button
+              radius='sm'
+              size='md'
               variant="outline"
-              onClick={() => loginByOAuth(FirebaseAuthProvider.Apple)}
-            >
-              <FaApple size={30} />
-            </ActionIcon> */}
-
-            <ActionIcon
-              radius="xl"
-              size="xl"
-              color='primary'
-              variant="outline"
+              fullWidth
+              leftSection={<Image src={MicrosoftLogo} width={20} height={20} />}
               onClick={() => loginByOAuth(FirebaseAuthProvider.Microsoft)}
             >
-              <Image src={MicrosoftLogo} width={25} height={25} />
-            </ActionIcon>
-
-            <ActionIcon
-              radius="xl"
-              size="xl"
-              color='black'
-              variant="outline"
-              onClick={() => loginByOAuth(FirebaseAuthProvider.Github)}
-            >
-              <RiGithubFill size={30} />
-            </ActionIcon>
+              Microsoft
+            </Button>
           </Flex>
         </Form>
-      </Paper>
+      </Paper >
     </Container>
   );
 };
