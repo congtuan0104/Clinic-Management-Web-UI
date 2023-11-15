@@ -11,11 +11,6 @@ export interface ILoginRequest {
   password: string;
 }
 
-export interface ILoginResponse {
-  user: IUserInfo;
-  token: string;
-}
-
 export interface IRegisterRequest {
   firstName: string;
   lastName: string;
@@ -24,10 +19,26 @@ export interface IRegisterRequest {
 }
 
 export interface ILinkAccountRequest {
-  key: string | null,
-  userId: string | null | undefined,
-  firstName: string | null,
-  lastName: string | null,
-  picture: string | null,
-  provider: string | null
+  key: string | null;
+  userId: string | null | undefined;
+  firstName: string | null;
+  lastName: string | null;
+  picture: string | null;
+  provider: string | null;
+}
+
+export interface IGoogleLoginRequest {
+  firstName: string;
+  lastName: string;
+  email: string;
+  picture: string;
+}
+
+export interface ILoginResponse {
+  user: IUserInfo;
+  token: string;
+}
+
+export interface IRegisterResponse {
+  user: IUserInfo;
 }

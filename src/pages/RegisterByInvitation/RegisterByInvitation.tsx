@@ -1,21 +1,20 @@
 import { yupResolver } from '@hookform/resolvers/yup';
-import { FirebaseAuthProvider, PATHS } from '@/config';
-import { Container, Paper, Title, Text, Anchor, Button, Grid, Divider, Flex, ActionIcon, Image } from '@mantine/core';
+import { PATHS } from '@/config';
+import { Container, Paper, Title, Text, Anchor, Button, Grid } from '@mantine/core';
 import { useForm, Form } from 'react-hook-form';
 import { PasswordInput, TextInput } from 'react-hook-form-mantine';
-import { FcGoogle } from 'react-icons/fc';
-import { RiGithubFill, RiLockPasswordLine } from 'react-icons/ri';
+import { RiLockPasswordLine } from 'react-icons/ri';
 import { SiMaildotru } from 'react-icons/si';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import * as yup from 'yup';
 import { authApi } from '@/services';
 import { cookies } from '@/utils';
 import { COOKIE_KEY } from '@/constants';
 import { setUserInfo } from '@/store';
-import { useAppDispatch, useAuth } from '@/hooks';
+import { useAppDispatch } from '@/hooks';
 import { notifications } from '@mantine/notifications';
-import { FaFacebookF } from 'react-icons/fa6';
-import MicrosoftLogo from '@/assets/icons/microsoft.svg'
+import React, { useEffect } from 'react';
+import { JwtPayload, jwtDecode } from 'jwt-decode';
 
 interface IRegisterFormData {
   firstName: string;
@@ -23,6 +22,8 @@ interface IRegisterFormData {
   email: string;
   password: string;
   confirmPassword: string;
+  emailVerified: boolean;
+  role: string;
 }
 
 const schema = yup.object().shape({
@@ -37,12 +38,41 @@ const schema = yup.object().shape({
     .string()
     .required('Vui lòng xác nhận lại mật khẩu')
     .oneOf([yup.ref('password'), ''], 'Không trùng với mật khẩu đã nhập'),
+  emailVerified: yup.boolean().required(),
+  role: yup.string().required(),
 });
 
-const RegisterPage = () => {
+const decodeToken = (token: string) => {
+  // function to decode token
+  console.log(token);
+  const decoded: {
+    email: string;
+    role: string;
+    iat: number;
+    exp: number;
+  } = jwtDecode(token);
+  console.log(decoded);
+  const result = {
+    email: decoded?.email,
+    role: decoded?.role,
+  };
+  return result;
+};
+
+const RegisterByInvitation = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const { loginByOAuth } = useAuth();
+  let token_email: string = '';
+  let token_role: string = '';
+
+  // get token from param and decode token to get email and role
+  let [searchParams, setSearchParams] = useSearchParams();
+  const token = searchParams.get('token');
+  if (token) {
+    const { email, role } = decodeToken(token);
+    token_email = email;
+    token_role = role;
+  }
 
   // tích hợp react-hook-form với mantine form
   const { control } = useForm<IRegisterFormData>({
@@ -51,17 +81,17 @@ const RegisterPage = () => {
       // giá trị mặc định của các field
       firstName: '',
       lastName: '',
-      email: '',
+      email: token_email,
       password: '',
       confirmPassword: '',
-      // emailVerified: false,
-      // role: 'user'
+      role: token_role,
+      emailVerified: true,
     },
   });
 
   const handleRegister = (data: IRegisterFormData) => {
     const { confirmPassword, ...registerData } = data; // xóa thông tin xác nhận mật khẩu trước khi gửi api
-
+    console.log(registerData);
     // gọi api đăng ký
     authApi
       .register(registerData)
@@ -81,8 +111,8 @@ const RegisterPage = () => {
             color: 'green',
           });
 
-          // chuyển hướng về trang chủ
-          navigate(PATHS.HOME);
+          // Nếu đăng ký thành công thì sẽ cần đưa về trang Login
+          navigate(PATHS.LOGIN);
         } else {
           console.log('Đăng ký không thành công:', res.message);
           notifications.show({
@@ -101,15 +131,15 @@ const RegisterPage = () => {
   };
 
   return (
-    <Container size={570} py={30}>
-      <Paper withBorder shadow="md" p={30} radius="md">
+    <Container size={570} my={40}>
+      <Paper withBorder shadow="md" p={30} mt={30} radius="md">
         <Title>Đăng ký</Title>
-        <Text c="dimmed" size="sm" mt={5} mb={15}>
+        {/* <Text c="dimmed" size="sm" mt={5} mb={15}>
           Đã có tài khoản?{' '}
           <Anchor size="sm" component={Link} to={PATHS.LOGIN}>
             Đăng nhập
           </Anchor>
-        </Text>
+        </Text> */}
         <Form
           control={control}
           onSubmit={e => handleRegister(e.data)}
@@ -141,8 +171,8 @@ const RegisterPage = () => {
           <TextInput
             label="Email"
             name="email"
-            placeholder="example@gmail.com"
             required
+            readOnly
             mt="md"
             size="md"
             radius="sm"
@@ -174,43 +204,10 @@ const RegisterPage = () => {
           <Button fullWidth mt="xl" radius="sm" size="md" type="submit">
             Đăng ký
           </Button>
-          <Text mt='md' mb='sm' fw='500' c='gray.7' ta='center'>Hoặc đăng nhập bằng tài khoản</Text>
-          <Flex gap='md' justify='space-between'>
-            <Button
-              radius='sm'
-              size='md'
-              variant="outline"
-              fullWidth
-              leftSection={<FcGoogle size={20} />}
-              onClick={() => loginByOAuth(FirebaseAuthProvider.Google)}
-            >
-              Google
-            </Button>
-            <Button
-              radius='sm'
-              size='md'
-              variant="outline"
-              fullWidth
-              leftSection={<FaFacebookF size={20} />}
-              onClick={() => loginByOAuth(FirebaseAuthProvider.Facebook)}
-            >
-              Facebook
-            </Button>
-            <Button
-              radius='sm'
-              size='md'
-              variant="outline"
-              fullWidth
-              leftSection={<Image src={MicrosoftLogo} width={20} height={20} />}
-              onClick={() => loginByOAuth(FirebaseAuthProvider.Microsoft)}
-            >
-              Microsoft
-            </Button>
-          </Flex>
         </Form>
       </Paper>
     </Container>
   );
 };
 
-export default RegisterPage;
+export default RegisterByInvitation;

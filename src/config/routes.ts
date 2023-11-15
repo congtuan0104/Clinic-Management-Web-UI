@@ -1,15 +1,25 @@
-import { DefaultLayout } from '@/layouts';
-import { HomePage, LoginPage, ProductPage, RegisterPage, UserProfile } from '@/pages';
+import { AdminLayout, DefaultLayout } from '@/layouts';
+import {
+  HomePage,
+  LoginPage,
+  VerifyAccountPage,
+  RegisterPage,
+  RegisterByInvitation,
+  DashboardAdmin,
+  UserProfile,
+} from '@/pages';
 
 export const PATHS = {
   HOME: '/',
-  PRODUCT: '/products',
   LOGIN: '/dang-nhap',
   REGISTER: '/dang-ky',
   PROFILE: '/thong-tin-ca-nhan',
+  VERIFY: '/verify-account',
+  REGISTER_BY_INVITATION: '/verify-account',
+  ADMIN_DASHBOARD: '/admin/dashboard',
 };
 
-const ROUTES = [
+export const ROUTES = [
   {
     path: PATHS.HOME,
     title: 'Trang chủ',
@@ -18,11 +28,11 @@ const ROUTES = [
     children: [],
   },
   {
-    path: PATHS.PRODUCT,
-    title: 'Trang sản phẩm',
+    path: PATHS.VERIFY,
+    title: 'Xác minh tài khoản',
     layout: DefaultLayout,
-    element: ProductPage,
-    isProtected: true,
+    element: VerifyAccountPage,
+    isProtected: false,
     children: [],
   },
   {
@@ -30,7 +40,7 @@ const ROUTES = [
     title: 'Đăng nhập',
     layout: DefaultLayout,
     element: LoginPage,
-    isProtected: true,
+    isProtected: false,
     children: [],
   },
   {
@@ -38,6 +48,22 @@ const ROUTES = [
     title: 'Đăng ký',
     layout: DefaultLayout,
     element: RegisterPage,
+    isProtected: false,
+    children: [],
+  },
+  {
+    path: PATHS.REGISTER_BY_INVITATION,
+    title: 'Đăng ký',
+    layout: DefaultLayout,
+    element: RegisterByInvitation,
+    isProtected: true,
+    children: [],
+  },
+  {
+    path: PATHS.ADMIN_DASHBOARD,
+    title: 'Dashboard',
+    layout: AdminLayout,
+    element: DashboardAdmin,
     isProtected: true,
     children: [],
   },
@@ -57,5 +83,3 @@ const ROUTES = [
   //   children: [],
   // },
 ];
-
-export default ROUTES;

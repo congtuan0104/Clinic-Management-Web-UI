@@ -1,4 +1,12 @@
-import { IApiResponse, ILoginRequest, ILoginResponse, IRegisterRequest, ILinkAccountRequest } from '@/types';
+import {
+  IApiResponse,
+  IGoogleLoginRequest,
+  ILoginRequest,
+  ILoginResponse,
+  IRegisterRequest,
+  IRegisterResponse,
+  ILinkAccountRequest,
+} from '@/types';
 import { axiosClient } from '@/utils';
 
 export const authApi = {
@@ -6,11 +14,19 @@ export const authApi = {
     return axiosClient.post('/auth/login', data);
   },
 
-  register(data: IRegisterRequest): Promise<any> {
+  register(data: IRegisterRequest): Promise<IApiResponse<IRegisterResponse>> {
     return axiosClient.post('/auth/register', data);
   },
 
   linkAccount(data: ILinkAccountRequest): Promise<any> {
     return axiosClient.post('/auth/link-account', data);
-  }
+  },
+
+  loginGoogle(data: IGoogleLoginRequest): Promise<IApiResponse<ILoginResponse>> {
+    return axiosClient.post('/auth/account', data);
+  },
+
+  confirmEmail(email: string): Promise<IApiResponse<any>> {
+    return axiosClient.post('/auth/confirm', { email, role: 'user' });
+  },
 };

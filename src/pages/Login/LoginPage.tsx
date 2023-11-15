@@ -1,22 +1,23 @@
-import { Anchor, Paper, Title, Text, Container, Group, Button } from '@mantine/core';
+import { Anchor, Paper, Title, Text, Container, Group, Button, Flex, Divider, ActionIcon, Image, Box } from '@mantine/core';
 import { TextInput, PasswordInput, Checkbox } from 'react-hook-form-mantine';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm, Form } from 'react-hook-form';
 import { FcGoogle } from 'react-icons/fc';
-import { RiLockPasswordLine } from 'react-icons/ri';
+import { RiGithubFill, RiLockPasswordLine } from 'react-icons/ri';
+import { FaFacebookF, FaApple } from 'react-icons/fa6';
 import { SiMaildotru } from 'react-icons/si';
 import { Link, useNavigate } from 'react-router-dom';
 
 import * as yup from 'yup';
 
-import { authApi } from '@/services/auth.service';
+import { authApi } from '@/services';
 import { cookies } from '@/utils';
-import { PATHS } from '@/config';
-import { useAppDispatch } from '@/hooks';
+import { PATHS, FirebaseAuthProvider, firebaseAuth } from '@/config';
+import { useAppDispatch, useAuth } from '@/hooks';
 import { setUserInfo } from '@/store';
 import { COOKIE_KEY } from '@/constants';
 import { notifications } from '@mantine/notifications';
-import { error } from 'console';
+import MicrosoftLogo from '@/assets/icons/microsoft.svg'
 
 interface ILoginFormData {
   email: string;
@@ -37,6 +38,7 @@ const schema = yup.object().shape({
 const LoginPage = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const { loginByOAuth } = useAuth(); // xử lý đăng nhập bằng tài khoản bên thứ 3 (Google, Facebook, ...)
 
   // tích hợp react-hook-form với antd form
   const { control, handleSubmit } = useForm<ILoginFormData>({
@@ -76,7 +78,9 @@ const LoginPage = () => {
           });
 
           // chuyển hướng về trang chủ
-          navigate(PATHS.HOME);
+          // navigate(PATHS.HOME);
+          navigate(PATHS.ADMIN_DASHBOARD);
+
         } else {
           notifications.show({
             message: res.message,
@@ -94,8 +98,11 @@ const LoginPage = () => {
       });
   };
 
+
+
+
   return (
-    <Container size={500} my={40}>
+    <Container size={570} my={40}>
       <Paper withBorder shadow="md" p={30} mt={30} radius="md">
         <Title>Đăng nhập</Title>
         <Text c="dimmed" size="sm" mt={5} mb={15}>
@@ -133,24 +140,49 @@ const LoginPage = () => {
               control={control}
               name="isRemember"
             />
-            <Anchor component="button" size="sm">
+            <Anchor component={Link} size="sm" to='#'>
               Quên mật khẩu?
             </Anchor>
           </Group>
           <Button fullWidth mt="xl" radius="sm" size="md" type="submit">
             Đăng nhập
           </Button>
-          <Button
-            fullWidth
-            mt="sm"
-            radius="sm"
-            size="md"
-            variant="outline"
-            leftSection={<FcGoogle size={20} />}>
-            Đăng nhập bằng tài khoản Google
-          </Button>
+
+          <Text mt='md' mb='sm' fw='500' c='gray.7' ta='center'>Hoặc đăng nhập bằng tài khoản</Text>
+          <Flex gap='md' justify='space-between'>
+            <Button
+              radius='sm'
+              size='md'
+              variant="outline"
+              fullWidth
+              leftSection={<FcGoogle size={20} />}
+              onClick={() => loginByOAuth(FirebaseAuthProvider.Google)}
+            >
+              Google
+            </Button>
+            <Button
+              radius='sm'
+              size='md'
+              variant="outline"
+              fullWidth
+              leftSection={<FaFacebookF size={20} />}
+              onClick={() => loginByOAuth(FirebaseAuthProvider.Facebook)}
+            >
+              Facebook
+            </Button>
+            <Button
+              radius='sm'
+              size='md'
+              variant="outline"
+              fullWidth
+              leftSection={<Image src={MicrosoftLogo} width={20} height={20} />}
+              onClick={() => loginByOAuth(FirebaseAuthProvider.Microsoft)}
+            >
+              Microsoft
+            </Button>
+          </Flex>
         </Form>
-      </Paper>
+      </Paper >
     </Container>
   );
 };
