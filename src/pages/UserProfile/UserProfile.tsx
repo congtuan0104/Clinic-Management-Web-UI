@@ -1,16 +1,19 @@
 import { Paper, Text, Group, Avatar, Input, Divider, Button, Flex, Modal } from '@mantine/core';
 import { PasswordInput } from 'react-hook-form-mantine';
 import { useDisclosure } from '@mantine/hooks';
+import { useAppDispatch, useAppSelector } from '@/hooks';
 
 import { useForm, Form } from 'react-hook-form';
 import { RiLockPasswordLine } from 'react-icons/ri';
-import { auth, provider } from "./firebase";
+import { auth, provider, fbProvider } from "./firebase";
 import { signInWithPopup } from "firebase/auth";
 import React, { useState, useEffect } from 'react';
 import { authApi } from '@/services/auth.service';
 import { notifications } from '@mantine/notifications';
-import { useSelector } from 'react-redux';
-import { CommonState, RootState } from '@/store';
+import { userInfoSelector } from '@/store';
+import { FacebookLoginButton } from 'react-social-login-buttons';
+import { LoginSocialFacebook } from 'reactjs-social-login'; 
+
 import { cookies } from '@/utils';
 import { COOKIE_KEY } from '@/constants';
 
@@ -20,8 +23,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import classes from './UserInfoIcons.module.css';
 import { IUserInfo } from '@/types';
 
-const isGoogleLink = true;
-const isFacebookLink = false;
+var isFacebookLink = false;
 
 interface ChangePasswordFormData {
   currentPassword: string;
@@ -43,16 +45,14 @@ const schema = yup.object().shape({
 
 
 const ProFilePage = () => {
+  const userInfoRedux = useAppSelector(userInfoSelector);
   const [opened, { open, close }] = useDisclosure(false);
-  // const userInfo = useAppSelector(userInfoSelector);
+  const [googleAccoutId, setgoogleAccoutId] = useState('')
+  const [fbAccoutId, setfbAccoutId] = useState('')
 
   const [googleAccout, setgoogleAccout] = useState('')
-  //const userInforedux = useSelector((state: RootState) => state.common.user);
-
-  /* console.log('user info redux: ', userInforedux);
-  if (userInforedux){
-    console.log('user id: ', userInforedux.id);
-  } */
+  const [fbAccout, setfbAccout] = useState('')
+ 
   const [userInfo, setUserInfo] = useState<IUserInfo | undefined>();
 
   const { control } = useForm<ChangePasswordFormData>({
@@ -64,6 +64,7 @@ const ProFilePage = () => {
     },
   });
 
+  // Kiểm tra và lấy danh sách tài khoản google liên kết
   useEffect(() => {
     const userInfo_cookies = cookies.get(COOKIE_KEY.USER_INFO);
 
@@ -72,16 +73,68 @@ const ProFilePage = () => {
     if (userInfo_cookies) {
       // Xử lý userInfo
       const userInfoObject = JSON.parse(userInfo_cookies);
+      console.log('userInfoObject: ', userInfoObject)
       console.log('User Info id:', userInfoObject.id);
       setUserInfo(userInfoObject);
+      console.log('userInfo:', userInfo)
+      // Lấy danh sách tài khoản google
+      if (userInfoObject.id) {
+        authApi.geLinkAccount(userInfoObject.id)
+        .then(res => {
+          console.log('response get link account:', res)
+          //console.log('email response get link account:', res.data[0].key)
+          setgoogleAccout(res.data[0].key)
+          setgoogleAccoutId(res.data[0].id)
+        })
+        .catch(err => {
+          console.log(err);
+        })
+      } else {
+        // Handle the case when userInfo is undefined
+        console.error("userInfo is undefined");
+      }
     }
-  }, []);
+  }, [googleAccout]);
+  console.log('googleAccoutId: ', googleAccoutId);
+  console.log('userInfoRedux: ', userInfoRedux);
+  // Xử lý hủy kết nối tài khoản liên kết
+  const handleDisConnectGoogle = () => {    
+    if (userInfoRedux) {
+      authApi.disConnectLinkAccount(userInfoRedux.id, googleAccoutId)
+      .then(res => {
+        setgoogleAccout('')
+        // Hiển thị thông báo
+        notifications.show({
+          message: 'Hủy liên kết tài khoản thành công',
+          color: 'green',
+        });
+
+
+      }
+      )
+      .catch(error => {
+        console.log(error.message);
+        notifications.show({
+          message: error.response.data.message,
+          color: 'red',
+        });
+      });;
+    } else {
+      // Handle the case when userInfoRedux is null or undefined
+      console.error("userInfoRedux is null or undefined");
+    }
+  }
+
+  const handleConnectFacebook =() => {
+    signInWithPopup(auth, fbProvider).then((data) => {
+      console.log('response fbProvider: ', data);
+    })
+    .catch((error) => {console.error(error)})
+  }
 
   const handleConnectGoogle = () => {
 
-    signInWithPopup(auth, provider.google).then((data) => {
-      /* setValue(data.user.email)
-      localStorage.setItem("email",data.user.email) */
+    signInWithPopup(auth, provider).then((data) => {
 
       const userInfo = cookies.get(COOKIE_KEY.USER_INFO);
 
@@ -92,17 +145,13 @@ const ProFilePage = () => {
         const userInfoObject = JSON.parse(userInfo);
         console.log('User Info id:', userInfoObject.id);
 
-        console.log(data)
-        if (data.user.email) {
-          setgoogleAccout(data.user.email);
-        } else {
-          console.log("Không nhận được email")
-        }
+        
+        
         if (data.user)
           authApi
             .linkAccount({ key: data.user.email, userId: userInfoObject?.id, firstName: data.user.displayName, lastName: data.user.displayName, picture: data.user.photoURL, provider: "Google" })
             .then(res => {
-
+              setgoogleAccout(res.data[0].key)
               // Hiển thị thông báo
               notifications.show({
                 message: 'Liên kết tài khoản thành công',
@@ -245,7 +294,7 @@ const ProFilePage = () => {
             <Text pt={20} pb={20} c="grey" fz="md" fw={200} className={classes.name}>
               {isFacebookLink ? ('Đã kết nối') : ('Chưa kết nối')}
             </Text>
-            <Button variant="subtle">Kết nối</Button>
+            <Button variant="subtle" onClick={handleConnectFacebook}>Kết nối</Button>
           </div>
           <Divider />
         </div>
@@ -255,11 +304,26 @@ const ProFilePage = () => {
           </Text>
           <div className="flex justify-between">
             <Text pt={20} pb={20} c="grey" fz="md" fw={200} className={classes.name}>
-              {isGoogleLink ? ('Đã kết nối') : ('Chưa kết nối')}
+              
+              {googleAccout? `${googleAccout}`: 'Chưa kết nối'}
             </Text>
-            <Button variant="subtle" onClick={handleConnectGoogle}>Kết nối</Button>
+            {googleAccout ? (
+              <Button variant="subtle" onClick={handleDisConnectGoogle}>Hủy kết nối</Button>
+            ) : (
+              <Button variant="subtle" onClick={handleConnectGoogle}>Kết nối</Button>
+            )}
           </div>
           <Divider />
+          <div>
+            <LoginSocialFacebook
+              appId="1019785319297496"
+              onResolve={(res: any) => { console.log(res) }}
+
+              onReject={(err:any) => {console.log(err)}}
+              >
+                <FacebookLoginButton/>
+              </LoginSocialFacebook>
+          </div>
         </div>
       </Paper>
     </Flex>
