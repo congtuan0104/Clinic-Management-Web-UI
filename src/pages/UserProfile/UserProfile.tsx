@@ -16,7 +16,6 @@ import { COOKIE_KEY } from '@/constants';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 
-import classes from './UserInfoIcons.module.css';
 import { IUserInfo } from '@/types';
 import { useAuth } from '@/hooks';
 import { FirebaseAuthProvider } from '@/config';
@@ -79,7 +78,7 @@ const UserProfilePage = () => {
           </Group> */}
 
           <div style={{ margin: '1rem 0' }}>
-            <Text fz="lg" fw={700} className={classes.name}>
+            <Text fz="lg" fw={700}>
               Thông tin cá nhân
             </Text>
             <Divider />
@@ -148,11 +147,11 @@ const UserProfilePage = () => {
       </Paper>
 
       <Paper w='100%' withBorder shadow="md" p={30} radius="md">
-        <Text fz="xl" fw={700} className={classes.name}>
+        <Text fz="xl" fw={700}>
           Quản lý tài khoản đăng nhập
         </Text>
         <div className='flex justify-between items-center w-full'>
-          <Text pt={30} fz="md" fw={700} className={classes.name}>
+          <Text pt={30} fz="md" fw={700}>
             Mật khẩu
           </Text>
 
@@ -162,15 +161,15 @@ const UserProfilePage = () => {
 
           <Divider />
         </div>
-        <Text pt={30} fz="xl" fw={700} className={classes.name}>
+        <Text pt={30} fz="xl" fw={700}>
           Tài khoản mạng xã hội
         </Text>
         <div>
-          <Text pt={30} fz="md" fw={700} className={classes.name}>
+          <Text pt={30} fz="md" fw={700}>
             Facebook
           </Text>
           <div className="flex justify-between">
-            <Text pt={20} pb={20} c="grey" fz="md" fw={200} className={classes.name}>
+            <Text pt={20} pb={20} c="grey" fz="md" fw={200}>
               {isFacebookLink ? ('Đã kết nối') : ('Chưa kết nối')}
             </Text>
             <Button variant="subtle">Kết nối</Button>
@@ -178,11 +177,11 @@ const UserProfilePage = () => {
           <Divider />
         </div>
         <div>
-          <Text pt={30} fz="md" fw={700} className={classes.name}>
+          <Text pt={30} fz="md" fw={700}>
             Google
           </Text>
           <div className="flex justify-between">
-            <Text pt={20} pb={20} c="grey" fz="md" fw={200} className={classes.name}>
+            <Text pt={20} pb={20} c="grey" fz="md" fw={200}>
               {isGoogleLink ? ('Đã kết nối') : ('Chưa kết nối')}
             </Text>
             <Button variant="subtle" onClick={() => linkAccount(FirebaseAuthProvider.Google)}>Kết nối</Button>
