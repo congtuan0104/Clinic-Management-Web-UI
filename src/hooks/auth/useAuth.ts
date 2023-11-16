@@ -1,20 +1,30 @@
 import { PATHS, firebaseAuth } from '@/config';
 import { COOKIE_KEY } from '@/constants';
-import { setUserInfo } from '@/store';
+import { setUserInfo, userInfoSelector } from '@/store';
 import { cookies } from '@/utils';
 import { notifications } from '@mantine/notifications';
 import { AuthProvider, signInWithPopup } from 'firebase/auth';
-import { useAppDispatch } from '@/hooks';
+import { useAppDispatch, useAppSelector } from '@/hooks';
 import { useNavigate } from 'react-router-dom';
 import { authApi } from '@/services';
+import { useEffect, useState } from 'react';
 
 // description: hook xử lý các tác vụ liên quan đến chức năng đăng nhập, đăng xuất
 
 export const useAuth = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const userInfo = cookies.get(COOKIE_KEY.USER_INFO);
-  const token = cookies.get(COOKIE_KEY.TOKEN);
+  const userInfo = useAppSelector(userInfoSelector);
+  const [isLogin, setIsLogin] = useState(false);
+
+  // kiểm tra xem người dùng đã đăng nhập hay chưa
+  useEffect(() => {
+    if (userInfo) {
+      setIsLogin(true);
+    } else {
+      setIsLogin(false);
+    }
+  }, [userInfo]);
 
   // lấy thông tin user từ bên thứ 3 (Google, Facebook, Microsoft)
   const getUserInfoByProvider = async (provider: AuthProvider) => {
@@ -33,7 +43,7 @@ export const useAuth = () => {
     const user = await getUserInfoByProvider(provider);
     if (!user) {
       notifications.show({
-        message: 'Đăng nhập không thành cồn',
+        message: 'Đăng nhập không thành công',
         color: 'red',
       });
       return;
@@ -55,6 +65,14 @@ export const useAuth = () => {
     }
 
     // gọi api liên kết tài khoản với user
+    const res = await authApi.linkAccount({
+      key: user.uid,
+      userId: userInfo?.id,
+      firstName: user.displayName?.split(' ')[0] || '',
+      lastName: user.displayName?.split(' ')[1] || '',
+      picture: user.photoURL || '',
+      provider: user.providerId,
+    });
   };
 
   // đăng xuất tài khoản
@@ -70,5 +88,12 @@ export const useAuth = () => {
     navigate(PATHS.HOME);
   };
 
-  return { getUserInfoByProvider, logout, loginByOAuth, linkAccount };
+  return {
+    userInfo, // thông tin user hiện đang đăng nhập
+    isLogin, // trạng thái đăng nhập
+    getUserInfoByProvider, // lấy thông tin user từ bên thứ 3
+    logout, // đăng xuất
+    loginByOAuth, // đăng nhập bằng bên thứ 3
+    linkAccount, // liên kết tài khoản với bên thứ 3
+  };
 };

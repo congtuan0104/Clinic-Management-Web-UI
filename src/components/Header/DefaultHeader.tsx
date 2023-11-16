@@ -61,7 +61,7 @@ const Header = () => {
 
           <Group visibleFrom="md">
             {userInfo ? (
-              <Button variant="light" color="red" onClick={logout}>
+              <Button variant="light" color="red.5" onClick={logout}>
                 Đăng xuất
               </Button>
             ) : (

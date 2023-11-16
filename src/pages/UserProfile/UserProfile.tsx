@@ -4,8 +4,7 @@ import { useDisclosure } from '@mantine/hooks';
 
 import { useForm, Form } from 'react-hook-form';
 import { RiLockPasswordLine } from 'react-icons/ri';
-import { auth, provider } from "./firebase";
-import { signInWithPopup } from "firebase/auth";
+import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import React, { useState, useEffect } from 'react';
 import { authApi } from '@/services/auth.service';
 import { notifications } from '@mantine/notifications';
@@ -19,6 +18,8 @@ import { yupResolver } from '@hookform/resolvers/yup';
 
 import classes from './UserInfoIcons.module.css';
 import { IUserInfo } from '@/types';
+import { useAuth } from '@/hooks';
+import { FirebaseAuthProvider } from '@/config';
 
 const isGoogleLink = true;
 const isFacebookLink = false;
@@ -42,18 +43,10 @@ const schema = yup.object().shape({
 });
 
 
-const ProFilePage = () => {
+const UserProfilePage = () => {
   const [opened, { open, close }] = useDisclosure(false);
-  // const userInfo = useAppSelector(userInfoSelector);
 
-  const [googleAccout, setgoogleAccout] = useState('')
-  //const userInforedux = useSelector((state: RootState) => state.common.user);
-
-  /* console.log('user info redux: ', userInforedux);
-  if (userInforedux){
-    console.log('user id: ', userInforedux.id);
-  } */
-  const [userInfo, setUserInfo] = useState<IUserInfo | undefined>();
+  const { userInfo, linkAccount } = useAuth();
 
   const { control } = useForm<ChangePasswordFormData>({
     resolver: yupResolver(schema),
@@ -64,71 +57,6 @@ const ProFilePage = () => {
     },
   });
 
-  useEffect(() => {
-    const userInfo_cookies = cookies.get(COOKIE_KEY.USER_INFO);
-
-    console.log('user Info cookies: ', userInfo_cookies)
-    // Kiểm tra nếu userInfo tồn tại
-    if (userInfo_cookies) {
-      // Xử lý userInfo
-      const userInfoObject = JSON.parse(userInfo_cookies);
-      console.log('User Info id:', userInfoObject.id);
-      setUserInfo(userInfoObject);
-    }
-  }, []);
-
-  const handleConnectGoogle = () => {
-
-    signInWithPopup(auth, provider.google).then((data) => {
-      /* setValue(data.user.email)
-      localStorage.setItem("email",data.user.email) */
-
-      const userInfo = cookies.get(COOKIE_KEY.USER_INFO);
-
-      console.log('user Info cookies: ', userInfo)
-      // Kiểm tra nếu userInfo tồn tại
-      if (userInfo) {
-        // Xử lý userInfo
-        const userInfoObject = JSON.parse(userInfo);
-        console.log('User Info id:', userInfoObject.id);
-
-        console.log(data)
-        if (data.user.email) {
-          setgoogleAccout(data.user.email);
-        } else {
-          console.log("Không nhận được email")
-        }
-        if (data.user)
-          authApi
-            .linkAccount({ key: data.user.email, userId: userInfoObject?.id, firstName: data.user.displayName, lastName: data.user.displayName, picture: data.user.photoURL, provider: "Google" })
-            .then(res => {
-
-              // Hiển thị thông báo
-              notifications.show({
-                message: 'Liên kết tài khoản thành công',
-                color: 'green',
-              });
-
-
-            }
-            )
-            .catch(error => {
-              console.log(error.message);
-              notifications.show({
-                message: error.response.data.message,
-                color: 'red',
-              });
-            });
-      } else {
-        // Xử lý khi không tìm thấy userInfo trong cookies
-        console.log('User Info not found in cookies');
-      }
-
-
-    }).catch((error) => {
-      console.log(error);
-    })
-  }
 
   return (
     <Flex my={30} mx={{ base: 15, md: 0 }} gap={20} direction={{ base: 'column', md: 'row' }}>
@@ -257,7 +185,7 @@ const ProFilePage = () => {
             <Text pt={20} pb={20} c="grey" fz="md" fw={200} className={classes.name}>
               {isGoogleLink ? ('Đã kết nối') : ('Chưa kết nối')}
             </Text>
-            <Button variant="subtle" onClick={handleConnectGoogle}>Kết nối</Button>
+            <Button variant="subtle" onClick={() => linkAccount(FirebaseAuthProvider.Google)}>Kết nối</Button>
           </div>
           <Divider />
         </div>
@@ -266,4 +194,4 @@ const ProFilePage = () => {
   );
 }
 
-export default ProFilePage;
+export default UserProfilePage;

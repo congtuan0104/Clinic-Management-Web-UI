@@ -55,7 +55,6 @@ const LoginPage = () => {
     // gọi api đăng nhập
     // nếu thành công, lưu access token vào cookie và thông tin user vào redux -> chuyển hướng về trang chủ
     // nếu thất bại, hiển thị thông báo lỗi
-    console.log(data)
     authApi
       .login({ email: data.email, password: data.password })
       .then(res => {
@@ -67,7 +66,7 @@ const LoginPage = () => {
           // lưu vào token và thông tin user vào cookie
           cookies.set(COOKIE_KEY.TOKEN, token);
           cookies.set(COOKIE_KEY.USER_INFO, userInfo);
-          console.log('dang nhap ', userInfo);
+
           // lưu thông tin user vào redux
           dispatch(setUserInfo(userInfo));
 
@@ -79,7 +78,7 @@ const LoginPage = () => {
 
           // chuyển hướng về trang chủ
           // navigate(PATHS.HOME);
-          navigate(PATHS.ADMIN_DASHBOARD);
+          navigate(PATHS.PROFILE);
 
         } else {
           notifications.show({
