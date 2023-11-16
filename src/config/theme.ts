@@ -49,7 +49,7 @@ export const theme = createTheme({
     secondary,
     error,
   },
-  primaryColor: 'error',
+  primaryColor: 'primary',
   primaryShade: 3,
   fontFamily: 'Montserrat, sans-serif',
   defaultRadius: 'sm',
