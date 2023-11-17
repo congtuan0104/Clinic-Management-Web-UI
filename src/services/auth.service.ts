@@ -29,4 +29,11 @@ export const authApi = {
   confirmEmail(email: string): Promise<IApiResponse<any>> {
     return axiosClient.post('/auth/confirm', { email, role: 'user' });
   },
+  geLinkAccount(userId: string): Promise<any> {
+    return axiosClient.get(`/auth/${userId}/accounts`);
+  },
+
+  disConnectLinkAccount(userId: string, accountId: string): Promise<any> {
+    return axiosClient.delete(`/auth/${userId}/accounts/${accountId}`);
+  }
 };

@@ -63,7 +63,7 @@ export const useAuth = () => {
       });
       return;
     }
-
+    console.log('user info from fb or google: ', user)
     // gọi api liên kết tài khoản với user
     const res = await authApi.linkAccount({
       key: user.uid,
@@ -72,7 +72,8 @@ export const useAuth = () => {
       lastName: user.displayName?.split(' ')[1] || '',
       picture: user.photoURL || '',
       provider: user.providerId,
-    });
+    }).catch(err => {console.error(err);});
+    
   };
 
   // đăng xuất tài khoản

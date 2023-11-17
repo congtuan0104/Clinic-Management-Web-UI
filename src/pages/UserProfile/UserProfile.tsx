@@ -20,9 +20,6 @@ import { IUserInfo } from '@/types';
 import { useAuth } from '@/hooks';
 import { FirebaseAuthProvider } from '@/config';
 
-const isGoogleLink = true;
-const isFacebookLink = false;
-
 interface ChangePasswordFormData {
   currentPassword: string;
   newPassword: string;
@@ -47,6 +44,18 @@ const UserProfilePage = () => {
 
   const { userInfo, linkAccount } = useAuth();
 
+  const [googleAccoutId, setgoogleAccoutId] = useState<string>('')
+
+  const [fbAccoutId, setfbAccoutId] = useState('')
+
+  const [googleAccout, setgoogleAccout] = useState<string>('')
+
+  const [isGoogleLink, setisGoogleLink] = useState(false)
+
+  const [fbAccout, setfbAccout] = useState('')
+
+  const [isFacebookLink, setisFacebookLink] =  useState(false)
+
   const { control } = useForm<ChangePasswordFormData>({
     resolver: yupResolver(schema),
     defaultValues: {
@@ -56,6 +65,67 @@ const UserProfilePage = () => {
     },
   });
 
+  // Kiểm tra và lấy danh sách tài khoản google liên kết
+  useEffect(() => {
+    console.log('user info: ', userInfo)
+    if (userInfo?.id) {
+      authApi.geLinkAccount(userInfo.id)
+      .then(res => {
+        setgoogleAccout(res.data[0].key)
+        setgoogleAccoutId(res.data[0].id)
+      });
+    }
+  }, [isGoogleLink]);
+
+  // Kiểm tra và lấy danh sách tài khoản facebook liên kết
+  useEffect(() => {
+    console.log('user info: ', userInfo)
+    if (userInfo?.id) {
+      authApi.geLinkAccount(userInfo.id)
+      .then(res => {
+        setfbAccout(res.data[0].key)
+        setfbAccoutId(res.data[0].id)
+      });
+    }
+  }, [isGoogleLink]);
+
+
+  const handleConnectGoogle = () => {
+    linkAccount(FirebaseAuthProvider.Google)
+    setisGoogleLink(true)
+  }
+
+  const handleConnectFacebook = () => {
+    linkAccount(FirebaseAuthProvider.Facebook)
+    setisFacebookLink(true)
+  }
+
+  const handleDisConnectFacebook = () => {
+    if (userInfo?.id) {
+      authApi.disConnectLinkAccount(userInfo.id, fbAccoutId)
+      .then( () => {
+        setisFacebookLink(false)
+        // Hiển thị thông báo
+        notifications.show({
+          message: 'Hủy liên kết tài khoản thành công',
+          color: 'green',
+        });
+      })
+    }
+  }
+  const handleDisConnectGoogle = () => {
+    if (userInfo?.id) {
+      authApi.disConnectLinkAccount(userInfo.id, googleAccoutId)
+      .then( () => {
+        setisGoogleLink(false)
+        // Hiển thị thông báo
+        notifications.show({
+          message: 'Hủy liên kết tài khoản thành công',
+          color: 'green',
+        });
+      })
+    }
+  }
 
   return (
     <Flex my={30} mx={{ base: 15, md: 0 }} gap={20} direction={{ base: 'column', md: 'row' }}>
@@ -170,9 +240,13 @@ const UserProfilePage = () => {
           </Text>
           <div className="flex justify-between">
             <Text pt={20} pb={20} c="grey" fz="md" fw={200}>
-              {isFacebookLink ? ('Đã kết nối') : ('Chưa kết nối')}
+            {fbAccout? `${fbAccout}`: 'Chưa kết nối'}
             </Text>
-            <Button variant="subtle">Kết nối</Button>
+            {fbAccout ? (
+              <Button variant="subtle" onClick={handleDisConnectFacebook}>Hủy kết nối</Button>
+            ) : (
+              <Button variant="subtle" onClick={handleConnectFacebook}>Kết nối</Button>
+            )}
           </div>
           <Divider />
         </div>
@@ -182,9 +256,14 @@ const UserProfilePage = () => {
           </Text>
           <div className="flex justify-between">
             <Text pt={20} pb={20} c="grey" fz="md" fw={200}>
-              {isGoogleLink ? ('Đã kết nối') : ('Chưa kết nối')}
+              {googleAccout? `${googleAccout}`: 'Chưa kết nối'}
             </Text>
-            <Button variant="subtle" onClick={() => linkAccount(FirebaseAuthProvider.Google)}>Kết nối</Button>
+            {googleAccout ? (
+              <Button variant="subtle" onClick={handleDisConnectGoogle}>Hủy kết nối</Button>
+            ) : (
+              <Button variant="subtle" onClick={handleConnectGoogle}>Kết nối</Button>
+            )}
+                        
           </div>
           <Divider />
         </div>
