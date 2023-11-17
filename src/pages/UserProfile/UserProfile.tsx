@@ -87,7 +87,7 @@ const UserProfilePage = () => {
         setfbAccoutId(res.data[0].id)
       });
     }
-  }, [isGoogleLink]);
+  }, [isFacebookLink]);
 
 
   const handleConnectGoogle = () => {
