@@ -2,7 +2,7 @@ import { Paper, Text, Group, Avatar, Input, Divider, Button, Flex, Modal } from 
 import { PasswordInput } from 'react-hook-form-mantine';
 import { useDisclosure } from '@mantine/hooks';
 
-import { useForm, Form } from 'react-hook-form';
+import { useForm, Form, set } from 'react-hook-form';
 import { RiLockPasswordLine } from 'react-icons/ri';
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import React, { useState, useEffect } from 'react';
@@ -48,13 +48,15 @@ const UserProfilePage = () => {
 
   const [fbAccoutId, setfbAccoutId] = useState('')
 
-  const [googleAccout, setgoogleAccout] = useState<string>('')
+  const [micAccoutId, setmicAccoutId] = useState('')
 
   const [isGoogleLink, setisGoogleLink] = useState(false)
 
-  const [fbAccout, setfbAccout] = useState('')
-
   const [isFacebookLink, setisFacebookLink] =  useState(false)
+
+  const [isMicrosoftLink, setisMicrosoftLink] = useState(false)
+
+  const [isRender, setisRender] = useState<boolean>(false)
 
   const { control } = useForm<ChangePasswordFormData>({
     resolver: yupResolver(schema),
@@ -67,37 +69,46 @@ const UserProfilePage = () => {
 
   // Kiểm tra và lấy danh sách tài khoản google liên kết
   useEffect(() => {
-    console.log('user info: ', userInfo)
     if (userInfo?.id) {
       authApi.geLinkAccount(userInfo.id)
       .then(res => {
-        setgoogleAccout(res.data[0].key)
-        setgoogleAccoutId(res.data[0].id)
+        res.data.forEach((item: any) => {
+          if (item.provider === 'google') {
+            setgoogleAccoutId(item.id)
+            setisGoogleLink(true)
+          }
+          if (item.provider === 'facebook') {
+            setfbAccoutId(item.id)
+            setisFacebookLink(true)
+          }
+          if (item.provider === 'microsoft') {
+            setmicAccoutId(item.id)
+            setisMicrosoftLink(true)
+          }
+        });
+        
+        
       });
     }
-  }, [isGoogleLink]);
+  }, [isGoogleLink, isFacebookLink, isMicrosoftLink, isRender]);
 
-  // Kiểm tra và lấy danh sách tài khoản facebook liên kết
-  useEffect(() => {
-    console.log('user info: ', userInfo)
-    if (userInfo?.id) {
-      authApi.geLinkAccount(userInfo.id)
-      .then(res => {
-        setfbAccout(res.data[0].key)
-        setfbAccoutId(res.data[0].id)
-      });
-    }
-  }, [isFacebookLink]);
-
-
-  const handleConnectGoogle = () => {
-    linkAccount(FirebaseAuthProvider.Google)
-    setisGoogleLink(true)
+  const handleConnectGoogle = async () => {
+    await linkAccount(FirebaseAuthProvider.Google, 'google')
+    setisRender(!isRender)
   }
 
   const handleConnectFacebook = () => {
-    linkAccount(FirebaseAuthProvider.Facebook)
-    setisFacebookLink(true)
+    linkAccount(FirebaseAuthProvider.Facebook, 'facebook')
+    .then(() => {
+      setisRender(!isRender);
+    })
+  }
+
+  const handleConnectMicrosoft = () => {
+    linkAccount(FirebaseAuthProvider.Microsoft, 'microsoft')
+    .then(() => {
+      setisRender(!isRender);
+    })
   }
 
   const handleDisConnectFacebook = () => {
@@ -118,6 +129,20 @@ const UserProfilePage = () => {
       authApi.disConnectLinkAccount(userInfo.id, googleAccoutId)
       .then( () => {
         setisGoogleLink(false)
+        // Hiển thị thông báo
+        notifications.show({
+          message: 'Hủy liên kết tài khoản thành công',
+          color: 'green',
+        });
+      })
+    }
+  }
+
+  const handleDisConnectMicrosoft = () => {
+    if (userInfo?.id) {
+      authApi.disConnectLinkAccount(userInfo.id, micAccoutId)
+      .then( () => {
+        setisMicrosoftLink(false)
         // Hiển thị thông báo
         notifications.show({
           message: 'Hủy liên kết tài khoản thành công',
@@ -240,12 +265,28 @@ const UserProfilePage = () => {
           </Text>
           <div className="flex justify-between">
             <Text pt={20} pb={20} c="grey" fz="md" fw={200}>
-            {fbAccout? `${fbAccout}`: 'Chưa kết nối'}
+            {isFacebookLink? `Đã kết nối`: 'Chưa kết nối'}
             </Text>
-            {fbAccout ? (
+            {isFacebookLink ? (
               <Button variant="subtle" onClick={handleDisConnectFacebook}>Hủy kết nối</Button>
             ) : (
               <Button variant="subtle" onClick={handleConnectFacebook}>Kết nối</Button>
+            )}
+          </div>
+          <Divider />
+        </div>
+        <div>
+          <Text pt={30} fz="md" fw={700}>
+            Microsoft
+          </Text>
+          <div className="flex justify-between">
+            <Text pt={20} pb={20} c="grey" fz="md" fw={200}>
+            {isMicrosoftLink? `Đã kết nối`: 'Chưa kết nối'}
+            </Text>
+            {isMicrosoftLink ? (
+              <Button variant="subtle" onClick={handleDisConnectMicrosoft}>Hủy kết nối</Button>
+            ) : (
+              <Button variant="subtle" onClick={handleConnectMicrosoft}>Kết nối</Button>
             )}
           </div>
           <Divider />
@@ -256,14 +297,13 @@ const UserProfilePage = () => {
           </Text>
           <div className="flex justify-between">
             <Text pt={20} pb={20} c="grey" fz="md" fw={200}>
-              {googleAccout? `${googleAccout}`: 'Chưa kết nối'}
+              {isGoogleLink? `Đã kết nối`: 'Chưa kết nối'}
             </Text>
-            {googleAccout ? (
+            {isGoogleLink ? (
               <Button variant="subtle" onClick={handleDisConnectGoogle}>Hủy kết nối</Button>
             ) : (
               <Button variant="subtle" onClick={handleConnectGoogle}>Kết nối</Button>
             )}
-                        
           </div>
           <Divider />
         </div>

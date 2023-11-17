@@ -53,7 +53,7 @@ export const useAuth = () => {
     console.log(`user info from ${user.providerId}: `, user);
   };
 
-  const linkAccount = async (provider: AuthProvider) => {
+  const linkAccount = async (provider: AuthProvider, providertext: string) => {
     // lấy thông tin user từ provider
     const user = await getUserInfoByProvider(provider);
     if (!user) {
@@ -63,7 +63,6 @@ export const useAuth = () => {
       });
       return;
     }
-    console.log('user info from fb or google: ', user)
     // gọi api liên kết tài khoản với user
     const res = await authApi.linkAccount({
       key: user.uid,
@@ -71,7 +70,7 @@ export const useAuth = () => {
       firstName: user.displayName?.split(' ')[0] || '',
       lastName: user.displayName?.split(' ')[1] || '',
       picture: user.photoURL || '',
-      provider: user.providerId,
+      provider: providertext,
     }).catch(err => {console.error(err);});
     
   };
