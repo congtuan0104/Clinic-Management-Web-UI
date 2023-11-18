@@ -6,3 +6,4 @@ export * from './Register';
 export * from './UserProfile';
 export * from './DashboardAdmin';
 export * from './RegisterByInvitation';
+export * from './VerifyUserLinkAccount';

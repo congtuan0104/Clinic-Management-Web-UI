@@ -1,7 +1,7 @@
-import { Anchor, Paper, Title, Text, Container, Group, Button, Flex, Divider, ActionIcon, Image, Box } from '@mantine/core';
+import { Anchor, Paper, Title, Text, Container, Group, Button, Flex, Divider, ActionIcon, Image, Box, Modal, TextInput as MantineTextInput } from '@mantine/core';
 import { TextInput, PasswordInput, Checkbox } from 'react-hook-form-mantine';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { useForm, Form } from 'react-hook-form';
+import { useForm, Form, set } from 'react-hook-form';
 import { FcGoogle } from 'react-icons/fc';
 import { RiGithubFill, RiLockPasswordLine } from 'react-icons/ri';
 import { FaFacebookF, FaApple } from 'react-icons/fa6';
@@ -18,6 +18,9 @@ import { setUserInfo } from '@/store';
 import { COOKIE_KEY } from '@/constants';
 import { notifications } from '@mantine/notifications';
 import MicrosoftLogo from '@/assets/icons/microsoft.svg'
+import { AuthProvider } from 'firebase/auth';
+import { useDisclosure } from '@mantine/hooks';
+import { useState } from 'react';
 
 interface ILoginFormData {
   email: string;
@@ -38,10 +41,15 @@ const schema = yup.object().shape({
 const LoginPage = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const { loginByOAuth } = useAuth(); // xử lý đăng nhập bằng tài khoản bên thứ 3 (Google, Facebook, ...)
+  const [emailChoose, setEmailChoose] = useState<string>(''); // email được chọn để đăng ký tài khoản
+  const [emailFromProvider, setEmailFromProvider] = useState<string | null>(''); // email được chọn để đăng ký tài khoản
+  const [openedModalChooseEmail, { open, close }] = useDisclosure(false);
+  const { getUserInfoByProvider } = useAuth(); // xử lý đăng nhập bằng tài khoản bên thứ 3 (Google, Facebook, ...)
+  const [providerLogin, setProviderLogin] = useState<string>('');
+  const [userIdFromProvider, setUserIdFromProvider] = useState<string>('');
 
   // tích hợp react-hook-form với antd form
-  const { control, handleSubmit } = useForm<ILoginFormData>({
+  const { control } = useForm<ILoginFormData>({
     resolver: yupResolver(schema), // gắn điều kiện xác định input hợp lệ vào form
     defaultValues: {
       // giá trị mặc định của các field
@@ -50,6 +58,67 @@ const LoginPage = () => {
       isRemember: false,
     },
   });
+
+  const loginByOAuth = async (provider: AuthProvider) => {
+    // lấy thông tin user từ provider
+    try {
+      const userInfoFromProvider = await getUserInfoByProvider(provider);
+      let providerStr;
+
+      switch (provider) {
+        case FirebaseAuthProvider.Google:
+          providerStr = 'google';
+          break;
+        case FirebaseAuthProvider.Facebook:
+          providerStr = 'facebook';
+          break;
+        case FirebaseAuthProvider.Microsoft:
+          providerStr = 'microsoft';
+          break;
+        default:
+          providerStr = 'google';
+          break;
+      }
+
+      if (!userInfoFromProvider) {
+        notifications.show({
+          message: 'Đăng nhập không thành công',
+          color: 'red',
+        });
+        return;
+      }
+
+      // gửi thông tin user lên server để lấy token (đang chờ api)
+      console.log(`user info from: `, userInfoFromProvider);
+      setUserIdFromProvider(userInfoFromProvider.uid);
+      setProviderLogin(providerStr);
+
+      // kiểm tra account có tồn tại, nếu có thì lưu thông tin user và token
+      const res = await authApi.getUserByAccountId(userInfoFromProvider.uid, providerStr);
+      console.log(`userAccount: `, res.data.user);
+      if (res.data.user) {
+        cookies.set(COOKIE_KEY.TOKEN, res.data.token);
+        cookies.set(COOKIE_KEY.USER_INFO, JSON.stringify(res.data.user));
+        dispatch(setUserInfo(res.data.user));
+        notifications.show({
+          message: 'Đăng nhập thành công',
+          color: 'green',
+        });
+        navigate(PATHS.PROFILE);
+        return;
+      } else {
+        // chưa có tài khoản, chọn email để đăng ký tài khoản 
+        setEmailFromProvider(userInfoFromProvider.email || userInfoFromProvider.providerData[0].email);
+        open(); // mở modal chọn email để đăng ký tài khoản
+      }
+    } catch (err) {
+      console.error(err);
+      notifications.show({
+        message: 'Đăng nhập không thành công',
+        color: 'red',
+      });
+    }
+  };
 
   const handleLogin = (data: ILoginFormData) => {
     // gọi api đăng nhập
@@ -76,8 +145,6 @@ const LoginPage = () => {
             color: 'green',
           });
 
-          // chuyển hướng về trang chủ
-          // navigate(PATHS.HOME);
           navigate(PATHS.PROFILE);
 
         } else {
@@ -98,7 +165,27 @@ const LoginPage = () => {
   };
 
 
-
+  const sendEmailVerifyLinkAccount = async (email: string) => {
+    try {
+      console.log(`Gửi mail xác thực đến  `, email);
+      const res = await authApi.sendEmailVerifyUser({ email, key: userIdFromProvider, provider: providerLogin });
+      if (res.status) {
+        notifications.show({
+          message: `Chúng tôi đã gửi mail xác thực đến ${email}.\n Vui lòng kiểm tra mail và xác thực tài khoản`,
+          color: 'green',
+        });
+        close();
+      }
+      setEmailChoose('');
+    }
+    catch (err) {
+      console.error(err);
+      notifications.show({
+        message: 'Gửi mail xác thực không thành công',
+        color: 'red',
+      });
+    }
+  }
 
   return (
     <Container size={570} my={40}>
@@ -182,6 +269,32 @@ const LoginPage = () => {
           </Flex>
         </Form>
       </Paper >
+      <Modal opened={openedModalChooseEmail} onClose={close} title="Tài khoản của bạn chưa được liên kết, vui lòng chọn email muốn liên kết">
+        {emailFromProvider &&
+          <>
+            <Text size='sm'>Chọn email để liên kết tài khoản</Text>
+            <Button fullWidth variant='outline' color='orange.6' onClick={() => {
+              setEmailChoose(emailFromProvider)
+              sendEmailVerifyLinkAccount(emailFromProvider);
+            }}>
+              <Text>{emailFromProvider}</Text>
+            </Button>
+          </>
+        }
+
+        <Flex align='flex-end' gap={10}>
+          <MantineTextInput
+            mt='md'
+            className='flex-1'
+            label="Hoặc nhập email của bạn"
+            placeholder="Nhập tài khoản mà bạn muốn liên kết"
+            value={emailChoose}
+            name='email-register'
+            onChange={(e) => setEmailChoose(e.currentTarget.value)}
+          />
+          <Button mt='md' onClick={() => sendEmailVerifyLinkAccount(emailChoose)}>Tiếp tục</Button>
+        </Flex>
+      </Modal>
     </Container>
   );
 };

@@ -7,6 +7,7 @@ import {
   RegisterByInvitation,
   DashboardAdmin,
   UserProfile,
+  VerifyUserLinkAccountPage,
 } from '@/pages';
 
 export const PATHS = {
@@ -17,6 +18,7 @@ export const PATHS = {
   VERIFY: '/verify-account',
   REGISTER_BY_INVITATION: '/verify-account',
   ADMIN_DASHBOARD: '/admin/dashboard',
+  VERIFY_LINK_ACCOUNT: '/verify-user',
 };
 
 export const ROUTES = [
@@ -32,6 +34,14 @@ export const ROUTES = [
     title: 'Xác minh tài khoản',
     layout: DefaultLayout,
     element: VerifyAccountPage,
+    isProtected: false,
+    children: [],
+  },
+  {
+    path: PATHS.VERIFY_LINK_ACCOUNT,
+    title: 'Xác nhận liên kết tài khoản',
+    layout: DefaultLayout,
+    element: VerifyUserLinkAccountPage,
     isProtected: false,
     children: [],
   },

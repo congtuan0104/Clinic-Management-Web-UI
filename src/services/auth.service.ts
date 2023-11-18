@@ -34,7 +34,19 @@ export const authApi = {
     return axiosClient.get(`/auth/${userId}/accounts`);
   },
 
+  getUserByAccountId(accountId: string, provider: string): Promise<any> {
+    return axiosClient.get(`/auth/account?key=${accountId}&provider=${provider}`);
+  },
+
   unlinkAccount(userId: string, accountId: string): Promise<any> {
     return axiosClient.delete(`/auth/${userId}/accounts/${accountId}`);
+  },
+
+  sendEmailVerifyUser(data: { email: string; key: string; provider: string }): Promise<any> {
+    return axiosClient.get('/auth/user/send-email-verify-user', { params: data });
+  },
+
+  linkAccountWithEmail(data: { email: string; key: string; provider: string }): Promise<any> {
+    return axiosClient.post('/auth/link-account-email', data);
   },
 };

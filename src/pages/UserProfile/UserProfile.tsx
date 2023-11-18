@@ -52,7 +52,7 @@ const UserProfilePage = () => {
   const [isFacebookLink, setisFacebookLink] = useState(false)
   const [isMicrosoftLink, setisMicrosoftLink] = useState(false)
 
-  const [isRender, setisRender] = useState<boolean>(false)
+  // const [isRender, setisRender] = useState<boolean>(false)
 
   const { control } = useForm<ChangePasswordFormData>({
     resolver: yupResolver(schema),
@@ -64,7 +64,7 @@ const UserProfilePage = () => {
   });
 
   // Kiểm tra và lấy danh sách tài khoản google liên kết
-  useEffect(() => {
+  const checkAccountIsLinked = async () => {
     if (userInfo?.id) {
       authApi.getAccountByUser(userInfo.id)
         .then(res => {
@@ -82,29 +82,27 @@ const UserProfilePage = () => {
               setisMicrosoftLink(true)
             }
           });
-
-
         });
     }
-  }, [isGoogleLink, isFacebookLink, isMicrosoftLink, isRender]);
+  }
+
+  useEffect(() => {
+    checkAccountIsLinked();
+  }, []);
 
   const handleConnectGoogle = async () => {
-    await linkAccount(FirebaseAuthProvider.Google, 'google')
-    setisRender(!isRender)
+    const res = await linkAccount(FirebaseAuthProvider.Google, 'google');
+    checkAccountIsLinked();
   }
 
-  const handleConnectFacebook = () => {
-    linkAccount(FirebaseAuthProvider.Facebook, 'facebook')
-      .then(() => {
-        setisRender(!isRender);
-      })
+  const handleConnectFacebook = async () => {
+    const res = await linkAccount(FirebaseAuthProvider.Facebook, 'facebook');
+    checkAccountIsLinked();
   }
 
-  const handleConnectMicrosoft = () => {
-    linkAccount(FirebaseAuthProvider.Microsoft, 'microsoft')
-      .then(() => {
-        setisRender(!isRender);
-      })
+  const handleConnectMicrosoft = async () => {
+    const res = await linkAccount(FirebaseAuthProvider.Microsoft, 'microsoft');
+    checkAccountIsLinked();
   }
 
   const handleDisConnectFacebook = () => {
@@ -264,7 +262,7 @@ const UserProfilePage = () => {
               {isFacebookLink ? `Đã kết nối` : 'Chưa kết nối'}
             </Text>
             {isFacebookLink ? (
-              <Button variant="subtle" onClick={handleDisConnectFacebook}>Hủy kết nối</Button>
+              <Button color='red.5' variant="subtle" onClick={handleDisConnectFacebook}>Hủy kết nối</Button>
             ) : (
               <Button variant="subtle" onClick={handleConnectFacebook}>Kết nối</Button>
             )}
@@ -280,7 +278,7 @@ const UserProfilePage = () => {
               {isMicrosoftLink ? `Đã kết nối` : 'Chưa kết nối'}
             </Text>
             {isMicrosoftLink ? (
-              <Button variant="subtle" onClick={handleDisConnectMicrosoft}>Hủy kết nối</Button>
+              <Button color='red.5' variant="subtle" onClick={handleDisConnectMicrosoft}>Hủy kết nối</Button>
             ) : (
               <Button variant="subtle" onClick={handleConnectMicrosoft}>Kết nối</Button>
             )}
@@ -296,7 +294,7 @@ const UserProfilePage = () => {
               {isGoogleLink ? `Đã kết nối` : 'Chưa kết nối'}
             </Text>
             {isGoogleLink ? (
-              <Button variant="subtle" onClick={handleDisConnectGoogle}>Hủy kết nối</Button>
+              <Button color='red.5' variant="subtle" onClick={handleDisConnectGoogle}>Hủy kết nối</Button>
             ) : (
               <Button variant="subtle" onClick={handleConnectGoogle}>Kết nối</Button>
             )}
