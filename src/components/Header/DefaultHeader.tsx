@@ -1,6 +1,10 @@
 import { PATHS } from '@/config';
-import { useAppSelector, useAuth } from '@/hooks';
-import { userInfoSelector } from '@/store';
+import { COOKIE_KEY } from '@/constants';
+import { useAppDispatch, useAppSelector, useAuth } from '@/hooks';
+import { setUserInfo, userInfoSelector } from '@/store';
+import { cookies } from '@/utils';
+import { auth } from '@/pages/UserProfile/firebase';
+
 
 import {
   Group,
@@ -12,10 +16,16 @@ import {
   ScrollArea,
   rem,
   Stack,
+  Title,
+  UnstyledButton,
+  Avatar,
+  Text,
   Image,
 } from '@mantine/core';
+
 import { useDisclosure } from '@mantine/hooks';
 import { Link } from 'react-router-dom';
+
 
 // header cho các trang dành cho khách hàng chưa đăng nhập
 const Header = () => {
@@ -49,9 +59,9 @@ const Header = () => {
             </Link>
           </Group>
 
-          <Group visibleFrom="sm">
+          <Group visibleFrom="md">
             {userInfo ? (
-              <Button variant="light" color="red" onClick={logout}>
+              <Button variant="light" color="red.5" onClick={logout}>
                 Đăng xuất
               </Button>
             ) : (
@@ -66,10 +76,10 @@ const Header = () => {
             )}
           </Group>
 
+
           <Burger opened={drawerOpened} onClick={toggleDrawer} hiddenFrom="sm" />
         </Group>
       </header>
-
       <Drawer
         opened={drawerOpened}
         onClose={closeDrawer}
@@ -79,6 +89,13 @@ const Header = () => {
         hiddenFrom="sm"
         zIndex={1000000}>
         <ScrollArea h={`calc(100vh - ${rem(80)})`} mx="-md">
+          {userInfo && (
+            <Link to={PATHS.PROFILE}>
+              <Text c="dimmed" size="xs">
+                {userInfo?.email}
+              </Text>
+            </Link>
+          )}
           <Divider my="sm" />
 
           <Stack pl={20}>

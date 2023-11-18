@@ -16,7 +16,18 @@ export interface IRegisterRequest {
   lastName: string;
   email: string;
   password: string;
+  role: string;
 }
+
+export interface ILinkAccountRequest {
+  key: string | null;
+  userId: string | null | undefined;
+  firstName: string | null;
+  lastName: string | null;
+  picture: string | null;
+  provider: string | null;
+}
+
 export interface IGoogleLoginRequest {
   firstName: string;
   lastName: string;
@@ -31,4 +42,5 @@ export interface ILoginResponse {
 
 export interface IRegisterResponse {
   user: IUserInfo;
+  token: string;
 }

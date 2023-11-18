@@ -58,7 +58,8 @@ const LoginPage = () => {
     authApi
       .login({ email: data.email, password: data.password })
       .then(res => {
-        if (res.status && !res.errors && res.data) {
+
+        if (res.data) {
           const userInfo = res.data?.user;
           const token = res.data?.token;
 
@@ -77,7 +78,7 @@ const LoginPage = () => {
 
           // chuyển hướng về trang chủ
           // navigate(PATHS.HOME);
-          navigate(PATHS.ADMIN_DASHBOARD);
+          navigate(PATHS.PROFILE);
 
         } else {
           notifications.show({

@@ -6,12 +6,14 @@ import {
   RegisterPage,
   RegisterByInvitation,
   DashboardAdmin,
+  UserProfile,
 } from '@/pages';
 
 export const PATHS = {
   HOME: '/',
   LOGIN: '/dang-nhap',
   REGISTER: '/dang-ky',
+  PROFILE: '/thong-tin-ca-nhan',
   VERIFY: '/verify-account',
   REGISTER_BY_INVITATION: '/verify-account',
   ADMIN_DASHBOARD: '/admin/dashboard',
@@ -62,6 +64,14 @@ export const ROUTES = [
     title: 'Dashboard',
     layout: AdminLayout,
     element: DashboardAdmin,
+    isProtected: true,
+    children: [],
+  },
+  {
+    path: PATHS.PROFILE,
+    title: 'Thông tin cá nhân',
+    layout: DefaultLayout,
+    element: UserProfile,
     isProtected: true,
     children: [],
   },

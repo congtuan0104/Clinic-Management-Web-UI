@@ -21,6 +21,7 @@ const InterceptorsRequest = async (config: AxiosRequestConfig) => {
 
   const interceptorHeaders = {
     token: `Bearer ${token}`,
+    authorization: `Bearer ${token}`,
   };
 
   const headers = {

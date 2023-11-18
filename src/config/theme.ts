@@ -1,10 +1,10 @@
 import { Button, createTheme, MantineColorsTuple, Anchor } from '@mantine/core';
 
 const primary: MantineColorsTuple = [
-  '#eaeaff',
+  '#f5f5fc',
   '#d0d0ff',
   '#9f9cff',
-  '#6964ff',
+  '#6964ff', // main
   '#3d36fe',
   '#2119fe',
   '#1109ff',
@@ -26,11 +26,28 @@ const secondary: MantineColorsTuple = [
   '#b12300',
 ];
 
+const error: MantineColorsTuple = [
+  '#ffe9e9',
+  '#ffd1d1',
+  '#fba0a1',
+  '#f76d6d',
+  '#f34141',
+  '#f22625',
+  '#f21616',
+  '#d8070b',
+  '#c10008',
+  '#a90003',
+];
+
+// các thông báo thành công :green.6: #2BDD66
+// các thông báo cảnh báo :orange.6:
+
 // config theme of mantine ui library
 export const theme = createTheme({
   colors: {
     primary,
     secondary,
+    error,
   },
   primaryColor: 'primary',
   primaryShade: 3,
