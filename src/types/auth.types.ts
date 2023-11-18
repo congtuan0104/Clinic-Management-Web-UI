@@ -16,6 +16,7 @@ export interface IRegisterRequest {
   lastName: string;
   email: string;
   password: string;
+  role: string;
 }
 
 export interface ILinkAccountRequest {
@@ -41,4 +42,5 @@ export interface ILoginResponse {
 
 export interface IRegisterResponse {
   user: IUserInfo;
+  token: string;
 }

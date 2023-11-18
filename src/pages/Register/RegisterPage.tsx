@@ -23,6 +23,7 @@ interface IRegisterFormData {
   email: string;
   password: string;
   confirmPassword: string;
+  role: string;
 }
 
 const schema = yup.object().shape({
@@ -37,6 +38,7 @@ const schema = yup.object().shape({
     .string()
     .required('Vui lòng xác nhận lại mật khẩu')
     .oneOf([yup.ref('password'), ''], 'Không trùng với mật khẩu đã nhập'),
+  role: yup.string().required(),
 });
 
 const RegisterPage = () => {
@@ -54,8 +56,8 @@ const RegisterPage = () => {
       email: '',
       password: '',
       confirmPassword: '',
+      role: 'user'
       // emailVerified: false,
-      // role: 'user'
     },
   });
 
@@ -68,9 +70,11 @@ const RegisterPage = () => {
       .then(res => {
         if (res.status && !res.errors && res.data) {
           const userInfo = res.data?.user;
+          const token = res.data?.token;
 
           // lưu vào thông tin user vào cookie
           cookies.set(COOKIE_KEY.USER_INFO, userInfo);
+          cookies.set(COOKIE_KEY.TOKEN, token);
 
           // lưu thông tin user vào redux
           dispatch(setUserInfo(userInfo));

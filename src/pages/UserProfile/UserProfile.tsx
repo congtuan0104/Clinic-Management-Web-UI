@@ -45,15 +45,11 @@ const UserProfilePage = () => {
   const { userInfo, linkAccount } = useAuth();
 
   const [googleAccoutId, setgoogleAccoutId] = useState<string>('')
-
   const [fbAccoutId, setfbAccoutId] = useState('')
-
   const [micAccoutId, setmicAccoutId] = useState('')
 
   const [isGoogleLink, setisGoogleLink] = useState(false)
-
-  const [isFacebookLink, setisFacebookLink] =  useState(false)
-
+  const [isFacebookLink, setisFacebookLink] = useState(false)
   const [isMicrosoftLink, setisMicrosoftLink] = useState(false)
 
   const [isRender, setisRender] = useState<boolean>(false)
@@ -70,25 +66,25 @@ const UserProfilePage = () => {
   // Kiểm tra và lấy danh sách tài khoản google liên kết
   useEffect(() => {
     if (userInfo?.id) {
-      authApi.geLinkAccount(userInfo.id)
-      .then(res => {
-        res.data.forEach((item: any) => {
-          if (item.provider === 'google') {
-            setgoogleAccoutId(item.id)
-            setisGoogleLink(true)
-          }
-          if (item.provider === 'facebook') {
-            setfbAccoutId(item.id)
-            setisFacebookLink(true)
-          }
-          if (item.provider === 'microsoft') {
-            setmicAccoutId(item.id)
-            setisMicrosoftLink(true)
-          }
+      authApi.getAccountByUser(userInfo.id)
+        .then(res => {
+          res.data.forEach((item: any) => {
+            if (item.provider === 'google') {
+              setgoogleAccoutId(item.id)
+              setisGoogleLink(true)
+            }
+            if (item.provider === 'facebook') {
+              setfbAccoutId(item.id)
+              setisFacebookLink(true)
+            }
+            if (item.provider === 'microsoft') {
+              setmicAccoutId(item.id)
+              setisMicrosoftLink(true)
+            }
+          });
+
+
         });
-        
-        
-      });
     }
   }, [isGoogleLink, isFacebookLink, isMicrosoftLink, isRender]);
 
@@ -99,56 +95,56 @@ const UserProfilePage = () => {
 
   const handleConnectFacebook = () => {
     linkAccount(FirebaseAuthProvider.Facebook, 'facebook')
-    .then(() => {
-      setisRender(!isRender);
-    })
+      .then(() => {
+        setisRender(!isRender);
+      })
   }
 
   const handleConnectMicrosoft = () => {
     linkAccount(FirebaseAuthProvider.Microsoft, 'microsoft')
-    .then(() => {
-      setisRender(!isRender);
-    })
+      .then(() => {
+        setisRender(!isRender);
+      })
   }
 
   const handleDisConnectFacebook = () => {
     if (userInfo?.id) {
-      authApi.disConnectLinkAccount(userInfo.id, fbAccoutId)
-      .then( () => {
-        setisFacebookLink(false)
-        // Hiển thị thông báo
-        notifications.show({
-          message: 'Hủy liên kết tài khoản thành công',
-          color: 'green',
-        });
-      })
+      authApi.unlinkAccount(userInfo.id, fbAccoutId)
+        .then(() => {
+          setisFacebookLink(false)
+          // Hiển thị thông báo
+          notifications.show({
+            message: 'Hủy liên kết tài khoản thành công',
+            color: 'green',
+          });
+        })
     }
   }
   const handleDisConnectGoogle = () => {
     if (userInfo?.id) {
-      authApi.disConnectLinkAccount(userInfo.id, googleAccoutId)
-      .then( () => {
-        setisGoogleLink(false)
-        // Hiển thị thông báo
-        notifications.show({
-          message: 'Hủy liên kết tài khoản thành công',
-          color: 'green',
-        });
-      })
+      authApi.unlinkAccount(userInfo.id, googleAccoutId)
+        .then(() => {
+          setisGoogleLink(false)
+          // Hiển thị thông báo
+          notifications.show({
+            message: 'Hủy liên kết tài khoản thành công',
+            color: 'green',
+          });
+        })
     }
   }
 
   const handleDisConnectMicrosoft = () => {
     if (userInfo?.id) {
-      authApi.disConnectLinkAccount(userInfo.id, micAccoutId)
-      .then( () => {
-        setisMicrosoftLink(false)
-        // Hiển thị thông báo
-        notifications.show({
-          message: 'Hủy liên kết tài khoản thành công',
-          color: 'green',
-        });
-      })
+      authApi.unlinkAccount(userInfo.id, micAccoutId)
+        .then(() => {
+          setisMicrosoftLink(false)
+          // Hiển thị thông báo
+          notifications.show({
+            message: 'Hủy liên kết tài khoản thành công',
+            color: 'green',
+          });
+        })
     }
   }
 
@@ -254,8 +250,8 @@ const UserProfilePage = () => {
             Đổi mật khẩu
           </Button>
 
-          <Divider />
         </div>
+        <Divider />
         <Text pt={30} fz="xl" fw={700}>
           Tài khoản mạng xã hội
         </Text>
@@ -265,7 +261,7 @@ const UserProfilePage = () => {
           </Text>
           <div className="flex justify-between">
             <Text pt={20} pb={20} c="grey" fz="md" fw={200}>
-            {isFacebookLink? `Đã kết nối`: 'Chưa kết nối'}
+              {isFacebookLink ? `Đã kết nối` : 'Chưa kết nối'}
             </Text>
             {isFacebookLink ? (
               <Button variant="subtle" onClick={handleDisConnectFacebook}>Hủy kết nối</Button>
@@ -281,7 +277,7 @@ const UserProfilePage = () => {
           </Text>
           <div className="flex justify-between">
             <Text pt={20} pb={20} c="grey" fz="md" fw={200}>
-            {isMicrosoftLink? `Đã kết nối`: 'Chưa kết nối'}
+              {isMicrosoftLink ? `Đã kết nối` : 'Chưa kết nối'}
             </Text>
             {isMicrosoftLink ? (
               <Button variant="subtle" onClick={handleDisConnectMicrosoft}>Hủy kết nối</Button>
@@ -297,7 +293,7 @@ const UserProfilePage = () => {
           </Text>
           <div className="flex justify-between">
             <Text pt={20} pb={20} c="grey" fz="md" fw={200}>
-              {isGoogleLink? `Đã kết nối`: 'Chưa kết nối'}
+              {isGoogleLink ? `Đã kết nối` : 'Chưa kết nối'}
             </Text>
             {isGoogleLink ? (
               <Button variant="subtle" onClick={handleDisConnectGoogle}>Hủy kết nối</Button>
