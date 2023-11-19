@@ -3,6 +3,7 @@ import { PasswordInput } from 'react-hook-form-mantine';
 import { useDisclosure } from '@mantine/hooks';
 
 import { FaCheck } from "react-icons/fa";
+import { AiOutlineCheck } from "react-icons/ai";
 
 import {
     theme
@@ -10,66 +11,72 @@ import {
 import classes from './style.module.css';
 
 
-
 const data = [
     {
         name: 'BASIC',
         price: '100.000',
         numberOfUsers: '50',
-        feature1: {
-            description: 'Tính năng 1',
-            isActive: true
-        },
-        feature2: {
-            description: 'Tính năng 2',
-            isActive: false
-        },
-        feature3: {
-            description: 'Tính năng 3',
-            isActive: false
-        },
+        features: [
+            {
+                description: 'Tính năng 1',
+                isActive: true
+            },
+            {
+                description: 'Tính năng 2',
+                isActive: false
+            },
+            {
+                description: 'Tính năng 3',
+                isActive: false
+            },
+        ],
     },
     {
         name: 'MEDIUM',
         price: '200.000',
         numberOfUsers: '100',
-        feature1: {
-            description: 'Tính năng 1',
-            isActive: true
-        },
-        feature2: {
-            description: 'Tính năng 2',
-            isActive: true
-        },
-        feature3: {
-            description: 'Tính năng 3',
-            isActive: false
-        },
+        features: [
+            {
+                description: 'Tính năng 1',
+                isActive: true
+            },
+            {
+                description: 'Tính năng 2',
+                isActive: true
+            },
+            {
+                description: 'Tính năng 3',
+                isActive: false
+            },
+        ],
     },
     {
         name: 'HIGH',
         price: '500.000',
         numberOfUsers: '200',
-        feature1: {
-            description: 'Tính năng 1',
-            isActive: true
-        },
-        feature2: {
-            description: 'Tính năng 2',
-            isActive: true
-        },
-        feature3: {
-            description: 'Tính năng 3',
-            isActive: true
-        },
+        features: [
+            {
+                description: 'Tính năng 1',
+                isActive: true
+            },
+            {
+                description: 'Tính năng 2',
+                isActive: true
+            },
+            {
+                description: 'Tính năng 3',
+                isActive: true
+            },
+        ],
     },
 
 ];
 
+
 const _buildFeature = (text: string) => {
     return (
         <Group>
-            <FaCheck size="1rem" stroke={1.5} color='primary' />
+            <FaCheck size="1rem" stroke={1.5} color="var(--mantine-color-primary-3)" />
             <Text>{text}</Text>
         </Group>
     );
@@ -88,18 +95,18 @@ const PricingPlanPage = () => {
                         <Text ta="center" c={'primary'} fw={700} fz="lg">{item.name}</Text>
                         <Divider pb={10} color='primary'></Divider>
 
-                            <Text ta="center" size='lg'>{item.price}</Text>
-                            <Text ta="center" c={'grey'} size='sm'>/ tháng</Text>
+                        <Text ta="center" size='lg'>{item.price}</Text>
+                        <Text ta="center" c={'grey'} size='sm'>/ tháng</Text>
 
                         <Group>
-                            <FaCheck size="1rem" color='#6964ff' stroke={1.5} />
+                            <FaCheck size="1rem" color="var(--mantine-color-primary-3)" stroke={1.5} />
                             <Text>{item.numberOfUsers} người dùng</Text>
                         </Group>
-                        {item.feature1.isActive ? _buildFeature(item.feature1.description) : null}
-                        {item.feature2.isActive ? _buildFeature(item.feature2.description) : null}
-                        {item.feature3.isActive ? _buildFeature(item.feature3.description) : null}
+                        {item.features.map((feature) => (
+                            feature.isActive ? _buildFeature(feature.description) : null
+                        ))}
 
-                        <div style={{ marginBottom: '4rem' }} />
+                        <div style={{ margin: '4rem' }} />
                         <Button mt="xl" radius="sm" size="md" type="submit">
                             Mua gói
                         </Button>
