@@ -12,12 +12,12 @@ export default defineConfig({
   server: {
     // tự động khởi chạy backend server khi chạy frontend
     // port: 3000,
-    proxy: {
-      '/api': {
-        target: process.env.VITE_API_URL || 'http://localhost:2222',
-        changeOrigin: false,
-        secure: true,
-      },
-    },
+    // proxy: {
+    //   '/api': {
+    //     target: process.env.VITE_API_URL || 'http://localhost:2222',
+    //     changeOrigin: true,
+    //     secure: false,
+    //   },
+    // },
   },
 });
