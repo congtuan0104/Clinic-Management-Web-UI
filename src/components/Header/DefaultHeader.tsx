@@ -3,7 +3,6 @@ import { COOKIE_KEY } from '@/constants';
 import { useAppDispatch, useAppSelector, useAuth } from '@/hooks';
 import { setUserInfo, userInfoSelector } from '@/store';
 import { cookies } from '@/utils';
-import { auth } from '@/pages/UserProfile/firebase';
 
 
 import {
