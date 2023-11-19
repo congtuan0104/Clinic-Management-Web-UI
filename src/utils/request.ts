@@ -7,7 +7,7 @@ export const REQUEST_TIMEOUT = 30000;
 
 export const axiosClient = axios.create({
   // host api được cấu hình trong vite.config.ts -> thay đổi theo env
-  baseURL: '/api',
+  baseURL: 'http://128.199.79.32:2222/api',
   timeout: REQUEST_TIMEOUT,
 });
 
