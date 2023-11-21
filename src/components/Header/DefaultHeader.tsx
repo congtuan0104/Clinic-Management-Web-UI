@@ -24,7 +24,7 @@ import {
 
 import { useDisclosure } from '@mantine/hooks';
 import { Link } from 'react-router-dom';
-import ClinusLogo from '@/assets/images/logo-and-title.png'
+import ClinusLogo from '@/assets/images/logo.png'
 
 
 // header cho các trang dành cho khách hàng chưa đăng nhập
