@@ -35,7 +35,7 @@ const schema = yup.object().shape({
   confirmNewPassword: yup
     .string()
     .required('Vui lòng xác nhận lại mật khẩu')
-    .oneOf([yup.ref('password'), ''], 'Không trùng với mật khẩu đã nhập'),
+    .oneOf([yup.ref('newPassword'), ''], 'Không trùng với mật khẩu đã nhập'),
 });
 
 
@@ -62,6 +62,33 @@ const UserProfilePage = () => {
       confirmNewPassword: '',
     },
   });
+
+  const handleChangePassword = async (data: ChangePasswordFormData) => {
+    try {
+      const res = await authApi.changePassword({
+        currentPassword: data.currentPassword,
+        newPassword: data.newPassword,
+      });
+
+      if (res.status) {
+        // Password change successful
+        notifications.show({
+          message: 'Đổi mật khẩu thành công',
+          color: 'green',
+        })
+      } else {
+        notifications.show({
+          message: res.message || 'Đổi mật khẩu không thành công',
+          color: 'red',
+        });
+      }
+    } catch (error) {
+      notifications.show({
+        message: 'Đổi mật khẩu không thành công',
+        color: 'red',
+      });
+    }
+  };
 
   // Kiểm tra và lấy danh sách tài khoản google liên kết
   const checkAccountIsLinked = async () => {
@@ -188,7 +215,7 @@ const UserProfilePage = () => {
                 <Modal.CloseButton />
               </Modal.Header>
               <Modal.Body><Form
-                control={control}>
+                control={control} onSubmit={e => handleChangePassword(e.data)} onError={e => console.log(e)}>
                 <PasswordInput
                   name="currentPassword"
                   label="Mật khẩu hiện tại"

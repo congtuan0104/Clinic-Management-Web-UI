@@ -6,6 +6,7 @@ import {
   IRegisterRequest,
   IRegisterResponse,
   ILinkAccountRequest,
+  IChangePasswordRequest,
 } from '@/types';
 import { axiosClient } from '@/utils';
 
@@ -48,5 +49,9 @@ export const authApi = {
 
   linkAccountWithEmail(data: { email: string; key: string; provider: string }): Promise<any> {
     return axiosClient.post('/auth/link-account-email', data);
+  },
+
+  changePassword(data: IChangePasswordRequest): Promise<any> {
+    return axiosClient.post('/auth/change-password', data);
   },
 };
