@@ -47,6 +47,13 @@ export const authApi = {
   },
 
   /**
+   * API liên kết tài khoản bên thứ 3
+   */
+  linkAccount(data: ILinkAccountRequest): Promise<any> {
+    return axiosClient.post('/auth/link-account', data);
+  },
+
+  /**
    * API hủy liên kết tài khoản bên thứ 3
    */
   unlinkAccount(userId: string, accountId: string): Promise<any> {
