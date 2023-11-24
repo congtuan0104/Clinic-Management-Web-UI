@@ -35,6 +35,11 @@ export interface IGoogleLoginRequest {
   picture: string;
 }
 
+export interface IChangePasswordRequest {
+  currentPassword: string;
+  newPassword: string;
+}
+
 export interface ILoginResponse {
   user: IUserInfo;
   token: string;
@@ -44,3 +49,5 @@ export interface IRegisterResponse {
   user: IUserInfo;
   token: string;
 }
+
+

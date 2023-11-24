@@ -2,21 +2,14 @@ import { Paper, Text, Group, Avatar, Input, Divider, Button, Flex, Modal } from 
 import { PasswordInput } from 'react-hook-form-mantine';
 import { useDisclosure } from '@mantine/hooks';
 
-import { useForm, Form, set } from 'react-hook-form';
+import { useForm, Form } from 'react-hook-form';
 import { RiLockPasswordLine } from 'react-icons/ri';
-import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { authApi } from '@/services/auth.service';
 import { notifications } from '@mantine/notifications';
-import { useSelector } from 'react-redux';
-import { CommonState, RootState } from '@/store';
-import { cookies } from '@/utils';
-import { COOKIE_KEY } from '@/constants';
 
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
-
-import { IUserInfo } from '@/types';
 import { useAuth } from '@/hooks';
 import { FirebaseAuthProvider } from '@/config';
 
@@ -27,7 +20,10 @@ interface ChangePasswordFormData {
 }
 
 const schema = yup.object().shape({
-  currentPassword: yup.string().required('Bạn chưa nhập mật khẩu hiện tại'),
+  currentPassword: yup
+    .string()
+    .required('Bạn chưa nhập mật khẩu hiện tại')
+    .min(8, 'Mật khẩu phải có tối thiểu 8 ký tự'),
   newPassword: yup
     .string()
     .required('Bạn chưa nhập mật khẩu mới')
@@ -35,7 +31,7 @@ const schema = yup.object().shape({
   confirmNewPassword: yup
     .string()
     .required('Vui lòng xác nhận lại mật khẩu')
-    .oneOf([yup.ref('password'), ''], 'Không trùng với mật khẩu đã nhập'),
+    .oneOf([yup.ref('newPassword'), ''], 'Không trùng với mật khẩu đã nhập'),
 });
 
 
@@ -52,9 +48,7 @@ const UserProfilePage = () => {
   const [isFacebookLink, setisFacebookLink] = useState(false)
   const [isMicrosoftLink, setisMicrosoftLink] = useState(false)
 
-  // const [isRender, setisRender] = useState<boolean>(false)
-
-  const { control } = useForm<ChangePasswordFormData>({
+  const { control, reset } = useForm<ChangePasswordFormData>({
     resolver: yupResolver(schema),
     defaultValues: {
       currentPassword: '',
@@ -62,6 +56,35 @@ const UserProfilePage = () => {
       confirmNewPassword: '',
     },
   });
+
+  const handleChangePassword = async (data: ChangePasswordFormData) => {
+    try {
+      const res = await authApi.changePassword({
+        currentPassword: data.currentPassword,
+        newPassword: data.newPassword,
+      });
+
+      if (res.status) {
+        // Password change successful
+        notifications.show({
+          message: 'Đổi mật khẩu thành công',
+          color: 'green',
+        })
+        close();  // Đóng modal đổi mật khẩu
+        reset();  // reset value form đổi mật khẩu
+      } else {
+        notifications.show({
+          message: res.message || 'Đổi mật khẩu không thành công',
+          color: 'red',
+        });
+      }
+    } catch (error) {
+      notifications.show({
+        message: 'Đổi mật khẩu không thành công',
+        color: 'red',
+      });
+    }
+  };
 
   // Kiểm tra và lấy danh sách tài khoản google liên kết
   const checkAccountIsLinked = async () => {
@@ -188,7 +211,7 @@ const UserProfilePage = () => {
                 <Modal.CloseButton />
               </Modal.Header>
               <Modal.Body><Form
-                control={control}>
+                control={control} onSubmit={e => handleChangePassword(e.data)} onError={e => console.log(e)}>
                 <PasswordInput
                   name="currentPassword"
                   label="Mật khẩu hiện tại"
@@ -224,7 +247,14 @@ const UserProfilePage = () => {
                 />
                 <div style={{ display: 'flex', justifyContent: 'flex-end', }}>
                   <Button mt="xl" radius="sm" size="md" type="submit">
-                    Đổi mật khẩu
+                    Xác nhận
+                  </Button>
+                  <Button mt="xl" ml="sm" radius="sm" size="md" variant='outline' color='red.5'
+                    onClick={() => {
+                      close();
+                      reset();
+                    }}>
+                    Hủy
                   </Button>
                 </div>
               </Form>
