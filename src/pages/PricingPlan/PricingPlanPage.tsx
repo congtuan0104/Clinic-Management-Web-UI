@@ -1,17 +1,8 @@
-import { Paper, Text, Group, Avatar, Input, Divider, Button, Flex, Badge, Box, Modal, Anchor, ColorSchemeScript, Container } from '@mantine/core';
-import { PasswordInput } from 'react-hook-form-mantine';
-import { useDisclosure } from '@mantine/hooks';
+import {Text, Flex} from '@mantine/core';
 
-import { FaCheck } from "react-icons/fa";
-import { AiOutlineCheck } from "react-icons/ai";
+import PlanCard from '@/components/Card/PlanCard';
 
-import {
-    theme
-} from '@/config';
-import classes from './style.module.css';
-
-
-const data = [
+const plans = [
     {
         name: 'BASIC',
         price: '100.000',
@@ -72,17 +63,6 @@ const data = [
 
 ];
 
-
-const _buildFeature = (text: string) => {
-    return (
-        <Group>
-            <FaCheck size="1rem" stroke={1.5} color="var(--mantine-color-primary-3)" />
-            <Text>{text}</Text>
-        </Group>
-    );
-};
-
-
 const PricingPlanPage = () => {
     return (
         <div>
@@ -90,28 +70,8 @@ const PricingPlanPage = () => {
                 Bảng giá dịch vụ
             </Text>
             <Flex my={30} mx={{ base: 15, md: 0 }} gap={20} direction={{ base: 'column', md: 'row' }}>
-                {data.map((item, index) => (
-                    <Paper key={index} w="100%" withBorder shadow="md" p={30} radius="md" className={classes.PaperWithButton}>
-                        <Text ta="center" c={'primary'} fw={700} fz="lg">{item.name}</Text>
-                        <Divider pb={10} color='primary'></Divider>
-
-                        <Text ta="center" size='lg'>{item.price}</Text>
-                        <Text ta="center" c={'grey'} size='sm'>/ tháng</Text>
-
-                        <Group>
-                            <FaCheck size="1rem" color="var(--mantine-color-primary-3)" stroke={1.5} />
-                            <Text>{item.numberOfUsers} người dùng</Text>
-                        </Group>
-                        {item.features.map((feature) => (
-                            feature.isActive ? _buildFeature(feature.description) : null
-                        ))}
-
-                        <div style={{ margin: '4rem' }} />
-                        <Button mt="xl" radius="sm" size="md" type="submit">
-                            Mua gói
-                        </Button>
-
-                    </Paper>
+                {plans.map((plan, index) => (
+                    <PlanCard key={index} plan={plan} />
                 ))}
             </Flex>
         </div>
