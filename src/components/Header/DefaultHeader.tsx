@@ -3,7 +3,6 @@ import { COOKIE_KEY } from '@/constants';
 import { useAppDispatch, useAppSelector, useAuth } from '@/hooks';
 import { setUserInfo, userInfoSelector } from '@/store';
 import { cookies } from '@/utils';
-import { auth } from '@/pages/UserProfile/firebase';
 
 
 import {
@@ -25,6 +24,7 @@ import {
 
 import { useDisclosure } from '@mantine/hooks';
 import { Link } from 'react-router-dom';
+import ClinusLogo from '@/assets/images/logo.png'
 
 
 // header cho các trang dành cho khách hàng chưa đăng nhập
@@ -40,7 +40,7 @@ const Header = () => {
         <Group justify="space-between" h="100%">
           <Box w={userInfo ? undefined : 222}>
             <Link to={PATHS.HOME}>
-              <Image src='/src/assets/images/logo.png' alt='logo' h={50} fit='contain' />
+              <Image src={ClinusLogo} alt='logo' h={50} fit='contain' />
             </Link>
           </Box>
 
