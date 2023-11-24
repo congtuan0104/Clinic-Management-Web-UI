@@ -63,11 +63,7 @@ export const authApi = {
   /**
    * API liên kết tài khoản bên thứ 3 với tài khoản mặc định (email)
    */
-  linkAccountWithEmail(data: {
-    email: string;
-    key: string;
-    provider: string;
-  }): Promise<ILoginResponse> {
+  linkAccountWithEmail(data: { email: string; key: string; provider: string }): Promise<any> {
     return axiosClient.post('/auth/link-account-email', data);
   },
 
