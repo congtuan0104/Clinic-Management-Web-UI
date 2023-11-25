@@ -1,4 +1,5 @@
 export * from './Home';
+export * from './PricingPlan';
 export * from './Login';
 export * from './NotFound';
 export * from './VerifyAccount';

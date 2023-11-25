@@ -1,0 +1,14 @@
+.PaperWithButton {
+  border-color: var(--mantine-color-primary-3);
+  border-width: 2px;
+  position: relative;
+}
+
+.PaperWithButton Button {
+  position: absolute;
+  width: rem(250px);
+  left: calc(50% - rem(125px));
+  bottom: rem(-20px);
+  background: linear-gradient(to right, var(--mantine-color-primary-3) 0%, var(--mantine-color-secondary-3) 130%);
+  border: none;
+}

@@ -51,7 +51,7 @@ const Header = () => {
             <Link className="hover:text-[#228BE6]" to="#">
               Giới thiệu
             </Link>
-            <Link className="hover:text-[#228BE6]" to="#">
+            <Link className="hover:text-[#228BE6]" to={PATHS.PRICING_PLAN}>
               Bảng giá
             </Link>
             <Link className="hover:text-[#228BE6]" to="#">
@@ -101,7 +101,7 @@ const Header = () => {
           <Stack pl={20}>
             <Link to={PATHS.HOME}>Trang chủ</Link>
             <Link to="#">Giới thiệu</Link>
-            <Link to="#">Bảng giá</Link>
+            <Link to={PATHS.PRICING_PLAN}>Bảng giá</Link>
             <Link to="#">Tin tức</Link>
           </Stack>
 

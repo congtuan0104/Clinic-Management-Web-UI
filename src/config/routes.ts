@@ -1,6 +1,7 @@
 import { AdminLayout, DefaultLayout } from '@/layouts';
 import {
   HomePage,
+  PricingPlanPage,
   LoginPage,
   VerifyAccountPage,
   RegisterPage,
@@ -12,6 +13,7 @@ import {
 
 export const PATHS = {
   HOME: '/',
+  PRICING_PLAN: '/bang-gia',
   LOGIN: '/dang-nhap',
   REGISTER: '/dang-ky',
   PROFILE: '/thong-tin-ca-nhan',
@@ -27,6 +29,13 @@ export const ROUTES = [
     title: 'Trang chủ',
     layout: DefaultLayout,
     element: HomePage,
+    children: [],
+  },
+  {
+    path: PATHS.PRICING_PLAN,
+    title: 'Bảng giá',
+    layout: DefaultLayout,
+    element: PricingPlanPage,
     children: [],
   },
   {
