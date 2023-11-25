@@ -45,16 +45,16 @@ const Header = () => {
           </Box>
 
           <Group h="100%" gap={35} visibleFrom="sm">
-            <Link className="hover:text-[#228BE6]" to={PATHS.HOME}>
+            <Link className="hover:text-[#6964ff]" to={PATHS.HOME}>
               Trang chủ
             </Link>
-            <Link className="hover:text-[#228BE6]" to="#">
+            <Link className="hover:text-[#6964ff]" to="#">
               Giới thiệu
             </Link>
-            <Link className="hover:text-[#228BE6]" to={PATHS.PRICING_PLAN}>
+            <Link className="hover:text-[#6964ff]" to={PATHS.PRICING_PLAN}>
               Bảng giá
             </Link>
-            <Link className="hover:text-[#228BE6]" to="#">
+            <Link className="hover:text-[#6964ff]" to="#">
               Tin tức
             </Link>
           </Group>

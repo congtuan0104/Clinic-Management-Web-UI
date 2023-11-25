@@ -1,7 +1,7 @@
 import { Anchor, Paper, Title, Text, Container, Group, Button, Flex, Divider, ActionIcon, Image, Box, Modal, TextInput as MantineTextInput } from '@mantine/core';
 import { TextInput, PasswordInput, Checkbox } from 'react-hook-form-mantine';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { useForm, Form, set } from 'react-hook-form';
+import { useForm, Form } from 'react-hook-form';
 import { FcGoogle } from 'react-icons/fc';
 import { RiGithubFill, RiLockPasswordLine } from 'react-icons/ri';
 import { FaFacebookF, FaApple } from 'react-icons/fa6';
@@ -145,7 +145,10 @@ const LoginPage = () => {
             color: 'green',
           });
 
-          navigate(PATHS.PROFILE);
+          if (userInfo.role === 'admin')
+            navigate(PATHS.ADMIN_DASHBOARD);
+          else
+            navigate(PATHS.PROFILE);
 
         } else {
           notifications.show({

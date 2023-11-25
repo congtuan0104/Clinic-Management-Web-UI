@@ -4,8 +4,8 @@
 export interface IPlanOption {
   id: number;
   planId: number;
-  // planName: string;
-  // description: string;
+  optionName: string;
+  description: string;
   optionId: number;
   createdAt: Date;
   updatedAt?: Date;
@@ -23,5 +23,15 @@ export interface IServicePlan {
   isActive: boolean;
   updatedAt: Date;
   createdAt: Date;
-  planOptions: IPlanOption[];
+  planOptions: {
+    option: IPlanOption;
+  }[];
+}
+
+export interface IAddPlanRequest {
+  planName: string;
+  currentPrice: number;
+  duration: number;
+  description?: string;
+  optionIds?: number[];
 }

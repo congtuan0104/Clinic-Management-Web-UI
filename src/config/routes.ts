@@ -9,6 +9,7 @@ import {
   DashboardAdmin,
   UserProfile,
   VerifyUserLinkAccountPage,
+  PricingPlanAdminPage,
 } from '@/pages';
 
 export const PATHS = {
@@ -21,6 +22,7 @@ export const PATHS = {
   REGISTER_BY_INVITATION: '/verify-account',
   ADMIN_DASHBOARD: '/admin/dashboard',
   VERIFY_LINK_ACCOUNT: '/verify-user',
+  ADMIN_PRICING_PLAN: '/admin/bang-gia',
 };
 
 export const ROUTES = [
@@ -91,6 +93,14 @@ export const ROUTES = [
     title: 'Thông tin cá nhân',
     layout: DefaultLayout,
     element: UserProfile,
+    isProtected: true,
+    children: [],
+  },
+  {
+    path: PATHS.ADMIN_PRICING_PLAN,
+    title: 'Quản lý bảng giá',
+    layout: AdminLayout,
+    element: PricingPlanAdminPage,
     isProtected: true,
     children: [],
   },

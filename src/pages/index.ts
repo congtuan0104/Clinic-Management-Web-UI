@@ -8,3 +8,4 @@ export * from './UserProfile';
 export * from './DashboardAdmin';
 export * from './RegisterByInvitation';
 export * from './VerifyUserLinkAccount';
+export * from './PricingPlanAdmin';

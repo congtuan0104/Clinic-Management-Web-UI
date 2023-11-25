@@ -35,11 +35,19 @@ const AdminHeader = () => {
             </Link>
           </Box>
 
-          <Text>Admin Layout</Text>
+          <Group h="100%" gap={35} visibleFrom="sm">
+            <Link className="hover:text-[#6964ff]" to={PATHS.ADMIN_DASHBOARD}>
+              Dashboard
+            </Link>
+            <Link className="hover:text-[#6964ff]" to={PATHS.ADMIN_PRICING_PLAN}>
+              Quản lý gói
+            </Link>
+
+          </Group>
 
           <Group visibleFrom="sm">
             {userInfo ? (
-              <Button variant="light" color="red" onClick={logout}>
+              <Button variant="light" color="red.7" onClick={logout}>
                 Đăng xuất
               </Button>
             ) : (

@@ -10,13 +10,13 @@ export const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
   if (!isLogin) {
     navigate(PATHS.LOGIN);
   }
-  return (
+  else return (
     <>{children}</>
   );
 };
 
 function App() {
-  const isLogin = checkIsLogin(); // trạng thái user đã đăng nhập hay chưa
+  // const isLogin = checkIsLogin(); // trạng thái user đã đăng nhập hay chưa
   // const { isLogin } = useAuth();
   // const isLogin = false;
 

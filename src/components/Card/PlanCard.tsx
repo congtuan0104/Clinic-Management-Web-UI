@@ -1,4 +1,4 @@
-import { Paper, Text, Divider, Group, Button } from '@mantine/core';
+import { Paper, Text, Divider, Group, Button, Flex, Box } from '@mantine/core';
 import { FaCheck } from 'react-icons/fa';
 
 import classes from './style.module.css';
@@ -17,25 +17,29 @@ interface IPlanCardProps {
 
 const PlanCard = ({ plan, actionText, action }: IPlanCardProps) => {
   return (
-    <Paper w="100%" withBorder shadow="md" p={30} radius="md" >
+    <Paper w="100%" h='100%' withBorder shadow="md" p={30} radius="md" display='flex' style={{ flexDirection: 'column' }}>
       <Text ta="center" c={'primary'} fw={700} fz="lg">{plan.planName}</Text>
       <Divider pb={10} color='primary'></Divider>
 
-      <Text ta="center" size='lg'>{plan.currentPrice}/{plan.duration} ngày</Text>
+      <Text ta='center' c='gray.7'>{plan.description}</Text>
+      <Text ta="center" c='secondary' size='lg'>{plan.currentPrice}₫/{plan.duration} ngày</Text>
+
 
       {/* <Group>
         <FaCheck size="1rem" color="var(--mantine-color-primary-3)" stroke={1.5} />
         <Text>{plan} người dùng</Text>
       </Group> */}
 
-      {plan.planOptions.map((option) => (
-        <Group>
-          <FaCheck size="1rem" stroke={1.5} color="var(--mantine-color-primary-3)" />
-          <Text>{option.optionId}</Text>
-        </Group>
-      ))}
+      <Box style={{ flex: 1 }}>
+        {plan.planOptions.map((option) => (
+          <Flex key={option.option.id} mt={10}>
+            <FaCheck size="1rem" stroke={1.5} color="var(--mantine-color-primary-3)" />
+            <Text ml={5} component='span'>{option.option.optionName}</Text>
+          </Flex>
+        ))}
+      </Box>
 
-      <Button mt="xl" radius="sm" size="md" type="submit" w='60%' mx='auto' onClick={action}>
+      <Button mt="xl" radius="sm" size="md" type="submit" variant='outline' fullWidth mx='auto' onClick={action}>
         {actionText}
       </Button>
     </Paper>

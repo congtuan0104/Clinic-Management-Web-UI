@@ -24,7 +24,7 @@ const PricingPlanPage = () => {
   }
 
   return (
-    <div>
+    <Box>
       <Text ta="center" pt={30} size="xl" fw={600}>
         Bảng giá dịch vụ
       </Text>
@@ -35,7 +35,7 @@ const PricingPlanPage = () => {
           </Box>
         ))}
       </Flex>
-    </div>
+    </Box>
   );
 }
 
