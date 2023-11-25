@@ -1,20 +1,27 @@
-import { IListDataResponse } from '@/types';
-
-export interface IProduct {
+/**
+ * Các chức năng trong một gói sản phẩm
+ */
+export interface IPlanOption {
   id: number;
-  title: string;
-  description: string;
-  price: number;
-  discountPercentage: number;
-  rating: number;
-  stock: number;
-  brand: string;
-  category: string;
-  thumbnail: string;
-  images: string[];
+  planId: number;
+  // planName: string;
+  // description: string;
+  optionId: number;
+  createdAt: Date;
+  updatedAt?: Date;
 }
 
-// kiểu dữ liệu trả về từ api khi gọi api get list product 'https://dummyjson.com/products'
-export interface IProductListDataResponse extends IListDataResponse {
-  products: IProduct[];
+/**
+ * Các gói sản phẩm chức năng cung cấp cho phòng khám
+ */
+export interface IServicePlan {
+  id: number;
+  planName: string;
+  currentPrice: number;
+  duration: number;
+  description: string;
+  isActive: boolean;
+  updatedAt: Date;
+  createdAt: Date;
+  planOptions: IPlanOption[];
 }

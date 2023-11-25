@@ -1,39 +1,42 @@
-import { Paper, Text, Divider, Group, Button } from '@mantine/core'; 
-import { FaCheck } from 'react-icons/fa'; 
+import { Paper, Text, Divider, Group, Button } from '@mantine/core';
+import { FaCheck } from 'react-icons/fa';
 
 import classes from './style.module.css';
+import { IServicePlan } from '@/types';
 
+/**
+ * @param {IServicePlan} plan - Thông tin gói dịch vụ
+ * @param {string} actionText - Nội dung button thực thi hành động (ví dụ như 'Mua gói')
+ * @param {() => void} action - Hành động thực thi khi click vào button
+ */
+interface IPlanCardProps {
+  plan: IServicePlan;
+  actionText?: string;
+  action: () => void;
+}
 
-const PlanCard = ({ index, plan } : any) => {
-    const _buildFeature = (text: string) => {
-        return (
-            <Group>
-                <FaCheck size="1rem" stroke={1.5} color="var(--mantine-color-primary-3)" />
-                <Text>{text}</Text>
-            </Group>
-        );
-    };
-
+const PlanCard = ({ plan, actionText, action }: IPlanCardProps) => {
   return (
-    <Paper w="100%" withBorder shadow="md" p={30} radius="md" className={classes.PaperWithButton}>
-      <Text ta="center" c={'primary'} fw={700} fz="lg">{plan.name}</Text>
+    <Paper w="100%" withBorder shadow="md" p={30} radius="md" >
+      <Text ta="center" c={'primary'} fw={700} fz="lg">{plan.planName}</Text>
       <Divider pb={10} color='primary'></Divider>
 
-      <Text ta="center" size='lg'>{plan.price}</Text>
-      <Text ta="center" c={'grey'} size='sm'>/ tháng</Text>
+      <Text ta="center" size='lg'>{plan.currentPrice}/{plan.duration} ngày</Text>
 
-      <Group>
+      {/* <Group>
         <FaCheck size="1rem" color="var(--mantine-color-primary-3)" stroke={1.5} />
-        <Text>{plan.numberOfUsers} người dùng</Text>
-      </Group>
+        <Text>{plan} người dùng</Text>
+      </Group> */}
 
-      {plan.features.map((feature : any) => (
-        feature.isActive ? _buildFeature(feature.description) : null
+      {plan.planOptions.map((option) => (
+        <Group>
+          <FaCheck size="1rem" stroke={1.5} color="var(--mantine-color-primary-3)" />
+          <Text>{option.optionId}</Text>
+        </Group>
       ))}
 
-      <div style={{ margin: '4rem' }} />
-      <Button mt="xl" radius="sm" size="md" type="submit">
-        Mua gói
+      <Button mt="xl" radius="sm" size="md" type="submit" w='60%' mx='auto' onClick={action}>
+        {actionText}
       </Button>
     </Paper>
   );

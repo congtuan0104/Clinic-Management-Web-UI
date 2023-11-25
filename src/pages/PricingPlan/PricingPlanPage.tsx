@@ -1,81 +1,42 @@
-import {Text, Flex} from '@mantine/core';
+import { Text, Flex, Box } from '@mantine/core';
 
 import PlanCard from '@/components/Card/PlanCard';
-
-const plans = [
-    {
-        name: 'BASIC',
-        price: '100.000',
-        numberOfUsers: '50',
-        features: [
-            {
-                description: 'Tính năng 1',
-                isActive: true
-            },
-            {
-                description: 'Tính năng 2',
-                isActive: false
-            },
-            {
-                description: 'Tính năng 3',
-                isActive: false
-            },
-        ],
-    },
-    {
-        name: 'MEDIUM',
-        price: '200.000',
-        numberOfUsers: '100',
-        features: [
-            {
-                description: 'Tính năng 1',
-                isActive: true
-            },
-            {
-                description: 'Tính năng 2',
-                isActive: true
-            },
-            {
-                description: 'Tính năng 3',
-                isActive: false
-            },
-        ],
-    },
-    {
-        name: 'HIGH',
-        price: '500.000',
-        numberOfUsers: '200',
-        features: [
-            {
-                description: 'Tính năng 1',
-                isActive: true
-            },
-            {
-                description: 'Tính năng 2',
-                isActive: true
-            },
-            {
-                description: 'Tính năng 3',
-                isActive: true
-            },
-        ],
-    },
-
-];
+import { useQuery } from 'react-query';
+import { planApi } from '@/services';
 
 const PricingPlanPage = () => {
-    return (
-        <div>
-            <Text ta="center" pt={30} size="xl" fw={600}>
-                Bảng giá dịch vụ
-            </Text>
-            <Flex my={30} mx={{ base: 15, md: 0 }} gap={20} direction={{ base: 'column', md: 'row' }}>
-                {plans.map((plan, index) => (
-                    <PlanCard key={index} plan={plan} />
-                ))}
-            </Flex>
-        </div>
-    );
+  const { data: plans, isLoading, isError, error } = useQuery('plans', () => getAllPlans());
+
+  const getAllPlans = async () => {
+    try {
+      const response = await planApi.getAllPlans();
+      return response.data;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  /**
+   * Xử lý khi mua gói dịch vụ
+   */
+  const handleBuyPlan = () => {
+    alert('Chức năng mua gói dịch vụ đang được phát triển');
+  }
+
+  return (
+    <div>
+      <Text ta="center" pt={30} size="xl" fw={600}>
+        Bảng giá dịch vụ
+      </Text>
+      <Flex wrap='wrap' my={30} mx={{ base: 15, md: 0 }} gap={20} direction={{ base: 'column', md: 'row' }}>
+        {plans && plans.map((plan) => (
+          <Box w='33%'>
+            <PlanCard key={plan.id} plan={plan} actionText='Mua gói' action={handleBuyPlan} />
+          </Box>
+        ))}
+      </Flex>
+    </div>
+  );
 }
 
 export default PricingPlanPage;
