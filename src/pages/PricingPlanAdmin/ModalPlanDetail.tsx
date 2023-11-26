@@ -108,6 +108,7 @@ const ModalPlanDetail = ({ open, onClose, planInfo }: IModalPlanDetailProps) => 
             <TextInput
               label="Tên gói"
               name="planName"
+              variant={editMode ? 'default' : 'filled'}
               required
               size="md"
               radius="sm"
@@ -117,6 +118,7 @@ const ModalPlanDetail = ({ open, onClose, planInfo }: IModalPlanDetailProps) => 
             <NumberInput
               label="Giá gói"
               name="currentPrice"
+              variant={editMode ? 'default' : 'filled'}
               required
               size="md"
               mt='sm'
@@ -134,6 +136,7 @@ const ModalPlanDetail = ({ open, onClose, planInfo }: IModalPlanDetailProps) => 
               name="duration"
               required
               size="md"
+              variant={editMode ? 'default' : 'filled'}
               mt='sm'
               radius="sm"
               control={control}
@@ -145,6 +148,7 @@ const ModalPlanDetail = ({ open, onClose, planInfo }: IModalPlanDetailProps) => 
               name="description"
               required
               size="md"
+              variant={editMode ? 'default' : 'filled'}
               radius="sm"
               mt='sm'
               control={control}

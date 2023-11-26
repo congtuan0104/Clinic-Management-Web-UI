@@ -1,8 +1,9 @@
-import { Paper, Text, Divider, Group, Button, Flex, Box } from '@mantine/core';
+import { Paper, Text, Divider, Group, Button, Flex, Box, NumberFormatter, ThemeIcon } from '@mantine/core';
 import { FaCheck } from 'react-icons/fa';
 
 import classes from './style.module.css';
 import { IServicePlan } from '@/types';
+import { CurrencyFormatter } from '@/components';
 
 /**
  * @param {IServicePlan} plan - Thông tin gói dịch vụ
@@ -17,12 +18,15 @@ interface IPlanCardProps {
 
 const PlanCard = ({ plan, actionText, action }: IPlanCardProps) => {
   return (
-    <Paper w="100%" h='100%' withBorder shadow="md" p={30} radius="md" display='flex' style={{ flexDirection: 'column' }}>
-      <Text ta="center" c={'primary'} fw={700} fz="lg">{plan.planName}</Text>
-      <Divider pb={10} color='primary'></Divider>
+    <Paper w="100%" h='100%' withBorder shadow="md" px={25} py={15} radius="md" display='flex' style={{ flexDirection: 'column' }}>
+      <Text ta="center" tt='uppercase' c={'primary'} fw={700} fz="lg" >{plan.planName}</Text>
+      <Divider pb={10} color='gray.5'></Divider>
 
+      <Text ta="center" c='secondary' size='lg'>
+        <CurrencyFormatter value={plan.currentPrice} />
+        /{plan.duration} ngày
+      </Text>
       <Text ta='center' c='gray.7'>{plan.description}</Text>
-      <Text ta="center" c='secondary' size='lg'>{plan.currentPrice}₫/{plan.duration} ngày</Text>
 
 
       {/* <Group>
@@ -33,8 +37,10 @@ const PlanCard = ({ plan, actionText, action }: IPlanCardProps) => {
       <Box style={{ flex: 1 }}>
         {plan.planOptions.map((option) => (
           <Flex key={option.option.id} mt={10}>
-            <FaCheck size="1rem" stroke={1.5} color="var(--mantine-color-primary-3)" />
-            <Text ml={5} component='span'>{option.option.optionName}</Text>
+            <ThemeIcon variant='white' color="primary" >
+              <FaCheck size="1rem" stroke={1.5} />
+            </ThemeIcon>
+            <Text mt={1} ml={5} component='span'>{option.option.optionName}</Text>
           </Flex>
         ))}
       </Box>

@@ -849,7 +849,7 @@
     "@jridgewell/resolve-uri" "^3.1.0"
     "@jridgewell/sourcemap-codec" "^1.4.14"
 
-"@mantine/core@^7.1.5":
+"@mantine/core@^7.2.2":
   version "7.2.2"
   resolved "https://registry.yarnpkg.com/@mantine/core/-/core-7.2.2.tgz#fd7df20f4020fb4c96557f7ec06bb912dfb211ca"
   integrity sha512-cVGmLjYyKIzjn0LRwamj71O4HT43qCxPGAzMZqkMYGOako7xwBLYQNe7HjL/J0FXJDyfX8OdMylVhgsePWYbng==
@@ -861,19 +861,19 @@
     react-textarea-autosize "8.5.3"
     type-fest "^3.13.1"
 
-"@mantine/dates@^7.1.5":
+"@mantine/dates@^7.2.2":
   version "7.2.2"
   resolved "https://registry.yarnpkg.com/@mantine/dates/-/dates-7.2.2.tgz#9e1fcc24d8cc229130d617cf306f6bdcf5b2c550"
   integrity sha512-MgUy2qODhXEkdK5OQE3talThrbXKfBK6V0AJ8iwPcrxMoQ77u4aMzTv4+47bEjQeUFyjrT8u916VFd82mn59SA==
   dependencies:
     clsx "2.0.0"
 
-"@mantine/hooks@^7.1.5":
+"@mantine/hooks@^7.2.2":
   version "7.2.2"
   resolved "https://registry.yarnpkg.com/@mantine/hooks/-/hooks-7.2.2.tgz#d116d8659f77c5f05f9dc088887c8857fcb456da"
   integrity sha512-7CFSVP2aQHrBwLLAVf0q5dgj+6QTZmhLTNcuc3pE1du+HLFUdyVS6vvQC6kieZXxOd6UzwFGBlN4G+aDx95XeA==
 
-"@mantine/notifications@^7.1.5":
+"@mantine/notifications@^7.2.2":
   version "7.2.2"
   resolved "https://registry.yarnpkg.com/@mantine/notifications/-/notifications-7.2.2.tgz#1f2370bdeaf70347d7996c113a93f941a1a40936"
   integrity sha512-2MQ0jJi9HOspJOAq0sfE5QvacZytYoLB8k0GwnubnFilSACbpDYeoQXZWmKX0joYhHtKR15muTnF+P1s9kmr3Q==

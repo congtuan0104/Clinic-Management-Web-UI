@@ -12,7 +12,8 @@ import ModalPlanDetail from './ModalPlanDetail';
 const PlanAdminPage = () => {
   const { data: plans, isLoading } = useQuery('plans', () => getAllPlans());
 
-  const [planDetail, setPlanDetail] = useState<IServicePlan | undefined>(undefined);
+  const [openAddModal, setOpenAddModal] = useState(false);  // mở modal thêm gói dịch vụ
+  const [planDetail, setPlanDetail] = useState<IServicePlan | undefined>(undefined);  // mở modal xem chi tiết gói dịch vụ
 
   const getAllPlans = async () => {
     try {
@@ -23,7 +24,6 @@ const PlanAdminPage = () => {
     }
   }
 
-  const [openAddModal, setOpenAddModal] = useState(false);
 
   return (
     <>
@@ -38,9 +38,9 @@ const PlanAdminPage = () => {
         <Loader color="blue" size="xl" />
       </Flex>}
 
-      <Flex wrap='wrap' my={30} mx={{ base: 15, md: 0 }} gap={20} direction={{ base: 'column', md: 'row' }}>
+      <Flex wrap='wrap' justify='space-between' my={10} mx={{ base: 15, md: 0 }} direction={{ base: 'column', md: 'row' }}>
         {plans && plans.map((plan) => (
-          <Box w='33%'>
+          <Box w='32%'>
             <PlanCard key={plan.id} plan={plan} actionText='Xem chi tiết' action={() => setPlanDetail(plan)} />
           </Box>
         ))}
