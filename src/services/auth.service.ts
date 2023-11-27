@@ -7,6 +7,7 @@ import {
   IRegisterResponse,
   ILinkAccountRequest,
   IChangePasswordRequest,
+  IForgotPasswordRequest,
 } from '@/types';
 import { axiosClient } from '@/utils';
 
@@ -80,4 +81,11 @@ export const authApi = {
   changePassword(data: IChangePasswordRequest): Promise<any> {
     return axiosClient.post('/auth/change-password', data);
   },
+
+  /**
+   * API đquên mật khẩu
+   */
+  forgotPassword(data: IForgotPasswordRequest): Promise<any> {
+    return axiosClient.post('/auth/reset-password', data);
+  }
 };

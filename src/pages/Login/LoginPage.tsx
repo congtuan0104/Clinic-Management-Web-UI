@@ -28,14 +28,22 @@ interface ILoginFormData {
   isRemember?: boolean;
 }
 
+interface IForgotPasswordFormData {
+  email: string;
+}
+
 // định nghĩa điều kiện xác định input hợp lệ
-const schema = yup.object().shape({
+const LoginSchema = yup.object().shape({
   email: yup.string().required('Bạn chưa nhập email').email('Email không hợp lệ'),
   password: yup
     .string()
     .required('Bạn chưa nhập mật khẩu')
     .min(8, 'Mật khẩu phải có tối thiểu 8 ký tự'),
   isRemember: yup.boolean(),
+});
+
+const ForgotPasswordSchema = yup.object().shape({
+  email: yup.string().required('Bạn chưa nhập email').email('Email không hợp lệ'),
 });
 
 const LoginPage = () => {
@@ -47,15 +55,23 @@ const LoginPage = () => {
   const { getUserInfoByProvider } = useAuth(); // xử lý đăng nhập bằng tài khoản bên thứ 3 (Google, Facebook, ...)
   const [providerLogin, setProviderLogin] = useState<string>('');
   const [userIdFromProvider, setUserIdFromProvider] = useState<string>('');
+  const [openedModalResetPassword, { open: openResetPassword, close: closeResetPassword }] = useDisclosure(false);
 
   // tích hợp react-hook-form với antd form
-  const { control } = useForm<ILoginFormData>({
-    resolver: yupResolver(schema), // gắn điều kiện xác định input hợp lệ vào form
+  const { control: loginControl } = useForm<ILoginFormData>({
+    resolver: yupResolver(LoginSchema), // gắn điều kiện xác định input hợp lệ vào form
     defaultValues: {
       // giá trị mặc định của các field
       email: '',
       password: '',
       isRemember: false,
+    },
+  });
+
+  const { control: forgotPasswordControl, reset } = useForm<IForgotPasswordFormData>({
+    resolver: yupResolver(ForgotPasswordSchema),
+    defaultValues: {
+      email: '',
     },
   });
 
@@ -164,6 +180,34 @@ const LoginPage = () => {
       });
   };
 
+  const handleForgotPassword = async (data: IForgotPasswordFormData) => {
+    try {
+      const res = await authApi.forgotPassword({
+        email: data.email,
+      });
+
+      if (res.status) {
+        // Password change successful
+        notifications.show({
+          message: 'Gửi email thành công',
+          color: 'green',
+        })
+        close();  // Đóng modal quên mật khẩu
+        reset();  // reset value form quên mật khẩu
+      } else {
+        notifications.show({
+          message: res.message || 'Gửi email không thành công',
+          color: 'red',
+        });
+      }
+    } catch (error) {
+      notifications.show({
+        message: 'Thiết lập lại mật khẩu không thành công',
+        color: 'red',
+      });
+    }
+  };
+
 
   const sendEmailVerifyLinkAccount = async (email: string) => {
     try {
@@ -197,7 +241,7 @@ const LoginPage = () => {
             Tạo tài khoản mới
           </Anchor>
         </Text>
-        <Form control={control} onSubmit={e => handleLogin(e.data)} onError={e => console.log(e)}>
+        <Form control={loginControl} onSubmit={e => handleLogin(e.data)} onError={e => console.log(e)}>
           <TextInput
             label="Email"
             name="email"
@@ -205,7 +249,7 @@ const LoginPage = () => {
             required
             size="md"
             radius="sm"
-            control={control}
+            control={loginControl}
             leftSection={<SiMaildotru size={16} />}
           />
           <PasswordInput
@@ -216,17 +260,17 @@ const LoginPage = () => {
             mt="md"
             size="md"
             radius="sm"
-            control={control}
+            control={loginControl}
             leftSection={<RiLockPasswordLine size={18} />}
           />
           <Group justify="space-between" mt="lg">
             <Checkbox
               label="Lưu thông tin đăng nhập"
               radius="sm"
-              control={control}
+              control={loginControl}
               name="isRemember"
             />
-            <Anchor component={Link} size="sm" to='#'>
+            <Anchor component={Link} size="sm" to='#' onClick={openResetPassword}>
               Quên mật khẩu?
             </Anchor>
           </Group>
@@ -269,6 +313,42 @@ const LoginPage = () => {
           </Flex>
         </Form>
       </Paper >
+
+      <Modal.Root opened={openedModalResetPassword} onClose={closeResetPassword} centered>
+        <Modal.Overlay />
+        <Modal.Content>
+          <Modal.Header>
+            <Modal.Title fz="lg" fw={600}>Quên mật khẩu</Modal.Title>
+            <Modal.CloseButton />
+          </Modal.Header>
+          <Modal.Body><Form
+            control={forgotPasswordControl} onSubmit={e => handleForgotPassword(e.data)} onError={e => console.log(e)}>
+            <TextInput
+              label="Email"
+              name="email"
+              placeholder="example@gmail.com"
+              required
+              size="md"
+              radius="sm"
+              control={forgotPasswordControl}
+              leftSection={<SiMaildotru size={16} />}
+            />
+            <div style={{ display: 'flex', justifyContent: 'flex-end', }}>
+              <Button mt="xl" radius="sm" size="md" type="submit">
+                Xác nhận
+              </Button>
+              <Button mt="xl" ml="sm" radius="sm" size="md" variant='outline' color='red.5'
+                onClick={() => {
+                  close();
+                  reset();
+                }}>
+                Hủy
+              </Button>
+            </div>
+          </Form>
+          </Modal.Body>
+        </Modal.Content>
+      </Modal.Root>
       <Modal opened={openedModalChooseEmail} onClose={close} title="Tài khoản của bạn chưa được liên kết, vui lòng chọn email muốn liên kết">
         {emailFromProvider &&
           <>
