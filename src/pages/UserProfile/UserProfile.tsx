@@ -27,7 +27,8 @@ const schema = yup.object().shape({
   newPassword: yup
     .string()
     .required('Bạn chưa nhập mật khẩu mới')
-    .min(8, 'Mật khẩu phải có tối thiểu 8 ký tự'),
+    .min(8, 'Mật khẩu phải có tối thiểu 8 ký tự')
+    .notOneOf([yup.ref('currentPassword'), ''], 'Mật khẩu mới không được trùng với mật khẩu hiện tại'),
   confirmNewPassword: yup
     .string()
     .required('Vui lòng xác nhận lại mật khẩu')
@@ -35,7 +36,9 @@ const schema = yup.object().shape({
 });
 
 
+
 const UserProfilePage = () => {
+  const isReset = false;
   const [opened, { open, close }] = useDisclosure(false);
 
   const { userInfo, linkAccount } = useAuth();
@@ -62,6 +65,7 @@ const UserProfilePage = () => {
       const res = await authApi.changePassword({
         currentPassword: data.currentPassword,
         newPassword: data.newPassword,
+        isReset,
       });
 
       if (res.status) {
