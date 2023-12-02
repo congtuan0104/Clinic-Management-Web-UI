@@ -9,6 +9,7 @@ import {
   DashboardAdmin,
   UserProfile,
   VerifyUserLinkAccountPage,
+  ResetPasswordPage,
 } from '@/pages';
 
 export const PATHS = {
@@ -21,6 +22,7 @@ export const PATHS = {
   REGISTER_BY_INVITATION: '/verify-account',
   ADMIN_DASHBOARD: '/admin/dashboard',
   VERIFY_LINK_ACCOUNT: '/verify-user',
+  RESET_PASSWORD: '/cai-lai-mat-khau',
 };
 
 export const ROUTES = [
@@ -91,6 +93,14 @@ export const ROUTES = [
     title: 'Thông tin cá nhân',
     layout: DefaultLayout,
     element: UserProfile,
+    isProtected: true,
+    children: [],
+  },
+  {
+    path: PATHS.RESET_PASSWORD,
+    title: 'Thiết lập lại mật khẩu',
+    layout: DefaultLayout,
+    element: ResetPasswordPage,
     isProtected: true,
     children: [],
   },
