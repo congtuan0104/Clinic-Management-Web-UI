@@ -1,52 +1,66 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import ChatHeads from "@/components/chatheads/ChatHeads";
 import Conversation from "@/components/conversation/Conversation";
 
-import { ChatHeadsUser } from "@/types"
+import { IGroupChat } from "@/types"
 //import { db } from "../../firebase";
 
 import "./chat-screen.css";
+import { useAuth } from "@/hooks";
+import { GroupChatType } from "@/enums";
 
 // get user from redux
 
-const arr = Array.from({ length: 5 }, () => ({ uid: "abcd", email: "Công Tuấn Phan" }));
-
 
 export default function ChatScreen() {
-  const [user, setUser] = useState("nhatminhpro2001@gmail.com");
+  const { userInfo } = useAuth();
 
-  const [chatHeads, setChatHeads] = useState<ChatHeadsUser[]>([]);
-  const [receiver, setReceiver] = useState(null);
+  const [groupChats, setGroupChats] = useState<IGroupChat[]>([]); // danh sách các nhóm chat của user hiện tại
+  const [selectedGroup, setSelectedGroup] = useState<IGroupChat | undefined>(undefined);  // nhóm chat được chọn để hiển thị
 
-  React.useEffect(() => {
-    
+  const fetchGroupChatsByUser = () => {
+    const userId = userInfo?.id;
+    // gọi api
+    const fakeDataGroup: IGroupChat[] = [
+      {
+        id: "group_1",
+        groupName: "Group 1",
+        type: GroupChatType.PERSONAL,
+      },
+      {
+        id: "group_2",
+        groupName: "Group 2",
+        type: GroupChatType.GROUP,
+      },
+      {
+        id: "group_3",
+        groupName: "Group 3",
+        type: GroupChatType.PERSONAL,
+      },
+    ];
 
-    // if no user -> redirect
-    if (user) setUser(user);
-    
-    
-  }, [setUser, setReceiver]);
+    setGroupChats(fakeDataGroup);
+  }
 
-  React.useEffect(() => {
-    if (!user) return;
+  useEffect(() => {
+    fetchGroupChatsByUser();
+  }, []);
 
-    (async () => {
-      
-      setChatHeads(arr);
-    })();
-  }, [user]);
+  const changeGroup = (group: IGroupChat) => {
+    setSelectedGroup(group);
+  }
 
   return (
     <div className="chat-screen">
       {/* ChatHeads */}
       <div className="half-screen chat-heads">
-        <ChatHeads items={chatHeads} setReceiver={setReceiver} />
+        <ChatHeads groups={groupChats} changeGroup={changeGroup} />
       </div>
 
       {/* Conversation */}
       <div className="half-screen">
-        <Conversation receiver={receiver} user={user} />
+        <Conversation groupChat={selectedGroup} />
       </div>
     </div>
   );

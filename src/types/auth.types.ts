@@ -50,8 +50,5 @@ export interface IRegisterResponse {
   token: string;
 }
 
-export interface ChatHeadsUser {
-  uid: string;
-  email: string;
-}
+
 

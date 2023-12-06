@@ -1,4 +1,6 @@
 import * as firebase from 'firebase/app';
+import { getDatabase } from 'firebase/database';
+
 import {
   getAuth,
   FacebookAuthProvider,
@@ -12,6 +14,7 @@ import {
 export const firebaseConfig = {
   apiKey: 'AIzaSyDLE4z4TMB5SsM9RqSxcqj6iUwTT6TFGus',
   authDomain: 'clinic-admin-e5eae.firebaseapp.com',
+  databaseURL: 'https://clinic-admin-e5eae-default-rtdb.asia-southeast1.firebasedatabase.app',
   projectId: 'clinic-admin-e5eae',
   storageBucket: 'clinic-admin-e5eae.appspot.com',
   messagingSenderId: '713822273863',
@@ -33,3 +36,5 @@ export const FirebaseAuthProvider = {
   Microsoft: new OAuthProvider('microsoft.com'),
   Apple: new OAuthProvider('apple.com'),
 };
+
+export const realtimeDB = getDatabase();

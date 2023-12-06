@@ -1,6 +1,7 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
+import { ref, onValue, set, push, child, update } from "firebase/database";
 
-import { ChatHeadsUser } from "@/types"
+import { IGroupChat, IGroupChatMessage } from "@/types"
 import "./conversation.css";
 import {
   FaCommentAlt,
@@ -13,32 +14,81 @@ import {
   FaThumbsUp,
   FaVideo,
 } from "react-icons/fa";
+import { realtimeDB } from "@/config";
 
-export default function Conversation({receiver, user} : any) {
-  const [conversationId, setConversationId] = useState(null);
-  const [messages, setMessages] = useState([]);
+interface ConversationProps {
+  groupChat?: IGroupChat;
+}
+
+export default function Conversation({ groupChat }: ConversationProps) {
+  const [messages, setMessages] = useState<IGroupChatMessage[]>([]);
+
+  const [inputMessage, setInputMessage] = useState<string>("");
+
+  useEffect(() => {
+    let groupRef = ref(realtimeDB, groupChat?.id);
+    onValue(groupRef, (snapshot) => {
+      const data: IGroupChatMessage[] | undefined = snapshot.val();
+      console.log(data);
+      setMessages(data || []);
+    })
+
+    return () => {
+      // cleanup
+    }
+  }, [groupChat])
+
+
 
   const currentMessage = useRef(null);
   const chatBodyRef = useRef(null);
 
   // handle sending the messages
-  
+  function sendMessage() {
+    if (!groupChat?.id) return;
+
+    const newMessage = {
+      messageId: new Date().toISOString(),
+      senderId: "user_test",
+      senderName: "User test",
+      content: inputMessage,
+      timestamp: new Date().toISOString(),
+    }
+
+    // thêm newMessage vào firebase
+    const newPostKey = messages.length;
+
+    const updates: any = {};
+    updates[newPostKey] = newMessage;
+    setInputMessage("");
+    update(ref(realtimeDB, groupChat.id), updates);
+
+    // set(ref(realtimeDB, groupChat?.id), {
+    //   messageId: new Date().toISOString(),
+    //   senderId: "user_test",
+    //   senderName: "User test",
+    //   content: inputMessage,
+    //   timestamp: new Date().toISOString(),
+    // });
+
+  }
+
   // add and save message to realtime db
-    
+
   // append message to existing conversation
-    
+
   // create a new conversation
 
   return (
     <div>
-      {receiver ? (
+      {groupChat ? (
         <div>
           <div className="user-conversation-header">
             <div className="user-conv-header-container">
               <div className="user-profile-pic-container">
-                <p className="user-profile-pic-text">{receiver.email[0]}</p>
+                <p className="user-profile-pic-text">{groupChat.groupName.slice(0, 1)}</p>
               </div>
-              <p>{receiver.email}</p>
+              <p>{groupChat.groupName}</p>
             </div>
 
             <div className="user-conv-header-container">
@@ -51,14 +101,18 @@ export default function Conversation({receiver, user} : any) {
           {/* Conversation messages */}
           <div className="conversation-messages" ref={chatBodyRef}>
             {messages.length > 0 ? (
-               /*  Xử lý khi có tin nhắn tại đây */
-              <></>
+              /*  Xử lý khi có tin nhắn tại đây */
+              <>
+                {messages.map((message) => (
+                  <div>{message.senderName}: {message.content}</div>
+                ))}
+              </>
             ) : (
               <div className="no-conversation">
                 <div>
                   <FaComments />
                 </div>
-                <p>Bắt đầu cuộc hội thoại với {receiver.email}</p>
+                <p>Bắt đầu cuộc hội thoại với {groupChat.groupName}</p>
               </div>
             )}
           </div>
@@ -69,9 +123,18 @@ export default function Conversation({receiver, user} : any) {
             <FaImage />
             <FaStickyNote />
             <div className="input-message">
-              <input placeholder="Hi.." ref={currentMessage}  />
+              <input
+                value={inputMessage}
+                onChange={(e) => setInputMessage(e.target.value)}
+                placeholder="Nhập nội dung tin nhắn"
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    sendMessage();
+                  }
+                }}
+                ref={currentMessage} />
             </div>
-            <button>Send</button>
+            <button onClick={sendMessage}>Gửi</button>
             <FaThumbsUp />
           </div>
         </div>
