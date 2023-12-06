@@ -1,4 +1,5 @@
 import { AdminLayout, DefaultLayout } from '@/layouts';
+import { MessageLayout } from '@/layouts/MessageLayout';
 import {
   HomePage,
   PricingPlanPage,
@@ -11,6 +12,7 @@ import {
   VerifyUserLinkAccountPage,
   PricingPlanAdminPage,
 } from '@/pages';
+import { Message } from '@/pages/Message';
 
 export const PATHS = {
   HOME: '/',
@@ -23,6 +25,7 @@ export const PATHS = {
   ADMIN_DASHBOARD: '/admin/dashboard',
   VERIFY_LINK_ACCOUNT: '/verify-user',
   ADMIN_PRICING_PLAN: '/admin/bang-gia',
+  MESSAGE: '/message',
 };
 
 export const ROUTES = [
@@ -102,6 +105,13 @@ export const ROUTES = [
     layout: AdminLayout,
     element: PricingPlanAdminPage,
     isProtected: true,
+    children: [],
+  },
+  {
+    path: PATHS.MESSAGE,
+    title: 'Nhắn tin',
+    layout: MessageLayout,
+    element: Message,
     children: [],
   },
   // {
