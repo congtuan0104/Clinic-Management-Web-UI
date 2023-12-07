@@ -1,6 +1,6 @@
 .conversation-messages {
     overflow-y: scroll;
-    height: 90vh;
+    height: 96vh;
     padding: 0vh 1vh 0vh 1vh;
   }
   
@@ -9,7 +9,7 @@
     padding-top: 1vh;
     align-items: center;
     justify-content: center;
-    transform: translateY(-4vh);
+    transform: translateY(-11vh);
   }
 
   .input-container input {

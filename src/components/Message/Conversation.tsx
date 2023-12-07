@@ -110,13 +110,16 @@ export default function Conversation({ groupChat }: ConversationProps) {
                   key={i}
                   className="message-container"
                   style={{ textAlign: message.senderId === userInfo?.id ? "right" : "left"}}>
-                    <div style={{display: "flex", marginTop : "0.5rem"}}>
-                      <div className="user-profile-pic-container" style={{marginBottom: "0.5rem"}}>
-                        <p className="user-profile-pic-text" style={{color : "black"}}>{message.senderName.slice(0, 1)}</p>
-                      </div>
-                      <div className="message-senderName">{message.senderName}</div>
+                    <div style={{display: "flex", marginTop : "0.5rem", transform: "translateX(2.5rem)", fontSize: "14px", color: "#8a8d91"}}>
+                      
+                      <div className="message-senderName" >{message.senderName}</div>
                     </div>
-                    <div className="message-bubble" style={{marginBottom: "1rem"}}>{message.content}</div>
+                    <div style={{display: "flex", marginTop: "0.5rem"}}>
+                      <div className="user-profile-pic-container" style={{marginTop: "0.3rem", marginRight: "0.7rem"}}>
+                          <p className="user-profile-pic-text" style={{color : "black"}}>{message.senderName.slice(0, 1)}</p>
+                      </div>
+                      <div className="message-bubble">{message.content}</div>
+                    </div>
                   </div>
                 ))}
               </>
