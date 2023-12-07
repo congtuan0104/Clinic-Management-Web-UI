@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 
-import ChatHeads from "@/components/chatheads/ChatHeads";
-import Conversation from "@/components/conversation/Conversation";
+import ChatHeads from "@/components/Message/ChatHeads";
+import Conversation from "@/components/Message/Conversation";
 
 import { IGroupChat } from "@/types"
 //import { db } from "../../firebase";

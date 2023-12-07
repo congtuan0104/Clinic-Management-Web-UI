@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { ref, onValue, set, push, child, update } from "firebase/database";
+import { useAuth } from "@/hooks";
 
 import { IGroupChat, IGroupChatMessage } from "@/types"
 import "./conversation.css";
@@ -11,7 +12,6 @@ import {
   FaPhone,
   FaPlusCircle,
   FaStickyNote,
-  FaThumbsUp,
   FaVideo,
 } from "react-icons/fa";
 import { realtimeDB } from "@/config";
@@ -22,6 +22,7 @@ interface ConversationProps {
 
 export default function Conversation({ groupChat }: ConversationProps) {
   const [messages, setMessages] = useState<IGroupChatMessage[]>([]);
+  const { userInfo } = useAuth();
 
   const [inputMessage, setInputMessage] = useState<string>("");
 
@@ -103,8 +104,14 @@ export default function Conversation({ groupChat }: ConversationProps) {
             {messages.length > 0 ? (
               /*  Xử lý khi có tin nhắn tại đây */
               <>
-                {messages.map((message) => (
-                  <div>{message.senderName}: {message.content}</div>
+                {messages.map((message, i) => (
+                  <div
+                  key={i}
+                  className="message-container"
+                  style={{ textAlign: message.senderId === userInfo?.id ? "right" : "left"}}>
+                    <div className="message-senderName">{message.senderName}</div> 
+                    <div className="message-bubble">{message.content}</div>
+                  </div>
                 ))}
               </>
             ) : (
@@ -135,7 +142,6 @@ export default function Conversation({ groupChat }: ConversationProps) {
                 ref={currentMessage} />
             </div>
             <button onClick={sendMessage}>Gửi</button>
-            <FaThumbsUp />
           </div>
         </div>
       ) : (

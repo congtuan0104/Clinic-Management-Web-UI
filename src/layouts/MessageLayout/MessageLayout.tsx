@@ -5,9 +5,9 @@ import './index.css';
 
 const MessageLayout = ({ children }: { children: JSX.Element }) => {
   return (
-    <div>
+    <Box bg='primary.0'>
       <main className="max-w-screen-2xl mx-auto">{children}</main>
-    </div>
+    </Box>
   );
 };
 

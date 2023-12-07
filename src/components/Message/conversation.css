@@ -9,7 +9,12 @@
     padding-top: 1vh;
     align-items: center;
     justify-content: center;
-    transform: translateY(-3vh);
+    transform: translateY(-4vh);
+  }
+
+  .input-container input {
+    background-color: #cccccc;
+    color: black;
   }
   
   .input-container svg {
@@ -29,7 +34,7 @@
   }
   
   .message-container {
-    display: flex;
+    display: block;
   }
   
   .message-bubble {
@@ -39,6 +44,7 @@
     border-radius: 10px;
     min-width: 8vh;
     color: white;
+    display: inline-block;
   }
   
   .user-conversation-header {
@@ -52,6 +58,10 @@
   .user-conv-header-container {
     display: flex;
     align-items: center;
+  }
+
+  .user-conv-header-container p {
+    color: black;
   }
   
   .user-conv-header-container svg {

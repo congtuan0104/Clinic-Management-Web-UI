@@ -1,5 +1,4 @@
 import React from "react";
-import { FaEdit, FaEllipsisH, FaVideo } from "react-icons/fa";
 import { IGroupChat } from "@/types"
 import "./chatheads.css";
 
@@ -13,11 +12,6 @@ export default function ChatHeads({ groups, changeGroup }: ChatHeadsProps) {
     <div>
       <div className="conv-header-container">
         <p className="conversations-header">Đoạn chat</p>
-        <div>
-          <FaEllipsisH />
-          <FaVideo />
-          <FaEdit />
-        </div>
       </div>
       <input className="chat-heads-search" placeholder="Tìm kiếm" />
       <div className="chat-heads-container">
