@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-import ChatHeads from "@/components/Message/ChatHeads";
+import GroupChatList from "@/components/Message/GroupChatList";
 import Conversation from "@/components/Message/Conversation";
 
 import { IGroupChat } from "@/types"
@@ -38,6 +38,11 @@ export default function ChatScreen() {
         groupName: "Group 3",
         type: GroupChatType.PERSONAL,
       },
+      {
+        id: "group_4",
+        groupName: "Group 4",
+        type: GroupChatType.PERSONAL,
+      },
     ];
 
     setGroupChats(fakeDataGroup);
@@ -52,15 +57,18 @@ export default function ChatScreen() {
   }
 
   return (
-    <div className="chat-screen">
-      {/* ChatHeads */}
-      <div className="half-screen chat-heads">
-        <ChatHeads groups={groupChats} changeGroup={changeGroup} />
+    <div className="flex">
+      {/* Danh sách nhóm chat */}
+      <div className="w-[25%] border-r border-solid border-gray-300 mr-3">
+        <GroupChatList groups={groupChats} changeGroup={changeGroup} selectedGroup={selectedGroup} />
       </div>
 
-      {/* Conversation */}
-      <div className="half-screen">
-        <Conversation groupChat={selectedGroup} />
+      {/* Nội dung đoạn chat*/}
+      <div className="flex-1">
+        {selectedGroup ? <Conversation groupChat={selectedGroup} /> :
+          <div className="flex items-center justify-center h-full">
+            <p className="text-2xl text-gray-400">Chọn một nhóm chat để bắt đầu trò chuyện</p>
+          </div>}
       </div>
     </div>
   );
