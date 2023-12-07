@@ -7,17 +7,17 @@ export function UserButton() {
     <UnstyledButton className={classes.user}>
       <Group>
         <Avatar
-          src="https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/avatars/avatar-8.png"
+          src="https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/avatars/avatar-9.png"
           radius="xl"
         />
 
         <div style={{ flex: 1 }}>
           <Text size="sm" fw={500}>
-            Harriette Spoonlicker
+            Vo Hoai An
           </Text>
 
           <Text c="dimmed" size="xs">
-            hspoonlicker@outlook.com
+            vohoaian@gmail.com
           </Text>
         </div>
 

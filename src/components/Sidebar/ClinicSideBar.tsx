@@ -13,7 +13,6 @@ const mockdata = [
   {
     label: 'Quản trị',
     icon: CgNotes,
-    initiallyOpened: true,
     links: [
       { label: 'Overview', link: '/' },
       { label: 'Forecasts', link: '/' },
