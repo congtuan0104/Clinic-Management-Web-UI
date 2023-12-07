@@ -13,6 +13,7 @@ import {
   FaPlusCircle,
   FaStickyNote,
   FaVideo,
+  FaPaperPlane
 } from "react-icons/fa";
 import { realtimeDB } from "@/config";
 
@@ -109,8 +110,13 @@ export default function Conversation({ groupChat }: ConversationProps) {
                   key={i}
                   className="message-container"
                   style={{ textAlign: message.senderId === userInfo?.id ? "right" : "left"}}>
-                    <div className="message-senderName">{message.senderName}</div> 
-                    <div className="message-bubble">{message.content}</div>
+                    <div style={{display: "flex", marginTop : "0.5rem"}}>
+                      <div className="user-profile-pic-container" style={{marginBottom: "0.5rem"}}>
+                        <p className="user-profile-pic-text" style={{color : "black"}}>{message.senderName.slice(0, 1)}</p>
+                      </div>
+                      <div className="message-senderName">{message.senderName}</div>
+                    </div>
+                    <div className="message-bubble" style={{marginBottom: "1rem"}}>{message.content}</div>
                   </div>
                 ))}
               </>
@@ -141,7 +147,7 @@ export default function Conversation({ groupChat }: ConversationProps) {
                 }}
                 ref={currentMessage} />
             </div>
-            <button onClick={sendMessage}>Gửi</button>
+            <button onClick={sendMessage}><FaPaperPlane/></button>
           </div>
         </div>
       ) : (
