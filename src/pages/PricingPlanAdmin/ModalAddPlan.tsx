@@ -69,7 +69,7 @@ const ModalAddPlan = ({ open, onClose }: IModalAddPlanProps) => {
     resolver: yupResolver(schema), // gắn điều kiện xác định input hợp lệ vào form
     defaultValues: {
       planName: '',
-      currentPrice: 0,
+      currentPrice: 1000,
       duration: 30,
       description: '',
       optionIds: [],
@@ -117,7 +117,7 @@ const ModalAddPlan = ({ open, onClose }: IModalAddPlanProps) => {
               radius="sm"
               control={control}
               suffix="₫"
-              min={0}
+              min={1000}
               thousandSeparator="."
               decimalSeparator=","
               rightSection={<></>}

@@ -1,5 +1,4 @@
-import { AdminLayout, DefaultLayout } from '@/layouts';
-import { MessageLayout } from '@/layouts/MessageLayout';
+import { AdminLayout, DefaultLayout, ClinicLayout } from '@/layouts';
 import {
   HomePage,
   PricingPlanPage,
@@ -11,8 +10,8 @@ import {
   UserProfile,
   VerifyUserLinkAccountPage,
   PricingPlanAdminPage,
+  Message,
 } from '@/pages';
-import { Message } from '@/pages/Message';
 
 export const PATHS = {
   HOME: '/',
@@ -110,7 +109,7 @@ export const ROUTES = [
   {
     path: PATHS.MESSAGE,
     title: 'Nhắn tin',
-    layout: MessageLayout,
+    layout: ClinicLayout,
     element: Message,
     children: [],
   },

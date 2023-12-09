@@ -9,3 +9,4 @@ export * from './DashboardAdmin';
 export * from './RegisterByInvitation';
 export * from './VerifyUserLinkAccount';
 export * from './PricingPlanAdmin';
+export * from './Message';
