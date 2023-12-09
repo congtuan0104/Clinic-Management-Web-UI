@@ -1,4 +1,4 @@
-import { AdminLayout, DefaultLayout } from '@/layouts';
+import { AdminLayout, DefaultLayout, ClinicLayout } from '@/layouts';
 import {
   HomePage,
   PricingPlanPage,
