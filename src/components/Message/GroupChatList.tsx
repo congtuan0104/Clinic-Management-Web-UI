@@ -1,4 +1,4 @@
-import React from "react";
+import { useEffect, useState } from "react";
 import { IGroupChat } from "@/types"
 import { Avatar, Box, Flex, Input, Text } from "@mantine/core";
 import classNames from "classnames";
@@ -10,14 +10,50 @@ interface ChatHeadsProps {
 }
 
 export default function GroupChatList({ groups, changeGroup, selectedGroup }: ChatHeadsProps) {
-  return (
-    <Box px={16}>
-      <Text my={16} size={'22px'} fw={700}>Đoạn chat</Text>
+  const [searchGroup, setSearchGroup] = useState<string>("");
+  const [searchGroupResult, setSearchGroupResult] = useState<IGroupChat[]>(groups);
 
-      <Input placeholder="Tìm kiếm nhóm chat" radius='lg' />
+  useEffect(() => {
+    setSearchGroupResult(groups);
+  }
+    , [groups]);
+
+  // useEffect(() => {
+  //   if (searchGroup.trim().length === 0) {
+  //     setSearchGroupResult(groups);
+  //     return;
+  //   }
+  //   handleSearchGroup();
+  // }
+  //   , [searchGroup]);
+
+
+  const handleSearchGroup = (textSearch: string) => {
+    if (textSearch.trim().length === 0) {
+      setSearchGroupResult(groups);
+      return;
+    }
+    const result = groups.filter(
+      (group) => group.groupName
+        .toLowerCase()
+        .includes(searchGroup
+          .toLowerCase()));
+    setSearchGroupResult(result);
+  }
+
+  return (
+    <>
+      <Input
+        value={searchGroup}
+        onChange={(e) => {
+          setSearchGroup(e.target.value)
+          handleSearchGroup(e.target.value)
+        }}
+        placeholder="Tìm kiếm nhóm chat"
+        radius='lg' />
 
       <Flex my={10} align='center' direction='column'>
-        {groups.map((group) => (
+        {searchGroupResult.map((group) => (
           <Flex
             key={group.id}
             w={'100%'}
@@ -25,12 +61,12 @@ export default function GroupChatList({ groups, changeGroup, selectedGroup }: Ch
             align='center'
             my={2}
             className={classNames(
-              "cursor-pointer  rounded-xl p-2",
+              "cursor-pointer rounded-xl p-2",
               group.id === selectedGroup?.id ? "bg-blue-100" : 'hover:bg-gray-200'
 
             )}
           >
-            <Avatar color="primary.5" radius="xl" >
+            <Avatar color="secondary.5" radius="xl" >
               {group.groupName.slice(0, 1)}
             </Avatar>
 
@@ -39,6 +75,6 @@ export default function GroupChatList({ groups, changeGroup, selectedGroup }: Ch
 
         ))}
       </Flex>
-    </Box>
+    </>
   );
 }

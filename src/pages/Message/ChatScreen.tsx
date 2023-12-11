@@ -10,11 +10,16 @@ import "./chat-screen.css";
 import { useAuth } from "@/hooks";
 import { GroupChatType } from "@/enums";
 
+import { Text } from "@mantine/core";
+import { useDocumentTitle } from "@mantine/hooks";
+
 // get user from redux
 
 
 export default function ChatScreen() {
   const { userInfo } = useAuth();
+  useDocumentTitle('Clinus - Nhắn tin');
+
 
   const [groupChats, setGroupChats] = useState<IGroupChat[]>([]); // danh sách các nhóm chat của user hiện tại
   const [selectedGroup, setSelectedGroup] = useState<IGroupChat | undefined>(undefined);  // nhóm chat được chọn để hiển thị
@@ -57,19 +62,24 @@ export default function ChatScreen() {
   }
 
   return (
-    <div className="flex">
-      {/* Danh sách nhóm chat */}
-      <div className="w-[25%] border-r border-solid border-gray-300 mr-3">
-        <GroupChatList groups={groupChats} changeGroup={changeGroup} selectedGroup={selectedGroup} />
+    <div className="p-5 h-screen overflow-auto">
+      <Text mb={16} size={'22px'} fw={700}>Tin nhắn</Text>
+      <div className="bg-white p-4 rounded-xl flex border border-solid border-gray-300 h-[94%]">
+        {/* Danh sách nhóm chat */}
+        <div className="w-[25%] border-r border-0 border-solid border-gray-300 pr-3 bg-white max-h-full overflow-auto">
+          <GroupChatList groups={groupChats} changeGroup={changeGroup} selectedGroup={selectedGroup} />
+        </div>
+
+        {/* Nội dung đoạn chat*/}
+        <div className="flex-1 flex flex-col">
+          {selectedGroup ? <Conversation groupChat={selectedGroup} /> :
+            <div className="flex items-center justify-center h-full">
+              <p className="text-2xl text-gray-400">Chọn một nhóm chat để bắt đầu trò chuyện</p>
+            </div>
+          }
+        </div>
       </div>
 
-      {/* Nội dung đoạn chat*/}
-      <div className="flex-1">
-        {selectedGroup ? <Conversation groupChat={selectedGroup} /> :
-          <div className="flex items-center justify-center h-full">
-            <p className="text-2xl text-gray-400">Chọn một nhóm chat để bắt đầu trò chuyện</p>
-          </div>}
-      </div>
     </div>
   );
 }

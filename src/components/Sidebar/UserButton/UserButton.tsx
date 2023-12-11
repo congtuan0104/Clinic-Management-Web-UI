@@ -1,23 +1,28 @@
-import { UnstyledButton, Group, Avatar, Text, rem } from '@mantine/core';
+import { UnstyledButton, Group, Avatar, Text, rem, ThemeIcon } from '@mantine/core';
 import { IoIosArrowForward } from "react-icons/io";
 import classes from './UserButton.module.css';
+import { useAuth } from '@/hooks';
+import { FaUser } from 'react-icons/fa';
 
 export function UserButton() {
+  const { userInfo } = useAuth();
+
   return (
     <UnstyledButton className={classes.user}>
       <Group>
-        <Avatar
-          src="https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/avatars/avatar-9.png"
-          radius="xl"
-        />
+
+        <ThemeIcon c='teal.7' variant='white' radius='xl' size='lg'>
+          <FaUser size={22} />
+        </ThemeIcon>
+
 
         <div style={{ flex: 1 }}>
           <Text size="sm" fw={500}>
-            Vo Hoai An
+            {userInfo?.firstName} {userInfo?.lastName}
           </Text>
 
-          <Text c="dimmed" size="xs">
-            vohoaian@gmail.com
+          <Text tt='capitalize' lineClamp={1} c="dimmed" size="xs">
+            {userInfo?.role}
           </Text>
         </div>
 

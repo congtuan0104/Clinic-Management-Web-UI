@@ -6,6 +6,7 @@ export * from './VerifyAccount';
 export * from './Register';
 export * from './UserProfile';
 export * from './DashboardAdmin';
+export * from './DashboardClinic';
 export * from './RegisterByInvitation';
 export * from './VerifyUserLinkAccount';
 export * from './PricingPlanAdmin';

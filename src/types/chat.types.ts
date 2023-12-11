@@ -1,4 +1,4 @@
-import { GroupChatType } from '@/enums';
+import { GroupChatType, MessageType } from '@/enums';
 
 /**
  * Thông tin nhóm chat
@@ -26,9 +26,10 @@ export interface IGroupChatMember {
  * Nội dung tin nhắn trong nhóm chat
  */
 export interface IGroupChatMessage {
-  content: string;
+  content: string; // url
   messageId: string;
   senderId: string;
   senderName: string;
   timestamp: Date;
+  type: MessageType;
 }

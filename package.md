@@ -22,3 +22,4 @@
 <li> prettier: auto format code</li>
 <li> react-device-detect: kiểm tra loại thiết bị (mobile/desktop) truy cập trang web</li>
 <li> cookies-next: quản lý cookie</li>
+<li> @fancyapps/ui: tạo gallery thumbnail preview ảnh</li>

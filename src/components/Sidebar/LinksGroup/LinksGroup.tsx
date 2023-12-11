@@ -2,22 +2,25 @@ import { useState } from 'react';
 import { Group, Box, Collapse, ThemeIcon, Text, UnstyledButton, rem } from '@mantine/core';
 import { IoIosArrowForward } from "react-icons/io";
 import classes from './LinksGroup.module.css';
+import { Link } from 'react-router-dom';
 
 interface LinksGroupProps {
   icon: React.FC<any>;
   label: string;
   initiallyOpened?: boolean;
-  links?: { label: string; link: string }[];
+  href?: string;
+  children?: { label: string; link: string }[];
+  isActive?: boolean;
 }
 
-export function LinksGroup({ icon: Icon, label, initiallyOpened, links }: LinksGroupProps) {
-  const hasLinks = Array.isArray(links);
+export function LinksGroup({ icon: Icon, label, initiallyOpened, children, href, isActive = false }: LinksGroupProps) {
+  const hasLinks = Array.isArray(children);
   const [opened, setOpened] = useState(initiallyOpened || false);
-  const items = (hasLinks ? links : []).map((link) => (
-    <Text<'a'>
-      component="a"
+  const items = (hasLinks ? children : []).map((link) => (
+    <Text
+      component={Link}
       className={classes.link}
-      href={link.link}
+      to={link.link}
       key={link.label}
       onClick={(event) => event.preventDefault()}
     >
@@ -27,10 +30,14 @@ export function LinksGroup({ icon: Icon, label, initiallyOpened, links }: LinksG
 
   return (
     <>
-      <UnstyledButton onClick={() => setOpened((o) => !o)} className={classes.control}>
+      <UnstyledButton
+        to={href || '#'}
+        onClick={() => !href && setOpened((o) => !o)}
+        className={classes.control}
+        component={Link}>
         <Group justify="space-between" gap={0}>
           <Box style={{ display: 'flex', alignItems: 'center' }}>
-            <ThemeIcon variant="light" size={30}>
+            <ThemeIcon c='teal.7' variant="light" size={30}>
               <Icon style={{ width: rem(18), height: rem(18) }} />
             </ThemeIcon>
             <Box ml="md">{label}</Box>

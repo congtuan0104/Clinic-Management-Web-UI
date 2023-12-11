@@ -9,3 +9,10 @@ export enum GroupChatType {
    */
   GROUP = 2,
 }
+
+export enum MessageType {
+  Text = 'text',
+  Image = 'image',
+  Video = 'video',
+  File = 'file',
+}
