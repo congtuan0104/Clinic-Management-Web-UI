@@ -39,9 +39,6 @@ export default function Conversation({ groupChat }: ConversationProps) {
   const { userInfo } = useAuth();
 
   const [inputMessage, setInputMessage] = useState<string>("");
-  // const [fileUpload, setFileUpload] = useState<File | null>(null);
-
-
 
   useEffect(() => {
     let groupRef = ref(realtimeDB, 'chats/' + groupChat.id);
@@ -70,8 +67,6 @@ export default function Conversation({ groupChat }: ConversationProps) {
       type: type,
       link: link || '',
     }
-
-    console.log(newMessage);
 
     // thêm newMessage vào firebase
     const newPostKey = messages.length;
