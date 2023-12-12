@@ -26,10 +26,11 @@ export interface IGroupChatMember {
  * Nội dung tin nhắn trong nhóm chat
  */
 export interface IGroupChatMessage {
-  content: string; // url
+  content: string;
   messageId: string;
   senderId: string;
   senderName: string;
   timestamp: Date;
   type: MessageType;
+  link: string;
 }

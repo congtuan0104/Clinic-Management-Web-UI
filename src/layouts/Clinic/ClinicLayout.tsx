@@ -9,43 +9,42 @@ import { MessagePayload } from 'firebase/messaging';
 import { useEffect, useState } from 'react';
 
 const ClinicLayout = ({ children }: { children: JSX.Element }) => {
-    const { userInfo } = useAuth();
-    const [userNotice, setUserNotice] = useState<INotification[]>([]);
+  const { userInfo } = useAuth();
+  const [notify, setNotify] = useState<INotification[]>([]);
 
-    requestForToken();
-    onMessageListener()
-        .then((payload) => {
-            notifications.show({
-                message: <>
-                    <Title>{payload?.notification?.title}</Title>
-                    <Text>{payload?.notification?.body}</Text>
-                </>,
-                color: 'blue',
-            });
-        })
-        .catch((err) => console.log('Get firebase message failed: ', err));
+  requestForToken();
+  onMessageListener()
+    .then((payload) => {
+      notifications.show({
+        message: <>
+          <Title>{payload?.notification?.title}</Title>
+          <Text>{payload?.notification?.body}</Text>
+        </>,
+        color: 'blue',
+      });
+    })
+    .catch((err) => console.log('Get firebase message failed: ', err));
 
-    useEffect(() => {
-        let groupRef = ref(realtimeDB, 'notifications/' + userInfo?.id);
-        return onValue(groupRef, (snapshot) => {
-            const data = snapshot.val();
-            if (snapshot.exists()) {
-                setUserNotice(data || [])
-            }
-            else setUserNotice([])
-        })
+  useEffect(() => {
+    let groupRef = ref(realtimeDB, 'notifications/' + userInfo?.id);
+    return onValue(groupRef, (snapshot) => {
+      const data = snapshot.val();
+      if (snapshot.exists()) {
+        setNotify(data || [])
+      }
+      else setNotify([])
+    })
 
-    }, [userInfo?.id])
+  }, [userInfo?.id])
 
-    return (
-
-        <>
-            <ClinicSideBar />
-            <main style={{ marginLeft: '280px' }} className='bg-primary-0'>
-                {children}
-            </main>
-        </>
-    );
+  return (
+    <>
+      <ClinicSideBar notify={notify} />
+      <main style={{ marginLeft: '280px' }} className='bg-primary-0'>
+        {children}
+      </main>
+    </>
+  );
 };
 
 export default ClinicLayout;

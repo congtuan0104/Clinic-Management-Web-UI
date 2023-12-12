@@ -22,6 +22,7 @@ import {
   FaVideo,
   FaPaperPlane
 } from "react-icons/fa";
+import { TiDownload } from "react-icons/ti";
 import { firebaseStorage, realtimeDB } from "@/config";
 import { Avatar, Button, Flex, Input } from "@mantine/core";
 import classNames from "classnames";
@@ -59,15 +60,18 @@ export default function Conversation({ groupChat }: ConversationProps) {
   const chatBodyRef = useRef(null);
 
   // handle sending the messages
-  const saveMessageToFirebase = (content: string, type: MessageType) => {
+  const saveMessageToFirebase = (content: string, type: MessageType, link?: string) => {
     const newMessage = {
       messageId: uuidv4(),
       senderId: userInfo?.id,
       senderName: userInfo?.firstName + " " + userInfo?.lastName,
       content: content,
       timestamp: new Date().toISOString(),
-      type: type
+      type: type,
+      link: link || '',
     }
+
+    console.log(newMessage);
 
     // thêm newMessage vào firebase
     const newPostKey = messages.length;
@@ -95,9 +99,9 @@ export default function Conversation({ groupChat }: ConversationProps) {
       }
 
       // kiểm tra dung lượng file
-      if (fileUpload.size > 10485760) {
+      if (fileUpload.size > 20 * 1024 * 1024) {
         notifications.show({
-          message: 'Dung lượng file tối đa có thể tải lên là 10MB',
+          message: 'Dung lượng file tối đa có thể tải lên là 20MB',
           color: 'red',
         });
         return;
@@ -106,11 +110,11 @@ export default function Conversation({ groupChat }: ConversationProps) {
       const fileName = fileUpload.name;
       const fileType = fileUpload.type.split("/")[0];
 
-      const imageRef = storageRef(firebaseStorage, `chats/${fileName}${uuidv4()}`);
+      const imageRef = storageRef(firebaseStorage, `chats/${groupChat.id}/${fileName}`);
       const snapshot = await uploadBytes(imageRef, fileUpload);
       const url = await getDownloadURL(snapshot.ref);
 
-      saveMessageToFirebase(url, fileType === "application" ? MessageType.File : fileType as MessageType);
+      saveMessageToFirebase(fileName, fileType === "application" ? MessageType.File : fileType as MessageType, url);
     }
     catch (error) {
       console.log(error);
@@ -132,8 +136,8 @@ export default function Conversation({ groupChat }: ConversationProps) {
               w="40%"
               fit="contain"
               loading="lazy"
-              src={message.content}
-              alt="image"
+              src={message.link}
+              alt={message.content}
               className={classNames(
                 "cursor-pointer rounded-lg border-solid border",
                 message.senderId === userInfo?.id ? "border-primary-100" : "border-gray-100"
@@ -152,21 +156,25 @@ export default function Conversation({ groupChat }: ConversationProps) {
               data-fancybox="videos"
               controls
               width="100%"
-              src={message.content}
+              src={message.link}
               className="rounded-2xl"
             />
           </Fancybox>
         );
       case MessageType.File:
-        let fileName = message.content.split("chats%2F")[1].split("?")[0];
-        fileName = fileName.substring(0, fileName.length - 36);
-        fileName = decodeURIComponent(fileName);
-
         return <div className={classNames(
-          "rounded-2xl px-2 py-1 max-w-[45%] break-all hover:underline",
+          "rounded-2xl px-2 py-1 max-w-[70%] hover:opacity-80 cursor-pointer",
           message.senderId === userInfo?.id ? "bg-blue-500 text-white" : "bg-gray-100"
         )}>
-          <a className="text-white" href={message.content} target="_blank" rel="noreferrer">Tải file {fileName}</a>
+
+          <a className={
+            classNames("flex items-center",
+              message.senderId === userInfo?.id ? "text-white" : "text-black-70"
+            )
+          } href={message.link} target="_blank" rel="noreferrer">
+            <TiDownload size={70} />
+            <span className="line-clamp-2 break-all ml-2 leading-5">{message.content}</span>
+          </a>
         </div>;
       default:
         return <div className={classNames(
