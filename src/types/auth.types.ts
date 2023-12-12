@@ -1,6 +1,8 @@
 export interface IUserInfo {
   id: string;
   email: string;
+  firstName: string;
+  lastName: string;
   password: string;
   emailVerified: boolean;
   role: string;
@@ -49,5 +51,3 @@ export interface IRegisterResponse {
   user: IUserInfo;
   token: string;
 }
-
-

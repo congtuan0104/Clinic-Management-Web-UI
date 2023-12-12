@@ -6,11 +6,12 @@ import { useAuth } from './hooks';
 
 export const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
   const navigate = useNavigate();
-  const { isLogin } = useAuth();
-  if (!isLogin) {
-    navigate(PATHS.LOGIN);
-  }
-  else return (
+  // const { isLogin } = useAuth();
+  // const isLogin = checkIsLogin();
+  // if (!isLogin) {
+  //   navigate(PATHS.LOGIN);
+  // }
+  return (
     <>{children}</>
   );
 };

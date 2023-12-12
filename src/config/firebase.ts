@@ -1,4 +1,9 @@
 import * as firebase from 'firebase/app';
+import { getDatabase } from 'firebase/database';
+import { MessagePayload, getMessaging, getToken, onMessage } from 'firebase/messaging';
+import { getAnalytics } from 'firebase/analytics';
+import { getStorage } from 'firebase/storage';
+
 import {
   getAuth,
   FacebookAuthProvider,
@@ -10,13 +15,14 @@ import {
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 export const firebaseConfig = {
-  apiKey: 'AIzaSyDLE4z4TMB5SsM9RqSxcqj6iUwTT6TFGus',
-  authDomain: 'clinic-admin-e5eae.firebaseapp.com',
-  projectId: 'clinic-admin-e5eae',
-  storageBucket: 'clinic-admin-e5eae.appspot.com',
-  messagingSenderId: '713822273863',
-  appId: '1:713822273863:web:15b2f34ade2fb01ecf4c62',
-  measurementId: 'G-JLE3CG0FJQ',
+  apiKey: 'AIzaSyBUjR_LpKzbeLaBANVXDN84BDLPLRn6VhM',
+  authDomain: 'clinus-1d1d1.firebaseapp.com',
+  databaseURL: 'https://clinus-1d1d1-default-rtdb.asia-southeast1.firebasedatabase.app',
+  projectId: 'clinus-1d1d1',
+  storageBucket: 'clinus-1d1d1.appspot.com',
+  messagingSenderId: '698964272341',
+  appId: '1:698964272341:web:f8e27c1489c69dbf6cee5c',
+  measurementId: 'G-13Z9189280',
 };
 
 // Initialize Firebase
@@ -24,7 +30,11 @@ export const firebaseApp = !firebase.getApps().length
   ? firebase.initializeApp(firebaseConfig)
   : firebase.getApps()[0];
 
+export const analytics = getAnalytics(firebaseApp);
 export const firebaseAuth = getAuth(firebaseApp);
+export const realtimeDB = getDatabase();
+export const firebaseMessaging = getMessaging();
+export const firebaseStorage = getStorage();
 
 export const FirebaseAuthProvider = {
   Google: new GoogleAuthProvider(),
@@ -33,3 +43,36 @@ export const FirebaseAuthProvider = {
   Microsoft: new OAuthProvider('microsoft.com'),
   Apple: new OAuthProvider('apple.com'),
 };
+
+/**
+ * Lấy device token để nhận thông báo tức thời từ firebase
+ */
+export const requestForToken = () => {
+  return getToken(firebaseMessaging, {
+    vapidKey:
+      'BPq0Cn7VHMLHhi1BuOCLKVYbbJcR2zTl0b5J6bU0nm9tyXE8KZSzerwUj9GU6h11G4Yx4MtbkO88EzXaSSwKcQs',
+  })
+    .then(currentToken => {
+      if (currentToken) {
+        console.log('current token for client: ', currentToken);
+        // Perform any other neccessary action with the token
+      } else {
+        // Show permission request UI
+        console.log('No registration token available. Request permission to generate one.');
+      }
+    })
+    .catch(err => {
+      console.log('An error occurred while retrieving token. ', err);
+    });
+};
+
+/**
+ * Lắng nghe sự kiện nhận thông báo từ firebase
+ */
+export const onMessageListener = (): Promise<MessagePayload> =>
+  new Promise(resolve => {
+    onMessage(firebaseMessaging, payload => {
+      console.log('payload', payload);
+      resolve(payload);
+    });
+  });

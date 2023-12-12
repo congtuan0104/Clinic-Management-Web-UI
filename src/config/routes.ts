@@ -10,6 +10,8 @@ import {
   UserProfile,
   VerifyUserLinkAccountPage,
   PricingPlanAdminPage,
+  Message,
+  DashboardClinic,
 } from '@/pages';
 
 export const PATHS = {
@@ -19,10 +21,12 @@ export const PATHS = {
   REGISTER: '/dang-ky',
   PROFILE: '/thong-tin-ca-nhan',
   VERIFY: '/verify-account',
+  VERIFY_LINK_ACCOUNT: '/verify-user',
   REGISTER_BY_INVITATION: '/verify-account',
   ADMIN_DASHBOARD: '/admin/dashboard',
-  VERIFY_LINK_ACCOUNT: '/verify-user',
   ADMIN_PRICING_PLAN: '/admin/bang-gia',
+  CLINIC_CHAT: 'clinic/messages',
+  CLINIC_DASHBOARD: '/clinic/dashboard',
 };
 
 export const ROUTES = [
@@ -101,6 +105,22 @@ export const ROUTES = [
     title: 'Quản lý bảng giá',
     layout: AdminLayout,
     element: PricingPlanAdminPage,
+    isProtected: true,
+    children: [],
+  },
+  {
+    path: PATHS.CLINIC_CHAT,
+    title: 'Nhắn tin',
+    layout: ClinicLayout,
+    element: Message,
+    isProtected: true,
+    children: [],
+  },
+  {
+    path: PATHS.CLINIC_DASHBOARD,
+    title: 'Dashboard',
+    layout: ClinicLayout,
+    element: DashboardClinic,
     isProtected: true,
     children: [],
   },

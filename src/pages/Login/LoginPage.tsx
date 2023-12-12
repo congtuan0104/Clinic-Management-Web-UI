@@ -146,7 +146,7 @@ const LoginPage = () => {
           });
 
           if (userInfo.role === 'admin')
-            navigate(PATHS.ADMIN_DASHBOARD);
+            navigate(PATHS.CLINIC_DASHBOARD);
           else
             navigate(PATHS.PROFILE);
 
