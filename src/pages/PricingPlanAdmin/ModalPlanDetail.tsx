@@ -76,7 +76,7 @@ const ModalPlanDetail = ({ open, onClose, planInfo }: IModalPlanDetailProps) => 
       currentPrice: planInfo.currentPrice,
       duration: planInfo.duration,
       description: planInfo.description,
-      optionIds: planInfo.planOptions.map((option) => option.option.id)
+      optionIds: planInfo.planOptions.map((option) => option.id)
     },
   });
 

@@ -21,6 +21,7 @@ import MicrosoftLogo from '@/assets/icons/microsoft.svg'
 import { AuthProvider } from 'firebase/auth';
 import { useDisclosure } from '@mantine/hooks';
 import { useState } from 'react';
+import { AuthModule } from '@/enums';
 
 interface ILoginFormData {
   email: string;
@@ -145,21 +146,27 @@ const LoginPage = () => {
             color: 'green',
           });
 
-          if (userInfo.role === 'admin')
-            navigate(PATHS.CLINIC_DASHBOARD);
-          else
-            navigate(PATHS.PROFILE);
+          switch (userInfo.moduleId) {
+            case AuthModule.Admin:
+              navigate(PATHS.ADMIN_DASHBOARD);
+              break;
+            case AuthModule.Clinic:
+              navigate(PATHS.CLINIC_DASHBOARD);
+              break;
+            default:
+              navigate(PATHS.PROFILE);
+              break;
+          }
+
 
         } else {
           notifications.show({
             message: res.message,
             color: 'red',
           });
-          console.log('Loi dang nhap:', res.message);
         }
       })
       .catch(error => {
-        console.log(error.message);
         notifications.show({
           message: error.response.data.message,
           color: 'red',
@@ -170,7 +177,6 @@ const LoginPage = () => {
 
   const sendEmailVerifyLinkAccount = async (email: string) => {
     try {
-      console.log(`Gửi mail xác thực đến  `, email);
       const res = await authApi.sendEmailVerifyUser({ email, key: userIdFromProvider, provider: providerLogin });
       if (res.status) {
         notifications.show({
