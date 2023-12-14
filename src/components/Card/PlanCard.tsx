@@ -36,11 +36,11 @@ const PlanCard = ({ plan, actionText, action }: IPlanCardProps) => {
 
       <Box style={{ flex: 1 }}>
         {plan.planOptions.map((option) => (
-          <Flex key={option.option.id} mt={10}>
+          <Flex key={option.id} mt={10}>
             <ThemeIcon variant='white' color="primary" >
               <FaCheck size="1rem" stroke={1.5} />
             </ThemeIcon>
-            <Text mt={1} ml={5} component='span'>{option.option.optionName}</Text>
+            <Text mt={1} ml={5} component='span'>{option.optionName}</Text>
           </Flex>
         ))}
       </Box>

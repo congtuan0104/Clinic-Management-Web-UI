@@ -1,21 +1,22 @@
 import { yupResolver } from '@hookform/resolvers/yup';
-import { FirebaseAuthProvider, PATHS } from '@/config';
-import { Container, Paper, Title, Text, Anchor, Button, Grid, Divider, Flex, ActionIcon, Image } from '@mantine/core';
-import { useForm, Form } from 'react-hook-form';
+import { Anchor, Button, Container, Flex, Grid, Image, Paper, Text, Title } from '@mantine/core';
+import { notifications } from '@mantine/notifications';
+import { Form, useForm } from 'react-hook-form';
 import { PasswordInput, TextInput } from 'react-hook-form-mantine';
+import { FaFacebookF } from 'react-icons/fa6';
 import { FcGoogle } from 'react-icons/fc';
-import { RiGithubFill, RiLockPasswordLine } from 'react-icons/ri';
+import { RiLockPasswordLine } from 'react-icons/ri';
 import { SiMaildotru } from 'react-icons/si';
 import { Link, useNavigate } from 'react-router-dom';
 import * as yup from 'yup';
-import { authApi } from '@/services';
-import { cookies } from '@/utils';
-import { COOKIE_KEY } from '@/constants';
-import { setUserInfo } from '@/store';
-import { useAppDispatch, useAuth } from '@/hooks';
-import { notifications } from '@mantine/notifications';
-import { FaFacebookF } from 'react-icons/fa6';
+
 import MicrosoftLogo from '@/assets/icons/microsoft.svg'
+import { FirebaseAuthProvider, PATHS } from '@/config';
+import { COOKIE_KEY } from '@/constants';
+import { useAppDispatch, useAuth } from '@/hooks';
+import { authApi } from '@/services';
+import { setUserInfo } from '@/store';
+import { cookies } from '@/utils';
 
 interface IRegisterFormData {
   firstName: string;
@@ -62,7 +63,12 @@ const RegisterPage = () => {
   });
 
   const handleRegister = (data: IRegisterFormData) => {
-    const { confirmPassword, ...registerData } = data; // xóa thông tin xác nhận mật khẩu trước khi gửi api
+    const registerData = {
+      firstName: data.firstName,
+      lastName: data.lastName,
+      email: data.email,
+      password: data.password,
+    };
 
     // gọi api đăng ký
     authApi

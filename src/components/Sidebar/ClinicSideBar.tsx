@@ -1,21 +1,21 @@
-import { Text, Code, ScrollArea, rem, Divider, Image, ActionIcon, Tooltip, Modal, Flex } from '@mantine/core';
-import { FaHome, FaRegCalendarAlt } from "react-icons/fa";
-import { CgNotes } from "react-icons/cg";
-import { MdOutlineAnalytics } from "react-icons/md";
-import { IoSettingsOutline } from "react-icons/io5";
-import { MdNotificationsNone } from "react-icons/md";
-import { MdOutlinePeopleAlt } from "react-icons/md";
-import { LinksGroup } from './LinksGroup/LinksGroup';
-import { UserButton } from './UserButton/UserButton';
-import classes from './SideBar.module.css';
-import { RiMessage2Fill } from 'react-icons/ri';
-import { PATHS } from '@/config';
-import { Link, useLocation } from 'react-router-dom';
-import ClinusLogo from '@/assets/images/logo.png';
-import { INotification } from '@/types';
+import { ActionIcon, Divider, Image, Modal, rem, ScrollArea, Text, Tooltip } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import dayjs from 'dayjs';
+import { CgNotes } from "react-icons/cg";
+import { FaHome } from "react-icons/fa";
+import { IoSettingsOutline } from "react-icons/io5";
+import { MdNotificationsNone, MdOutlineAnalytics, MdOutlinePeopleAlt } from "react-icons/md";
+import { RiMessage2Fill } from 'react-icons/ri';
+import { Link, useLocation } from 'react-router-dom';
+
+import ClinusLogo from '@/assets/images/logo.png';
+import { PATHS } from '@/config';
 import { useAuth } from '@/hooks';
+import { INotification } from '@/types';
+
+import { LinksGroup } from './LinksGroup/LinksGroup';
+import classes from './SideBar.module.css';
+import { UserButton } from './UserButton/UserButton';
 
 const mockdata = [
   { label: 'Trang chủ', icon: FaHome, href: '/clinic/dashboard' },
@@ -94,6 +94,7 @@ export function ClinicSideBar({ notify }: ISidebarProps) {
 
       <Modal opened={opened} onClose={close} title={<Text fw={600}>Thông báo của {userInfo?.lastName}</Text>}>
         <div className="flex flex-col">
+          {notify.length === 0 && <p>Bạn không có thông báo nào</p>}
           {notify.map((item) => (
             <div key={item.id} className="flex flex-col border-0 border-y border-gray-300 border-solid py-2">
               <p>{item.body}</p>
