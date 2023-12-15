@@ -12,6 +12,7 @@ import {
   PricingPlanAdminPage,
   Message,
   DashboardClinic,
+  VideoCall
 } from '@/pages';
 
 export const PATHS = {
@@ -27,6 +28,7 @@ export const PATHS = {
   ADMIN_PRICING_PLAN: '/admin/bang-gia',
   CLINIC_CHAT: 'clinic/messages',
   CLINIC_DASHBOARD: '/clinic/dashboard',
+  VIDEO_CALL: '/clinic/video-call',
 };
 
 export const ROUTES = [
@@ -124,6 +126,13 @@ export const ROUTES = [
     isProtected: true,
     children: [],
   },
+  {
+    path: PATHS.VIDEO_CALL,
+    title: 'Video Call',
+    element: VideoCall,
+    isProtected: true,
+    children: [],
+  }
   // {
   //   path: '*',
   //   title: 'Không tìm thấy trang',

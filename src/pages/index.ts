@@ -11,3 +11,4 @@ export * from './RegisterByInvitation';
 export * from './VerifyUserLinkAccount';
 export * from './PricingPlanAdmin';
 export * from './Message';
+export * from './VideoCall';
