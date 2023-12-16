@@ -37,3 +37,10 @@ export interface IGroupChatMessage {
   type: MessageType;
   link: string;
 }
+
+export interface IAddGroupChatRequest {
+  groupName: string;
+  maxMember?: number;
+  type?: GroupChatType;
+  userList: string[];
+}

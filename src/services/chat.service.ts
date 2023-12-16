@@ -1,6 +1,7 @@
 import {
     IApiResponse,
-    IGroupChat
+    IGroupChat,
+    IAddGroupChatRequest,
   } from '@/types';
 
   import { axiosClient } from '@/utils';
@@ -16,4 +17,7 @@ export const chatApi = {
           });
       },
 
+    addGroupChat(data: IAddGroupChatRequest): Promise<any> {
+      return axiosClient.post('/chats', data);
+    }
 };

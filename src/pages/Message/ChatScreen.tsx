@@ -12,15 +12,30 @@ import { GroupChatType } from "@/enums";
 
 import { Button, Text, Modal, TextInput, Select, MultiSelect, Avatar, ModalRoot, ModalHeader, ModalCloseButton, ModalBody } from "@mantine/core";
 import { useDocumentTitle, useDisclosure } from "@mantine/hooks";
+import { useForm, Form, Controller } from 'react-hook-form';
 import { chatApi } from "@/services";
 
+interface FormAddGroupChatData {
+  groupName: string;
+  userList: string[];
+}
+
 export default function ChatScreen() {
+  const membersData = [
+    { label: 'Võ Hoài An', value: '37386997-de3b-4b78-baf5-884bcf57f1ff' },
+    { label: 'Phan Tài Nhật Minh', value: '4200b0a2-11a7-4e2b-bcd0-3cc8649a124f' },
+    { label: 'Phan Công Tuấn', value: '9fc5002b-b9f9-4192-85e8-f95dbcfe6f6f' },
+  ];
+
+
   const { userInfo } = useAuth();
   useDocumentTitle("Clinus - Nhắn tin");
+  const { control, handleSubmit, setValue } = useForm<FormAddGroupChatData>();
 
   const [groupChats, setGroupChats] = useState<IGroupChat[]>([]);
   const [selectedGroup, setSelectedGroup] = useState<IGroupChat | undefined>(undefined);
   const [opened, { open, close }] = useDisclosure(false);
+
 
   const fetchGroupChatsByUser = async () => {
     const userId = userInfo?.id as string;
@@ -35,8 +50,6 @@ export default function ChatScreen() {
       console.log(error);
     }
   };
-  
-
 
   useEffect(() => {
     fetchGroupChatsByUser();
@@ -45,6 +58,21 @@ export default function ChatScreen() {
   const changeGroup = (group: IGroupChat) => {
     setSelectedGroup(group);
   };
+
+  const onSubmitAddGroupChat = async (data: FormAddGroupChatData) => {
+    console.log('Form data:', data);
+    try {
+      const res = await chatApi.addGroupChat({
+        groupName: data.groupName,
+        userList: data.userList,
+      });
+      close();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+
 
   return (
     <div className="p-5 h-screen overflow-auto">
@@ -83,17 +111,32 @@ export default function ChatScreen() {
             <ModalCloseButton />
           </ModalHeader>
           <ModalBody>
-            <TextInput label="Tên nhóm" placeholder="Nhập vào tên nhóm" />
-
-            <MultiSelect
-              label="Thành viên"
-              data={['Võ Hoài An', 'Phan Tài Nhật Minh', 'Nguyễn Nhật Khang', 'Phan Công Tuấn', 'Nguyễn Sơn Bão', 'Nguyễn Hải Nhật Minh']}
-              searchable
-              hidePickedOptions
-              pt={10}
+            <Controller
+              name="groupName"
+              control={control}
+              render={({ field }) => (
+                <TextInput label="Tên nhóm" placeholder="Nhập vào tên nhóm" {...field} />
+              )}
             />
+
+            <Controller
+              name="userList"
+              control={control}
+              render={({ field }) => (
+                <MultiSelect
+                  label="Thành viên"
+                  data={membersData}
+                  searchable
+                  hidePickedOptions
+                  pt={10}
+                  onChange={(values: string[]) => setValue('userList', values)}
+                />
+              )}
+            />
+
+
             <div style={{ display: 'flex', justifyContent: 'flex-end', }}>
-              <Button mt="lg" radius="sm" size="md" type="submit">
+              <Button mt="lg" radius="sm" size="md" type="submit" onClick={handleSubmit(onSubmitAddGroupChat)}>
                 Xác nhận
               </Button>
               <Button mt="lg" ml="sm" radius="sm" size="md" variant='outline' color='red.5'
@@ -102,6 +145,7 @@ export default function ChatScreen() {
                 }}>
                 Hủy
               </Button>
+
             </div>
 
           </ModalBody>
