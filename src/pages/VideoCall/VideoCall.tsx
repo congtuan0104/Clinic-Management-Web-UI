@@ -2,12 +2,14 @@ import * as React from 'react';
 import { ZegoUIKitPrebuilt } from '@zegocloud/zego-uikit-prebuilt';
 import { useAuth } from "@/hooks";
 import { useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 export default function VideoCall() {
     const { userInfo } = useAuth();
     const location = useLocation();
     const groupID = location.state?.groupID;
-      
+    const navigate = useNavigate();
+
     let myMeeting = async (element: HTMLDivElement) => {
     // generate Kit Token
     const appID = 1036177780;
@@ -34,6 +36,9 @@ export default function VideoCall() {
     scenario: {
         mode: ZegoUIKitPrebuilt.GroupCall, // To implement 1-on-1 calls, modify the parameter here to [ZegoUIKitPrebuilt.OneONoneCall].
     },
+    showPreJoinView: false,
+    showLeavingView: true,
+    onLeaveRoom: () => {navigate('/clinic/messages')}
     });
 
 
