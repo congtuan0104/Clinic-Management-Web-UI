@@ -8,7 +8,8 @@ export interface IGroupChat {
   groupName: string;
   maxMember?: number;
   type: GroupChatType;
-  member?: IGroupChatMember[];
+  isActive: boolean;
+  groupChatMember?: IGroupChatMember[];
 }
 
 /**
@@ -17,9 +18,11 @@ export interface IGroupChat {
 export interface IGroupChatMember {
   id: string;
   userId: string;
-  groupId: string;
-  groupAdmin: boolean;
+  isAdmin: boolean;
   joinAt: Date;
+  email: string;
+  firstname: string;
+  lastname: string;
 }
 
 /**
@@ -33,4 +36,11 @@ export interface IGroupChatMessage {
   timestamp: Date;
   type: MessageType;
   link: string;
+}
+
+export interface IAddGroupChatRequest {
+  groupName: string;
+  maxMember?: number;
+  type?: GroupChatType;
+  userList: string[];
 }
