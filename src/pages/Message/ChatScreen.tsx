@@ -12,6 +12,7 @@ import { GroupChatType } from "@/enums";
 
 import { Button, Text, Modal, TextInput, Select, MultiSelect, Avatar, ModalRoot, ModalHeader, ModalCloseButton, ModalBody } from "@mantine/core";
 import { useDocumentTitle, useDisclosure } from "@mantine/hooks";
+import { chatApi } from "@/services";
 
 export default function ChatScreen() {
   const { userInfo } = useAuth();
@@ -21,34 +22,20 @@ export default function ChatScreen() {
   const [selectedGroup, setSelectedGroup] = useState<IGroupChat | undefined>(undefined);
   const [opened, { open, close }] = useDisclosure(false);
 
-  const fetchGroupChatsByUser = () => {
+  const fetchGroupChatsByUser = async () => {
     const userId = userInfo?.id;
-    // gọi api
-    const fakeDataGroup: IGroupChat[] = [
-      {
-        id: "group_1",
-        groupName: "Group 1",
-        type: GroupChatType.PERSONAL,
-      },
-      {
-        id: "group_2",
-        groupName: "Group 2",
-        type: GroupChatType.GROUP,
-      },
-      {
-        id: "group_3",
-        groupName: "Group 3",
-        type: GroupChatType.PERSONAL,
-      },
-      {
-        id: "group_4",
-        groupName: "Group 4",
-        type: GroupChatType.PERSONAL,
-      },
-    ];
-
-    setGroupChats(fakeDataGroup);
+    try {
+      const response = await chatApi.getAllGroupChat();
+      if (response.data) {
+        setGroupChats(response.data);
+      } else {
+        console.error("Lỗi không thể nhận được dữ liệu");
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
+
 
   useEffect(() => {
     fetchGroupChatsByUser();
