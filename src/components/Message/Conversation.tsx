@@ -10,6 +10,8 @@ import {
   uploadBytes,
 } from "firebase/storage";
 
+import { PATHS } from '@/config';
+import { useNavigate } from 'react-router-dom';
 import { IGroupChat, IGroupChatMessage } from "@/types"
 import {
   FaCommentAlt,
@@ -39,6 +41,8 @@ export default function Conversation({ groupChat }: ConversationProps) {
   const { userInfo } = useAuth();
 
   const [inputMessage, setInputMessage] = useState<string>("");
+  // const [fileUpload, setFileUpload] = useState<File | null>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     let groupRef = ref(realtimeDB, 'chats/' + groupChat.id);
@@ -81,6 +85,11 @@ export default function Conversation({ groupChat }: ConversationProps) {
     if (inputMessage.length > 0) {
       saveMessageToFirebase(inputMessage, MessageType.Text);
     }
+  }
+
+  const createVideoCall = () => {
+    const groupID = groupChat.id; 
+    navigate(PATHS.VIDEO_CALL, { state: { groupID } });
   }
 
   const uploadFile = async (fileUpload: File) => {
@@ -194,7 +203,11 @@ export default function Conversation({ groupChat }: ConversationProps) {
 
         <Flex gap={15} align='center'>
           <FaPhone color="dodgerblue" size="20px" />
-          <FaVideo color="dodgerblue" size="20px" />
+          <Button
+           color="rgba(255, 255, 255, 1)"
+           onClick={createVideoCall}>
+            <FaVideo color="dodgerblue" size="20px" />
+          </Button>
           <FaInfoCircle color="dodgerblue" size="20px" />
         </Flex>
       </div>
