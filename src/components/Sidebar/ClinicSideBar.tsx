@@ -1,4 +1,4 @@
-import { ActionIcon, Divider, Image, Modal, rem, ScrollArea, Text, Tooltip } from '@mantine/core';
+import { ActionIcon, Divider, Image, Indicator, Modal, rem, ScrollArea, Text, Tooltip } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import dayjs from 'dayjs';
 import { CgNotes } from "react-icons/cg";
@@ -75,7 +75,9 @@ export function ClinicSideBar({ notify }: ISidebarProps) {
             <ActionIcon
               onClick={() => open()}
               color='primary.5' variant="light" radius="xl" size='xl' aria-label="Notifications">
-              <MdNotificationsNone size={25} />
+              <Indicator color='secondary.5' inline label={notify.length} size={16}>
+                <MdNotificationsNone size={25} />
+              </Indicator>
             </ActionIcon>
           </Tooltip>
 
