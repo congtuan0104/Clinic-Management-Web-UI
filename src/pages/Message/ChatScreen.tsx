@@ -122,7 +122,7 @@ export default function ChatScreen() {
             <Controller
               name="userList"
               control={control}
-              render={({ field }) => (
+              render={() => (
                 <MultiSelect
                   label="Thành viên"
                   data={membersData}
