@@ -23,9 +23,7 @@ export interface IServicePlan {
   isActive: boolean;
   updatedAt: Date;
   createdAt: Date;
-  planOptions: {
-    option: IPlanOption;
-  }[];
+  planOptions: IPlanOption[];
 }
 
 export interface IAddPlanRequest {
