@@ -1,11 +1,13 @@
+import { AuthModule } from '@/enums';
+
 export interface IUserInfo {
   id: string;
   email: string;
   firstName: string;
   lastName: string;
-  password: string;
   emailVerified: boolean;
-  role: string;
+  moduleId: AuthModule;
+  isInputPassword: boolean;
 }
 
 export interface ILoginRequest {
@@ -18,7 +20,7 @@ export interface IRegisterRequest {
   lastName: string;
   email: string;
   password: string;
-  role: string;
+  // role: string;
 }
 
 export interface ILinkAccountRequest {

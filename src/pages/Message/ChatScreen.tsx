@@ -10,7 +10,7 @@ import "./chat-screen.css";
 import { useAuth } from "@/hooks";
 import { GroupChatType } from "@/enums";
 
-import { Text } from "@mantine/core";
+import { Button, Text } from "@mantine/core";
 import { useDocumentTitle } from "@mantine/hooks";
 
 // get user from redux
@@ -63,7 +63,11 @@ export default function ChatScreen() {
 
   return (
     <div className="p-5 h-screen overflow-auto">
-      <Text mb={16} size={'22px'} fw={700}>Tin nhắn</Text>
+      <div className="flex justify-between items-center mb-4">
+        <Text size={'22px'} fw={700}>Tin nhắn</Text>
+
+        <Button variant="filled">Tạo nhóm chat</Button>
+      </div>
       <div className="bg-white p-4 rounded-xl flex border border-solid border-gray-300 h-[94%]">
         {/* Danh sách nhóm chat */}
         <div className="w-[25%] border-r border-0 border-solid border-gray-300 pr-3 bg-white max-h-full overflow-auto">

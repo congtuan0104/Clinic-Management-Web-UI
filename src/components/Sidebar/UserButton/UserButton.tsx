@@ -21,9 +21,6 @@ export function UserButton() {
             {userInfo?.firstName} {userInfo?.lastName}
           </Text>
 
-          <Text tt='capitalize' lineClamp={1} c="dimmed" size="xs">
-            {userInfo?.role}
-          </Text>
         </div>
 
         <IoIosArrowForward style={{ width: rem(14), height: rem(14) }} stroke={1.5} />

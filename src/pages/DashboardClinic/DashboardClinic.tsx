@@ -13,9 +13,6 @@ const DashboardAdmin = () => {
           <Text c="dimmed" size="lg" ta="center" mt="10">
             Bạn đã đăng nhập bằng email: {userInfo.email}
           </Text>
-          <Text c="teal" size="md" ta="center" mt="10">
-            Bạn là: {userInfo.role}
-          </Text>
         </>
       )}
     </Box>
