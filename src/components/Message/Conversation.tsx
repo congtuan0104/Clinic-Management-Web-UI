@@ -2,12 +2,13 @@ import React, { useEffect, useRef, useState } from "react";
 import { ref, onValue, set, push, child, update } from "firebase/database";
 import { useAuth } from "@/hooks";
 import { v4 as uuidv4 } from 'uuid';
-import { Tooltip, Image, ThemeIcon } from "@mantine/core";
+import { Tooltip, Image, ThemeIcon, Progress, Box, Text } from "@mantine/core";
 import dayjs from "dayjs";
 import {
   getDownloadURL,
   ref as storageRef,
   uploadBytes,
+  uploadBytesResumable,
 } from "firebase/storage";
 
 import { PATHS } from '@/config';
@@ -16,7 +17,6 @@ import { IGroupChat, IGroupChatMessage } from "@/types"
 import {
   FaCommentAlt,
   FaComments,
-  FaImage,
   FaInfoCircle,
   FaPhone,
   FaPlusCircle,
@@ -25,6 +25,7 @@ import {
   FaPaperPlane
 } from "react-icons/fa";
 import { TiDownload } from "react-icons/ti";
+import { MdOutlineAttachFile } from "react-icons/md";
 import { firebaseStorage, realtimeDB } from "@/config";
 import { Avatar, Button, Flex, Input } from "@mantine/core";
 import classNames from "classnames";
@@ -39,6 +40,7 @@ interface ConversationProps {
 export default function Conversation({ groupChat }: ConversationProps) {
   const [messages, setMessages] = useState<IGroupChatMessage[]>([]);
   const { userInfo } = useAuth();
+  const [uploadProgress, setUploadProgress] = useState<number | undefined>(undefined);
 
   const [inputMessage, setInputMessage] = useState<string>("");
   // const [fileUpload, setFileUpload] = useState<File | null>(null);
@@ -87,8 +89,9 @@ export default function Conversation({ groupChat }: ConversationProps) {
     }
   }
 
+
   const createVideoCall = () => {
-    const groupID = groupChat.id; 
+    const groupID = groupChat.id;
     navigate(PATHS.VIDEO_CALL, { state: { groupID } });
   }
 
@@ -115,10 +118,27 @@ export default function Conversation({ groupChat }: ConversationProps) {
       const fileType = fileUpload.type.split("/")[0];
 
       const imageRef = storageRef(firebaseStorage, `chats/${groupChat.id}/${fileName}`);
-      const snapshot = await uploadBytes(imageRef, fileUpload);
-      const url = await getDownloadURL(snapshot.ref);
 
-      saveMessageToFirebase(fileName, fileType === "application" ? MessageType.File : fileType as MessageType, url);
+      const uploadTask = uploadBytesResumable(imageRef, fileUpload);
+      uploadTask.on('state_changed',
+        (snapshot) => {
+          const percent = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
+          setUploadProgress(percent);
+        },
+        (error) => {
+          notifications.show({
+            message: 'Upload file thất bại',
+            color: 'red',
+          })
+          console.log(error);
+        },
+        async () => {
+          const url = await getDownloadURL(uploadTask.snapshot.ref);
+          saveMessageToFirebase(fileName, fileType === "application" ? MessageType.File : fileType as MessageType, url);
+          setUploadProgress(undefined);
+        }
+      );
+
     }
     catch (error) {
       console.log(error);
@@ -204,8 +224,8 @@ export default function Conversation({ groupChat }: ConversationProps) {
         <Flex gap={15} align='center'>
           <FaPhone color="dodgerblue" size="20px" />
           <Button
-           color="rgba(255, 255, 255, 1)"
-           onClick={createVideoCall}>
+            color="rgba(255, 255, 255, 1)"
+            onClick={createVideoCall}>
             <FaVideo color="dodgerblue" size="20px" />
           </Button>
           <FaInfoCircle color="dodgerblue" size="20px" />
@@ -252,6 +272,18 @@ export default function Conversation({ groupChat }: ConversationProps) {
             <p className="text-gray-400 text-15 font-bold">Bắt đầu cuộc hội thoại với {groupChat.groupName}</p>
           </div>
         )}
+
+        {!!uploadProgress && uploadProgress > 0 && (
+          <div className="ml-auto my-3 flex justify-end">
+            <div className="w-[35%] flex flex-col">
+              <Text fs='italic' c='gray.6' size="sm">Đang upload file {uploadProgress}%</Text>
+              <Progress value={uploadProgress} color='primary' size="lg" striped animated />
+            </div>
+            <Avatar mx={8} color='primary.5' radius="xl" >
+              {userInfo?.firstName.slice(0, 1)}
+            </Avatar>
+          </div>
+        )}
       </div>
 
       {/* Input bar */}
@@ -261,7 +293,7 @@ export default function Conversation({ groupChat }: ConversationProps) {
         <FaStickyNote /> */}
         <label className="cursor-pointer flex items-center justify-center" htmlFor="upload-file-chat">
           <ThemeIcon size='xl' variant="light" radius='xl'>
-            <FaImage size={25} />
+            <MdOutlineAttachFile size={25} />
           </ThemeIcon>
         </label>
         <input

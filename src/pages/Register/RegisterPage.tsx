@@ -17,6 +17,7 @@ import { useAppDispatch, useAuth } from '@/hooks';
 import { authApi } from '@/services';
 import { setUserInfo } from '@/store';
 import { cookies } from '@/utils';
+import { AuthModule } from '@/enums';
 
 interface IRegisterFormData {
   firstName: string;
@@ -24,7 +25,7 @@ interface IRegisterFormData {
   email: string;
   password: string;
   confirmPassword: string;
-  role: string;
+  moduleId: number;
 }
 
 const schema = yup.object().shape({
@@ -39,7 +40,7 @@ const schema = yup.object().shape({
     .string()
     .required('Vui lòng xác nhận lại mật khẩu')
     .oneOf([yup.ref('password'), ''], 'Không trùng với mật khẩu đã nhập'),
-  role: yup.string().required(),
+  moduleId: yup.number().required(),
 });
 
 const RegisterPage = () => {
@@ -57,7 +58,7 @@ const RegisterPage = () => {
       email: '',
       password: '',
       confirmPassword: '',
-      role: 'user'
+      moduleId: AuthModule.Guest,
       // emailVerified: false,
     },
   });
@@ -68,6 +69,7 @@ const RegisterPage = () => {
       lastName: data.lastName,
       email: data.email,
       password: data.password,
+      moduleId: data.moduleId,
     };
 
     // gọi api đăng ký

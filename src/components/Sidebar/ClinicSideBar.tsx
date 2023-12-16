@@ -67,7 +67,7 @@ export function ClinicSideBar({ notify }: ISidebarProps) {
     <>
       <nav style={{ position: 'fixed', top: 0, bottom: 0, left: 0 }} className={classes.navbar}>
         <div className='flex flex-between items-center px-1 w-full'>
-          <Link className='flex-1 flex justify-start' to={PATHS.CLINIC_DASHBOARD}>
+          <Link className='flex-1 flex justify-start py-2' to={PATHS.CLINIC_DASHBOARD}>
             <Image src={ClinusLogo} alt='logo' h={50} fit='contain' />
           </Link>
 
