@@ -3,6 +3,7 @@ import { BrowserRouter, Navigate, Route, Routes, useNavigate } from 'react-route
 import { PATHS, ROUTES } from '@/config';
 import { checkIsLogin } from '@/utils';
 import { useAuth } from './hooks';
+import { CustomRoutes } from './components';
 
 export const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
   const navigate = useNavigate();
@@ -23,7 +24,7 @@ function App() {
 
   return (
     <BrowserRouter>
-      <Routes>
+      <CustomRoutes>
         {ROUTES.map((route, index) => {
           const Layout = route.layout || Fragment;
           const Page = route.element;
@@ -56,7 +57,7 @@ function App() {
             />
           );
         })}
-      </Routes>
+      </CustomRoutes>
     </BrowserRouter>
   );
 }
