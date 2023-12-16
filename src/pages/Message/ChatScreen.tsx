@@ -60,13 +60,13 @@ export default function ChatScreen() {
   };
 
   const onSubmitAddGroupChat = async (data: FormAddGroupChatData) => {
-    console.log('Form data:', data);
     try {
       const res = await chatApi.addGroupChat({
         groupName: data.groupName,
         userList: data.userList,
       });
       close();
+      fetchGroupChatsByUser();
     } catch (error) {
       console.log(error);
     }
