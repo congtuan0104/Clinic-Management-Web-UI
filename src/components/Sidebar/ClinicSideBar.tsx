@@ -97,7 +97,7 @@ export function ClinicSideBar({ notify }: ISidebarProps) {
       <Modal opened={opened} onClose={close} title={<Text fw={600}>Thông báo của {userInfo?.lastName}</Text>}>
         <div className="flex flex-col">
           {notify.length === 0 && <p>Bạn không có thông báo nào</p>}
-          {notify.map((item) => (
+          {notify.reverse().map((item) => (
             <div key={item.id} className="flex flex-col border-0 border-y border-gray-300 border-solid py-2">
               <p>{item.body}</p>
               <p className='text-primary-300 text-14'>{renderSendingTime(item.sendingTime)}</p>
