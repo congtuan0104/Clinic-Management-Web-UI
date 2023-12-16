@@ -7,8 +7,13 @@ import {
 
 
 export const chatApi = {
-    getAllGroupChat(): Promise<IApiResponse<IGroupChat[]>>{
-        return axiosClient.get('/chats');
-    }
+    getGroupChatByUser(userId: string): Promise<IApiResponse<IGroupChat[]>> {
+        return axiosClient.get('/chats',
+          {
+            params: {
+              userId: userId
+            }
+          });
+      },
 
 };

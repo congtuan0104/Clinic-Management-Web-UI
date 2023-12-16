@@ -23,9 +23,9 @@ export default function ChatScreen() {
   const [opened, { open, close }] = useDisclosure(false);
 
   const fetchGroupChatsByUser = async () => {
-    const userId = userInfo?.id;
+    const userId = userInfo?.id as string;
     try {
-      const response = await chatApi.getAllGroupChat();
+      const response = await chatApi.getGroupChatByUser(userId);
       if (response.data) {
         setGroupChats(response.data);
       } else {
@@ -35,6 +35,7 @@ export default function ChatScreen() {
       console.log(error);
     }
   };
+  
 
 
   useEffect(() => {
