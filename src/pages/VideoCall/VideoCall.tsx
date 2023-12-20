@@ -1,11 +1,8 @@
 import AgoraUIKit from 'agora-react-uikit';
-import { useAuth } from "@/hooks";
 import { useLocation } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
-import React, {useState} from 'react';
 
 export default function VideoCall() {
-  const { userInfo } = useAuth();
   const location = useLocation();
   const groupID = location.state?.groupID;
   const navigate = useNavigate();
