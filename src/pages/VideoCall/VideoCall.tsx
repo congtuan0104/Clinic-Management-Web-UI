@@ -15,7 +15,7 @@ export default function VideoCall() {
     const appID = 1036177780;
     const serverSecret = "f856da2571d3cbfce4cbc3f6257d0e96";
     const userId = userInfo?.id ? userInfo.id : '';
-    const kitToken =  ZegoUIKitPrebuilt.generateKitTokenForTest(appID, serverSecret, groupID,  userId,  userInfo?.lastName);
+    const kitToken =  ZegoUIKitPrebuilt.generateKitTokenForTest(appID, serverSecret, groupID.toString(),  userId,  userInfo?.lastName);
 
 
     // Create instance object from Kit Token.
