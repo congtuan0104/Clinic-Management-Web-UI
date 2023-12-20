@@ -5,40 +5,40 @@ import { useLocation } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 
 export default function VideoCall() {
-    const { userInfo } = useAuth();
-    const location = useLocation();
-    const groupID = location.state?.groupID;
-    const navigate = useNavigate();
+  const { userInfo } = useAuth();
+  const location = useLocation();
+  const groupID = location.state?.groupID;
+  const navigate = useNavigate();
 
-    let myMeeting = async (element: HTMLDivElement) => {
+  let myMeeting = async (element: HTMLDivElement) => {
     // generate Kit Token
     const appID = 1036177780;
     const serverSecret = "f856da2571d3cbfce4cbc3f6257d0e96";
     const userId = userInfo?.id ? userInfo.id : '';
-    const kitToken =  ZegoUIKitPrebuilt.generateKitTokenForTest(appID, serverSecret, groupID.toString(),  userId,  userInfo?.lastName);
+    const kitToken = ZegoUIKitPrebuilt.generateKitTokenForTest(appID, serverSecret, groupID.toString(), userId, userInfo?.lastName);
 
 
     // Create instance object from Kit Token.
     const zp = ZegoUIKitPrebuilt.create(kitToken);
     // start the call
     zp.joinRoom({
-    container: element,
-    sharedLinks: [
+      container: element,
+      sharedLinks: [
         {
-        name: 'Personal link',
-        url:
-            window.location.protocol + '//' + 
+          name: 'Personal link',
+          url:
+            window.location.protocol + '//' +
             window.location.host + window.location.pathname +
             '?roomID=' +
             groupID,
         },
-    ],
-    scenario: {
+      ],
+      scenario: {
         mode: ZegoUIKitPrebuilt.GroupCall, // To implement 1-on-1 calls, modify the parameter here to [ZegoUIKitPrebuilt.OneONoneCall].
-    },
-    showPreJoinView: false,
-    showLeavingView: true,
-    onLeaveRoom: () => {navigate('/clinic/messages')}
+      },
+      showPreJoinView: false,
+      showLeavingView: true,
+      onLeaveRoom: () => { navigate('/clinic/messages') }
     });
 
 
