@@ -7,7 +7,7 @@ export const clinicApi = {
    * @returns Lấy danh sách phòng khám theo chủ sở hữu (nếu truyền ownerId)
    */
   getClinicsByOwner(ownerId?: string): Promise<IApiResponse<IClinic[]>> {
-    return axiosClient.get(`/clinics`, { params: { ownerId } });
+    return axiosClient.get(`/clinics`, { params: { id: ownerId } });
   },
 
   /**
