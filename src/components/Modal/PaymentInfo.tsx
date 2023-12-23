@@ -2,8 +2,6 @@ import { Paper, Text, Group, Avatar, Input, Divider, Button, Flex, Modal, Radio,
 import { useDisclosure } from '@mantine/hooks';
 import { useState } from 'react';
 
-import './PaymentInfo.module.css';
-
 interface PaymentInfoModalProps {
     isOpen: boolean;
     onClose: () => void;
