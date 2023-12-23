@@ -12,7 +12,8 @@ import {
   PricingPlanAdminPage,
   Message,
   DashboardClinic,
-  VideoCall
+  VideoCall, 
+  PlanManagement
 } from '@/pages';
 
 export const PATHS = {
@@ -29,6 +30,7 @@ export const PATHS = {
   CLINIC_CHAT: 'clinic/messages',
   CLINIC_DASHBOARD: '/clinic/dashboard',
   VIDEO_CALL: '/clinic/video-call',
+  PLAN_MANAGEMENT: '/clinic/plan-management'
 };
 
 export const ROUTES = [
@@ -130,6 +132,14 @@ export const ROUTES = [
     path: PATHS.VIDEO_CALL,
     title: 'Video Call',
     element: VideoCall,
+    isProtected: true,
+    children: [],
+  },
+  {
+    path: PATHS.PLAN_MANAGEMENT,
+    title: 'Plan management',
+    layout: ClinicLayout,
+    element: PlanManagement,
     isProtected: true,
     children: [],
   }

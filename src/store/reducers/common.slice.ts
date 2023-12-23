@@ -6,6 +6,7 @@ import { COOKIE_KEY } from '@/constants';
 
 export interface CommonState {
   user?: IUserInfo | null;
+  clinicId?: number | null;
 }
 
 const initState: CommonState = {
@@ -13,6 +14,7 @@ const initState: CommonState = {
 };
 
 export const userInfoSelector = (state: RootState) => state?.commonReducer?.user;
+export const clinicIdSelector = (state: RootState) => state?.commonReducer?.clinicId;
 
 const commonSlice = createSlice({
   name: 'common',
@@ -21,8 +23,11 @@ const commonSlice = createSlice({
     setUserInfo(state: CommonState, action: PayloadAction<IUserInfo | undefined | null>) {
       state.user = action.payload;
     },
+    setClinicId(state: CommonState, action: PayloadAction<number | undefined | null>) {
+      state.clinicId = action.payload;
+    }
   },
 });
 
-export const { setUserInfo } = commonSlice.actions;
+export const { setUserInfo, setClinicId } = commonSlice.actions;
 export const commonReducer = commonSlice.reducer;
