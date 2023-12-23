@@ -32,6 +32,7 @@ export interface IClinic {
   isActive: boolean;
   createdAt: Date;
   updatedAt: Date;
+  subscriptions?: IClinicSubscription[];
 }
 
 export interface IClinicSubscription {

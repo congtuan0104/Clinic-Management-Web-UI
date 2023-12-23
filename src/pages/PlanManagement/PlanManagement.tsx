@@ -1,13 +1,22 @@
-import { Text, Flex, Box } from '@mantine/core';
+import { Text, Flex, Box, Paper, Title, Button } from '@mantine/core';
 import { useState } from 'react';
 import PlanCard from '@/components/Card/PlanCard';
 import { useQuery } from 'react-query';
-import { planApi } from '@/services';
-import { IClinicWithSubscription, IServicePlan } from '@/types';
+import { clinicApi, planApi } from '@/services';
+import { IClinic, IClinicWithSubscription, IServicePlan } from '@/types';
 import { ModalClinicPayment, ModalCreateNewClinic } from '@/components';
+import { useAuth } from '@/hooks';
+import dayjs from 'dayjs';
+import { renderSubscriptionStatus } from '@/utils/subscription';
+import { CLINIC_SUBSCRIPTION_STATUS } from '@/enums';
 
 
-const PricingPlanPage = () => {
+const ClinicManagePage = () => {
+  const { userInfo } = useAuth()
+  const { data: clinics, isLoading: isLoadingClinic } = useQuery(
+    ['clinics', userInfo?.id],
+    () => clinicApi.getClinicsByOwner(userInfo?.id).then(res => res.data)
+  );
   const { data: plans, isLoading } = useQuery('plans', () => getAllPlans());
   const [isOpenClinicModal, setIsOpenClinicModal] = useState<boolean>(false);
   const [isOpenPaymentModal, setIsOpenPaymentModal] = useState<boolean>(false);
@@ -42,9 +51,53 @@ const PricingPlanPage = () => {
     setIsOpenPaymentModal(true);
   }
 
+  const getPlanInfo = (planId: number) => {
+    return plans?.find((plan) => plan.id == planId);
+  }
+
+  const renderSubscriptionInfo = (clinic: IClinic) => {
+    const subscription = clinic.subscriptions ? clinic.subscriptions[0] : null;
+    console.log('subscription', subscription)
+    if (!subscription) return null;
+    const plan = getPlanInfo(subscription.planId);
+    return (
+      <>
+        <Text tt='uppercase'>
+          Gói {plan?.planName}
+        </Text>
+        {(subscription.status !== CLINIC_SUBSCRIPTION_STATUS.CANCEL && subscription.status !== CLINIC_SUBSCRIPTION_STATUS.INPAYMENT)
+          && <Text tt='uppercase'>
+            Hết hạn: {dayjs(subscription.expiredAt).format('DD/MM/YYYY')} (Còn {dayjs(subscription.expiredAt).diff(dayjs(), 'day')} ngày)
+          </Text>}
+        <Text>Trạng thái: {renderSubscriptionStatus(subscription.status)}</Text>
+      </>
+    )
+  }
+
   return (
     <>
-      <Box>
+      {clinics && clinics.length > 0 ? (
+        <Box px='xl' pt='lg'>
+          <Flex justify='space-between'>
+            <Title order={4} mb={20}>Danh sách phòng khám</Title>
+            <Button
+              color='primary'
+              onClick={() => setIsOpenClinicModal(true)}
+            >
+              Thêm phòng khám
+            </Button>
+          </Flex>
+          <Flex direction='column' gap={20}>
+            {clinics.map((clinic) => (
+              <Paper shadow="xs" radius='md' p='lg'>
+                <Text fw='semibold' tt='uppercase'>{clinic.name}</Text>
+                <Text>{clinic.address}</Text>
+                {renderSubscriptionInfo(clinic)}
+              </Paper>
+            ))}
+          </Flex>
+        </Box>
+      ) : (<Box>
         <Text ta="center" pt={30} size="xl" fw={600} mb='31.72px' mt='33.48px' c='secondary'>
           Bạn chưa đăng ký phòng khám. Vui lòng chọn mua gói và khởi tạo phòng khám
         </Text>
@@ -55,7 +108,7 @@ const PricingPlanPage = () => {
             </Box>
           ))}
         </Flex>
-      </Box>
+      </Box>)}
 
       <ModalCreateNewClinic
         isOpen={isOpenClinicModal}
@@ -73,4 +126,4 @@ const PricingPlanPage = () => {
   );
 }
 
-export default PricingPlanPage;
+export default ClinicManagePage;
