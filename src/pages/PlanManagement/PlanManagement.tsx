@@ -3,14 +3,18 @@ import { useState } from 'react';
 import PlanCard from '@/components/Card/PlanCard';
 import { useQuery } from 'react-query';
 import { planApi } from '@/services';
-import  AddClinicModal  from './ModalAddClinic'
-import { IServicePlan } from '@/types';
+import { IClinicWithSubscription, IServicePlan } from '@/types';
+import { ModalClinicPayment, ModalCreateNewClinic } from '@/components';
 
 
 const PricingPlanPage = () => {
-  const { data: plans, isLoading, isError, error } = useQuery('plans', () => getAllPlans());
+  const { data: plans, isLoading } = useQuery('plans', () => getAllPlans());
   const [isOpenClinicModal, setIsOpenClinicModal] = useState<boolean>(false);
+  const [isOpenPaymentModal, setIsOpenPaymentModal] = useState<boolean>(false);
+  const [clinicNeedPayment, setClinicNeedPayment] = useState<IClinicWithSubscription>();  // thông tin phòng khám vừa được tạo (dùng để thanh toán)
+
   const [selectedPlan, setSelectedPlan] = useState<IServicePlan>();
+
   const getAllPlans = async () => {
     try {
       const response = await planApi.getAllPlans();
@@ -24,42 +28,48 @@ const PricingPlanPage = () => {
    * Xử lý khi mua gói dịch vụ
    */
   const handleBuyPlan = (plan: IServicePlan) => {
-    setIsOpenClinicModal(true);
     setSelectedPlan(plan);
+    setIsOpenClinicModal(true);
   }
 
-  const handleCloseModal = (e:any) => {
-    if (e.target.id === 'container') setIsOpenClinicModal(false);
+  const handleCloseModal = () => {
+    setIsOpenClinicModal(false);
+  }
+
+  const handleCreateClinicSuccess = (clinic: IClinicWithSubscription) => {
+    setIsOpenClinicModal(false);
+    setClinicNeedPayment(clinic);
+    setIsOpenPaymentModal(true);
   }
 
   return (
-    <Box>
-      {/* Blur backdrop when modal is open */}
-      {isOpenClinicModal && (
-        <div className="backdrop-blur-md" />
-      )}
-      <Text ta="center" pt={30} size="xl" fw={600} mb='31.72px' mt='33.48px' c='secondary'>
-        Bạn chưa đăng ký phòng khám. Vui lòng chọn mua gói và khởi tạo phòng khám
-      </Text>
-      <Flex wrap='wrap' my={30} mx={{ base: 15, md: 0 }} gap={20} direction={{ base: 'column', md: 'row' }}>
-        {plans && plans.map((plan) => (
-          <Box w='350' h='509'>
-            <PlanCard key={plan.id} plan={plan} actionText='Mua gói' action={handleBuyPlan} />
-          </Box>
-        ))}
-      </Flex>
-      {
-      isOpenClinicModal && selectedPlan?
-      (<div id='container' onClick={handleCloseModal} className='fixed inset-0 bg-black bg-opacity-30 backdrop-blur-md'>
-        <Box
-          pos='absolute' top="50%" left="50%" style={{transform:"translate(-50%, -50%)", zIndex:"9999"}} 
-        >
-          <AddClinicModal plan={selectedPlan}/>
-        </Box>
-      </div>) :
-      null
-      }
-    </Box>
+    <>
+      <Box>
+        <Text ta="center" pt={30} size="xl" fw={600} mb='31.72px' mt='33.48px' c='secondary'>
+          Bạn chưa đăng ký phòng khám. Vui lòng chọn mua gói và khởi tạo phòng khám
+        </Text>
+        <Flex wrap='wrap' my={30} mx={{ base: 15, md: 0 }} gap={20} direction={{ base: 'column', md: 'row' }}>
+          {plans && plans.map((plan) => (
+            <Box w='350' h='509'>
+              <PlanCard key={plan.id} plan={plan} actionText='Mua gói' action={handleBuyPlan} />
+            </Box>
+          ))}
+        </Flex>
+      </Box>
+
+      <ModalCreateNewClinic
+        isOpen={isOpenClinicModal}
+        onClose={handleCloseModal}
+        selectedPlanId={selectedPlan?.id}
+        onSuccess={handleCreateClinicSuccess}
+      />
+
+      {clinicNeedPayment && <ModalClinicPayment
+        isOpen={isOpenPaymentModal}
+        onClose={() => setIsOpenPaymentModal(false)}
+        clinicPayment={clinicNeedPayment}
+      />}
+    </>
   );
 }
 

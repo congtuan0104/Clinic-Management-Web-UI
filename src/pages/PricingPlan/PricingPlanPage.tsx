@@ -30,7 +30,7 @@ const PricingPlanPage = () => {
       </Text>
       <Flex wrap='wrap' my={30} mx={{ base: 15, md: 0 }} gap={20} direction={{ base: 'column', md: 'row' }}>
         {plans && plans.map((plan) => (
-          <Box w='350' h='509'>
+          <Box key={plan.id} w='350' h='509'>
             <PlanCard key={plan.id} plan={plan} actionText='Mua gói' action={handleBuyPlan} />
           </Box>
         ))}

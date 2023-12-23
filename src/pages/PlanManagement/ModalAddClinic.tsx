@@ -1,5 +1,5 @@
 import { yupResolver } from '@hookform/resolvers/yup';
-import { Anchor, Button, Container, Flex, Grid, Image, Paper, Text, Title, Box} from '@mantine/core';
+import { Anchor, Button, Container, Flex, Grid, Image, Paper, Text, Title, Box } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import { Form, useForm } from 'react-hook-form';
 import { TextInput } from 'react-hook-form-mantine';
@@ -27,15 +27,15 @@ const schema = yup.object().shape({
 });
 
 interface AddClinicModalProps {
-    plan: IServicePlan; 
-  }
+  plan: IServicePlan;
+}
 
 const AddClinicModal: React.FC<AddClinicModalProps> = ({ plan }) => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const { loginByOAuth } = useAuth();
 
-  console.log('plan adding: ',plan)
+  console.log('plan adding: ', plan)
   // tích hợp react-hook-form với mantine form
   const { control } = useForm<IAddClinicFormData>({
     resolver: yupResolver(schema), // gắn điều kiện xác định input hợp lệ vào form
@@ -45,34 +45,34 @@ const AddClinicModal: React.FC<AddClinicModalProps> = ({ plan }) => {
       email: '',
       phone: '',
       address: '',
-      description: '',      
+      description: '',
     },
   });
 
   const handleAddClinic = (data: IAddClinicFormData) => {
     const addClinicData = {
-        name: data.clinicName,
-        email: data.email,
-        phone: data.phone,
-        address: data.address,
-        logo: '1',
-        description: data.description,
-        planId: plan.id.toString()
-      };
-      console.log('data request: ', addClinicData);
-      clinicApi
+      name: data.clinicName,
+      email: data.email,
+      phone: data.phone,
+      address: data.address,
+      logo: '1',
+      description: data.description,
+      planId: plan.id.toString()
+    };
+    console.log('data request: ', addClinicData);
+    clinicApi
       .createClinic(addClinicData)
-      .then(res => {   
-        if (res.status){
+      .then(res => {
+        if (res.status) {
           // lưu thông tin clinicId vào redux
-          dispatch(setClinicId(res.data?.id));
+          // dispatch(setClinicId(res.data?.clinic.id));
           // Hiển thị thông báo
           notifications.show({
             message: 'Đăng ký tạo phòng khám thành công',
             color: 'green',
           });
         }
-                
+
         else {
           console.log('Đăng ký không thành công:', res.message);
           notifications.show({
@@ -88,7 +88,7 @@ const AddClinicModal: React.FC<AddClinicModalProps> = ({ plan }) => {
           color: 'red',
         });
       });
-  }    
+  }
 
 
   return (
@@ -98,7 +98,7 @@ const AddClinicModal: React.FC<AddClinicModalProps> = ({ plan }) => {
         <Form
           control={control}
           onSubmit={e => handleAddClinic(e.data)}
-          onError={e => console.log(e)}>                     
+          onError={e => console.log(e)}>
           <TextInput
             label="Tên phòng khám"
             name="clinicName"
@@ -107,11 +107,11 @@ const AddClinicModal: React.FC<AddClinicModalProps> = ({ plan }) => {
             size="md"
             radius="sm"
             control={control}
-          />                    
-          
+          />
+
           <Grid>
             <Grid.Col>
-                <TextInput
+              <TextInput
                 label="Email liên hệ"
                 name="email"
                 placeholder="example@gmail.com"
@@ -120,11 +120,11 @@ const AddClinicModal: React.FC<AddClinicModalProps> = ({ plan }) => {
                 size="md"
                 radius="sm"
                 control={control}
-                
-                />
+
+              />
             </Grid.Col>
             <Grid.Col>
-            <TextInput
+              <TextInput
                 label="Số điện thoại liên hệ"
                 name="phone"
                 required
@@ -132,30 +132,30 @@ const AddClinicModal: React.FC<AddClinicModalProps> = ({ plan }) => {
                 size="md"
                 radius="sm"
                 control={control}
-                
-                />
+
+              />
             </Grid.Col>
           </Grid>
-          
+
           <TextInput
-                label="Địa chỉ phòng khám"
-                name="address"
-                required
-                mt="md"
-                size="md"
-                radius="sm"
-                control={control}                
-            />
+            label="Địa chỉ phòng khám"
+            name="address"
+            required
+            mt="md"
+            size="md"
+            radius="sm"
+            control={control}
+          />
           <TextInput
-                label="Thêm thông tin mô tả"
-                name="description"
-                required
-                mt="md"
-                size="md"
-                radius="sm"
-                control={control}                
-            />
-            {/* <TextInput disabled
+            label="Thêm thông tin mô tả"
+            name="description"
+            required
+            mt="md"
+            size="md"
+            radius="sm"
+            control={control}
+          />
+          {/* <TextInput disabled
                 label="Gói dịch vụ"
                 name="planName"
                 placeholder={plan.planName}
@@ -167,7 +167,7 @@ const AddClinicModal: React.FC<AddClinicModalProps> = ({ plan }) => {
           <Button fullWidth mt="xl" radius="sm" size="md" type="submit">
             Đăng ký
           </Button>
-          
+
         </Form>
       </Paper>
     </Box>

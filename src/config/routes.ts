@@ -1,4 +1,4 @@
-import { AdminLayout, DefaultLayout, ClinicLayout } from '@/layouts';
+import { AdminLayout, DefaultLayout, ClinicLayout, NoLayout } from '@/layouts';
 import {
   HomePage,
   PricingPlanPage,
@@ -12,9 +12,11 @@ import {
   PricingPlanAdminPage,
   Message,
   DashboardClinic,
-  VideoCall, 
-  PlanManagement
+  VideoCall,
+  PlanManagement,
+  PaymentResult,
 } from '@/pages';
+import { Fragment } from 'react';
 
 export const PATHS = {
   HOME: '/',
@@ -30,7 +32,8 @@ export const PATHS = {
   CLINIC_CHAT: 'clinic/messages',
   CLINIC_DASHBOARD: '/clinic/dashboard',
   VIDEO_CALL: '/clinic/video-call',
-  PLAN_MANAGEMENT: '/clinic/plan-management'
+  PLAN_MANAGEMENT: '/clinic/phong-kham',
+  PAYMENT_RESULT: '/thanh-toan/thong-tin-thanh-toan',
 };
 
 export const ROUTES = [
@@ -142,7 +145,15 @@ export const ROUTES = [
     element: PlanManagement,
     isProtected: true,
     children: [],
-  }
+  },
+  {
+    path: PATHS.PAYMENT_RESULT,
+    title: 'Kết quả thanh toán',
+    layout: NoLayout,
+    element: PaymentResult,
+    isProtected: false,
+    children: [],
+  },
   // {
   //   path: '*',
   //   title: 'Không tìm thấy trang',

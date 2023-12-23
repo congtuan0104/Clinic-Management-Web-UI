@@ -23,19 +23,19 @@ const mockdata = [
     label: 'Quản trị',
     icon: CgNotes,
     children: [
-      { label: 'Overview', link: '#' },
-      { label: 'Forecasts', link: '#' },
-      { label: 'Outlook', link: '#' },
-      { label: 'Real time', link: '#' },
+      { label: 'Quản lý phòng khám', href: '/clinic/phong-kham' },
+      { label: 'Forecasts', href: '#' },
+      { label: 'Outlook', href: '#' },
+      { label: 'Real time', href: '#' },
     ],
   },
   {
     label: 'Nhân viên',
     icon: MdOutlinePeopleAlt,
     children: [
-      { label: 'Upcoming releases', link: '#' },
-      { label: 'Previous releases', link: '#' },
-      { label: 'Releases schedule', link: '#' },
+      { label: 'Upcoming releases', href: '#' },
+      { label: 'Previous releases', href: '#' },
+      { label: 'Releases schedule', href: '#' },
     ],
   },
   { label: 'Nhắn tin', icon: RiMessage2Fill, href: '/clinic/messages' },
@@ -52,7 +52,9 @@ export function ClinicSideBar({ notify }: ISidebarProps) {
   const [opened, { open, close }] = useDisclosure(false);
   const { userInfo } = useAuth();
 
-  const links = mockdata.map((item) => <LinksGroup isActive={item.href === pathname} {...item} key={item.label} />);
+  const links = mockdata.map((item) =>
+    <LinksGroup isActive={item.href === pathname} {...item} key={item.label} />
+  );
 
   const renderSendingTime = (sendingTime: Date) => {
     const diff = dayjs(dayjs()).diff(sendingTime, 'second');

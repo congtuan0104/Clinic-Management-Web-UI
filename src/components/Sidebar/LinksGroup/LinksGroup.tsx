@@ -9,22 +9,21 @@ interface LinksGroupProps {
   label: string;
   initiallyOpened?: boolean;
   href?: string;
-  children?: { label: string; link: string }[];
+  children?: { label: string; href: string }[];
   isActive?: boolean;
 }
 
 export function LinksGroup({ icon: Icon, label, initiallyOpened, children, href }: LinksGroupProps) {
   const hasLinks = Array.isArray(children);
   const [opened, setOpened] = useState(initiallyOpened || false);
-  const items = (hasLinks ? children : []).map((link) => (
+  const items = (hasLinks ? children : []).map((item) => (
     <Text
       component={Link}
       className={classes.link}
-      to={link.link}
-      key={link.label}
-      onClick={(event) => event.preventDefault()}
+      to={item.href}
+      key={item.label}
     >
-      {link.label}
+      {item.label}
     </Text>
   ));
 
