@@ -3,9 +3,12 @@ import { Text, Flex, Box } from '@mantine/core';
 import PlanCard from '@/components/Card/PlanCard';
 import { useQuery } from 'react-query';
 import { planApi } from '@/services';
+import { useNavigate } from 'react-router-dom';
+import { PATHS } from '@/config';
 
 const PricingPlanPage = () => {
-  const { data: plans, isLoading, isError, error } = useQuery('plans', () => getAllPlans());
+  const { data: plans, isLoading } = useQuery('plans', () => getAllPlans());
+  const navigate = useNavigate();
 
   const getAllPlans = async () => {
     try {
@@ -20,7 +23,7 @@ const PricingPlanPage = () => {
    * Xử lý khi mua gói dịch vụ
    */
   const handleBuyPlan = () => {
-    alert('Chức năng mua gói dịch vụ đang được phát triển');
+    navigate(`${PATHS.LOGIN}?callback=${PATHS.PLAN_MANAGEMENT}`)
   }
 
   return (

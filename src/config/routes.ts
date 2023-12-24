@@ -15,6 +15,7 @@ import {
   VideoCall,
   PlanManagement,
   PaymentResult,
+  NotFoundPage,
 } from '@/pages';
 import { Fragment } from 'react';
 
@@ -42,6 +43,7 @@ export const ROUTES = [
     title: 'Trang chủ',
     layout: DefaultLayout,
     element: HomePage,
+    isProtected: false,
     children: [],
   },
   {
@@ -49,6 +51,7 @@ export const ROUTES = [
     title: 'Bảng giá',
     layout: DefaultLayout,
     element: PricingPlanPage,
+    isProtected: false,
     children: [],
   },
   {
@@ -151,14 +154,13 @@ export const ROUTES = [
     title: 'Kết quả thanh toán',
     layout: NoLayout,
     element: PaymentResult,
-    isProtected: false,
     children: [],
   },
-  // {
-  //   path: '*',
-  //   title: 'Không tìm thấy trang',
-  //   layout: DefaultLayout,
-  //   element: () => NotFoundPage,
-  //   children: [],
-  // },
+  {
+    path: '*',
+    title: 'Không tìm thấy trang',
+    layout: NoLayout,
+    element: NotFoundPage,
+    children: [],
+  },
 ];

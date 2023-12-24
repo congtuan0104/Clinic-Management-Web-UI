@@ -17,7 +17,7 @@ const ClinicManagePage = () => {
     ['clinics', userInfo?.id],
     () => clinicApi.getClinicsByOwner(userInfo?.id).then(res => res.data)
   );
-  const { data: plans, isLoading } = useQuery('plans', () => getAllPlans());
+  const { data: plans, isLoading: isLoadingPlan } = useQuery('plans', () => getAllPlans());
   const [isOpenClinicModal, setIsOpenClinicModal] = useState<boolean>(false);
   const [isOpenPaymentModal, setIsOpenPaymentModal] = useState<boolean>(false);
   const [clinicNeedPayment, setClinicNeedPayment] = useState<IClinicWithSubscription>();  // thông tin phòng khám vừa được tạo (dùng để thanh toán)
@@ -57,7 +57,6 @@ const ClinicManagePage = () => {
 
   const renderSubscriptionInfo = (clinic: IClinic) => {
     const subscription = clinic.subscriptions ? clinic.subscriptions[0] : null;
-    console.log('subscription', subscription)
     if (!subscription) return null;
     const plan = getPlanInfo(subscription.planId);
     return (

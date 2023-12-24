@@ -6,7 +6,7 @@ import { FcGoogle } from 'react-icons/fc';
 import { RiGithubFill, RiLockPasswordLine } from 'react-icons/ri';
 import { FaFacebookF, FaApple } from 'react-icons/fa6';
 import { SiMaildotru } from 'react-icons/si';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 
 import * as yup from 'yup';
 
@@ -42,6 +42,8 @@ const schema = yup.object().shape({
 const LoginPage = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const callback = searchParams.get('callback');
   const [emailChoose, setEmailChoose] = useState<string>(''); // email được chọn để đăng ký tài khoản
   const [emailFromProvider, setEmailFromProvider] = useState<string | null>(''); // email được chọn để đăng ký tài khoản
   const [openedModalChooseEmail, { open, close }] = useDisclosure(false);

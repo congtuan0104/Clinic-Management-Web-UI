@@ -9,6 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import { authApi } from '@/services';
 import { useEffect, useState } from 'react';
 import { useDisclosure } from '@mantine/hooks';
+import { notificationApi } from '@/services';
 
 // description: hook xử lý các tác vụ liên quan đến chức năng đăng nhập, đăng xuất
 
@@ -17,7 +18,6 @@ export const useAuth = () => {
   const navigate = useNavigate();
   const userInfo = useAppSelector(userInfoSelector);
   const [isLogin, setIsLogin] = useState(false);
-  const [listEmail, setListEmail] = useState<string[]>([]); // danh sách email để đăng ký tài khoản
   const [openedModalChooseEmail, { open, close }] = useDisclosure(false);
 
   // kiểm tra xem người dùng đã đăng nhập hay chưa
@@ -133,6 +133,13 @@ export const useAuth = () => {
     cookies.remove(COOKIE_KEY.TOKEN);
     cookies.remove(COOKIE_KEY.USER_INFO);
 
+    const deviceToken = cookies.get(COOKIE_KEY.DEVICE_TOKEN)?.toString();
+
+    if (deviceToken && userInfo) {
+      notificationApi.deleteDeviceToken(userInfo.id, deviceToken);
+      cookies.remove(COOKIE_KEY.DEVICE_TOKEN);
+    }
+
     dispatch(setUserInfo(undefined));
     notifications.show({
       message: 'Bạn đã đăng xuất',
@@ -150,6 +157,5 @@ export const useAuth = () => {
     linkAccount, // liên kết tài khoản với bên thứ 3
     openedModalChooseEmail, // mở modal chọn email để đăng ký tài khoản
     close,
-    listEmail,
   };
 };

@@ -7,7 +7,7 @@ const DashboardAdmin = () => {
 
   return (
     <Box>
-      <Title ta="center">Dashboard - Admin</Title>
+      <Title ta="center">Dashboard - Clinic</Title>
       {userInfo && (
         <>
           <Text c="dimmed" size="lg" ta="center" mt="10">

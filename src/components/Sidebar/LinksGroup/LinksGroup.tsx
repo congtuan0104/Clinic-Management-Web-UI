@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Group, Box, Collapse, ThemeIcon, Text, UnstyledButton, rem } from '@mantine/core';
 import { IoIosArrowForward } from "react-icons/io";
 import classes from './LinksGroup.module.css';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 interface LinksGroupProps {
   icon: React.FC<any>;
@@ -14,6 +14,7 @@ interface LinksGroupProps {
 }
 
 export function LinksGroup({ icon: Icon, label, initiallyOpened, children, href }: LinksGroupProps) {
+  const navigate = useNavigate();
   const hasLinks = Array.isArray(children);
   const [opened, setOpened] = useState(initiallyOpened || false);
   const items = (hasLinks ? children : []).map((item) => (
@@ -30,10 +31,8 @@ export function LinksGroup({ icon: Icon, label, initiallyOpened, children, href 
   return (
     <>
       <UnstyledButton
-        to={href || '#'}
-        onClick={() => !href && setOpened((o) => !o)}
-        className={classes.control}
-        component={Link}>
+        onClick={() => href ? navigate(href) : setOpened((o) => !o)}
+        className={classes.control}>
         <Group justify="space-between" gap={0}>
           <Box style={{ display: 'flex', alignItems: 'center' }}>
             <ThemeIcon c='teal.7' variant="light" size={30}>

@@ -2,9 +2,10 @@ import { ActionIcon, Divider, Image, Indicator, Modal, rem, ScrollArea, Text, To
 import { useDisclosure } from '@mantine/hooks';
 import dayjs from 'dayjs';
 import { CgNotes } from "react-icons/cg";
-import { FaHome } from "react-icons/fa";
+import { FaHome, FaHospitalUser } from "react-icons/fa";
+import { LuWarehouse } from "react-icons/lu";
 import { IoSettingsOutline } from "react-icons/io5";
-import { MdNotificationsNone, MdOutlineAnalytics, MdOutlinePeopleAlt } from "react-icons/md";
+import { MdNotificationsNone, MdOutlineAnalytics, MdOutlinePeopleAlt, MdOutlineSchedule, MdPayment } from "react-icons/md";
 import { RiMessage2Fill } from 'react-icons/ri';
 import { Link, useLocation } from 'react-router-dom';
 
@@ -24,22 +25,25 @@ const mockdata = [
     icon: CgNotes,
     children: [
       { label: 'Quản lý phòng khám', href: '/clinic/phong-kham' },
-      { label: 'Forecasts', href: '#' },
-      { label: 'Outlook', href: '#' },
-      { label: 'Real time', href: '#' },
+      { label: 'Tin tức, quảng cáo', href: '#' },
     ],
   },
   {
     label: 'Nhân viên',
     icon: MdOutlinePeopleAlt,
     children: [
-      { label: 'Upcoming releases', href: '#' },
-      { label: 'Previous releases', href: '#' },
-      { label: 'Releases schedule', href: '#' },
+      { label: 'Danh sách nhân viên', href: '#' },
+      { label: 'Vai trò nhân viên', href: '#' },
     ],
   },
-  { label: 'Nhắn tin', icon: RiMessage2Fill, href: '/clinic/messages' },
-  { label: 'Thống kê', icon: MdOutlineAnalytics },
+  { label: 'Nhắn tin tư vấn', icon: RiMessage2Fill, href: '/clinic/messages' },
+  { label: 'Bệnh nhân', icon: FaHospitalUser },
+  { label: 'Lịch hẹn khám', icon: MdOutlineSchedule },
+  { label: 'Tiếp nhận bệnh nhân', icon: MdOutlineAnalytics },
+  { label: 'Khám bệnh', icon: MdOutlineAnalytics },
+  { label: 'Thanh toán', icon: MdPayment },
+  { label: 'Kho hàng, vật tư', icon: LuWarehouse },
+  { label: 'Thống kê báo cáo', icon: MdOutlineAnalytics },
   { label: 'Cài đặt', icon: IoSettingsOutline },
 ];
 
@@ -68,9 +72,9 @@ export function ClinicSideBar({ notify }: ISidebarProps) {
   return (
     <>
       <nav style={{ position: 'fixed', top: 0, bottom: 0, left: 0 }} className={classes.navbar}>
-        <div className='flex flex-between items-center px-1 w-full'>
-          <Link className='flex-1 flex justify-start py-2' to={PATHS.CLINIC_DASHBOARD}>
-            <Image src={ClinusLogo} alt='logo' h={50} fit='contain' />
+        <div className='flex flex-between items-center pl-3 w-full'>
+          <Link className='flex-1 flex justify-start py-[4px]' to={PATHS.CLINIC_DASHBOARD}>
+            <Image src={ClinusLogo} alt='logo' h={51} fit='contain' />
           </Link>
 
           <Tooltip label='Hiển thị thông báo'>

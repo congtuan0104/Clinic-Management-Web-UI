@@ -49,8 +49,9 @@ export default function GroupChatList({ groups, changeGroup, selectedGroup }: Ch
           setSearchGroup(e.target.value)
           handleSearchGroup(e.target.value)
         }}
+        size="md"
         placeholder="Tìm kiếm nhóm chat"
-        radius='lg' />
+        radius='xl' />
 
       <Flex my={10} align='center' direction='column'>
         {searchGroupResult.map((group) => (

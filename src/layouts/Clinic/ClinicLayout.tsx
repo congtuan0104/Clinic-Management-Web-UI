@@ -1,29 +1,36 @@
 import { ClinicHeader, ClinicSideBar } from '@/components';
-import { onMessageListener, realtimeDB, requestForToken } from '@/config';
-import { useAuth } from '@/hooks';
+import { PATHS, onMessageListener, realtimeDB, requestForToken } from '@/config';
+import { COOKIE_KEY } from '@/constants';
+import { AuthModule } from '@/enums';
+import { useAppDispatch, useAuth } from '@/hooks';
+import { clinicApi, notificationApi } from '@/services';
+import { setCurrentClinic, setListClinics } from '@/store';
 import { INotification } from '@/types';
+import { cookies } from '@/utils';
 import { Title, Text, Group } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import { onValue, ref } from 'firebase/database';
 import { MessagePayload } from 'firebase/messaging';
 import { useEffect, useState } from 'react';
+import { useQuery } from 'react-query';
+import { useNavigate } from 'react-router-dom';
 
 const ClinicLayout = ({ children }: { children: JSX.Element }) => {
   const { userInfo } = useAuth();
   const [notify, setNotify] = useState<INotification[]>([]);
+  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
 
-  requestForToken();
-  onMessageListener()
-    .then((payload) => {
-      notifications.show({
-        message: <>
-          <Title>{payload?.notification?.title}</Title>
-          <Text>{payload?.notification?.body}</Text>
-        </>,
-        color: 'blue',
-      });
-    })
-    .catch((err) => console.log('Get firebase message failed: ', err));
+  const { data: clinics, isLoading: isLoadingClinic } = useQuery(
+    ['clinics', userInfo?.id],
+    () => clinicApi.getClinicsByOwner(userInfo?.id).then(res => res.data)
+  );
+
+  useEffect(() => {
+    if (userInfo?.moduleId !== AuthModule.Clinic) {
+      navigate(PATHS.HOME, { replace: true });
+    }
+  }, [userInfo, navigate]);
 
   useEffect(() => {
     let groupRef = ref(realtimeDB, 'notifications/' + userInfo?.id);
@@ -34,14 +41,25 @@ const ClinicLayout = ({ children }: { children: JSX.Element }) => {
       }
       else setNotify([])
     })
-
   }, [userInfo?.id])
+
+  useEffect(() => {
+    if (!isLoadingClinic) {
+      dispatch(setListClinics(clinics || []))
+      dispatch(setCurrentClinic(clinics?.[0]))
+    }
+
+  }, [isLoadingClinic])
+
 
   return (
     <>
       <ClinicSideBar notify={notify} />
       <main style={{ marginLeft: '280px' }} className='bg-primary-0 min-h-screen  '>
-        {children}
+        <ClinicHeader />
+        <div className='pt-[60px]'>
+          {children}
+        </div>
       </main>
     </>
   );
