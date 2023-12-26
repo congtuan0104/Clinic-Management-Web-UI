@@ -55,10 +55,10 @@ const ClinicLayout = ({ children }: { children: JSX.Element }) => {
 
   return (
     <>
-      <ClinicSideBar notify={notify} />
-      <main style={{ marginLeft: '280px' }} className='bg-primary-0 min-h-screen  '>
+      <main className='bg-primary-0 min-h-screen relative'>
         <ClinicHeader />
-        <div className='pt-[60px]'>
+        <ClinicSideBar notify={notify} />
+        <div className='mt-[60px] ml-[280px]'>
           {children}
         </div>
       </main>

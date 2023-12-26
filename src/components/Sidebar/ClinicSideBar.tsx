@@ -7,18 +7,13 @@ import { LuWarehouse } from "react-icons/lu";
 import { IoSettingsOutline } from "react-icons/io5";
 import { MdNotificationsNone, MdOutlineAnalytics, MdOutlinePeopleAlt, MdOutlineSchedule, MdPayment } from "react-icons/md";
 import { RiMessage2Fill } from 'react-icons/ri';
-import { Link, useLocation } from 'react-router-dom';
-
-import ClinusLogo from '@/assets/images/logo.png';
-import { PATHS } from '@/config';
+import { useLocation } from 'react-router-dom';
 import { useAuth } from '@/hooks';
 import { INotification } from '@/types';
 
 import { LinksGroup } from './LinksGroup/LinksGroup';
-import classes from './SideBar.module.css';
-import { UserButton } from './UserButton/UserButton';
 
-const mockdata = [
+const menuItems = [
   { label: 'Trang chủ', icon: FaHome, href: '/clinic/dashboard' },
   {
     label: 'Quản trị',
@@ -56,8 +51,9 @@ export function ClinicSideBar({ notify }: ISidebarProps) {
   const [opened, { open, close }] = useDisclosure(false);
   const { userInfo } = useAuth();
 
-  const links = mockdata.map((item) =>
-    <LinksGroup isActive={item.href === pathname} {...item} key={item.label} />
+
+  const links = menuItems.map((item) =>
+    <LinksGroup {...item} key={item.label} />
   );
 
   const renderSendingTime = (sendingTime: Date) => {
@@ -71,8 +67,10 @@ export function ClinicSideBar({ notify }: ISidebarProps) {
 
   return (
     <>
-      <nav style={{ position: 'fixed', top: 0, bottom: 0, left: 0 }} className={classes.navbar}>
-        <div className='flex flex-between items-center pl-3 w-full'>
+      <nav
+        className='bg-white pt-[60px] h-screen w-[280px] fixed top-0 bottom-0 left-0 z-[9]'
+      >
+        {/* <div className='flex flex-between items-center pl-3 w-full'>
           <Link className='flex-1 flex justify-start py-[4px]' to={PATHS.CLINIC_DASHBOARD}>
             <Image src={ClinusLogo} alt='logo' h={51} fit='contain' />
           </Link>
@@ -89,15 +87,11 @@ export function ClinicSideBar({ notify }: ISidebarProps) {
 
         </div>
 
-        <Divider />
+        <Divider /> */}
 
-        <ScrollArea className={classes.links}>
-          <div className={classes.linksInner}>{links}</div>
+        <ScrollArea>
+          <div>{links}</div>
         </ScrollArea>
-
-        <div className={classes.footer}>
-          <UserButton />
-        </div>
       </nav>
 
       <Modal opened={opened} onClose={close} title={<Text fw={600}>Thông báo của {userInfo?.lastName}</Text>}>
