@@ -45,10 +45,11 @@ const ClinicLayout = ({ children }: { children: JSX.Element }) => {
 
   useEffect(() => {
     if (!isLoadingClinic) {
+      const curClinicId = cookies.get(COOKIE_KEY.CURRENT_CLINIC_ID)?.toString();
+      const curClinic = clinics?.find((clinic) => clinic.id == curClinicId) || clinics?.[0];
       dispatch(setListClinics(clinics || []))
-      dispatch(setCurrentClinic(clinics?.[0]))
+      dispatch(setCurrentClinic(curClinic))
     }
-
   }, [isLoadingClinic])
 
 

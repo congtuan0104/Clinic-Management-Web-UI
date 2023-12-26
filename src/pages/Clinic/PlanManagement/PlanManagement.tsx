@@ -1,4 +1,4 @@
-import { Text, Flex, Box, Paper, Title, Button } from '@mantine/core';
+import { Text, Flex, Box, Paper, Title, Button, Loader, Stack } from '@mantine/core';
 import { useState } from 'react';
 import PlanCard from '@/components/Card/PlanCard';
 import { useQuery } from 'react-query';
@@ -72,6 +72,12 @@ const ClinicManagePage = () => {
       </>
     )
   }
+
+  if ((isLoadingClinic || isLoadingPlan) && !isOpenClinicModal && !isOpenPaymentModal) return (
+    <Stack h="90vh" align="center" justify="center">
+      <Loader size="xl" />
+      <Text size="xl">Đang tải</Text>
+    </Stack>)
 
   return (
     <>

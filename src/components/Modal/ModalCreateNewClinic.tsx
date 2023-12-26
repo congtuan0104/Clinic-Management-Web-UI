@@ -3,7 +3,7 @@ import { IClinicWithSubscription, IServicePlan } from "@/types";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Button, Flex, Grid, Modal } from "@mantine/core";
 import { Form, useForm } from "react-hook-form";
-import { NativeSelect, TextInput } from "react-hook-form-mantine";
+import { NativeSelect, Select, TextInput } from "react-hook-form-mantine";
 import { useQuery } from "react-query";
 import * as yup from 'yup';
 import { CurrencyFormatter } from "..";
@@ -129,7 +129,27 @@ const ModalCreateNewClinic = ({ isOpen, onClose, onSuccess, selectedPlanId }: IP
           radius="sm"
           control={control}
         />
-        <NativeSelect
+        <Select
+          name="planId"
+          control={control}
+          label="Chọn gói quản lý phòng khám"
+          placeholder={isLoadingPlan ? 'Đang lấy danh sách gói' : ''}
+          withAsterisk
+          mt="md"
+          size="md"
+          radius="sm"
+          required
+          disabled={isLoadingPlan}
+          comboboxProps={{ shadow: 'md', transitionProps: { transition: 'pop', duration: 200 } }}
+          checkIconPosition="right"
+          data={plans?.map((plan) => ({
+            value: plan.id.toString(),
+            label: `${plan.planName} - ${plan.duration} ngày - ${plan.currentPrice} VNĐ`,
+          }))
+          }
+        />
+
+        {/* <NativeSelect
           name="planId"
           control={control}
           label="Chọn gói quản lý phòng khám"
@@ -146,7 +166,7 @@ const ModalCreateNewClinic = ({ isOpen, onClose, onSuccess, selectedPlanId }: IP
               {plan.planName} - <CurrencyFormatter value={plan.currentPrice} /> - {plan.duration} ngày
             </option>
           ))}
-        </NativeSelect>
+        </NativeSelect> */}
         <Button mt="xl" radius="sm" size="md" type="submit">
           Đăng ký
         </Button>

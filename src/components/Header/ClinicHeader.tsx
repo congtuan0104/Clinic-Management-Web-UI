@@ -7,6 +7,8 @@ import { Box, Group, Button, Image, Divider, Menu } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import ClinusLogo from '@/assets/images/logo.png';
 import { IClinic } from '@/types';
+import { cookies } from '@/utils';
+import { COOKIE_KEY } from '@/constants';
 
 const ClinicHeader = () => {
   const userInfo = useAppSelector(userInfoSelector);
@@ -15,6 +17,7 @@ const ClinicHeader = () => {
   const dispatch = useAppDispatch();
 
   const handleChangeClinic = (clinic: IClinic) => {
+    cookies.set(COOKIE_KEY.CURRENT_CLINIC_ID, clinic.id)
     dispatch(setCurrentClinic(clinic));
   }
 

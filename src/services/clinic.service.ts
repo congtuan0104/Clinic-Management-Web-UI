@@ -1,4 +1,10 @@
-import { IApiResponse, IAddClinicRequest, IClinic, IClinicWithSubscription } from '@/types';
+import {
+  IApiResponse,
+  IAddClinicRequest,
+  IClinic,
+  IClinicWithSubscription,
+  IUserInfo,
+} from '@/types';
 import { axiosClient } from '@/utils';
 
 export const clinicApi = {
@@ -15,5 +21,12 @@ export const clinicApi = {
    */
   createClinic(data: IAddClinicRequest): Promise<IApiResponse<IClinicWithSubscription>> {
     return axiosClient.post(`/clinics`, data);
+  },
+
+  /**
+   * @returns Lấy danh sách thành viên trong phòng khám
+   */
+  getClinicMembers(clinicId: string): Promise<IApiResponse<IUserInfo[]>> {
+    return axiosClient.get(`/clinics/${clinicId}/users`);
   },
 };
