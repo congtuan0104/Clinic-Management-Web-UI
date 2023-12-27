@@ -34,7 +34,7 @@ export const clinicApi = {
   },
 
   getListUserGroupRole(Id?: string): Promise<IApiResponse<IUserGroupRole[]>> {
-    return axiosClient.get(`/clinics/${Id}/user-group-role`, { params: { id: Id } });
+    return axiosClient.get(`/clinics/${Id}/user-group-role`);
   },
 
   getListPermissions():Promise<IApiResponse<IRolePermission[]>>{

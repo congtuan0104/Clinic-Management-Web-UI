@@ -54,20 +54,20 @@ export interface IClinicWithSubscription {
   subscription: IClinicSubscription;
 }
 
-export interface IAddUserGroupRoleRequest{
+export interface IAddUserGroupRoleRequest {
   name: string;
   description: string;
   permissions: number[];
 }
 
-export interface IUserGroupRole{
+export interface IUserGroupRole {
   id: number;
-  name: string; 
+  name: string;
   description: string;
-  rolePermission: IRolePermission[];
+  rolePermissions: IRolePermission[];
 }
 
-export interface IRolePermission{
+export interface IRolePermission {
   id: number;
   optionName: string;
   description?: string;
