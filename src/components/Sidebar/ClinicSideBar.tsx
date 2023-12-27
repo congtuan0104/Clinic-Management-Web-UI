@@ -33,7 +33,7 @@ const mockdata = [
     icon: MdOutlinePeopleAlt,
     children: [
       { label: 'Danh sách nhân viên', href: '#' },
-      { label: 'Vai trò nhân viên', href: '#' },
+      { label: 'Vai trò nhân viên', href: '/clinic/quan-ly-role' },
     ],
   },
   { label: 'Nhắn tin tư vấn', icon: RiMessage2Fill, href: '/clinic/messages' },

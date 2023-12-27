@@ -16,7 +16,9 @@ import {
   PlanManagement,
   PaymentResult,
   NotFoundPage,
+  RoleManagement,
 } from '@/pages';
+import RoleManagementPage from '@/pages/Clinic/RoleManagement/RoleManagement';
 import { Fragment } from 'react';
 
 export const PATHS = {
@@ -35,6 +37,7 @@ export const PATHS = {
   VIDEO_CALL: '/clinic/video-call',
   PLAN_MANAGEMENT: '/clinic/phong-kham',
   PAYMENT_RESULT: '/thanh-toan/thong-tin-thanh-toan',
+  ROLE_MANAGEMENT: '/clinic/quan-ly-role',
 };
 
 export const ROUTES = [
@@ -163,4 +166,11 @@ export const ROUTES = [
     element: NotFoundPage,
     children: [],
   },
+  {
+    path: PATHS.ROLE_MANAGEMENT,
+    title: 'Quản lý Role',
+    layout: ClinicLayout,
+    element: RoleManagement,
+    children: [],
+  }
 ];

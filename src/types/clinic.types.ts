@@ -53,3 +53,26 @@ export interface IClinicWithSubscription {
   clinic: IClinic;
   subscription: IClinicSubscription;
 }
+
+export interface IAddUserGroupRoleRequest{
+  name: string;
+  description: string;
+  permissions: number[];
+}
+
+export interface IUserGroupRole{
+  id: number;
+  name: string; 
+  description: string;
+  rolePermission: IRolePermission[];
+}
+
+export interface IRolePermission{
+  id: number;
+  optionName: string;
+  description?: string;
+  isServiceOption?: boolean;
+  isActive?: boolean;
+  createdAt?: string;
+  updatedAt?: string;
+}
