@@ -17,7 +17,7 @@ interface IProps {
     isOpen: boolean;
     onClose: () => void;
     updateRole: () => void;
-    selectedRole?: IUserGroupRole; 
+    selectedRole?: IUserGroupRole;
 }
 
 const ModalRoleManagement = ({ isEditMode, isOpen, onClose, updateRole, selectedRole }: IProps) => {
@@ -29,7 +29,7 @@ const ModalRoleManagement = ({ isEditMode, isOpen, onClose, updateRole, selected
 
     const getPermissionData = async () => {
         try {
-            const response = await clinicApi.getListPermissions(); 
+            const response = await clinicApi.getListPermissions();
             if (response.data) {
                 setPermissions(response.data);
             } else {
@@ -45,10 +45,10 @@ const ModalRoleManagement = ({ isEditMode, isOpen, onClose, updateRole, selected
 
     useEffect(() => {
         if (selectedRole) {
-            setNewRole(selectedRole.name || ''); 
+            setNewRole(selectedRole.name || '');
             setRoleDescription(selectedRole.description || '');
             const selectedRolePermissions = permissions.filter((permission) =>
-                selectedRole.rolePermission?.some((rolePermission) => rolePermission.id === permission.id)
+                selectedRole.rolePermissions?.some((rolePermission) => rolePermission.id === permission.id)
             );
             setSelectedPermissions(selectedRolePermissions);
         }
@@ -61,7 +61,7 @@ const ModalRoleManagement = ({ isEditMode, isOpen, onClose, updateRole, selected
     };
 
     const handleSubmit = async () => {
-        if(!isEditMode){
+        if (!isEditMode) {
             try {
                 const requestData: IAddUserGroupRoleRequest = {
                     name: newRole,
@@ -102,7 +102,7 @@ const ModalRoleManagement = ({ isEditMode, isOpen, onClose, updateRole, selected
                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                     <div style={{ flex: '0 0 48%', display: 'flex', flexDirection: 'column' }}>
                         <CheckboxGroup
-                            label={<span style={{ fontWeight: 'bold'}}>Các quyền</span>}
+                            label={<span style={{ fontWeight: 'bold' }}>Các quyền</span>}
                             value={selectedPermissions.map((permission) => permission.optionName)}
                             onChange={(value) => {
                                 const selectedRolePermissions = permissions.filter((permission) =>
