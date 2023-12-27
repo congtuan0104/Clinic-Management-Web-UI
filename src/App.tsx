@@ -11,7 +11,8 @@ const App = () => {
         {ROUTES.map((route, index) => {
           const Layout = route.layout || Fragment;
           const Page = route.element;
-          const isProtected = route.isProtected// kiểm tra trang có yêu cầu đăng nhập không      
+          const isProtected = route.isProtected// kiểm tra trang có yêu cầu đăng nhập không        
+
           return (
             <Route
               key={index}

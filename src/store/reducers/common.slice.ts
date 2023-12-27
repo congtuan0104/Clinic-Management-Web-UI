@@ -25,7 +25,7 @@ const commonSlice = createSlice({
     },
     setClinicId(state: CommonState, action: PayloadAction<number | undefined | null>) {
       state.clinicId = action.payload;
-    }
+    },
   },
 });
 

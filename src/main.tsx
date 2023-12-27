@@ -5,6 +5,7 @@ import '@mantine/dates/styles.css';
 import 'dayjs/locale/vi';
 
 import { MantineProvider } from '@mantine/core';
+import { ModalsProvider } from '@mantine/modals';
 import ReactDOM from 'react-dom/client';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { theme } from '@/config';
@@ -21,10 +22,12 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
   <ReduxProvider store={store}>
     <QueryClientProvider client={queryClient}>
       <MantineProvider theme={theme} defaultColorScheme="light">
-        <DatesProvider settings={{ locale: 'vi' }}>
-          <Notifications autoClose={2000} limit={5} />
-          <App />
-        </DatesProvider>
+        <ModalsProvider labels={{ confirm: 'Xác nhận', cancel: 'Hủy' }}>
+          <DatesProvider settings={{ locale: 'vi' }}>
+            <Notifications autoClose={2000} limit={5} />
+            <App />
+          </DatesProvider>
+        </ModalsProvider>
       </MantineProvider>
     </QueryClientProvider>
   </ReduxProvider>,

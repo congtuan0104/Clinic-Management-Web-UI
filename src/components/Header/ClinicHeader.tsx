@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { PATHS } from '@/config';
 import { useAppDispatch, useAppSelector, useAuth } from '@/hooks';
 import { currentClinicSelector, listClinicSelector, setCurrentClinic, setUserInfo, userInfoSelector } from '@/store';
-import { Text, Group, Button, Image, Divider, Menu, TextInput, Flex, ScrollArea, Indicator, ActionIcon } from '@mantine/core';
+import { Text, Group, Button, Image, Divider, Menu, TextInput, Flex, ScrollArea, Indicator, ActionIcon, Badge, Title } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import ClinusLogo from '@/assets/images/logo.png';
 import { IClinic } from '@/types';
@@ -33,7 +33,6 @@ const ClinicHeader = () => {
         </Link>
 
         <MdOutlineMenuOpen size={35} />
-        {/* <p className='text-14 mb-3'>Phòng khám</p> */}
       </Group>
 
       <TextInput
@@ -42,14 +41,14 @@ const ClinicHeader = () => {
         leftSection={<IoSearch size={20} />}
         radius='md'
         w='100%'
-        maw={380}
+        maw={300}
       />
 
       <div className='flex flex-1 justify-end items-center'>
         <Menu shadow="md" width={200} position="bottom-end" offset={-3}>
           <Menu.Target>
-            <Button variant='transparent' size='sm' c='gray.5' fw={400} radius='md' mx={5}>
-              {currentClinic?.name}
+            <Button variant='transparent' size='sm' c='gray.8' fw={400} radius='md' mx={5}>
+              <span>{currentClinic?.name}</span>
             </Button>
           </Menu.Target>
 
@@ -101,11 +100,6 @@ const ClinicHeader = () => {
         </Menu>
 
       </div>
-
-
-
-
-
     </header>
   );
 };
