@@ -2,7 +2,8 @@ import { useState } from 'react';
 import { Group, Box, Collapse, ThemeIcon, Text, UnstyledButton, rem } from '@mantine/core';
 import { IoIosArrowForward } from "react-icons/io";
 import classes from './LinksGroup.module.css';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import classNames from 'classnames';
 
 interface LinksGroupProps {
   icon: React.FC<any>;
@@ -10,29 +11,35 @@ interface LinksGroupProps {
   initiallyOpened?: boolean;
   href?: string;
   children?: { label: string; href: string }[];
-  isActive?: boolean;
 }
 
 export function LinksGroup({ icon: Icon, label, initiallyOpened, children, href }: LinksGroupProps) {
+  const { pathname } = useLocation();
   const navigate = useNavigate();
   const hasLinks = Array.isArray(children);
   const [opened, setOpened] = useState(initiallyOpened || false);
   const items = (hasLinks ? children : []).map((item) => (
-    <Text
-      component={Link}
-      className={classes.link}
+    <Link
+      className={classNames(
+        'block font-medium text-14 border-0 border-l border-solid border-gray-300 ml-8 pl-4 py-2.5',
+        item.href === pathname ? 'bg-primary-0' : 'hover:bg-primary-100'
+      )}
       to={item.href}
       key={item.label}
     >
       {item.label}
-    </Text>
+    </Link>
   ));
 
   return (
     <>
-      <UnstyledButton
+      <Box
         onClick={() => href ? navigate(href) : setOpened((o) => !o)}
-        className={classes.control}>
+        // className={classes.control}>
+        className={classNames(
+          'w-full font-medium text-14 block px-4 py-2.5  cursor-pointer',
+          href === pathname ? 'bg-primary-0' : 'hover:bg-primary-100'
+        )}>
         <Group justify="space-between" gap={0}>
           <Box style={{ display: 'flex', alignItems: 'center' }}>
             <ThemeIcon c='teal.7' variant="light" size={30}>
@@ -52,7 +59,7 @@ export function LinksGroup({ icon: Icon, label, initiallyOpened, children, href 
             />
           )}
         </Group>
-      </UnstyledButton>
+      </Box>
       {hasLinks ? <Collapse in={opened}>{items}</Collapse> : null}
     </>
   );

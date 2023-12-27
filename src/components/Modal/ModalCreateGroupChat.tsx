@@ -12,8 +12,6 @@ import { notifications } from "@mantine/notifications";
 import { useAppSelector, useAuth } from "@/hooks";
 import { currentClinicSelector } from "@/store";
 
-
-
 interface IProps {
   isOpen: boolean;
   onClose: () => void;
@@ -25,7 +23,7 @@ interface FormAddGroupChatData {
   memberIds: string[];
 }
 
-const ModalCreateNewClinic = ({ isOpen, onClose, onSuccess }: IProps) => {
+const ModalCreateGroupChat = ({ isOpen, onClose, onSuccess }: IProps) => {
   const { userInfo } = useAuth();
   const currentClinic = useAppSelector(currentClinicSelector);
 
@@ -130,4 +128,4 @@ const ModalCreateNewClinic = ({ isOpen, onClose, onSuccess }: IProps) => {
 }
 
 
-export default ModalCreateNewClinic;
+export default ModalCreateGroupChat;
