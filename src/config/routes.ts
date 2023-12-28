@@ -18,8 +18,6 @@ import {
   NotFoundPage,
   RoleManagement,
 } from '@/pages';
-import RoleManagementPage from '@/pages/Clinic/RoleManagement/RoleManagement';
-import { Fragment } from 'react';
 
 export const PATHS = {
   HOME: '/',
@@ -32,12 +30,13 @@ export const PATHS = {
   REGISTER_BY_INVITATION: '/verify-account',
   ADMIN_DASHBOARD: '/admin/dashboard',
   ADMIN_PRICING_PLAN: '/admin/bang-gia',
-  CLINIC_CHAT: 'clinic/messages',
+  CLINIC_CHAT: '/clinic/messages',
   CLINIC_DASHBOARD: '/clinic/dashboard',
   VIDEO_CALL: '/clinic/video-call',
-  PLAN_MANAGEMENT: '/clinic/phong-kham',
+  PLAN_MANAGEMENT: '/clinic/quan-ly-goi',
   PAYMENT_RESULT: '/thanh-toan/thong-tin-thanh-toan',
   ROLE_MANAGEMENT: '/clinic/quan-ly-role',
+  CLINIC_INFO_MANAGEMENT: '/clinic/thong-tin-phong-kham',
 };
 
 export const ROUTES = [
@@ -160,17 +159,17 @@ export const ROUTES = [
     children: [],
   },
   {
+    path: PATHS.ROLE_MANAGEMENT,
+    title: 'Quản lý Role',
+    layout: ClinicLayout,
+    element: RoleManagement,
+    children: [],
+  },
+  {
     path: '*',
     title: 'Không tìm thấy trang',
     layout: NoLayout,
     element: NotFoundPage,
     children: [],
   },
-  {
-    path: PATHS.ROLE_MANAGEMENT,
-    title: 'Quản lý Role',
-    layout: ClinicLayout,
-    element: RoleManagement,
-    children: [],
-  }
 ];

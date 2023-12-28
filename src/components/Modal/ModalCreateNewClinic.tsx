@@ -167,9 +167,14 @@ const ModalCreateNewClinic = ({ isOpen, onClose, onSuccess, selectedPlanId }: IP
             </option>
           ))}
         </NativeSelect> */}
-        <Button mt="xl" radius="sm" size="md" type="submit">
-          Đăng ký
-        </Button>
+        <Flex justify='end' mt='xl' gap={8}>
+          <Button variant="default" radius="sm" size="md" onClick={onClose}>
+            Đóng
+          </Button>
+          <Button radius="sm" size="md" type="submit">
+            Đăng ký
+          </Button>
+        </Flex>
       </Form>
     </Modal>
   )

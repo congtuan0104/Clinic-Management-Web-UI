@@ -8,8 +8,8 @@ export const renderSubscriptionStatus = (status: CLINIC_SUBSCRIPTION_STATUS) => 
       return 'Đã hết hạn';
     case CLINIC_SUBSCRIPTION_STATUS.ACTIVE:
       return 'Đang hoạt động';
-    case CLINIC_SUBSCRIPTION_STATUS.CANCEL:
-      return 'Hủy thanh toán - Chưa kích hoạt';
+    case CLINIC_SUBSCRIPTION_STATUS.NOT_ACTIVE:
+      return 'Chưa kích hoạt';
     case CLINIC_SUBSCRIPTION_STATUS.PENDING:
       return 'Chờ duyệt';
     default:

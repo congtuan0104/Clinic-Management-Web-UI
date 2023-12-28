@@ -12,35 +12,38 @@ import { useAuth } from '@/hooks';
 import { INotification } from '@/types';
 
 import { LinksGroup } from './LinksGroup/LinksGroup';
+import { PATHS } from '@/config';
 
-const menuItems = [
-  { label: 'Trang chủ', icon: FaHome, href: '/clinic/dashboard' },
-  {
-    label: 'Quản trị',
-    icon: CgNotes,
-    children: [
-      { label: 'Quản lý phòng khám', href: '/clinic/phong-kham' },
-      { label: 'Tin tức, quảng cáo', href: '#' },
-    ],
-  },
-  {
-    label: 'Nhân viên',
-    icon: MdOutlinePeopleAlt,
-    children: [
-      { label: 'Danh sách nhân viên', href: '#' },
-      { label: 'Vai trò nhân viên', href: '/clinic/quan-ly-role' },
-    ],
-  },
-  { label: 'Nhắn tin tư vấn', icon: RiMessage2Fill, href: '/clinic/messages' },
-  { label: 'Bệnh nhân', icon: FaHospitalUser },
-  { label: 'Lịch hẹn khám', icon: MdOutlineSchedule },
-  { label: 'Tiếp nhận bệnh nhân', icon: MdOutlineAnalytics },
-  { label: 'Khám bệnh', icon: MdOutlineAnalytics },
-  { label: 'Thanh toán', icon: MdPayment },
-  { label: 'Kho hàng, vật tư', icon: LuWarehouse },
-  { label: 'Thống kê báo cáo', icon: MdOutlineAnalytics },
-  { label: 'Cài đặt', icon: IoSettingsOutline },
-];
+const createMenuItem = () => {
+  return [
+    { label: 'Trang chủ', icon: FaHome, href: PATHS.CLINIC_DASHBOARD },
+    {
+      label: 'Quản trị',
+      icon: CgNotes,
+      children: [
+        { label: 'Thông tin phòng khám', href: PATHS.CLINIC_INFO_MANAGEMENT },
+        { label: 'Tin tức, quảng cáo', href: '#' },
+      ],
+    },
+    {
+      label: 'Nhân viên',
+      icon: MdOutlinePeopleAlt,
+      children: [
+        { label: 'Danh sách nhân viên', href: '#' },
+        { label: 'Vai trò nhân viên', href: PATHS.ROLE_MANAGEMENT },
+      ],
+    },
+    { label: 'Nhắn tin tư vấn', icon: RiMessage2Fill, href: PATHS.CLINIC_CHAT },
+    { label: 'Bệnh nhân', icon: FaHospitalUser },
+    { label: 'Lịch hẹn khám', icon: MdOutlineSchedule },
+    { label: 'Tiếp nhận bệnh nhân', icon: MdOutlineAnalytics },
+    { label: 'Khám bệnh', icon: MdOutlineAnalytics },
+    { label: 'Thanh toán', icon: MdPayment },
+    { label: 'Kho hàng, vật tư', icon: LuWarehouse },
+    { label: 'Thống kê báo cáo', icon: MdOutlineAnalytics },
+    { label: 'Cài đặt', icon: IoSettingsOutline },
+  ]
+}
 
 interface ISidebarProps {
   notify: INotification[];
@@ -51,6 +54,7 @@ export function ClinicSideBar({ notify }: ISidebarProps) {
   const [opened, { open, close }] = useDisclosure(false);
   const { userInfo } = useAuth();
 
+  const menuItems = createMenuItem(); // fix lỗi import config path
 
   const links = menuItems.map((item) =>
     <LinksGroup {...item} key={item.label} />

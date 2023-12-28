@@ -1,14 +1,15 @@
 import { ClinicHeader, ClinicSideBar } from '@/components';
 import { PATHS, onMessageListener, realtimeDB, requestForToken } from '@/config';
 import { COOKIE_KEY } from '@/constants';
-import { AuthModule } from '@/enums';
-import { useAppDispatch, useAuth } from '@/hooks';
+import { AuthModule, CLINIC_SUBSCRIPTION_STATUS } from '@/enums';
+import { useAppDispatch, useAppSelector, useAuth } from '@/hooks';
 import { clinicApi, notificationApi } from '@/services';
-import { setCurrentClinic, setListClinics } from '@/store';
+import { focusModeSelector, setCurrentClinic, setListClinics } from '@/store';
 import { INotification } from '@/types';
 import { cookies } from '@/utils';
 import { Title, Text, Group } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
+import classNames from 'classnames';
 import { onValue, ref } from 'firebase/database';
 import { MessagePayload } from 'firebase/messaging';
 import { useEffect, useState } from 'react';
@@ -20,10 +21,14 @@ const ClinicLayout = ({ children }: { children: JSX.Element }) => {
   const [notify, setNotify] = useState<INotification[]>([]);
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+  const focusMode = useAppSelector(focusModeSelector);
 
   const { data: clinics, isLoading: isLoadingClinic } = useQuery(
     ['clinics', userInfo?.id],
-    () => clinicApi.getClinicsByOwner(userInfo?.id).then(res => res.data)
+    () => clinicApi.getClinicsByOwner(userInfo?.id).then(res => res.data),
+    {
+      refetchOnWindowFocus: false,
+    }
   );
 
   useEffect(() => {
@@ -47,7 +52,11 @@ const ClinicLayout = ({ children }: { children: JSX.Element }) => {
     if (!isLoadingClinic) {
       const curClinicId = cookies.get(COOKIE_KEY.CURRENT_CLINIC_ID)?.toString();
       const curClinic = clinics?.find((clinic) => clinic.id == curClinicId) || clinics?.[0];
-      dispatch(setListClinics(clinics || []))
+      const listActiveClinics = clinics?.filter(
+        (clinic) => clinic.subscriptions &&
+          clinic.subscriptions[0].status === CLINIC_SUBSCRIPTION_STATUS.ACTIVE
+      );
+      dispatch(setListClinics(listActiveClinics || []))
       dispatch(setCurrentClinic(curClinic))
     }
   }, [isLoadingClinic])
@@ -57,8 +66,11 @@ const ClinicLayout = ({ children }: { children: JSX.Element }) => {
     <>
       <main className='bg-primary-0 min-h-screen relative'>
         <ClinicHeader />
-        <ClinicSideBar notify={notify} />
-        <div className='mt-[60px] ml-[280px]'>
+        {!focusMode && <ClinicSideBar notify={notify} />}
+        <div className={classNames(
+          'mt-[60px]',
+          focusMode ? 'ml-0' : 'ml-[280px]',
+        )}>
           {children}
         </div>
       </main>
