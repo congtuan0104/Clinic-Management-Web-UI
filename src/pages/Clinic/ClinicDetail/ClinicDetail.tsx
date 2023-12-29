@@ -129,12 +129,14 @@ export default function ClinicDetail() {
             TextAlign.configure({ types: ['heading', 'paragraph'] }),
             ],
             content: `${content}`,
-            onUpdate({ editor }) {
+            /* onUpdate({ editor }) {
                 setEditorContent(editor.getHTML());
-            },
+            }, */
         });
 
-        editor?.commands.setContent(content)
+        useEffect(() =>{
+            editor?.commands.setContent(content)
+        },[editor])
 
         /* 
         Xử lý đẩy ảnh lên firebase
