@@ -90,7 +90,7 @@ const ClinicHeader = () => {
             component='a'
             target='_blank'
             rel='noopener noreferrer'
-            href='mailto:clinus123@gmail.com'
+            href='mailto:clinius123@gmail.com'
             color='gray.9' variant="subtle" radius="md" size={35} aria-label="full-screen">
             <MdOutlineHelpOutline size={25} />
           </ActionIcon>
