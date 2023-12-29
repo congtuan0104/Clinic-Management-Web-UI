@@ -2,6 +2,9 @@ import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios';
 
 import { cookies } from '@/utils';
 import { COOKIE_KEY } from '@/constants';
+import { jwtDecode } from 'jwt-decode';
+import { PATHS } from '@/config';
+import { notifications } from '@mantine/notifications';
 
 export const REQUEST_TIMEOUT = 30000;
 
@@ -13,7 +16,7 @@ export const axiosClient = axios.create({
 
 const InterceptorsRequest = async (config: AxiosRequestConfig) => {
   // lấy token từ cookie và gắn vào header trước khi gửi request
-  const token = cookies.get(COOKIE_KEY.TOKEN);
+  const token = cookies.get(COOKIE_KEY.TOKEN)?.toString();
 
   if (token === undefined) {
     return config;
@@ -41,10 +44,33 @@ const InterceptorsError = (error: AxiosError) => {
     // eslint-disable-next-line no-console
     console.error('Lỗi: ', error);
   }
+
+  if (
+    error.response &&
+    error.response.data &&
+    (error.response.data as { message?: string }).message === 'Token has expired'
+  ) {
+    // console.log('error', error.response?.data?.message); // eslint-disable-line
+    cookies.remove(COOKIE_KEY.TOKEN);
+    cookies.remove(COOKIE_KEY.USER_INFO);
+    notifications.show({
+      title: 'Phiên đăng nhập hết hạn',
+      message: 'Vui lòng đăng nhập lại',
+      color: 'red.5',
+    });
+    window.location.href = PATHS.LOGIN;
+  }
+
   return Promise.reject(error);
 };
 
 const InterceptorResponse = (response: AxiosResponse) => {
+  // if (response.data.message === 'Token has expired') {
+  //   cookies.remove(COOKIE_KEY.TOKEN);
+  //   cookies.remove(COOKIE_KEY.USER_INFO);
+  //   window.location.href = PATHS.LOGIN;
+  // }
+
   if (response && response.data) {
     return response.data;
   }

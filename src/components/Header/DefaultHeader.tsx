@@ -40,7 +40,7 @@ const Header = () => {
         <Group justify="space-between" h="100%">
           <Box w={userInfo ? undefined : 222}>
             <Link to={PATHS.HOME}>
-              <Image src={ClinusLogo} alt='logo' h={50} fit='contain' />
+              <Image src={ClinusLogo} alt='logo' h={51} w={150} fit='contain' />
             </Link>
           </Box>
 

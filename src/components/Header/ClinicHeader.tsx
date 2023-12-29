@@ -38,7 +38,7 @@ const ClinicHeader = () => {
     border-solid border-0 border-b border-gray-300 fixed top-0 right-0 left-0">
       <Group w={280} justify='space-between' align='center' pr={16}>
         <Link className='py-[4px] pr-1 w-fit h-[60px]' to={PATHS.CLINIC_DASHBOARD}>
-          <Image src={ClinusLogo} alt='logo' h={51} fit='contain' />
+          <Image src={ClinusLogo} alt='logo' h={51} w={150} fit='contain' />
         </Link>
 
         {!focusMode && <MdOutlineMenuOpen size={35} />}
