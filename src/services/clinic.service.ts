@@ -49,4 +49,8 @@ export const clinicApi = {
     return axiosClient.delete(`/clinics/${Id}/delete-user-group-role/${userGroupRoleId}`);
   },
 
+  updateUserGroupRole(data: IAddUserGroupRoleRequest, Id?: string, userGroupRoleId?: number): Promise<any>{
+    return axiosClient.put(`/clinics/${Id}/update-user-group-role/${userGroupRoleId}`, data);
+  },
+
 };

@@ -48,7 +48,7 @@ const ModalRoleManagement = ({ isEditMode, isOpen, onClose, updateRole, selected
             setNewRole(selectedRole.name || ''); 
             setRoleDescription(selectedRole.description || '');
             const selectedRolePermissions = permissions.filter((permission) =>
-                selectedRole.rolePermission?.some((rolePermission) => rolePermission.id === permission.id)
+                selectedRole.rolePermissions?.some((rolePermission) => rolePermission.id === permission.id)
             );
             setSelectedPermissions(selectedRolePermissions);
         }
@@ -61,21 +61,32 @@ const ModalRoleManagement = ({ isEditMode, isOpen, onClose, updateRole, selected
     };
 
     const handleSubmit = async () => {
-        if(!isEditMode){
-            try {
-                const requestData: IAddUserGroupRoleRequest = {
-                    name: newRole,
-                    description: roleDescription,
-                    permissions: selectedPermissions.map(permission => permission.id),
-                };
+        try {
+            const requestData: IAddUserGroupRoleRequest = {
+                name: newRole,
+                description: roleDescription,
+                permissions: selectedPermissions.map(permission => permission.id),
+            };
+
+            if (isEditMode) {
+                // If in edit mode, use updateUserGroupRole API
+                const response = await clinicApi.updateUserGroupRole(
+                    requestData,
+                    currentClinic?.id,
+                    selectedRole?.id
+                );
+                console.log('Update API Response:', response);
+            } else {
+                // If not in edit mode, use addUserGroupRole API
                 const response = await clinicApi.addUserGroupRole(requestData, currentClinic?.id);
-                console.log('API Response:', response);
-                updateRole();
-                resetModal();
-                onClose();
-            } catch (error) {
-                console.error('Error submitting data:', error);
+                console.log('Add API Response:', response);
             }
+
+            updateRole();
+            resetModal();
+            onClose();
+        } catch (error) {
+            console.error('Error submitting data:', error);
         }
     };
     return (
@@ -83,6 +94,7 @@ const ModalRoleManagement = ({ isEditMode, isOpen, onClose, updateRole, selected
             title={isEditMode ? 'Chỉnh sửa' : 'Thêm vai trò mới'}
             opened={isOpen}
             onClose={() => {
+                resetModal();
                 onClose();
             }}
         >
