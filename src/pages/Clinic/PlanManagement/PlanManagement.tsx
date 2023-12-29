@@ -63,6 +63,11 @@ const ClinicManagePage = () => {
     setIsOpenClinicModal(false);
   }
 
+  const handleCancelPayment = () => {
+    setIsOpenPaymentModal(false);
+    setClinicNeedPayment(undefined);
+  }
+
   const handleCreateClinicSuccess = (clinic: IClinicWithSubscription) => {
     setIsOpenClinicModal(false);
     setClinicNeedPayment(clinic);
@@ -125,6 +130,21 @@ const ClinicManagePage = () => {
         }}
       >
         Gia hạn
+      </div>
+    )
+
+    if (subscription.status === CLINIC_SUBSCRIPTION_STATUS.NOT_ACTIVE) return (
+      <div
+        className='cursor-pointer text-teal-600 hover:text-teal-500'
+        onClick={() => {
+          setClinicNeedPayment({
+            clinic: clinic,
+            subscription: subscription,
+          })
+          setIsOpenPaymentModal(true);
+        }}
+      >
+        Kích hoạt
       </div>
     )
   }
@@ -193,7 +213,7 @@ const ClinicManagePage = () => {
 
       {clinicNeedPayment && <ModalClinicPayment
         isOpen={isOpenPaymentModal}
-        onClose={() => setIsOpenPaymentModal(false)}
+        onClose={handleCancelPayment}
         clinicPayment={clinicNeedPayment}
       />}
     </div>
