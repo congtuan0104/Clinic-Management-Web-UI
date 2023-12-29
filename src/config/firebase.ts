@@ -32,9 +32,9 @@ export const firebaseApp = !firebase.getApps().length
 
 export const analytics = getAnalytics(firebaseApp);
 export const firebaseAuth = getAuth(firebaseApp);
-export const realtimeDB = getDatabase();
-export const firebaseMessaging = getMessaging();
-export const firebaseStorage = getStorage();
+export const realtimeDB = getDatabase(firebaseApp);
+export const firebaseMessaging = getMessaging(firebaseApp);
+export const firebaseStorage = getStorage(firebaseApp);
 
 export const FirebaseAuthProvider = {
   Google: new GoogleAuthProvider(),

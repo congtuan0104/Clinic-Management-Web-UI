@@ -7,6 +7,8 @@ import {
   IUserGroupRole,
   IRolePermission,
   IAddUserGroupRoleRequest,
+  IUpdateClinic,
+  IUpdateRequest,
 } from '@/types';
 import { axiosClient } from '@/utils';
 
@@ -37,16 +39,25 @@ export const clinicApi = {
     return axiosClient.get(`/clinics/${Id}/user-group-role`);
   },
 
-  getListPermissions():Promise<IApiResponse<IRolePermission[]>>{
+  getListPermissions(): Promise<IApiResponse<IRolePermission[]>> {
     return axiosClient.get('/clinics/permissions');
   },
 
-  addUserGroupRole(data: IAddUserGroupRoleRequest, Id?: string): Promise<any>{
+  addUserGroupRole(data: IAddUserGroupRoleRequest, Id?: string): Promise<any> {
     return axiosClient.post(`/clinics/${Id}/create-user-group-role`, data);
   },
 
-  deleteUserGroupRole(Id?: string, userGroupRoleId?: number ): Promise<any>{
+  deleteUserGroupRole(Id?: string, userGroupRoleId?: number): Promise<any> {
     return axiosClient.delete(`/clinics/${Id}/delete-user-group-role/${userGroupRoleId}`);
   },
 
+  /**
+   * @returns Cập nhật thông tin phòng khám
+   */
+  updateClinicInfor(
+    clinicId: string,
+    updateInfor: IUpdateRequest,
+  ): Promise<IApiResponse<IUpdateClinic>> {
+    return axiosClient.put(`/clinics/${clinicId}`, updateInfor);
+  },
 };

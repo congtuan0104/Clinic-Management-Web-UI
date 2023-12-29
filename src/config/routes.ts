@@ -17,6 +17,7 @@ import {
   PaymentResult,
   NotFoundPage,
   RoleManagement,
+  ClinicDetail,
 } from '@/pages';
 
 export const PATHS = {
@@ -148,6 +149,14 @@ export const ROUTES = [
     title: 'Plan management',
     layout: ClinicLayout,
     element: PlanManagement,
+    isProtected: true,
+    children: [],
+  },
+  {
+    path: PATHS.CLINIC_INFO_MANAGEMENT,
+    title: 'Thông tin phòng khám',
+    layout: ClinicLayout,
+    element: ClinicDetail,
     isProtected: true,
     children: [],
   },

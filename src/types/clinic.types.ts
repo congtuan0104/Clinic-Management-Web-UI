@@ -76,3 +76,22 @@ export interface IRolePermission {
   createdAt?: string;
   updatedAt?: string;
 }
+export interface IUpdateClinic {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  address: string;
+  isActive: boolean;
+  createdAt: Date;
+  updatedAt?: Date;
+}
+
+export interface IUpdateRequest {
+  name: string;
+  email: string;
+  phone: string;
+  address: string;
+  logo: string;
+  description: string;
+}
