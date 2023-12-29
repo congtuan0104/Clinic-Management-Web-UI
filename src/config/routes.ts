@@ -16,6 +16,7 @@ import {
   PlanManagement,
   PaymentResult,
   NotFoundPage,
+  ClinicDetail
 } from '@/pages';
 import { Fragment } from 'react';
 
@@ -35,6 +36,7 @@ export const PATHS = {
   VIDEO_CALL: '/clinic/video-call',
   PLAN_MANAGEMENT: '/clinic/phong-kham',
   PAYMENT_RESULT: '/thanh-toan/thong-tin-thanh-toan',
+  CLINIC_DETAIL: '/clinic/chi-tiet'
 };
 
 export const ROUTES = [
@@ -146,6 +148,14 @@ export const ROUTES = [
     title: 'Plan management',
     layout: ClinicLayout,
     element: PlanManagement,
+    isProtected: true,
+    children: [],
+  },
+  {
+    path: PATHS.CLINIC_DETAIL,
+    title: 'Clinic detail',
+    layout: ClinicLayout,
+    element: ClinicDetail,
     isProtected: true,
     children: [],
   },

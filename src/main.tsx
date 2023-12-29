@@ -3,7 +3,7 @@ import '@mantine/core/styles.css';
 import '@mantine/notifications/styles.css';
 import '@mantine/dates/styles.css';
 import 'dayjs/locale/vi';
-
+import '@mantine/tiptap/styles.css';
 import { MantineProvider } from '@mantine/core';
 import ReactDOM from 'react-dom/client';
 import { QueryClient, QueryClientProvider } from 'react-query';

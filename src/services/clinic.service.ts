@@ -4,6 +4,8 @@ import {
   IClinic,
   IClinicWithSubscription,
   IUserInfo,
+  IUpdateClinic,
+  IUpdateRequest
 } from '@/types';
 import { axiosClient } from '@/utils';
 
@@ -28,5 +30,11 @@ export const clinicApi = {
    */
   getClinicMembers(clinicId: string): Promise<IApiResponse<IUserInfo[]>> {
     return axiosClient.get(`/clinics/${clinicId}/users`);
+  },
+  /**
+   * @returns Cập nhật thông tin phòng khám
+   */
+  updateClinicInfor(clinicId: string, updateInfor: IUpdateRequest): Promise<IApiResponse<IUpdateClinic>> {
+    return axiosClient.put(`/clinics/${clinicId}`, updateInfor);
   },
 };

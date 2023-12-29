@@ -53,3 +53,23 @@ export interface IClinicWithSubscription {
   clinic: IClinic;
   subscription: IClinicSubscription;
 }
+
+export interface IUpdateClinic {
+    id: string,
+    name: string,
+    email: string,
+    phone: string,
+    address: string,
+    isActive: boolean,
+    createdAt: Date,
+    updatedAt?: Date
+}
+
+export interface IUpdateRequest {
+  name: string,
+  email: string,
+  phone: string,
+  address: string,
+  logo: string,
+  description: string
+}
