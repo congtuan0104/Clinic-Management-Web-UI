@@ -35,6 +35,8 @@ export default function ClinicDetail() {
 
     const [editorContent, setEditorContent] = useState("");
 
+    const [isUpdate, setIsUpdate] = useState<boolean>(false);
+
     /* Xử lý đẩy ảnh lên firebase
     const [imageUpload, setImageUpload] = useState("");
 
@@ -70,7 +72,7 @@ export default function ClinicDetail() {
         },
     
         validate: {
-          name: hasLength({ min: 2, max: 10 }, 'Name must be 2-10 characters long'),
+          name: hasLength({ min: 2, max: 10 }, 'Tên từ 2 đến 10 ký tự'),
           specialty: isNotEmpty('Chuyên môn không được để trống'),
           email: isEmail('Email không hợp lệ'),
           address: isNotEmpty('Địa chỉ không được để trống'),
@@ -85,6 +87,7 @@ export default function ClinicDetail() {
           }
       },[subscription])
       const onSubmit = async () => {
+        setIsUpdate(false);
         const updateInfor = {
             name: form.values.name,
             email: form.values.email,
@@ -104,9 +107,16 @@ export default function ClinicDetail() {
                             color: 'green',
                         });
                 })
+        form.setValues({
+            name: '',
+            specialty: '',
+            email: '',
+            address: '',
+            phone: '',
+          });
       }
 
-      const content = currentClinic?.description;
+      const content: string = `${currentClinic?.description}`;      
 
         const editor = useEditor({
             extensions: [
@@ -118,11 +128,13 @@ export default function ClinicDetail() {
             Highlight,
             TextAlign.configure({ types: ['heading', 'paragraph'] }),
             ],
-            content,
+            content: `${content}`,
             onUpdate({ editor }) {
                 setEditorContent(editor.getHTML());
             },
         });
+
+        editor?.commands.setContent(content)
 
         /* 
         Xử lý đẩy ảnh lên firebase
@@ -144,10 +156,10 @@ export default function ClinicDetail() {
                     <Stack>
                         <Title order={5}>BẠN ĐANG SỬ SỬ DỤNG GÓI {plan && (plan?.planName)}</Title>
                         <Flex>
-                            Thời gian sử dụng đến {dayjs(subscription?.expiredAt).format('DD/MM/YYYY')}
+                            Thời gian sử dụng đến &nbsp; <b>{dayjs(subscription?.expiredAt).format('DD/MM/YYYY')}</b>
                         </Flex>
                         <Flex>
-                            Còn lại {dayjs(subscription?.expiredAt).diff(dayjs(), 'day')} ngày
+                            Còn lại &nbsp; <b>{dayjs(subscription?.expiredAt).diff(dayjs(), 'day')}</b> &nbsp; ngày
                         </Flex>
                     </Stack>
                     <Stack justify='right'>
@@ -181,7 +193,7 @@ export default function ClinicDetail() {
                         </Grid.Col>
                         <Grid.Col span={8.5}>
                             <Box component="form" maw={700} mx="auto" onSubmit={form.onSubmit(onSubmit)}>
-                                <TextInput label="Tên phòng khám" placeholder="Tên phòng khám" withAsterisk {...form.getInputProps('name')} />
+                                <TextInput label="Tên phòng khám" placeholder={currentClinic?.name} withAsterisk {...form.getInputProps('name')} />
                                 <Grid>
                                     <Grid.Col span={6}>
                                         <TextInput
@@ -195,7 +207,7 @@ export default function ClinicDetail() {
                                     <Grid.Col span={6}>
                                         <TextInput
                                             label="Số điện thoại"
-                                            placeholder=""
+                                            placeholder={currentClinic?.phone}
                                             withAsterisk
                                             mt="md"
                                             {...form.getInputProps('phone')}
@@ -206,7 +218,7 @@ export default function ClinicDetail() {
                                     <Grid.Col span={6}>
                                         <TextInput
                                             label="Email liên hệ"
-                                            placeholder=""                                            
+                                            placeholder={currentClinic?.email}                                            
                                             withAsterisk
                                             mt="md"
                                             {...form.getInputProps('email')}
@@ -215,7 +227,7 @@ export default function ClinicDetail() {
                                     <Grid.Col span={6}>
                                         <TextInput
                                             label="Địa chỉ"
-                                            placeholder=""
+                                            placeholder={currentClinic?.address}
                                             withAsterisk
                                             mt="md"
                                             {...form.getInputProps('address')}
@@ -259,8 +271,14 @@ export default function ClinicDetail() {
                                         <RichTextEditor.Content/>
                                     </RichTextEditor>
                                 </Grid>
-                                <Group justify="flex-end" mt="md">
-                                    <Button type="submit">Submit</Button>
+                                <Group justify="flex-end" mt="lg">
+                                    {
+                                    isUpdate? (
+                                    <Button type="submit">Lưu thay đổi</Button>
+                                    ): (
+                                    <Button onClick={() => setIsUpdate(true)}>Cập nhật thông tin</Button>
+                                    )
+                                    }
                                 </Group>
                                 
                             </Box>
