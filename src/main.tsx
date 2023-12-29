@@ -35,6 +35,9 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
 );
 
 // register service worker
-if (import.meta.env.PROD) {
-  navigator.serviceWorker.register('/sw.js');
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    // we will register it after the page complete the load
+    navigator.serviceWorker.register('/sw.js');
+  });
 }
