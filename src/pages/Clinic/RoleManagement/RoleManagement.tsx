@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import {
-    Text,
-    Flex,
-    Paper,
-    Button,
-    Input,
+  Text,
+  Flex,
+  Paper,
+  Button,
+  Input,
+  Badge,
 } from '@mantine/core';
 import { useAppSelector } from '@/hooks';
 import { currentClinicSelector } from '@/store';
@@ -14,141 +15,139 @@ import { clinicApi } from '@/services';
 import { IUserGroupRole } from '@/types';
 import { useDisclosure, useHover } from '@mantine/hooks';
 import { ModalRoleManagement } from "@/components";
+import { modals } from '@mantine/modals';
 
 const RoleManagement = () => {
-    const currentClinic = useAppSelector(currentClinicSelector);
-    const [searchTerm, setSearchTerm] = useState<string>('');
-    const [opened, { open, close }] = useDisclosure(false);
-    const [isEditMode, setIsEditMode] = useState<boolean>(false);
-    const [roles, setRoles] = useState<IUserGroupRole[]>([]);
-    const [selectedRole, setSelectedRole] = useState<IUserGroupRole | undefined>(undefined);
+  const currentClinic = useAppSelector(currentClinicSelector);
+  const [searchTerm, setSearchTerm] = useState<string>('');
+  const [opened, { open, close }] = useDisclosure(false);
+  const [isEditMode, setIsEditMode] = useState<boolean>(false);
+  const [roles, setRoles] = useState<IUserGroupRole[]>([]);
+  const [selectedRole, setSelectedRole] = useState<IUserGroupRole | undefined>(undefined);
 
-    const fetchData = async () => {
+
+  const fetchData = async () => {
+    try {
+      if (!currentClinic) return;
+      const response = await clinicApi.getListUserGroupRole(currentClinic.id);
+      if (response.data) {
+        setRoles(response.data);
+      } else {
+        console.error("Lỗi không thể nhận được dữ liệu");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, [currentClinic?.id]);
+
+  const updateRole = async () => {
+    await fetchData();
+  };
+
+
+  const openDeleteModal = (userGroupRoleId: number, name: string) => {
+    modals.openConfirmModal({
+      title: `Xóa Role ${name}`,
+      centered: true,
+      children: (
+        <Text size="sm">
+          Bạn có muốn xóa {name} không
+        </Text>
+      ),
+      labels: { confirm: 'Xác nhận xóa', cancel: 'Hủy' },
+      confirmProps: { color: 'red' },
+      onCancel: () => console.log('Cancel'),
+      onConfirm: async () => {
         try {
-            if (!currentClinic) return;
-            const response = await clinicApi.getListUserGroupRole(currentClinic.id);
-            if (response.data) {
-                setRoles(response.data);
-            } else {
-                console.error("Lỗi không thể nhận được dữ liệu");
-            }
+          await clinicApi.deleteUserGroupRole(currentClinic?.id, userGroupRoleId);
+          await fetchData();
         } catch (error) {
-            console.log(error);
+          console.error('Error deleting role:', error);
         }
-    };
+      },
+    });
+  };
 
-    useEffect(() => {
-        fetchData();
-    }, [currentClinic?.id]);
+  return (
+    <Paper shadow="sm" style={{ background: 'rgba(255, 255, 255, 0)' }}>
+      <Flex direction="column" gap="md" p="md">
+        <Flex align="center" justify="space-between">
+          <Input
+            leftSection={<IoSearch size={16} />}
+            placeholder="Tìm kiếm vai trò"
+            value={searchTerm}
+            onChange={(event) => setSearchTerm(event.target.value)}
+            className='flex-1'
+            maw={300}
+          />
+          <Button onClick={() => {
+            open();
+            setIsEditMode(false);
+          }}>+ Thêm vai trò</Button>
+        </Flex>
 
-    const updateRole = async () => {
-        await fetchData();
-    };
-
-    const deleteRole = async (userGroupRoleId: number) => {
-        try {
-            await clinicApi.deleteUserGroupRole(currentClinic?.id, userGroupRoleId);
-            await fetchData();
-        } catch (error) {
-            console.error("Error deleting role:", error);
-        }
-    };
-
-    // Permission translation mapping with flexible keys
-    const permissionTranslations: Record<string, string> = {
-        MANAGE_CLINIC: 'Quản lý phòng khám',
-        MANAGE_USER: 'Quản lý người dùng',
-        MANAGE_ROLE: 'Quản lý vai trò',
-        MANAGE_PLAN: 'Quản lý kế hoạch',
-        MANAGE_SERVICE: 'Quản lý dịch vụ',
-    };
-
-    return (
-        <Paper shadow="sm" style={{ background: 'rgba(255, 255, 255, 0)' }}>
-            <Flex direction="column" gap="md" p="md">
-                <Flex align="center" justify="space-between">
-                    <Input
-                        leftSection={<IoSearch size={16} />}
-                        placeholder="Tìm kiếm vai trò"
-                        value={searchTerm}
-                        onChange={(event) => setSearchTerm(event.target.value)}
-                    />
-                    <Button onClick={() => {
-                        open();
-                        setIsEditMode(false);
-                    }}>+ Thêm vai trò</Button>
-                </Flex>
-
-                <table style={{ borderCollapse: 'collapse', width: '100%' }}>
-                    <thead style={{ background: '#ccc', color: '#222' }}>
-                        <tr>
-                            <th style={{ border: '1px solid #ddd', padding: '8px', width: '20%' }}>Vai trò</th>
-                            <th style={{ border: '1px solid #ddd', padding: '8px' }}>Quyền</th>
-                            <th style={{ border: '1px solid #ddd', padding: '8px', width: '10%' }}>Thao tác</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {roles
-                            .slice() // create a shallow copy to avoid mutating the original array
-                            .sort((a, b) => a.id - b.id) // sort roles by ID
-                            .map((role, index) => {
-                                const sortedPermissions = [...role.rolePermissions].sort((a, b) => a.id - b.id);
-
-                                // Alternate row background colors
-                                const rowBackgroundColor = index % 2 === 0 ? '#f9f9f9' : '#e6e6e6';
-
-                                return (
-                                    <tr key={index} style={{ background: rowBackgroundColor }}>
-                                        <td style={{ border: '1px solid #ddd', padding: '8px' }}>{role.name}</td>
-                                        <td style={{ border: '1px solid #ddd', padding: '8px' }}>
-                                            {sortedPermissions.map((permission, permissionIndex) => (
-                                                <span
-                                                    key={permissionIndex}
-                                                    style={{
-                                                        //color: permissionIndex % 2 === 0 ? 'purple' : 'orange',
-                                                    }}
-                                                >
-                                                    {permissionTranslations[permission.optionName] || permission.optionName}
-                                                    {permissionIndex < sortedPermissions.length - 1 && ', '}
-                                                </span>
-                                            ))}
-                                        </td>
-
-                                        <td style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'center' }}>
-                                            <FaRegEdit
-                                                size={20}
-                                                onClick={() => {
-                                                    open();
-                                                    setIsEditMode(true);
-                                                    setSelectedRole(role);
-                                                }}
-                                                style={{ cursor: 'pointer', marginRight: '6px', color: 'blue' }}
-                                                onMouseOver={(e: React.MouseEvent<SVGElement, MouseEvent>) => (e.currentTarget.style.color = 'darkblue')}
-                                                onMouseOut={(e: React.MouseEvent<SVGElement, MouseEvent>) => (e.currentTarget.style.color = 'blue')}
-                                            />
-                                            <FaTrash
-                                                size={20}
-                                                style={{ cursor: 'pointer', marginLeft: '6px', color: 'red' }}
-                                                onMouseOver={(e: React.MouseEvent<SVGElement, MouseEvent>) => (e.currentTarget.style.color = 'darkred')}
-                                                onMouseOut={(e: React.MouseEvent<SVGElement, MouseEvent>) => (e.currentTarget.style.color = 'red')}
-                                                onClick={() => deleteRole(role.id)}
-                                            />
-                                        </td>
-                                    </tr>
-                                );
-                            })}
-                    </tbody>
-                </table>
-            </Flex>
-            <ModalRoleManagement 
-                isEditMode={isEditMode}
-                isOpen={opened}
-                onClose={close}
-                updateRole={updateRole}
-                selectedRole={selectedRole} 
-            />
-        </Paper>
-    );
+        <table style={{ borderCollapse: 'collapse', width: '100%', backgroundColor: 'white' }}>
+          <thead style={{ background: '#ccc', color: '#222' }}>
+            <tr>
+              <th style={{ border: '1px solid #ddd', padding: '8px', width: '20%' }}>Vai trò</th>
+              <th style={{ border: '1px solid #ddd', padding: '8px' }}>Quyền</th>
+              <th style={{ border: '1px solid #ddd', padding: '8px', width: '10%' }}>Thao tác</th>
+            </tr>
+          </thead>
+          <tbody>
+            {roles.map((role, index) => (
+              <tr key={index}>
+                <td style={{ border: '1px solid #ddd', padding: '8px' }}>{role.name}</td>
+                <td style={{ border: '1px solid #ddd', padding: '8px' }}>
+                  {role.rolePermissions.map(permission =>
+                    <Badge
+                      key={`${role.id}-${permission.id}`}
+                      color="gray.5"
+                      size='lg'
+                      className='m-1'
+                    >
+                      {permission.optionName}
+                    </Badge>
+                  )}
+                </td>
+                <td style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'center' }}>
+                  <FaRegEdit
+                    size={20}
+                    onClick={() => {
+                      open();
+                      setIsEditMode(true);
+                      setSelectedRole(role);
+                    }}
+                    style={{ cursor: 'pointer', marginRight: '6px', color: 'blue' }}
+                    onMouseOver={(e: React.MouseEvent<SVGElement, MouseEvent>) => (e.currentTarget.style.color = 'darkblue')}
+                    onMouseOut={(e: React.MouseEvent<SVGElement, MouseEvent>) => (e.currentTarget.style.color = 'blue')}
+                  />
+                  <FaTrash
+                    size={20}
+                    style={{ cursor: 'pointer', marginLeft: '6px', color: 'red' }}
+                    onMouseOver={(e: React.MouseEvent<SVGElement, MouseEvent>) => (e.currentTarget.style.color = 'darkred')}
+                    onMouseOut={(e: React.MouseEvent<SVGElement, MouseEvent>) => (e.currentTarget.style.color = 'red')}
+                    onClick={() => openDeleteModal(role.id, role.name)}
+                  />
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </Flex>
+      <ModalRoleManagement
+        isEditMode={isEditMode}
+        isOpen={opened}
+        onClose={close}
+        updateRole={updateRole}
+        selectedRole={selectedRole}
+      />
+    </Paper>
+  );
 };
 
 export default RoleManagement;

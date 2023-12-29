@@ -67,26 +67,20 @@ const ModalRoleManagement = ({ isEditMode, isOpen, onClose, updateRole, selected
                 description: roleDescription,
                 permissions: selectedPermissions.map(permission => permission.id),
             };
-
+    
             if (isEditMode) {
-                // If in edit mode, use updateUserGroupRole API
-                const response = await clinicApi.updateUserGroupRole(
-                    requestData,
-                    currentClinic?.id,
-                    selectedRole?.id
-                );
-                console.log('Update API Response:', response);
+                const response = await clinicApi.updateUserGroupRole(requestData, currentClinic?.id, selectedRole?.id);
+                console.log('API Response (Update):', response);
             } else {
-                // If not in edit mode, use addUserGroupRole API
                 const response = await clinicApi.addUserGroupRole(requestData, currentClinic?.id);
-                console.log('Add API Response:', response);
+                console.log('API Response (Add):', response);
             }
-
+    
             updateRole();
             resetModal();
             onClose();
         } catch (error) {
-            console.error('Error submitting data:', error);
+            console.error('Error handling data:', error);
         }
     };
     return (
