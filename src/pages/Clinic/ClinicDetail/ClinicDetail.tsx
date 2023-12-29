@@ -129,9 +129,9 @@ export default function ClinicDetail() {
             TextAlign.configure({ types: ['heading', 'paragraph'] }),
             ],
             content: `${content}`,
-            /* onUpdate({ editor }) {
+            onUpdate({ editor }) {
                 setEditorContent(editor.getHTML());
-            }, */
+            },
         });
 
         useEffect(() =>{
