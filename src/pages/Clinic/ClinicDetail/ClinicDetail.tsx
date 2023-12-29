@@ -90,7 +90,7 @@ export default function ClinicDetail() {
             email: form.values.email,
             phone: form.values.phone,
             address: form.values.address,
-            logo: '',
+            logo: 'logo.png',
             description: editorContent
         }
         console.log('update infor: ', updateInfor);
