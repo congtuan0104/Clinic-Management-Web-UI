@@ -32,11 +32,7 @@ const ModalClinicPayment = ({ isOpen, onClose, clinicPayment }: IProps) => {
   const handlePayment = async () => {
     if (selectedPaymentMethod) {
       if (!planInfo) return;
-      console.log({
-        totalCost: planInfo.currentPrice,
-        provider: selectedPaymentMethod,
-        subscribePlanId: subscription.id,
-      })
+
       const response = await paymentApi.createPaymentRequest({
         totalCost: planInfo.currentPrice,
         provider: selectedPaymentMethod,

@@ -51,11 +51,12 @@ const ClinicLayout = ({ children }: { children: JSX.Element }) => {
   useEffect(() => {
     if (!isLoadingClinic) {
       const curClinicId = cookies.get(COOKIE_KEY.CURRENT_CLINIC_ID)?.toString();
-      const curClinic = clinics?.find((clinic) => clinic.id == curClinicId) || clinics?.[0];
       const listActiveClinics = clinics?.filter(
         (clinic) => clinic.subscriptions &&
           clinic.subscriptions[0].status === CLINIC_SUBSCRIPTION_STATUS.ACTIVE
       );
+      const curClinic = listActiveClinics?.find((clinic) => clinic.id == curClinicId) || listActiveClinics?.[0];
+      cookies.set(COOKIE_KEY.CURRENT_CLINIC_ID, curClinic?.id || '');
       dispatch(setListClinics(listActiveClinics || []))
       dispatch(setCurrentClinic(curClinic))
     }

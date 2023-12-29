@@ -32,7 +32,7 @@ const ClinicHeader = () => {
     cookies.set(COOKIE_KEY.CURRENT_CLINIC_ID, clinic.id)
     dispatch(setCurrentClinic(clinic));
   }
-  console.log(currentClinic?.id)
+
   return (
     <header className="h-[60px] flex justify-between items-center pl-3 pr-5 bg-white z-10 
     border-solid border-0 border-b border-gray-300 fixed top-0 right-0 left-0">

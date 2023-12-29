@@ -60,7 +60,6 @@ const ModalCreateNewClinic = ({ isOpen, onClose, onSuccess, selectedPlanId }: IP
   }, [selectedPlanId, setValue]);
 
   const handleAddClinic = async (data: IAddClinicFormData) => {
-    console.log('data: ', data);
     const newClinicData = {
       name: data.clinicName,
       email: data.email,

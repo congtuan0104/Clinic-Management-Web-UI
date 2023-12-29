@@ -11,7 +11,7 @@ const NotFoundPage = () => {
   return (
     <div className="h-screen w-screen bg-primary-0 flex justify-center items-start flex-col">
 
-      <div className="max-w-screen-lg relative flex flex-col md:flex-row items-center justify-between px-5 mx-auto text-gray-700 bg-white rounded-xl py-10 shadow-md">
+      <div className="max-w-screen-lg relative flex flex-col md:flex-row items-center justify-between px-5 mx-auto text-gray-700 bg-white rounded-xl py-10 shadow-md border-solid border border-yellow-300">
         <div className='absolute top-[-80px] left-0 right-0 w-[170px] h-[170px] mx-auto rounded-full outline outline-[6px] outline-primary-0'>
           <Image src={ClinusLogo} alt='logo' h={170} w={170} fit='contain' />
         </div>

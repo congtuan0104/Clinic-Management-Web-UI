@@ -52,11 +52,16 @@ const InterceptorsError = (error: AxiosError) => {
   ) {
     // console.log('error', error.response?.data?.message); // eslint-disable-line
     cookies.remove(COOKIE_KEY.TOKEN);
+    cookies.remove(COOKIE_KEY.CURRENT_CLINIC_ID);
+    cookies.remove(COOKIE_KEY.DEVICE_TOKEN);
     cookies.remove(COOKIE_KEY.USER_INFO);
+
     notifications.show({
+      id: 'token-expired',
       title: 'Phiên đăng nhập hết hạn',
       message: 'Vui lòng đăng nhập lại',
       color: 'red.5',
+      autoClose: 5000,
     });
     window.location.href = PATHS.LOGIN;
   }
