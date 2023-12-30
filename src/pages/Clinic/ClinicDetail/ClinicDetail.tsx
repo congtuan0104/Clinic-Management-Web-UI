@@ -120,7 +120,7 @@ export default function ClinicDetail() {
               color: 'green',
             });
         })
-      //location.reload();
+      location.reload();
   }
 
   const content: string = `${currentClinic?.description}`;
