@@ -122,7 +122,7 @@ export default function ClinicDetail() {
               color: 'green',
             });
         })
-      location.reload();
+      //location.reload();
   }
 
   const content: string = `${currentClinic?.description}`;
@@ -154,6 +154,7 @@ export default function ClinicDetail() {
       const imageRef = ref(firebaseStorage, `avatars/${currentClinic?.id}/${imageUpload.name + v4()}`);
       uploadBytes(imageRef, imageUpload).then((snapshot) => {
       getDownloadURL(snapshot.ref).then((url) => {
+        console.log(typeof url); 
           setImageUrl(url);
       });
       });
