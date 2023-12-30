@@ -1,10 +1,8 @@
 import { Title, Button, Flex, Text, Box, Center, Stack, Divider, Grid, NumberInput, Group, Image } from "@mantine/core"
 import { RichTextEditor, Link } from '@mantine/tiptap';
-import { Dropzone, IMAGE_MIME_TYPE } from '@mantine/dropzone';
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Form, useForm } from "react-hook-form";
 import { TextInput } from "react-hook-form-mantine";
-import classes from './Demo.module.css';
 import * as yup from 'yup';
 import { useEditor } from '@tiptap/react';
 import Highlight from '@tiptap/extension-highlight';
