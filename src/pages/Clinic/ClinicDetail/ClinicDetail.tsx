@@ -1,9 +1,10 @@
 import { Title, Button, Flex, Text, Box, Center, Stack, Divider, Grid, NumberInput, Group, Image } from "@mantine/core"
 import { RichTextEditor, Link } from '@mantine/tiptap';
-// import { useForm, isNotEmpty, isEmail, isInRange, hasLength, matches } from '@mantine/form';
+import { Dropzone, IMAGE_MIME_TYPE } from '@mantine/dropzone';
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Form, useForm } from "react-hook-form";
-import { NativeSelect, Select, TextInput } from "react-hook-form-mantine";
+import { TextInput } from "react-hook-form-mantine";
+import classes from './Demo.module.css';
 import * as yup from 'yup';
 import { useEditor } from '@tiptap/react';
 import Highlight from '@tiptap/extension-highlight';
@@ -13,7 +14,7 @@ import TextAlign from '@tiptap/extension-text-align';
 import Superscript from '@tiptap/extension-superscript';
 import SubScript from '@tiptap/extension-subscript';
 import { useAppSelector } from '@/hooks';
-import { listClinicSelector, currentClinicSelector } from '@/store'
+import { currentClinicSelector } from '@/store'
 import { useQuery } from 'react-query';
 import { clinicApi, planApi } from '@/services';
 import { IServicePlan } from "@/types";
@@ -29,6 +30,8 @@ import {
   list,
 } from "firebase/storage";
 import { v4 } from "uuid";
+
+type ImageUploadType = File | null;
 
 interface IUpdateData {
   name: string,
@@ -56,12 +59,10 @@ export default function ClinicDetail() {
 
   const [isUpdate, setIsUpdate] = useState<boolean>(false);
 
-  /* Xử lý đẩy ảnh lên firebase
-  const [imageUpload, setImageUpload] = useState("");
+  //Xử lý đẩy ảnh lên firebase
+  const [imageUpload, setImageUpload] = useState<ImageUploadType>(null);
 
-   */
-
-  //const [imageUrl, setImageUrl] = useState("");
+  const [imageUrl, setImageUrl] = useState("");
 
   const currentClinic = useAppSelector(currentClinicSelector);
   console.log('phong kham hien tai: ', currentClinic)
@@ -101,12 +102,13 @@ export default function ClinicDetail() {
   }, [subscription])
   const onSubmit = async (data: IUpdateData) => {
     setIsUpdate(false);
+    uploadFile();
     const updateInfor = {
       name: data.name,
       email: data.email,
       phone: data.phone,
       address: data.address,
-      logo: 'logo.png',
+      logo: imageUrl,
       description: editorContent
     }
     console.log('update infor: ', updateInfor);
@@ -120,14 +122,7 @@ export default function ClinicDetail() {
               color: 'green',
             });
         })
-        location.reload();
-    /* form.setValues({
-      name: '',
-      specialty: '',
-      email: '',
-      address: '',
-      phone: '',
-    }); */
+      location.reload();
   }
 
   const content: string = `${currentClinic?.description}`;
@@ -152,18 +147,17 @@ export default function ClinicDetail() {
     editor?.commands.setContent(content)
   }, [editor])
 
-  /*
-  Xử lý đẩy ảnh lên firebase
-  const imagesListRef = ref(firebaseStorage, `avatars/${currentClinic?.id}`);
+  
+  //Xử lý đẩy ảnh lên firebase
   const uploadFile = () => {
       if (imageUpload == null) return;
-      const imageRef = ref(firebaseStorage, `avatars/${currentClinic?.id}/${imageUpload + v4()}`);
+      const imageRef = ref(firebaseStorage, `avatars/${currentClinic?.id}/${imageUpload.name + v4()}`);
       uploadBytes(imageRef, imageUpload).then((snapshot) => {
       getDownloadURL(snapshot.ref).then((url) => {
           setImageUrl(url);
       });
       });
-  }; */
+  };
 
   return (
     <Center>
@@ -191,8 +185,16 @@ export default function ClinicDetail() {
           <Divider my="md" />
           <Grid>
             <Grid.Col span={3.5}>
-              {
-                currentClinic?.logo && currentClinic.logo.startsWith('https') ? (
+              {isUpdate ?
+                (
+                  <input
+                    type="file"
+                    onChange={(event) => {
+                      setImageUpload(event.target.files?.[0] || null);
+                    }}
+                    />
+                ):
+                (currentClinic?.logo && currentClinic.logo.startsWith('https') ? (
                   <Image
                     w='189px'
                     h='186px'
@@ -204,7 +206,7 @@ export default function ClinicDetail() {
                     h='186px'
                     src="https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-7.png"
                   />
-                )
+                ))
               }
             </Grid.Col>
             <Grid.Col span={8.5}>
