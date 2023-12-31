@@ -28,7 +28,6 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
     const exp = decodeToken.exp ? decodeToken.exp * 1000 : 0;
     const expDate = new Date(exp);
     const currentDate = new Date();
-    console.log('Token hết hạn lúc', dayjs(expDate).format('DD/MM/YYYY HH:mm:ss'));
 
     if (expDate < currentDate) {
       cookies.remove(COOKIE_KEY.TOKEN);

@@ -3,12 +3,12 @@ import {
   IAddClinicRequest,
   IClinic,
   IClinicWithSubscription,
-  IUserInfo,
   IUserGroupRole,
   IRolePermission,
   IAddUserGroupRoleRequest,
   IUpdateClinic,
   IUpdateRequest,
+  IClinicMember,
 } from '@/types';
 import { axiosClient } from '@/utils';
 
@@ -31,7 +31,7 @@ export const clinicApi = {
   /**
    * @returns Lấy danh sách thành viên trong phòng khám
    */
-  getClinicMembers(clinicId: string): Promise<IApiResponse<IUserInfo[]>> {
+  getClinicMembers(clinicId: string): Promise<IApiResponse<IClinicMember[]>> {
     return axiosClient.get(`/clinics/${clinicId}/users`);
   },
 

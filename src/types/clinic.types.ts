@@ -95,3 +95,24 @@ export interface IUpdateRequest {
   logo: string;
   description: string;
 }
+
+export interface IClinicMember {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  roleId: number;
+  isOwner: boolean;
+  role: {
+    id: number;
+    name: string;
+  };
+}
+
+export interface IInviteClinicMemberRequest {
+  firstName: string;
+  lastName: string;
+  email: string;
+  roleId: number;
+  clinicId: string;
+}

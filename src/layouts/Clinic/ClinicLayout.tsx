@@ -69,8 +69,8 @@ const ClinicLayout = ({ children }: { children: JSX.Element }) => {
         <ClinicHeader />
         {!focusMode && <ClinicSideBar notify={notify} />}
         <div className={classNames(
-          'mt-[60px]',
-          focusMode ? 'ml-0' : 'ml-[280px]',
+          'pt-[60px]',
+          focusMode ? 'pl-0' : 'pl-[280px]',
         )}>
           {children}
         </div>

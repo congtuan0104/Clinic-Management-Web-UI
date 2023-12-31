@@ -29,7 +29,7 @@ const createMenuItem = () => {
       label: 'Nhân viên',
       icon: MdOutlinePeopleAlt,
       children: [
-        { label: 'Danh sách nhân viên', href: '#' },
+        { label: 'Danh sách nhân viên', href: PATHS.CLINIC_STAFF_MANAGEMENT },
         { label: 'Vai trò nhân viên', href: PATHS.ROLE_MANAGEMENT },
       ],
     },
