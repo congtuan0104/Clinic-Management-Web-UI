@@ -103,27 +103,26 @@ const RoleManagement = () => {
                 </td>
 
                 <td style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'center' }}>
-                  <FaRegEdit
-                    size={20}
-
-                    onClick={() => {
-                      open();
-                      setIsEditMode(true);
-                      setSelectedRole(role);
-                      // console.log(roles);
-                      // console.log(role.rolePermission);
-                    }}
-                    style={{ cursor: 'pointer', marginRight: '6px', color: 'blue' }}
-                    onMouseOver={(e: React.MouseEvent<SVGElement, MouseEvent>) => (e.currentTarget.style.color = 'darkblue')}
-                    onMouseOut={(e: React.MouseEvent<SVGElement, MouseEvent>) => (e.currentTarget.style.color = 'blue')}
-                  />
-                  <FaTrash
-                    size={20}
-                    style={{ cursor: 'pointer', marginLeft: '6px', color: 'red' }}
-                    onMouseOver={(e: React.MouseEvent<SVGElement, MouseEvent>) => (e.currentTarget.style.color = 'darkred')}
-                    onMouseOut={(e: React.MouseEvent<SVGElement, MouseEvent>) => (e.currentTarget.style.color = 'red')}
-                    onClick={() => deleteRole(role.id)}
-                  />
+                  {role.name !== 'Admin' && <>
+                    <FaRegEdit
+                      size={20}
+                      onClick={() => {
+                        open();
+                        setIsEditMode(true);
+                        setSelectedRole(role);
+                      }}
+                      style={{ cursor: 'pointer', marginRight: '6px', color: 'blue' }}
+                      onMouseOver={(e: React.MouseEvent<SVGElement, MouseEvent>) => (e.currentTarget.style.color = 'darkblue')}
+                      onMouseOut={(e: React.MouseEvent<SVGElement, MouseEvent>) => (e.currentTarget.style.color = 'blue')}
+                    />
+                    <FaTrash
+                      size={20}
+                      style={{ cursor: 'pointer', marginLeft: '6px', color: 'red' }}
+                      onMouseOver={(e: React.MouseEvent<SVGElement, MouseEvent>) => (e.currentTarget.style.color = 'darkred')}
+                      onMouseOut={(e: React.MouseEvent<SVGElement, MouseEvent>) => (e.currentTarget.style.color = 'red')}
+                      onClick={() => deleteRole(role.id)}
+                    />
+                  </>}
                 </td>
               </tr>
             ))}

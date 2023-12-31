@@ -3,6 +3,7 @@ import { authApi, clinicApi } from "@/services";
 import { currentClinicSelector } from "@/store";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Button, Flex, Grid, Modal, ModalBody, ModalCloseButton, ModalHeader } from "@mantine/core";
+import { notifications } from "@mantine/notifications";
 import { Form, useForm } from "react-hook-form";
 import { Select, TextInput } from "react-hook-form-mantine";
 import { SiMaildotru } from "react-icons/si";
@@ -47,7 +48,7 @@ const ModalInviteClinicMember = ({
     }
   );
 
-  const { control } = useForm<IFormData>({
+  const { control, reset } = useForm<IFormData>({
     resolver: yupResolver(validateSchema),
     defaultValues: {
       firstName: '',
@@ -66,12 +67,25 @@ const ModalInviteClinicMember = ({
       clinicId: currentClinic?.id
     });
 
-    console.log(response)
+    if (response.status) {
+      notifications.show({
+        message: 'Đã gửi lời mời thành công',
+        color: 'green',
+      });
+      onSuccess();
+      reset();
+      onClose();
+    }
+  }
+
+  const handleCancel = () => {
+    reset();
+    onClose();
   }
 
 
   return (
-    <Modal.Root opened={isOpen} onClose={onClose} centered size={'lg'}>
+    <Modal.Root opened={isOpen} onClose={handleCancel} centered size={'lg'}>
       <Modal.Overlay />
       <Modal.Content>
         <ModalHeader>
@@ -122,7 +136,7 @@ const ModalInviteClinicMember = ({
             <Select
               name="roleId"
               control={control}
-              label="Chọn vai trờ của nhân viên"
+              label="Chọn vai trò cho nhân viên"
               placeholder={isLoadingRoles ? 'Đang lấy danh sách role có thể gán' : ''}
               withAsterisk
               mt="md"
@@ -143,7 +157,7 @@ const ModalInviteClinicMember = ({
               <Button mt="lg" radius="sm" size="md" type="submit">
                 Xác nhận
               </Button>
-              <Button mt="lg" radius="sm" size="md" variant='outline' color='red.5' onClick={onClose}>
+              <Button mt="lg" radius="sm" size="md" variant='outline' color='red.5' onClick={handleCancel}>
                 Hủy
               </Button>
             </Flex>

@@ -7,6 +7,7 @@ import {
   Input,
   Badge,
   Box,
+  ActionIcon,
 } from '@mantine/core';
 import { useAppSelector, useAuth } from '@/hooks';
 import { currentClinicSelector } from '@/store';
@@ -80,14 +81,26 @@ const StaffManagementPage = () => {
           <tbody>
             {members?.map((member) => (
               <tr key={member.id}>
-                <th style={{ border: '1px solid #ddd', padding: '8px', width: '30%' }}>{member.email}</th>
-                <th style={{ border: '1px solid #ddd', padding: '8px' }}>{member.firstName} {member.lastName}</th>
-                <th style={{ border: '1px solid #ddd', padding: '8px', width: '30%' }}>{member.role.name}</th>
+                <th style={{ border: '1px solid #ddd', padding: '8px', width: '30%', fontWeight: 400 }}>{member.email}</th>
+                <th style={{ border: '1px solid #ddd', padding: '8px', fontWeight: 400 }}>{member.firstName} {member.lastName}</th>
+                <th style={{ border: '1px solid #ddd', padding: '8px', width: '30%', fontWeight: 400 }}>{member.role.name}</th>
                 {/* <th style={{ border: '1px solid #ddd', padding: '8px', width: '10%' }}>Trạng thái</th> */}
                 {/* <th style={{ border: '1px solid #ddd', padding: '8px', width: '10%' }}>Địa chỉ</th> */}
                 {/* <th style={{ border: '1px solid #ddd', padding: '8px', width: '10%' }}>Số điện thoại</th> */}
-                <th style={{ border: '1px solid #ddd', padding: '8px', width: '10%' }}>
-                  <span>Sửa</span> | <span>Xóa</span>
+                <th style={{ border: '1px solid #ddd', padding: '8px', width: '10%', fontWeight: 400 }}>
+                  <ActionIcon mx={5} variant='subtle' aria-label="Update member">
+                    <FaRegEdit
+                      size={20}
+                    />
+                  </ActionIcon>
+
+                  <ActionIcon mx={5} variant='subtle' color='red.5' aria-label="Delete member">
+                    <FaTrash
+                      size={20}
+                    />
+                  </ActionIcon>
+
+
                 </th>
               </tr>
             ))}
