@@ -3,10 +3,12 @@ import {
   IAddClinicRequest,
   IClinic,
   IClinicWithSubscription,
-  IUserInfo,
   IUserGroupRole,
   IRolePermission,
   IAddUserGroupRoleRequest,
+  IUpdateClinic,
+  IUpdateRequest,
+  IClinicMember,
 } from '@/types';
 import { axiosClient } from '@/utils';
 
@@ -29,7 +31,7 @@ export const clinicApi = {
   /**
    * @returns Lấy danh sách thành viên trong phòng khám
    */
-  getClinicMembers(clinicId: string): Promise<IApiResponse<IUserInfo[]>> {
+  getClinicMembers(clinicId: string): Promise<IApiResponse<IClinicMember[]>> {
     return axiosClient.get(`/clinics/${clinicId}/users`);
   },
 
@@ -37,20 +39,33 @@ export const clinicApi = {
     return axiosClient.get(`/clinics/${Id}/user-group-role`);
   },
 
-  getListPermissions():Promise<IApiResponse<IRolePermission[]>>{
+  getListPermissions(): Promise<IApiResponse<IRolePermission[]>> {
     return axiosClient.get('/clinics/permissions');
   },
 
-  addUserGroupRole(data: IAddUserGroupRoleRequest, Id?: string): Promise<any>{
+  addUserGroupRole(data: IAddUserGroupRoleRequest, Id?: string): Promise<any> {
     return axiosClient.post(`/clinics/${Id}/create-user-group-role`, data);
   },
 
-  deleteUserGroupRole(Id?: string, userGroupRoleId?: number ): Promise<any>{
+  deleteUserGroupRole(Id?: string, userGroupRoleId?: number): Promise<any> {
     return axiosClient.delete(`/clinics/${Id}/delete-user-group-role/${userGroupRoleId}`);
   },
 
-  updateUserGroupRole(data: IAddUserGroupRoleRequest, Id?: string, userGroupRoleId?: number): Promise<any>{
+  updateUserGroupRole(
+    data: IAddUserGroupRoleRequest,
+    Id?: string,
+    userGroupRoleId?: number,
+  ): Promise<any> {
     return axiosClient.put(`/clinics/${Id}/update-user-group-role/${userGroupRoleId}`, data);
   },
 
+  /**
+   * @returns Cập nhật thông tin phòng khám
+   */
+  updateClinicInfor(
+    clinicId: string,
+    updateInfor: IUpdateRequest,
+  ): Promise<IApiResponse<IUpdateClinic>> {
+    return axiosClient.put(`/clinics/${clinicId}`, updateInfor);
+  },
 };

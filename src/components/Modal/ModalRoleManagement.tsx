@@ -17,7 +17,7 @@ interface IProps {
     isOpen: boolean;
     onClose: () => void;
     updateRole: () => void;
-    selectedRole?: IUserGroupRole; 
+    selectedRole?: IUserGroupRole;
 }
 
 const ModalRoleManagement = ({ isEditMode, isOpen, onClose, updateRole, selectedRole }: IProps) => {
@@ -32,7 +32,7 @@ const ModalRoleManagement = ({ isEditMode, isOpen, onClose, updateRole, selected
         try {
             if (currentClinic && currentClinic.subscriptions) {
                 const response = await planApi.getPlanById(currentClinic.subscriptions[0].planId);
-        
+
                 if (response.data) {
                     setPermissions(response.data.planOptions);
                 } else {
@@ -43,7 +43,7 @@ const ModalRoleManagement = ({ isEditMode, isOpen, onClose, updateRole, selected
             }
         } catch (error) {
             console.log(error);
-        }  
+        }
     }
     useEffect(() => {
         getPermissionData();
@@ -51,7 +51,7 @@ const ModalRoleManagement = ({ isEditMode, isOpen, onClose, updateRole, selected
 
     useEffect(() => {
         if (selectedRole) {
-            setNewRole(selectedRole.name || ''); 
+            setNewRole(selectedRole.name || '');
             setRoleDescription(selectedRole.description || '');
             const selectedRolePermissions = permissions.filter((permission) =>
                 selectedRole.rolePermissions?.some((rolePermission) => rolePermission.id === permission.id)
@@ -73,7 +73,7 @@ const ModalRoleManagement = ({ isEditMode, isOpen, onClose, updateRole, selected
                 description: roleDescription,
                 permissions: selectedPermissions.map(permission => permission.id),
             };
-    
+
             if (isEditMode) {
                 const response = await clinicApi.updateUserGroupRole(requestData, currentClinic?.id, selectedRole?.id);
                 console.log('API Response (Update):', response);
@@ -81,7 +81,7 @@ const ModalRoleManagement = ({ isEditMode, isOpen, onClose, updateRole, selected
                 const response = await clinicApi.addUserGroupRole(requestData, currentClinic?.id);
                 console.log('API Response (Add):', response);
             }
-    
+
             updateRole();
             resetModal();
             onClose();
@@ -114,7 +114,7 @@ const ModalRoleManagement = ({ isEditMode, isOpen, onClose, updateRole, selected
                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                     <div style={{ flex: '0 0 48%', display: 'flex', flexDirection: 'column' }}>
                         <CheckboxGroup
-                            label={<span style={{ fontWeight: 'bold'}}>Các quyền</span>}
+                            label={<span style={{ fontWeight: 'bold' }}>Các quyền</span>}
                             value={selectedPermissions.map((permission) => permission.optionName)}
                             onChange={(value) => {
                                 const selectedRolePermissions = permissions.filter((permission) =>

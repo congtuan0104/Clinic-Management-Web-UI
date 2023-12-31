@@ -44,14 +44,12 @@ const schema = yup.object().shape({
 
 const decodeToken = (token: string) => {
   // function to decode token
-  console.log(token);
   const decoded: {
     email: string;
     role: string;
     iat: number;
     exp: number;
   } = jwtDecode(token);
-  console.log(decoded);
   const result = {
     email: decoded?.email,
     role: decoded?.role,

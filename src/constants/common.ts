@@ -1,4 +1,4 @@
-const PREFIX_COOKIE = 'cma_';
+const PREFIX_COOKIE = 'clinus_';
 export const COOKIE_KEY = {
   TOKEN: PREFIX_COOKIE + 'token',
   USER_INFO: PREFIX_COOKIE + 'us',

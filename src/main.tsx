@@ -2,6 +2,7 @@ import './global.scss';
 import '@mantine/core/styles.css';
 import '@mantine/notifications/styles.css';
 import '@mantine/dates/styles.css';
+import '@mantine/tiptap/styles.css';
 import 'dayjs/locale/vi';
 
 import { MantineProvider } from '@mantine/core';
@@ -32,3 +33,11 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
     </QueryClientProvider>
   </ReduxProvider>,
 );
+
+// register service worker
+// if ('serviceWorker' in navigator) {
+//   window.addEventListener('load', () => {
+//     // we will register it after the page complete the load
+//     navigator.serviceWorker.register('/sw.js');
+//   });
+// }

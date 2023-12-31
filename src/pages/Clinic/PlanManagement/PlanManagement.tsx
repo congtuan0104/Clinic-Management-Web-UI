@@ -1,22 +1,40 @@
-import { Text, Flex, Box, Paper, Title, Button, Loader, Stack } from '@mantine/core';
-import { useState } from 'react';
+import { Text, Flex, Box, Paper, Title, Button, Loader, Stack, Badge, ActionIcon } from '@mantine/core';
+import { useEffect, useState } from 'react';
 import PlanCard from '@/components/Card/PlanCard';
 import { useQuery } from 'react-query';
 import { clinicApi, planApi } from '@/services';
 import { IClinic, IClinicWithSubscription, IServicePlan } from '@/types';
 import { ModalClinicPayment, ModalCreateNewClinic } from '@/components';
-import { useAuth } from '@/hooks';
+import { useAppDispatch, useAppSelector, useAuth } from '@/hooks';
 import dayjs from 'dayjs';
 import { renderSubscriptionStatus } from '@/utils/subscription';
 import { CLINIC_SUBSCRIPTION_STATUS } from '@/enums';
+import { listClinicSelector, setCurrentClinic, setFocusMode } from '@/store';
+import { useNavigate } from 'react-router-dom';
+import { IoChevronBackOutline } from 'react-icons/io5';
+import { PATHS } from '@/config';
+import { cookies } from '@/utils';
+import { COOKIE_KEY } from '@/constants';
 
 
 const ClinicManagePage = () => {
   const { userInfo } = useAuth()
+  const dispatch = useAppDispatch();
+  // const clinics = useAppSelector(listClinicSelector);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    dispatch(setFocusMode(true));
+    return () => {
+      dispatch(setFocusMode(false));
+    }
+  }, [])
+
   const { data: clinics, isLoading: isLoadingClinic } = useQuery(
     ['clinics', userInfo?.id],
     () => clinicApi.getClinicsByOwner(userInfo?.id).then(res => res.data)
   );
+
   const { data: plans, isLoading: isLoadingPlan } = useQuery('plans', () => getAllPlans());
   const [isOpenClinicModal, setIsOpenClinicModal] = useState<boolean>(false);
   const [isOpenPaymentModal, setIsOpenPaymentModal] = useState<boolean>(false);
@@ -45,6 +63,11 @@ const ClinicManagePage = () => {
     setIsOpenClinicModal(false);
   }
 
+  const handleCancelPayment = () => {
+    setIsOpenPaymentModal(false);
+    setClinicNeedPayment(undefined);
+  }
+
   const handleCreateClinicSuccess = (clinic: IClinicWithSubscription) => {
     setIsOpenClinicModal(false);
     setClinicNeedPayment(clinic);
@@ -60,44 +83,110 @@ const ClinicManagePage = () => {
     if (!subscription) return null;
     const plan = getPlanInfo(subscription.planId);
     return (
-      <>
+      <div className='flex flex-col items-end'>
         <Text tt='uppercase'>
           Gói {plan?.planName}
         </Text>
-        {(subscription.status !== CLINIC_SUBSCRIPTION_STATUS.CANCEL && subscription.status !== CLINIC_SUBSCRIPTION_STATUS.INPAYMENT)
-          && <Text tt='uppercase'>
-            Hết hạn: {dayjs(subscription.expiredAt).format('DD/MM/YYYY')} (Còn {dayjs(subscription.expiredAt).diff(dayjs(), 'day')} ngày)
+        {(subscription.status !== CLINIC_SUBSCRIPTION_STATUS.NOT_ACTIVE && subscription.status !== CLINIC_SUBSCRIPTION_STATUS.INPAYMENT)
+          && <Text>
+            Sử dụng đến {dayjs(subscription.expiredAt).format('DD/MM/YYYY')} (Còn {dayjs(subscription.expiredAt).diff(dayjs(), 'day')} ngày)
           </Text>}
-        <Text>Trạng thái: {renderSubscriptionStatus(subscription.status)}</Text>
-      </>
+
+        <Badge
+          color={subscription.status === CLINIC_SUBSCRIPTION_STATUS.ACTIVE ? 'primary.4'
+            : subscription.status === CLINIC_SUBSCRIPTION_STATUS.INPAYMENT ? 'teal.6'
+              : subscription.status === CLINIC_SUBSCRIPTION_STATUS.EXPIRED ? 'gray.6'
+                : 'error'}
+        >
+          {renderSubscriptionStatus(subscription.status)}
+        </Badge>
+
+      </div>
     )
   }
 
-  if ((isLoadingClinic || isLoadingPlan) && !isOpenClinicModal && !isOpenPaymentModal) return (
+  const renderAction = (clinic: IClinic) => {
+    const subscription = clinic.subscriptions ? clinic.subscriptions[0] : null;
+    if (!subscription) return null;
+
+    if (subscription.status === CLINIC_SUBSCRIPTION_STATUS.ACTIVE) return (
+      <div
+        className='cursor-pointer text-teal-600 hover:text-teal-500'
+        onClick={() => {
+          cookies.set(COOKIE_KEY.CURRENT_CLINIC_ID, clinic.id)
+          dispatch(setCurrentClinic(clinic));
+          navigate(PATHS.CLINIC_INFO_MANAGEMENT)
+        }}
+      >
+        Xem chi tiết
+      </div>
+    )
+
+    if (subscription.status === CLINIC_SUBSCRIPTION_STATUS.EXPIRED) return (
+      <div
+        className='cursor-pointer text-teal-600 hover:text-teal-500'
+        onClick={() => {
+          alert('Gia hạn phòng khám')
+        }}
+      >
+        Gia hạn
+      </div>
+    )
+
+    if (subscription.status === CLINIC_SUBSCRIPTION_STATUS.NOT_ACTIVE) return (
+      <div
+        className='cursor-pointer text-teal-600 hover:text-teal-500'
+        onClick={() => {
+          setClinicNeedPayment({
+            clinic: clinic,
+            subscription: subscription,
+          })
+          setIsOpenPaymentModal(true);
+        }}
+      >
+        Kích hoạt
+      </div>
+    )
+  }
+
+  if ((isLoadingPlan || isLoadingClinic) && !isOpenClinicModal && !isOpenPaymentModal) return (
     <Stack h="90vh" align="center" justify="center">
       <Loader size="xl" />
       <Text size="xl">Đang tải</Text>
     </Stack>)
 
   return (
-    <>
+    <div className='max-w-screen-md mx-auto pb-3'>
       {clinics && clinics.length > 0 ? (
-        <Box px='xl' pt='lg'>
-          <Flex justify='space-between'>
-            <Title order={4} mb={20}>Danh sách phòng khám</Title>
+        <Box px='xl' pt='md'>
+          <Flex justify='space-between' align='center' mb={15}>
+            <Flex>
+              <ActionIcon size='md' radius='xl' mr={5} c='gray.7' variant="subtle" aria-label="Back" onClick={() => navigate(-1)}>
+                <IoChevronBackOutline size={25} />
+              </ActionIcon>
+              <Title order={4}>Danh sách gói - phòng khám</Title>
+            </Flex>
             <Button
               color='primary'
               onClick={() => setIsOpenClinicModal(true)}
             >
-              Thêm phòng khám
+              Mua gói
             </Button>
           </Flex>
-          <Flex direction='column' gap={20}>
+          <Flex direction='column' gap={15}>
             {clinics.map((clinic) => (
               <Paper shadow="xs" radius='md' p='lg'>
-                <Text fw='semibold' tt='uppercase'>{clinic.name}</Text>
-                <Text>{clinic.address}</Text>
-                {renderSubscriptionInfo(clinic)}
+                <div className='flex justify-between'>
+                  <div>
+                    <Text fw='semibold' tt='uppercase'>{clinic.name}</Text>
+                    <Text>{clinic.address}</Text>
+                    {renderAction(clinic)}
+
+                  </div>
+                  <div>
+                    {renderSubscriptionInfo(clinic)}
+                  </div>
+                </div>
               </Paper>
             ))}
           </Flex>
@@ -124,10 +213,10 @@ const ClinicManagePage = () => {
 
       {clinicNeedPayment && <ModalClinicPayment
         isOpen={isOpenPaymentModal}
-        onClose={() => setIsOpenPaymentModal(false)}
+        onClose={handleCancelPayment}
         clinicPayment={clinicNeedPayment}
       />}
-    </>
+    </div>
   );
 }
 

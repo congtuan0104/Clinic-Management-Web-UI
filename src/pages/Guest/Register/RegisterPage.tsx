@@ -62,7 +62,7 @@ const RegisterPage = () => {
       // emailVerified: false,
     },
   });
-  console.log('control: ',control)
+
   const handleRegister = (data: IRegisterFormData) => {
     const registerData = {
       firstName: data.firstName,

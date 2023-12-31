@@ -6,7 +6,6 @@ import Conversation from "@/components/Message/Conversation";
 import { IGroupChat } from "@/types";
 // import { db } from "../../firebase";
 
-import "./chat-screen.css";
 import { useAuth } from "@/hooks";
 import { GroupChatType } from "@/enums";
 
@@ -50,8 +49,8 @@ export default function ChatScreen() {
 
   return (
     <>
-      <div className="p-5 h-screen overflow-auto">
-        <div className="flex justify-between items-center mb-4">
+      <div className="mx-5 h-[calc(100vh-60px)] overflow-hidden">
+        <div className="flex justify-between items-center mt-2 mb-3">
           <Text size={"22px"} fw={700}>
             Tin nhắn
           </Text>
@@ -60,7 +59,7 @@ export default function ChatScreen() {
             Tạo nhóm chat
           </Button>
         </div>
-        <div className="bg-white p-4 rounded-xl flex border border-solid border-gray-300 h-[94%]">
+        <div className="bg-white p-4 rounded-xl flex border border-solid border-gray-300 h-[calc(100vh-116px)]">
           <div className="w-[25%] border-r border-0 border-solid border-gray-300 pr-3 bg-white max-h-full overflow-auto">
             <GroupChatList groups={groupChats} changeGroup={changeGroup} selectedGroup={selectedGroup} />
           </div>

@@ -76,3 +76,43 @@ export interface IRolePermission {
   createdAt?: string;
   updatedAt?: string;
 }
+export interface IUpdateClinic {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  address: string;
+  isActive: boolean;
+  createdAt: Date;
+  updatedAt?: Date;
+}
+
+export interface IUpdateRequest {
+  name: string;
+  email: string;
+  phone: string;
+  address: string;
+  logo: string;
+  description: string;
+}
+
+export interface IClinicMember {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  roleId: number;
+  isOwner: boolean;
+  role: {
+    id: number;
+    name: string;
+  };
+}
+
+export interface IInviteClinicMemberRequest {
+  firstName: string;
+  lastName: string;
+  email: string;
+  roleId: number;
+  clinicId: string;
+}
