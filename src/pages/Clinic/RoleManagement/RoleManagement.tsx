@@ -119,8 +119,8 @@ const RoleManagement = () => {
                     size={20}
                     onClick={() => {
                       open();
-                      setIsEditMode(true);
                       setSelectedRole(role);
+                      setIsEditMode(true);
                     }}
                     style={{ cursor: 'pointer', marginRight: '6px', color: 'blue' }}
                     onMouseOver={(e: React.MouseEvent<SVGElement, MouseEvent>) => (e.currentTarget.style.color = 'darkblue')}
