@@ -28,6 +28,7 @@ import {
   list,
 } from "firebase/storage";
 import { v4 } from "uuid";
+import { useNavigate, useNavigation } from "react-router-dom";
 
 type ImageUploadType = File | null;
 
@@ -62,6 +63,8 @@ export default function ClinicDetail() {
 
   const [imageUrl, setImageUrl] = useState("");
 
+  // const navigate = useNavigation();
+
   const currentClinic = useAppSelector(currentClinicSelector);
   console.log('phong kham hien tai: ', currentClinic)
 
@@ -83,11 +86,11 @@ export default function ClinicDetail() {
   const { control, setValue } = useForm<IUpdateData>({
     resolver: yupResolver(schema), // gắn điều kiện xác định input hợp lệ vào form
     defaultValues: {
-      name: '',
+      name: currentClinic?.name,
       specialty: '',
-      email: '',
-      address: '',
-      phone: '',
+      email: currentClinic?.email,
+      address: currentClinic?.address,
+      phone: currentClinic?.phone,
     },
   });
 
@@ -120,7 +123,8 @@ export default function ClinicDetail() {
               color: 'green',
             });
         })
-      location.reload();
+    location.reload();
+    // navigate
   }
 
   const content: string = `${currentClinic?.description}`;
@@ -145,17 +149,17 @@ export default function ClinicDetail() {
     editor?.commands.setContent(content)
   }, [editor])
 
-  
+
   //Xử lý đẩy ảnh lên firebase
   const uploadFile = () => {
-      if (imageUpload == null) return;
-      const imageRef = ref(firebaseStorage, `avatars/${currentClinic?.id}/${imageUpload.name + v4()}`);
-      uploadBytes(imageRef, imageUpload).then((snapshot) => {
+    if (imageUpload == null) return;
+    const imageRef = ref(firebaseStorage, `avatars/${currentClinic?.id}/${imageUpload.name + v4()}`);
+    uploadBytes(imageRef, imageUpload).then((snapshot) => {
       getDownloadURL(snapshot.ref).then((url) => {
-        console.log(typeof url); 
-          setImageUrl(url);
+        console.log(typeof url);
+        setImageUrl(url);
       });
-      });
+    });
   };
 
   return (
@@ -186,13 +190,28 @@ export default function ClinicDetail() {
             <Grid.Col span={3.5}>
               {isUpdate ?
                 (
-                  <input
-                    type="file"
-                    onChange={(event) => {
-                      setImageUpload(event.target.files?.[0] || null);
-                    }}
+                  <>
+                    <label htmlFor="upload-image" className="relative">
+                      <Image
+                        w='189px'
+                        h='186px'
+                        className="cursor-pointer hover:opacity-90 rounded-md"
+                        src="https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-7.png"
+                      />
+                      <div className="absolute top-[50%] text-white mx-auto">
+                        Chỉnh sửa logo
+                      </div>
+                    </label>
+                    <input
+                      type="file"
+                      id="upload-image"
+                      className="hidden"
+                      onChange={(event) => {
+                        setImageUpload(event.target.files?.[0] || null);
+                      }}
                     />
-                ):
+                  </>
+                ) :
                 (currentClinic?.logo && currentClinic.logo.startsWith('https') ? (
                   <Image
                     w='189px'
@@ -211,7 +230,10 @@ export default function ClinicDetail() {
             <Grid.Col span={8.5}>
               <Box maw={700} mx="auto" >
                 <Form control={control} onSubmit={e => onSubmit(e.data)} onError={e => console.log(e)}>
-                  <TextInput label="Tên phòng khám" placeholder={currentClinic?.name}  name='name' control={control}/>
+                  <TextInput label="Tên phòng khám"
+                    //  placeholder={currentClinic?.name}
+                    name='name'
+                    control={control} />
                   <Grid>
                     <Grid.Col span={6}>
                       <TextInput
