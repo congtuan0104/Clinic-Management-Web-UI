@@ -67,7 +67,7 @@ const ClinicHeader = () => {
           <Divider orientation="vertical" mr={5} />
 
           <Menu.Dropdown>
-            <ScrollArea mah={300}>
+            <ScrollArea h={300}>
               {listClinic?.map((clinic) => (
                 <Menu.Item key={clinic.id} onClick={() => handleChangeClinic(clinic)}>
                   {clinic.name}

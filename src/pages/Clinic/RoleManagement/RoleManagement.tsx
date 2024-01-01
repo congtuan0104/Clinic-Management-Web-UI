@@ -54,12 +54,12 @@ const RoleManagement = () => {
       title: `Xóa Role ${name}`,
       centered: true,
       children: (
-        <Text size="sm">
-          Bạn có muốn xóa {name} không
+        <Text size="md">
+          Bạn có chắc chắn muốn xóa vai trò {name} không?
         </Text>
       ),
       labels: { confirm: 'Xác nhận xóa', cancel: 'Hủy' },
-      confirmProps: { color: 'red' },
+      confirmProps: { color: 'red.5' },
       onCancel: () => console.log('Cancel'),
       onConfirm: async () => {
         try {
