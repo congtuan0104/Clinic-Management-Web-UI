@@ -62,7 +62,7 @@ export const clinicApi = {
   /**
    * @returns Cập nhật thông tin phòng khám
    */
-  updateClinicInfor(
+  updateClinicInfo(
     clinicId: string,
     updateInfo: IUpdateRequest,
   ): Promise<IApiResponse<IUpdateClinic>> {

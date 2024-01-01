@@ -21,7 +21,6 @@ interface IFormData {
   firstName: string;
   lastName: string;
   email: string;
-  // clinicId: string;
   roleId: string;
 }
 
@@ -85,7 +84,7 @@ const ModalInviteClinicMember = ({
 
 
   return (
-    <Modal.Root opened={isOpen} onClose={handleCancel} centered size={'lg'}>
+    <Modal.Root opened={isOpen} onClose={handleCancel} centered size={'md'}>
       <Modal.Overlay />
       <Modal.Content>
         <ModalHeader>

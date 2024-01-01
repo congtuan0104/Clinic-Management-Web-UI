@@ -1,3 +1,5 @@
+import { IServicePlan } from '@/types';
+
 export interface IAddClinicRequest {
   name: string;
   email: string;
@@ -47,6 +49,7 @@ export interface IClinicSubscription {
   updatedAt: Date;
   isDisabled: boolean;
   disabledAt?: Date;
+  plans?: IServicePlan;
 }
 
 export interface IClinicWithSubscription {

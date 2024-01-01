@@ -16,7 +16,7 @@ import { currentClinicSelector } from '@/store'
 import { useQuery } from 'react-query';
 import { clinicApi, planApi } from '@/services';
 import { IServicePlan } from "@/types";
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import dayjs from 'dayjs';
 import { notifications } from "@mantine/notifications";
 import { firebaseStorage } from '@/config';
@@ -52,10 +52,7 @@ const schema = yup.object().shape({
 
 
 export default function ClinicDetail() {
-  const { data: plans, isLoading: isLoadingPlan } = useQuery('plans', () => getAllPlans());
-
-  const [plan, setPlan] = useState<IServicePlan>();
-
+  const currentClinic = useAppSelector(currentClinicSelector);
   const [editorContent, setEditorContent] = useState("");
 
   const [isUpdate, setIsUpdate] = useState<boolean>(false);
@@ -63,44 +60,37 @@ export default function ClinicDetail() {
   //Xử lý đẩy ảnh lên firebase
   const [imageUpload, setImageUpload] = useState<ImageUploadType>(null);
 
-  // const navigate = useNavigation();
-
-  const currentClinic = useAppSelector(currentClinicSelector);
-
-  const getAllPlans = async () => {
-    try {
-      const response = await planApi.getAllPlans();
-      return response.data;
-    } catch (error) {
-      console.log(error);
-    }
-  }
-
-  const getPlanInfo = (planId: number) => {
-    return plans?.find((plan) => plan.id == planId);
-  }
+  const navigate = useNavigate();
 
   const subscription = currentClinic?.subscriptions?.[0];
 
-  const { control, setValue, getValues } = useForm<IUpdateData>({
+  const { control, setValue, getValues, reset } = useForm<IUpdateData>({
     resolver: yupResolver(schema), // gắn điều kiện xác định input hợp lệ vào form
-    defaultValues: {
-      name: currentClinic?.name,
-      specialty: '',
-      email: currentClinic?.email,
-      address: currentClinic?.address,
-      phone: currentClinic?.phone,
-      logo: currentClinic?.logo,
-    },
+    defaultValues: useMemo(() => {
+      return {
+        name: currentClinic?.name || '',
+        specialty: '',
+        email: currentClinic?.email || '',
+        address: currentClinic?.address || '',
+        phone: currentClinic?.phone || '',
+        logo: currentClinic?.logo || '',
+      }
+    }
+      , [currentClinic]),
   });
 
-
   useEffect(() => {
-    if (subscription && subscription.planId) {
-      const fetchedPlan = getPlanInfo(subscription.planId);
-      setPlan(fetchedPlan);
-    }
-  }, [subscription])
+    setIsUpdate(false);
+    reset({
+      name: currentClinic?.name || '',
+      specialty: '',
+      email: currentClinic?.email || '',
+      address: currentClinic?.address || '',
+      phone: currentClinic?.phone || '',
+      logo: currentClinic?.logo || '',
+    })
+  }, [currentClinic])
+
   const onSubmit = async (data: IUpdateData) => {
     setIsUpdate(false);
     await uploadFile();
@@ -113,20 +103,18 @@ export default function ClinicDetail() {
       description: editorContent
     }
     if (currentClinic?.id) {
-      const res = await clinicApi.updateClinicInfor(currentClinic?.id, updateInfo)
+      const res = await clinicApi.updateClinicInfo(currentClinic?.id, updateInfo)
 
       if (res.status)
         notifications.show({
-          title: 'Thành công',
-          message: 'Cập nhật thông tin thành công',
+          title: 'Thông báo',
+          message: 'Cập nhật thông tin phòng khám thành công',
           color: 'green',
         });
 
     }
 
-
-    // location.reload();
-    // navigate
+    navigate(0) // reload page
   }
 
   const content: string = `${currentClinic?.description}`;
@@ -165,9 +153,9 @@ export default function ClinicDetail() {
   return (
     <Center>
       <Stack>
-        <Flex w='941px' h='160px' px='30px' align="center" justify={'space-between'} bg='#081692' style={{ borderRadius: '10px' }} mt='30px' c='white'>
+        {subscription && <Flex w='941px' h='160px' px='30px' align="center" justify={'space-between'} bg='#081692' style={{ borderRadius: '10px' }} mt='30px' c='white'>
           <Stack>
-            <Title order={5}>BẠN ĐANG SỬ SỬ DỤNG GÓI {plan && (plan?.planName)}</Title>
+            <Title order={5}>BẠN ĐANG SỬ SỬ DỤNG GÓI {subscription.plans?.planName}</Title>
             <Flex>
               Thời gian sử dụng đến &nbsp; <b>{dayjs(subscription?.expiredAt).format('DD/MM/YYYY')}</b>
             </Flex>
@@ -179,7 +167,7 @@ export default function ClinicDetail() {
             <Button variant="filled" bg='#68B056'>Nâng cấp gói</Button>
             <Text>Xem lịch sử đăng ký gói</Text>
           </Stack>
-        </Flex>
+        </Flex>}
         <Box w='941px' h='636px' px='30px' bg='white' py='20px' style={{ borderRadius: '10px' }}>
           <Flex justify={"space-between"}>
             <Title order={5}>THÔNG TIN CƠ SỞ Y TẾ</Title>
@@ -191,15 +179,16 @@ export default function ClinicDetail() {
               {isUpdate ?
                 (
                   <>
-                    <label htmlFor="upload-image" className="relative">
+                    <label htmlFor="upload-image" className="relative w-fit group">
                       <Image
                         w='189px'
                         h='186px'
-                        className="cursor-pointer hover:opacity-90 rounded-md"
-                        src="https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-7.png"
+                        radius='md'
+                        className="cursor-pointer group-hover:opacity-90 transition-all"
+                        src={imageUpload ? URL.createObjectURL(imageUpload) : currentClinic?.logo || "https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-7.png"}
                       />
-                      <div className="absolute top-[50%] text-white mx-auto">
-                        Chỉnh sửa logo
+                      <div className="absolute top-[50%] left-[50px] bg-gray-600 p-2 rounded-md text-white text-14 font-bold mx-auto hidden group-hover:block cursor-pointer">
+                        Thay đổi logo
                       </div>
                     </label>
                     <input
@@ -216,12 +205,14 @@ export default function ClinicDetail() {
                   <Image
                     w='189px'
                     h='186px'
+                    radius='md'
                     src={currentClinic.logo}
                   />
                 ) : (
                   <Image
                     w='189px'
                     h='186px'
+                    radius='md'
                     src="https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-7.png"
                   />
                 ))
@@ -314,7 +305,11 @@ export default function ClinicDetail() {
                       isUpdate ? (
                         <Button type="submit">Lưu thay đổi</Button>
                       ) : (
-                        <Button onClick={() => setIsUpdate(true)}>Cập nhật thông tin</Button>
+                        <Button onClick={(e) => {
+                          e.preventDefault()
+                          e.stopPropagation()
+                          setIsUpdate(true)
+                        }}>Cập nhật thông tin</Button>
                       )
                     }
                   </Group>
