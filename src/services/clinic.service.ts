@@ -64,8 +64,8 @@ export const clinicApi = {
    */
   updateClinicInfor(
     clinicId: string,
-    updateInfor: IUpdateRequest,
+    updateInfo: IUpdateRequest,
   ): Promise<IApiResponse<IUpdateClinic>> {
-    return axiosClient.put(`/clinics/${clinicId}`, updateInfor);
+    return axiosClient.put(`/clinics/${clinicId}`, updateInfo);
   },
 };

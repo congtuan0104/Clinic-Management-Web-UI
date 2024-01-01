@@ -22,6 +22,7 @@ const createMenuItem = () => {
       icon: CgNotes,
       children: [
         { label: 'Thông tin phòng khám', href: PATHS.CLINIC_INFO_MANAGEMENT },
+        { label: 'Lịch làm việc', href: '#' },
         { label: 'Tin tức, quảng cáo', href: '#' },
       ],
     },

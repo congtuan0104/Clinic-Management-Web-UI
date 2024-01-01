@@ -92,8 +92,8 @@ export interface IUpdateRequest {
   email: string;
   phone: string;
   address: string;
-  logo: string;
-  description: string;
+  logo?: string;
+  description?: string;
 }
 
 export interface IClinicMember {

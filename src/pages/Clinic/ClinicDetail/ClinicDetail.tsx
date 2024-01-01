@@ -38,6 +38,7 @@ interface IUpdateData {
   email: string,
   address: string,
   phone: string,
+  logo?: string,
 }
 
 const schema = yup.object().shape({
@@ -46,6 +47,7 @@ const schema = yup.object().shape({
   email: yup.string().required('Thông tin email là bắt buộc').email('Email không hợp lệ'),
   address: yup.string().required('Thông tin địa chỉ phòng khám là bắt buộc'),
   phone: yup.string().required('Thông tin số điện thoại là bắt buộc'),
+  logo: yup.string(),
 });
 
 
@@ -61,12 +63,9 @@ export default function ClinicDetail() {
   //Xử lý đẩy ảnh lên firebase
   const [imageUpload, setImageUpload] = useState<ImageUploadType>(null);
 
-  const [imageUrl, setImageUrl] = useState("");
-
   // const navigate = useNavigation();
 
   const currentClinic = useAppSelector(currentClinicSelector);
-  console.log('phong kham hien tai: ', currentClinic)
 
   const getAllPlans = async () => {
     try {
@@ -83,7 +82,7 @@ export default function ClinicDetail() {
 
   const subscription = currentClinic?.subscriptions?.[0];
 
-  const { control, setValue } = useForm<IUpdateData>({
+  const { control, setValue, getValues } = useForm<IUpdateData>({
     resolver: yupResolver(schema), // gắn điều kiện xác định input hợp lệ vào form
     defaultValues: {
       name: currentClinic?.name,
@@ -91,6 +90,7 @@ export default function ClinicDetail() {
       email: currentClinic?.email,
       address: currentClinic?.address,
       phone: currentClinic?.phone,
+      logo: currentClinic?.logo,
     },
   });
 
@@ -103,27 +103,29 @@ export default function ClinicDetail() {
   }, [subscription])
   const onSubmit = async (data: IUpdateData) => {
     setIsUpdate(false);
-    uploadFile();
-    const updateInfor = {
+    await uploadFile();
+    const updateInfo = {
       name: data.name,
       email: data.email,
       phone: data.phone,
       address: data.address,
-      logo: imageUrl,
+      logo: getValues('logo'),
       description: editorContent
     }
-    console.log('update infor: ', updateInfor);
-    if (currentClinic?.id)
-      await clinicApi.updateClinicInfor(currentClinic?.id, updateInfor)
-        .then((res) => {
-          if (res.status)
-            notifications.show({
-              title: 'Thành công',
-              message: 'Cập nhật thông tin thành công',
-              color: 'green',
-            });
-        })
-    location.reload();
+    if (currentClinic?.id) {
+      const res = await clinicApi.updateClinicInfor(currentClinic?.id, updateInfo)
+
+      if (res.status)
+        notifications.show({
+          title: 'Thành công',
+          message: 'Cập nhật thông tin thành công',
+          color: 'green',
+        });
+
+    }
+
+
+    // location.reload();
     // navigate
   }
 
@@ -151,15 +153,13 @@ export default function ClinicDetail() {
 
 
   //Xử lý đẩy ảnh lên firebase
-  const uploadFile = () => {
+  const uploadFile = async () => {
     if (imageUpload == null) return;
-    const imageRef = ref(firebaseStorage, `avatars/${currentClinic?.id}/${imageUpload.name + v4()}`);
-    uploadBytes(imageRef, imageUpload).then((snapshot) => {
-      getDownloadURL(snapshot.ref).then((url) => {
-        console.log(typeof url);
-        setImageUrl(url);
-      });
-    });
+    const imageRef = ref(firebaseStorage, `clinic-logo/${currentClinic?.id}/${imageUpload.name + v4()}`);
+    const snapshot = await uploadBytes(imageRef, imageUpload)
+
+    const url = await getDownloadURL(snapshot.ref);
+    setValue('logo', url);
   };
 
   return (
