@@ -7,8 +7,8 @@ import {
     Button,
     Modal,
 } from '@mantine/core';
-import { IAddUserGroupRoleRequest, IRolePermission, IUserGroupRole } from '@/types';
-import { clinicApi } from '@/services';
+import { IAddUserGroupRoleRequest, IPlanOption, IRolePermission, IUserGroupRole } from '@/types';
+import { clinicApi, planApi } from '@/services';
 import { useAppSelector } from '@/hooks';
 import { currentClinicSelector } from '@/store';
 
@@ -23,17 +23,23 @@ interface IProps {
 const ModalRoleManagement = ({ isEditMode, isOpen, onClose, updateRole, selectedRole }: IProps) => {
     const currentClinic = useAppSelector(currentClinicSelector);
     const [newRole, setNewRole] = useState<string>('');
-    const [permissions, setPermissions] = useState<IRolePermission[]>([]);
-    const [selectedPermissions, setSelectedPermissions] = useState<IRolePermission[]>([]);
+    const [permissions, setPermissions] = useState<IPlanOption[]>([]);
+    const [selectedPermissions, setSelectedPermissions] = useState<IPlanOption[]>([]);
     const [roleDescription, setRoleDescription] = useState<string>('');
+
 
     const getPermissionData = async () => {
         try {
-            const response = await clinicApi.getListPermissions();
-            if (response.data) {
-                setPermissions(response.data);
+            if (currentClinic && currentClinic.subscriptions) {
+                const response = await planApi.getPlanById(currentClinic.subscriptions[0].planId);
+
+                if (response.data) {
+                    setPermissions(response.data.planOptions);
+                } else {
+                    console.error("Lỗi không thể nhận được dữ liệu");
+                }
             } else {
-                console.error("Lỗi không thể nhận được dữ liệu");
+                console.error("Lỗi: currentClinic hoặc currentClinic.subscriptions không được xác định hoặc rỗng");
             }
         } catch (error) {
             console.log(error);
@@ -41,7 +47,7 @@ const ModalRoleManagement = ({ isEditMode, isOpen, onClose, updateRole, selected
     }
     useEffect(() => {
         getPermissionData();
-    }, []);
+    }, [currentClinic]);
 
     useEffect(() => {
         if (selectedRole) {
@@ -61,21 +67,26 @@ const ModalRoleManagement = ({ isEditMode, isOpen, onClose, updateRole, selected
     };
 
     const handleSubmit = async () => {
-        if (!isEditMode) {
-            try {
-                const requestData: IAddUserGroupRoleRequest = {
-                    name: newRole,
-                    description: roleDescription,
-                    permissions: selectedPermissions.map(permission => permission.id),
-                };
+        try {
+            const requestData: IAddUserGroupRoleRequest = {
+                name: newRole,
+                description: roleDescription,
+                permissions: selectedPermissions.map(permission => permission.id),
+            };
+
+            if (isEditMode) {
+                const response = await clinicApi.updateUserGroupRole(requestData, currentClinic?.id, selectedRole?.id);
+                console.log('API Response (Update):', response);
+            } else {
                 const response = await clinicApi.addUserGroupRole(requestData, currentClinic?.id);
-                console.log('API Response:', response);
-                updateRole();
-                resetModal();
-                onClose();
-            } catch (error) {
-                console.error('Error submitting data:', error);
+                console.log('API Response (Add):', response);
             }
+
+            updateRole();
+            resetModal();
+            onClose();
+        } catch (error) {
+            console.error('Error handling data:', error);
         }
     };
     return (
@@ -83,6 +94,7 @@ const ModalRoleManagement = ({ isEditMode, isOpen, onClose, updateRole, selected
             title={isEditMode ? 'Chỉnh sửa' : 'Thêm vai trò mới'}
             opened={isOpen}
             onClose={() => {
+                resetModal();
                 onClose();
             }}
         >

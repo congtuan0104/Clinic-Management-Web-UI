@@ -15,7 +15,7 @@ import { clinicApi } from '@/services';
 import { IUserGroupRole } from '@/types';
 import { useDisclosure, useHover } from '@mantine/hooks';
 import { ModalRoleManagement } from "@/components";
-
+import { modals } from '@mantine/modals';
 
 const RoleManagement = () => {
   const currentClinic = useAppSelector(currentClinicSelector);
@@ -49,14 +49,27 @@ const RoleManagement = () => {
   };
 
 
-
-  const deleteRole = async (userGroupRoleId: number) => {
-    try {
-      await clinicApi.deleteUserGroupRole(currentClinic?.id, userGroupRoleId);
-      await fetchData();
-    } catch (error) {
-      console.error("Error deleting role:", error);
-    }
+  const openDeleteModal = (userGroupRoleId: number, name: string) => {
+    modals.openConfirmModal({
+      title: `Xóa Role ${name}`,
+      centered: true,
+      children: (
+        <Text size="md">
+          Bạn có chắc chắn muốn xóa vai trò {name} không?
+        </Text>
+      ),
+      labels: { confirm: 'Xác nhận xóa', cancel: 'Hủy' },
+      confirmProps: { color: 'red.5' },
+      onCancel: () => console.log('Cancel'),
+      onConfirm: async () => {
+        try {
+          await clinicApi.deleteUserGroupRole(currentClinic?.id, userGroupRoleId);
+          await fetchData();
+        } catch (error) {
+          console.error('Error deleting role:', error);
+        }
+      },
+    });
   };
 
   return (
@@ -101,28 +114,25 @@ const RoleManagement = () => {
                     </Badge>
                   )}
                 </td>
-
                 <td style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'center' }}>
-                  {role.name !== 'Admin' && <>
-                    <FaRegEdit
-                      size={20}
-                      onClick={() => {
-                        open();
-                        setIsEditMode(true);
-                        setSelectedRole(role);
-                      }}
-                      style={{ cursor: 'pointer', marginRight: '6px', color: 'blue' }}
-                      onMouseOver={(e: React.MouseEvent<SVGElement, MouseEvent>) => (e.currentTarget.style.color = 'darkblue')}
-                      onMouseOut={(e: React.MouseEvent<SVGElement, MouseEvent>) => (e.currentTarget.style.color = 'blue')}
-                    />
-                    <FaTrash
-                      size={20}
-                      style={{ cursor: 'pointer', marginLeft: '6px', color: 'red' }}
-                      onMouseOver={(e: React.MouseEvent<SVGElement, MouseEvent>) => (e.currentTarget.style.color = 'darkred')}
-                      onMouseOut={(e: React.MouseEvent<SVGElement, MouseEvent>) => (e.currentTarget.style.color = 'red')}
-                      onClick={() => deleteRole(role.id)}
-                    />
-                  </>}
+                  <FaRegEdit
+                    size={20}
+                    onClick={() => {
+                      open();
+                      setSelectedRole(role);
+                      setIsEditMode(true);
+                    }}
+                    style={{ cursor: 'pointer', marginRight: '6px', color: 'blue' }}
+                    onMouseOver={(e: React.MouseEvent<SVGElement, MouseEvent>) => (e.currentTarget.style.color = 'darkblue')}
+                    onMouseOut={(e: React.MouseEvent<SVGElement, MouseEvent>) => (e.currentTarget.style.color = 'blue')}
+                  />
+                  <FaTrash
+                    size={20}
+                    style={{ cursor: 'pointer', marginLeft: '6px', color: 'red' }}
+                    onMouseOver={(e: React.MouseEvent<SVGElement, MouseEvent>) => (e.currentTarget.style.color = 'darkred')}
+                    onMouseOut={(e: React.MouseEvent<SVGElement, MouseEvent>) => (e.currentTarget.style.color = 'red')}
+                    onClick={() => openDeleteModal(role.id, role.name)}
+                  />
                 </td>
               </tr>
             ))}
