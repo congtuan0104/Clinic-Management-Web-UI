@@ -4,13 +4,13 @@ import { PATHS } from '@/config';
 import { useAppDispatch, useAppSelector, useAuth } from '@/hooks';
 import { currentClinicSelector, focusModeSelector, listClinicSelector, setCurrentClinic, setUserInfo, userInfoSelector } from '@/store';
 import { Text, Group, Button, Image, Divider, Menu, TextInput, Flex, ScrollArea, Indicator, ActionIcon, Badge, Title, Tooltip } from '@mantine/core';
-import { useDisclosure, useFullscreen } from '@mantine/hooks';
+import { useDisclosure, useFullscreen, useNetwork } from '@mantine/hooks';
 import ClinusLogo from '@/assets/images/logo.png';
 import { IClinic } from '@/types';
 import { cookies } from '@/utils';
 import { COOKIE_KEY } from '@/constants';
 import { IoSearch } from 'react-icons/io5';
-import { MdNotificationsNone, MdOutlineHelpOutline, MdOutlineMenuOpen } from 'react-icons/md';
+import { MdNotificationsNone, MdOutlineHelpOutline, MdOutlineMenuOpen, MdOutlineSchedule } from 'react-icons/md';
 import { CgLogOut, CgProfile } from 'react-icons/cg';
 import { FaUserCircle } from "react-icons/fa";
 import { BsCardText } from "react-icons/bs";
@@ -27,6 +27,7 @@ const ClinicHeader = () => {
   const { userInfo } = useAuth();
 
   const { toggle, fullscreen } = useFullscreen();
+  const networkStatus = useNetwork();
 
   const handleChangeClinic = (clinic: IClinic) => {
     cookies.set(COOKIE_KEY.CURRENT_CLINIC_ID, clinic.id)
@@ -56,6 +57,10 @@ const ClinicHeader = () => {
       )}
 
       <div className='flex flex-1 justify-end items-center gap-1'>
+        {/* <Divider orientation="vertical" mr={5} />
+        <Text size='sm' c='gray.6' mr={5} fw={500}>
+          {networkStatus.online ? 'Online' : 'Offline'}
+        </Text> */}
         {!focusMode && <Menu shadow="md" width={200} position="bottom-end" offset={-3}>
           <Divider orientation="vertical" />
           <Menu.Target>
@@ -85,7 +90,7 @@ const ClinicHeader = () => {
           </ActionIcon>
         </Tooltip>
 
-        <Tooltip label='Trợ giúp'>
+        <Tooltip label='Yêu cầu hỗ trợ'>
           <ActionIcon
             component='a'
             target='_blank'
@@ -132,6 +137,12 @@ const ClinicHeader = () => {
               leftSection={<BsCardText size={15} />}
             >
               Quản lý gói
+            </Menu.Item>
+            <Menu.Item
+              onClick={() => navigate(PATHS.USER_CALENDAR)}
+              leftSection={<MdOutlineSchedule size={15} />}
+            >
+              Lịch làm việc
             </Menu.Item>
             <Menu.Item
               onClick={() => logout()}

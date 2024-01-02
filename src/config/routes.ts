@@ -42,6 +42,7 @@ export const PATHS = {
   ROLE_MANAGEMENT: '/clinic/quan-ly-role',
   CLINIC_INFO_MANAGEMENT: '/clinic/thong-tin-phong-kham',
   CLINIC_STAFF_MANAGEMENT: '/clinic/nhan-vien',
+  USER_CALENDAR: '/lich-lam-viec',
 };
 
 export const ROUTES = [

@@ -5,7 +5,7 @@ import { CgNotes } from "react-icons/cg";
 import { FaHome, FaHospitalUser } from "react-icons/fa";
 import { LuWarehouse } from "react-icons/lu";
 import { IoSettingsOutline } from "react-icons/io5";
-import { MdNotificationsNone, MdOutlineAnalytics, MdOutlinePeopleAlt, MdOutlineSchedule, MdPayment } from "react-icons/md";
+import { MdCalendarMonth, MdNotificationsNone, MdOutlineAnalytics, MdOutlinePeopleAlt, MdOutlineSchedule, MdPayment } from "react-icons/md";
 import { RiMessage2Fill } from 'react-icons/ri';
 import { useLocation } from 'react-router-dom';
 import { useAuth } from '@/hooks';
@@ -22,7 +22,6 @@ const createMenuItem = () => {
       icon: CgNotes,
       children: [
         { label: 'Thông tin phòng khám', href: PATHS.CLINIC_INFO_MANAGEMENT },
-        { label: 'Lịch làm việc', href: '#' },
         { label: 'Tin tức, quảng cáo', href: '#' },
       ],
     },
@@ -36,7 +35,7 @@ const createMenuItem = () => {
     },
     { label: 'Nhắn tin tư vấn', icon: RiMessage2Fill, href: PATHS.CLINIC_CHAT },
     { label: 'Bệnh nhân', icon: FaHospitalUser },
-    { label: 'Lịch hẹn khám', icon: MdOutlineSchedule },
+    { label: 'Lịch hẹn khám', icon: MdCalendarMonth },
     { label: 'Tiếp nhận bệnh nhân', icon: MdOutlineAnalytics },
     { label: 'Khám bệnh', icon: MdOutlineAnalytics },
     { label: 'Thanh toán', icon: MdPayment },
