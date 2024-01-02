@@ -68,6 +68,12 @@ export default function ClinicDetail() {
   //Xử lý đẩy ảnh lên firebase
   const [imageUpload, setImageUpload] = useState<ImageUploadType>(null);
 
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    setImageUrl(imageUpload ? URL.createObjectURL(imageUpload) : null);
+  }, [imageUpload]);
+
   const navigate = useNavigate();
 
   const currentClinic = useAppSelector(currentClinicSelector);
@@ -123,9 +129,9 @@ export default function ClinicDetail() {
 
   useEffect(() => {
 
-  },[]);
+  }, []);
 
-  const previewImage = async (event:React.ChangeEvent<HTMLInputElement>) =>{
+  const previewImage = async (event: React.ChangeEvent<HTMLInputElement>) => {
     setImageUpload(event.target.files?.[0] || null);
     console.log('setimage upload: ', imageUpload);
     await uploadFile();
@@ -137,7 +143,7 @@ export default function ClinicDetail() {
     }
   }
 
-  const onInputClick = ( event: React.MouseEvent<HTMLInputElement, MouseEvent>) => {
+  const onInputClick = (event: React.MouseEvent<HTMLInputElement, MouseEvent>) => {
     const element = event.target as HTMLInputElement
     element.value = ''
   }
@@ -162,17 +168,16 @@ export default function ClinicDetail() {
   });
 
   const handleSetValue = () => {
-    if (currentClinic?.name && currentClinic?.email && currentClinic?.phone && currentClinic?.address)
-      {
-        setValue('name', currentClinic?.name);
-        setValue('email', currentClinic?.email);
-        setValue('phone', currentClinic?.phone);
-        setValue('address', currentClinic?.address);
-      }
-      if (currentClinic?.description)
-        editor?.commands.setContent(currentClinic?.description)
-      else
-        editor?.commands.setContent('')
+    if (currentClinic?.name && currentClinic?.email && currentClinic?.phone && currentClinic?.address) {
+      setValue('name', currentClinic?.name);
+      setValue('email', currentClinic?.email);
+      setValue('phone', currentClinic?.phone);
+      setValue('address', currentClinic?.address);
+    }
+    if (currentClinic?.description)
+      editor?.commands.setContent(currentClinic?.description)
+    else
+      editor?.commands.setContent('')
   }
 
   useEffect(() => {
@@ -180,13 +185,13 @@ export default function ClinicDetail() {
   }, [currentClinic]);
 
   const uploadFile = (): Promise<void> => {
-    return new Promise( async (resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
       if (imageUpload == null) return;
       const imageRef = ref(firebaseStorage, `clinic-logo/${currentClinic?.id}/${imageUpload.name + v4()}`);
       const snapshot = await uploadBytes(imageRef, imageUpload)
 
       const url = await getDownloadURL(snapshot.ref);
-      
+
       console.log('đang upload file')
       setTimeout(() => {
         console.log('File uploaded'); // Simulated upload completion message
@@ -210,7 +215,7 @@ export default function ClinicDetail() {
             </Flex>
           </Stack>
           <Stack justify='right'>
-            
+
             <Text>Xem lịch sử đăng ký gói</Text>
           </Stack>
         </Flex>
@@ -225,15 +230,14 @@ export default function ClinicDetail() {
               {isUpdate ?
                 (
                   <>
-                    <label htmlFor="upload-image" className="relative">
+                    <label htmlFor="upload-image" className="relative group">
                       <Image
                         w='189px'
                         h='186px'
-                        className="cursor-pointer hover:opacity-90 rounded-md"
-                        src="https://firebasestorage.googleapis.com/v0/b/clinus-1d1d1.appspot.com/o/public%2Fupload-file-icon.png?alt=media&token=4863e0f5-3164-47f9-83ed-ec55f0562e9c"
-                        ref={imageRef}
+                        className="cursor-pointer group-hover:opacity-90 rounded-md"
+                        src={imageUrl || currentClinic?.logo || "https://firebasestorage.googleapis.com/v0/b/clinus-1d1d1.appspot.com/o/avatars%2Fe6c13d64-83bb-43cd-a2a5-5867168fb4fe%2Flogo-2.png60385af5-5855-412e-81f1-73f5a53fe068?alt=media&token=4b2291e8-9db5-4d35-8e90-f6fc4973bf90"}
                       />
-                      <div className="absolute top-[110%] left-[19%] text-black mx-auto">
+                      <div className="absolute opacity-90 cursor-pointer top-[50%] left-[19%] text-white bg-gray-500 px-2 py-1.5 rounded-md mx-auto hidden group-hover:block">
                         Chỉnh sửa logo
                       </div>
                     </label>
@@ -241,26 +245,17 @@ export default function ClinicDetail() {
                       type="file"
                       id="upload-image"
                       className="hidden"
-                      onChange={previewImage}
-                      /* onClick={onInputClick} */
+                      onChange={(e) => setImageUpload(e.target.files?.[0] || null)}
+                    // onClick={onInputClick} 
                     />
                   </>
-                ) :
-                (currentClinic?.logo && currentClinic.logo.startsWith('https') ? (
-                  <Image
-                    w='189px'
-                    h='186px'
-                    src={currentClinic.logo}
-                    ref={imageRef2}
-                  />
                 ) : (
                   <Image
                     w='189px'
                     h='186px'
-                    src="https://firebasestorage.googleapis.com/v0/b/clinus-1d1d1.appspot.com/o/avatars%2Fe6c13d64-83bb-43cd-a2a5-5867168fb4fe%2Flogo-2.png60385af5-5855-412e-81f1-73f5a53fe068?alt=media&token=4b2291e8-9db5-4d35-8e90-f6fc4973bf90"
-                    ref={imageRef3}
+                    src={currentClinic?.logo || "https://firebasestorage.googleapis.com/v0/b/clinus-1d1d1.appspot.com/o/avatars%2Fe6c13d64-83bb-43cd-a2a5-5867168fb4fe%2Flogo-2.png60385af5-5855-412e-81f1-73f5a53fe068?alt=media&token=4b2291e8-9db5-4d35-8e90-f6fc4973bf90"}
                   />
-                ))
+                )
               }
             </Grid.Col>
             <Grid.Col span={8.5}>
@@ -309,41 +304,45 @@ export default function ClinicDetail() {
                         name='address'
                       />
                     </Grid.Col>
-                    <Text ml='8px' mt='10px' fw={700} mb='7px'>Mô tả</Text>
-                    <RichTextEditor editor={editor} style={{ transform: "translateX(11px)" }}>
-                      <RichTextEditor.Toolbar sticky stickyOffset={60}>
-                        <RichTextEditor.ControlsGroup>
-                          <RichTextEditor.Bold />
-                          <RichTextEditor.Italic />
-                          <RichTextEditor.Underline />
-                          <RichTextEditor.Strikethrough />
-                          <RichTextEditor.ClearFormatting />
-                          <RichTextEditor.Highlight />
-                          <RichTextEditor.Code />
-                        </RichTextEditor.ControlsGroup>
-                        <RichTextEditor.ControlsGroup>
-                          <RichTextEditor.H1 />
-                          <RichTextEditor.H2 />
-                          <RichTextEditor.H3 />
-                          <RichTextEditor.H4 />
-                        </RichTextEditor.ControlsGroup>
-                        <RichTextEditor.ControlsGroup>
-                          <RichTextEditor.Blockquote />
-                          <RichTextEditor.Hr />
-                          <RichTextEditor.BulletList />
-                          <RichTextEditor.OrderedList />
-                          <RichTextEditor.Subscript />
-                          <RichTextEditor.Superscript />
-                        </RichTextEditor.ControlsGroup>
-                        <RichTextEditor.ControlsGroup>
-                          <RichTextEditor.AlignLeft />
-                          <RichTextEditor.AlignCenter />
-                          <RichTextEditor.AlignJustify />
-                          <RichTextEditor.AlignRight />
-                        </RichTextEditor.ControlsGroup>
-                      </RichTextEditor.Toolbar>
-                      <RichTextEditor.Content />
-                    </RichTextEditor>
+                    <Text w='100%' ml='8px' mt='10px' fw={700} mb='7px'>Mô tả</Text>
+                    {isUpdate ? (
+                      <RichTextEditor editor={editor} style={{ transform: "translateX(11px)" }}>
+                        <RichTextEditor.Toolbar sticky stickyOffset={60}>
+                          <RichTextEditor.ControlsGroup>
+                            <RichTextEditor.Bold />
+                            <RichTextEditor.Italic />
+                            <RichTextEditor.Underline />
+                            <RichTextEditor.Strikethrough />
+                            <RichTextEditor.ClearFormatting />
+                            <RichTextEditor.Highlight />
+                            <RichTextEditor.Code />
+                          </RichTextEditor.ControlsGroup>
+                          <RichTextEditor.ControlsGroup>
+                            <RichTextEditor.H1 />
+                            <RichTextEditor.H2 />
+                            <RichTextEditor.H3 />
+                            <RichTextEditor.H4 />
+                          </RichTextEditor.ControlsGroup>
+                          <RichTextEditor.ControlsGroup>
+                            <RichTextEditor.Blockquote />
+                            <RichTextEditor.Hr />
+                            <RichTextEditor.BulletList />
+                            <RichTextEditor.OrderedList />
+                            <RichTextEditor.Subscript />
+                            <RichTextEditor.Superscript />
+                          </RichTextEditor.ControlsGroup>
+                          <RichTextEditor.ControlsGroup>
+                            <RichTextEditor.AlignLeft />
+                            <RichTextEditor.AlignCenter />
+                            <RichTextEditor.AlignJustify />
+                            <RichTextEditor.AlignRight />
+                          </RichTextEditor.ControlsGroup>
+                        </RichTextEditor.Toolbar>
+                        <RichTextEditor.Content />
+                      </RichTextEditor>
+                    ) : (
+                      <div className="ml-[8px]" dangerouslySetInnerHTML={{ __html: currentClinic?.description || '' }}></div>
+                    )}
                   </Grid>
                   <Group justify="flex-end" mt="lg">
                     {
@@ -353,11 +352,15 @@ export default function ClinicDetail() {
                         <></>
                       )
                     }
+                    {isUpdate ?
+                      (
+                        <Button variant="outline" onClick={() => { setIsUpdate(false); handleSetValue(); editor?.setEditable(false); setImageUpload(null) }} color='gray.6'>Hủy thay đổi</Button>
+                      ) :
+                      (
+                        <Button onClick={() => { setIsUpdate(true); editor?.setEditable(true) }}>Cập nhật thông tin</Button>
+                      )}
                   </Group>
                 </Form>
-                  {isUpdate ? (
-                    <Button onClick={() => {setIsUpdate(false); handleSetValue(); editor?.setEditable(false);}} bg='red' style={{transform: 'translateY(-35px)'}}>Hủy thay đổi</Button>
-                  ): (<Button onClick={() => {setIsUpdate(true); editor?.setEditable(true)}}>Cập nhật thông tin</Button>)}
               </Box>
             </Grid.Col>
           </Grid>
