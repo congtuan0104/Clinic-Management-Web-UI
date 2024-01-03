@@ -20,6 +20,7 @@ import {
   ClinicDetail,
   StaffManagementPage,
   AcceptInviteAccountPage,
+  StaffDetailPage,
 } from '@/pages';
 
 export const PATHS = {
@@ -42,6 +43,7 @@ export const PATHS = {
   ROLE_MANAGEMENT: '/clinic/quan-ly-role',
   CLINIC_INFO_MANAGEMENT: '/clinic/thong-tin-phong-kham',
   CLINIC_STAFF_MANAGEMENT: '/clinic/nhan-vien',
+  STAFF_DETAIL: '/clinic/nhan-vien/:id',
   USER_CALENDAR: '/lich-lam-viec',
 };
 
@@ -193,6 +195,14 @@ export const ROUTES = [
     title: 'Quản lý nhân viên',
     layout: ClinicLayout,
     element: StaffManagementPage,
+    isProtected: true,
+    children: [],
+  },
+  {
+    path: PATHS.STAFF_DETAIL,
+    title: 'Thông tin nhân viên',
+    layout: ClinicLayout,
+    element: StaffDetailPage,
     isProtected: true,
     children: [],
   },

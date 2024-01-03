@@ -6,3 +6,4 @@ export * from './PaymentResult';
 export * from './RoleManagement';
 export * from './ClinicDetail';
 export * from './StaffManagement';
+export * from './StaffDetail';

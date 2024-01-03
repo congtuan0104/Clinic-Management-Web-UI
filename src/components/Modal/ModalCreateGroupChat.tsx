@@ -72,7 +72,7 @@ const ModalCreateGroupChat = ({ isOpen, onClose, onSuccess }: IProps) => {
   };
 
   return (
-    <Modal.Root opened={isOpen} onClose={onClose} centered size={'lg'}>
+    <Modal.Root opened={isOpen} onClose={onClose} centered size={'md'}>
       <Modal.Overlay />
       <Modal.Content>
         <ModalHeader>

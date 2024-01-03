@@ -17,12 +17,15 @@ import { clinicApi } from '@/services';
 import { useDisclosure, useHover } from '@mantine/hooks';
 import { ModalInviteClinicMember, ModalRoleManagement } from "@/components";
 import { useQuery, useQueryClient } from 'react-query';
+import { useNavigate } from 'react-router-dom';
+import { PATHS } from '@/config';
 
 
 const StaffManagementPage = () => {
   const currentClinic = useAppSelector(currentClinicSelector);
   const { userInfo } = useAuth();
   const [opened, { open, close }] = useDisclosure(false);
+  const navigate = useNavigate();
 
   const queryClient = useQueryClient();
 
@@ -88,7 +91,7 @@ const StaffManagementPage = () => {
                 {/* <th style={{ border: '1px solid #ddd', padding: '8px', width: '10%' }}>Địa chỉ</th> */}
                 {/* <th style={{ border: '1px solid #ddd', padding: '8px', width: '10%' }}>Số điện thoại</th> */}
                 <th style={{ border: '1px solid #ddd', padding: '8px', width: '10%', fontWeight: 400 }}>
-                  <ActionIcon mx={5} variant='subtle' aria-label="Update member">
+                  <ActionIcon mx={5} variant='subtle' aria-label="Update member" onClick={() => navigate(`${PATHS.CLINIC_STAFF_MANAGEMENT}/${member.id}`)}>
                     <FaRegEdit
                       size={20}
                     />
