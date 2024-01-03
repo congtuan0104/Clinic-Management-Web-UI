@@ -59,12 +59,6 @@ export default function ClinicDetail() {
 
   const [isUpdate, setIsUpdate] = useState<boolean>(false);
 
-  const imageRef = useRef<HTMLImageElement>(null);
-
-  const imageRef2 = useRef<HTMLImageElement>(null);
-
-  const imageRef3 = useRef<HTMLImageElement>(null);
-
   //Xử lý đẩy ảnh lên firebase
   const [imageUpload, setImageUpload] = useState<ImageUploadType>(null);
 
@@ -94,7 +88,8 @@ export default function ClinicDetail() {
   });
 
   const onSubmit = async (data: IUpdateData) => {
-    setIsUpdate(false);
+    console.log('im here')
+    await uploadFile();
     const updateInfo = {
       name: data.name,
       email: data.email,
@@ -108,14 +103,6 @@ export default function ClinicDetail() {
 
       if (res.status) {
         const logo = getValues('logo') || '';
-        if (imageRef2.current) {
-          console.log('logo: ', logo);
-          imageRef2.current.src = logo;
-        }
-        if (imageRef3.current) {
-          console.log('logo: ', logo);
-          imageRef3.current.src = logo;
-        }
         notifications.show({
           title: 'Thành công',
           message: 'Cập nhật thông tin thành công',
@@ -123,8 +110,8 @@ export default function ClinicDetail() {
         });
       }
     }
-
-    navigate('/clinic/thong-tin-phong-kham')
+    setIsUpdate(false);
+    navigate(0)
   }
 
   useEffect(() => {
@@ -136,16 +123,18 @@ export default function ClinicDetail() {
     console.log('setimage upload: ', imageUpload);
     await uploadFile();
     console.log('uploading thành công');
-    const logo = getValues('logo') || ''; // Using an empty string as default if getValues returns undefined
-    if (imageRef.current) {
-      console.log('logo: ', logo);
-      imageRef.current.src = logo;
-    }
   }
 
-  const onInputClick = (event: React.MouseEvent<HTMLInputElement, MouseEvent>) => {
-    const element = event.target as HTMLInputElement
-    element.value = ''
+  const handleCancelChange = () => {
+    setIsUpdate(false); 
+    handleSetValue(); 
+    editor?.setEditable(false); 
+    setImageUpload(null)
+  } 
+
+  const handleUpdate = () => {
+    setIsUpdate(true); 
+    editor?.setEditable(true)
   }
 
   const content = currentClinic?.description;
@@ -164,7 +153,8 @@ export default function ClinicDetail() {
     onUpdate({ editor }) {
       setEditorContent(editor.getHTML());
     },
-    editable: false
+    editable: false,
+    
   });
 
   const handleSetValue = () => {
@@ -184,22 +174,16 @@ export default function ClinicDetail() {
     handleSetValue();
   }, [currentClinic]);
 
-  const uploadFile = (): Promise<void> => {
-    return new Promise(async (resolve, reject) => {
-      if (imageUpload == null) return;
-      const imageRef = ref(firebaseStorage, `clinic-logo/${currentClinic?.id}/${imageUpload.name + v4()}`);
-      const snapshot = await uploadBytes(imageRef, imageUpload)
+  //Xử lý đẩy ảnh lên firebase
+  const uploadFile = async () => {
+    if (imageUpload == null) return;
+    const imageRef = ref(firebaseStorage, `clinic-logo/${currentClinic?.id}/${imageUpload.name + v4()}`);
+    const snapshot = await uploadBytes(imageRef, imageUpload)
 
-      const url = await getDownloadURL(snapshot.ref);
-
-      console.log('đang upload file')
-      setTimeout(() => {
-        console.log('File uploaded'); // Simulated upload completion message
-        setValue('logo', url);
-        resolve(); // Resolve the promise after the upload is completed
-      }, 1000); // Simulated 1 seconds delay for the upload
-    });
+    const url = await getDownloadURL(snapshot.ref);
+    setValue('logo', url);
   };
+
 
   return (
     <Center>
@@ -246,7 +230,6 @@ export default function ClinicDetail() {
                       id="upload-image"
                       className="hidden"
                       onChange={(e) => setImageUpload(e.target.files?.[0] || null)}
-                    // onClick={onInputClick} 
                     />
                   </>
                 ) : (
@@ -338,7 +321,7 @@ export default function ClinicDetail() {
                             <RichTextEditor.AlignRight />
                           </RichTextEditor.ControlsGroup>
                         </RichTextEditor.Toolbar>
-                        <RichTextEditor.Content />
+                        <RichTextEditor.Content style={{minHeight:'8em'}}/>
                       </RichTextEditor>
                     ) : (
                       <div className="ml-[8px]" dangerouslySetInnerHTML={{ __html: currentClinic?.description || '' }}></div>
@@ -354,10 +337,10 @@ export default function ClinicDetail() {
                     }
                     {isUpdate ?
                       (
-                        <Button variant="outline" onClick={() => { setIsUpdate(false); handleSetValue(); editor?.setEditable(false); setImageUpload(null) }} color='gray.6'>Hủy thay đổi</Button>
+                        <Button variant="outline" onClick={handleCancelChange} color='gray.6'>Hủy thay đổi</Button>
                       ) :
                       (
-                        <Button onClick={() => { setIsUpdate(true); editor?.setEditable(true) }}>Cập nhật thông tin</Button>
+                        <Button onClick={handleUpdate}>Cập nhật thông tin</Button>
                       )}
                   </Group>
                 </Form>
