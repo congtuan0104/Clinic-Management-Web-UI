@@ -114,14 +114,14 @@ export default function ClinicDetail() {
   }
 
   const handleCancelChange = () => {
-    setIsUpdate(false); 
-    handleSetValue(); 
-    editor?.setEditable(false); 
+    setIsUpdate(false);
+    handleSetValue();
+    editor?.setEditable(false);
     setImageUpload(null)
-  } 
+  }
 
   const handleUpdate = () => {
-    setIsUpdate(true); 
+    setIsUpdate(true);
     editor?.setEditable(true)
   }
 
@@ -142,7 +142,7 @@ export default function ClinicDetail() {
       setEditorContent(editor.getHTML());
     },
     editable: false,
-    
+
   });
 
   const handleSetValue = () => {
@@ -275,7 +275,7 @@ export default function ClinicDetail() {
                         name='address'
                       />
                     </Grid.Col>
-                    <Text w='100%' ml='8px' mt='10px' fw={700} mb='7px'>Mô tả</Text>
+                    <Text w='100%' ml='8px' mt='10px' mb='7px'>Mô tả</Text>
                     {isUpdate ? (
                       <RichTextEditor editor={editor} style={{ transform: "translateX(11px)" }}>
                         <RichTextEditor.Toolbar sticky stickyOffset={60}>
@@ -309,12 +309,13 @@ export default function ClinicDetail() {
                             <RichTextEditor.AlignRight />
                           </RichTextEditor.ControlsGroup>
                         </RichTextEditor.Toolbar>
-                        <RichTextEditor.Content style={{minHeight:'8em'}}/>
+                        <RichTextEditor.Content style={{ minHeight: '8em' }} />
                       </RichTextEditor>
                     ) : (
                       <div className="ml-[8px]" dangerouslySetInnerHTML={{ __html: currentClinic?.description || '' }}></div>
                     )}
                   </Grid>
+                  <Divider my="md" />
                   <Group justify="flex-end" mt="lg">
                     {
                       isUpdate ? (
@@ -328,7 +329,7 @@ export default function ClinicDetail() {
                         <Button variant="outline" onClick={handleCancelChange} color='gray.6'>Hủy thay đổi</Button>
                       ) :
                       (
-                        <Button onClick={handleUpdate}>Cập nhật thông tin</Button>
+                        <Button onClick={handleUpdate}>Chỉnh sửa</Button>
                       )}
                   </Group>
                 </Form>
