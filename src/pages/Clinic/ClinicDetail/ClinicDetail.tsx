@@ -16,7 +16,7 @@ import { currentClinicSelector } from '@/store'
 import { useQuery } from 'react-query';
 import { clinicApi, planApi } from '@/services';
 import { IServicePlan } from "@/types";
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import dayjs from 'dayjs';
 import { notifications } from "@mantine/notifications";
 import { firebaseStorage } from '@/config';
@@ -28,13 +28,15 @@ import {
   list,
 } from "firebase/storage";
 import { v4 } from "uuid";
-import { useNavigate, useNavigation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { current } from "@reduxjs/toolkit";
+import classNames from "classnames";
 
 type ImageUploadType = File | null;
 
 interface IUpdateData {
   name: string,
-  specialty: string,
+  specialty?: string,
   email: string,
   address: string,
   phone: string,
@@ -43,7 +45,7 @@ interface IUpdateData {
 
 const schema = yup.object().shape({
   name: yup.string().required('Bạn chưa nhập tên phòng khám'),
-  specialty: yup.string().required('Chuyên môn không được để trống'),
+  specialty: yup.string(),
   email: yup.string().required('Thông tin email là bắt buộc').email('Email không hợp lệ'),
   address: yup.string().required('Thông tin địa chỉ phòng khám là bắt buộc'),
   phone: yup.string().required('Thông tin số điện thoại là bắt buộc'),
@@ -52,7 +54,6 @@ const schema = yup.object().shape({
 
 
 export default function ClinicDetail() {
-  const currentClinic = useAppSelector(currentClinicSelector);
   const [editorContent, setEditorContent] = useState("");
 
   const [isUpdate, setIsUpdate] = useState<boolean>(false);
@@ -60,11 +61,20 @@ export default function ClinicDetail() {
   //Xử lý đẩy ảnh lên firebase
   const [imageUpload, setImageUpload] = useState<ImageUploadType>(null);
 
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    setImageUrl(imageUpload ? URL.createObjectURL(imageUpload) : null);
+  }, [imageUpload]);
+
   const navigate = useNavigate();
+
+  const currentClinic = useAppSelector(currentClinicSelector);
 
   const subscription = currentClinic?.subscriptions?.[0];
 
-  const { control, setValue, getValues, reset } = useForm<IUpdateData>({
+  console.log('thong tin phong kham: ', currentClinic);
+  const { control, setValue, getValues } = useForm<IUpdateData>({
     resolver: yupResolver(schema), // gắn điều kiện xác định input hợp lệ vào form
     defaultValues: useMemo(() => {
       return {
@@ -79,20 +89,8 @@ export default function ClinicDetail() {
       , [currentClinic]),
   });
 
-  useEffect(() => {
-    setIsUpdate(false);
-    reset({
-      name: currentClinic?.name || '',
-      specialty: '',
-      email: currentClinic?.email || '',
-      address: currentClinic?.address || '',
-      phone: currentClinic?.phone || '',
-      logo: currentClinic?.logo || '',
-    })
-  }, [currentClinic])
-
   const onSubmit = async (data: IUpdateData) => {
-    setIsUpdate(false);
+    // console.log('im here')
     await uploadFile();
     const updateInfo = {
       name: data.name,
@@ -105,19 +103,31 @@ export default function ClinicDetail() {
     if (currentClinic?.id) {
       const res = await clinicApi.updateClinicInfo(currentClinic?.id, updateInfo)
 
-      if (res.status)
+      if (res.status) {
         notifications.show({
           title: 'Thông báo',
           message: 'Cập nhật thông tin phòng khám thành công',
           color: 'green',
         });
-
+      }
     }
-
-    navigate(0) // reload page
+    setIsUpdate(false);
+    navigate(0)
   }
 
-  const content: string = `${currentClinic?.description}`;
+  const handleCancelChange = () => {
+    setIsUpdate(false);
+    handleSetValue();
+    editor?.setEditable(false);
+    setImageUpload(null)
+  }
+
+  const handleUpdate = () => {
+    setIsUpdate(true);
+    editor?.setEditable(true)
+  }
+
+  const content = currentClinic?.description;
 
   const editor = useEditor({
     extensions: [
@@ -129,16 +139,30 @@ export default function ClinicDetail() {
       Highlight,
       TextAlign.configure({ types: ['heading', 'paragraph'] }),
     ],
-    content: `${content}`,
+    content,
     onUpdate({ editor }) {
       setEditorContent(editor.getHTML());
     },
+    editable: false,
+
   });
 
-  useEffect(() => {
-    editor?.commands.setContent(content)
-  }, [editor])
+  const handleSetValue = () => {
+    if (currentClinic?.name && currentClinic?.email && currentClinic?.phone && currentClinic?.address) {
+      setValue('name', currentClinic?.name);
+      setValue('email', currentClinic?.email);
+      setValue('phone', currentClinic?.phone);
+      setValue('address', currentClinic?.address);
+    }
+    if (currentClinic?.description)
+      editor?.commands.setContent(currentClinic?.description)
+    else
+      editor?.commands.setContent('')
+  }
 
+  useEffect(() => {
+    handleSetValue();
+  }, [currentClinic]);
 
   //Xử lý đẩy ảnh lên firebase
   const uploadFile = async () => {
@@ -150,12 +174,13 @@ export default function ClinicDetail() {
     setValue('logo', url);
   };
 
+
   return (
     <Center>
       <Stack>
         {subscription && <Flex w='941px' h='160px' px='30px' align="center" justify={'space-between'} bg='#081692' style={{ borderRadius: '10px' }} mt='30px' c='white'>
           <Stack>
-            <Title order={5}>BẠN ĐANG SỬ SỬ DỤNG GÓI {subscription.plans?.planName}</Title>
+            <Title order={5}>BẠN ĐANG SỬ SỬ DỤNG GÓI {subscription?.plans?.planName}</Title>
             <Flex>
               Thời gian sử dụng đến &nbsp; <b>{dayjs(subscription?.expiredAt).format('DD/MM/YYYY')}</b>
             </Flex>
@@ -164,7 +189,7 @@ export default function ClinicDetail() {
             </Flex>
           </Stack>
           <Stack justify='right'>
-            <Button variant="filled" bg='#68B056'>Nâng cấp gói</Button>
+
             <Text>Xem lịch sử đăng ký gói</Text>
           </Stack>
         </Flex>}
@@ -179,57 +204,45 @@ export default function ClinicDetail() {
               {isUpdate ?
                 (
                   <>
-                    <label htmlFor="upload-image" className="relative w-fit group">
+                    <label htmlFor="upload-image" className="relative group">
                       <Image
                         w='189px'
                         h='186px'
-                        radius='md'
-                        className="cursor-pointer group-hover:opacity-90 transition-all"
-                        src={imageUpload ? URL.createObjectURL(imageUpload) : currentClinic?.logo || "https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-7.png"}
+                        className="cursor-pointer group-hover:opacity-90 rounded-md"
+                        src={imageUrl || currentClinic?.logo || "https://firebasestorage.googleapis.com/v0/b/clinus-1d1d1.appspot.com/o/avatars%2Fe6c13d64-83bb-43cd-a2a5-5867168fb4fe%2Flogo-2.png60385af5-5855-412e-81f1-73f5a53fe068?alt=media&token=4b2291e8-9db5-4d35-8e90-f6fc4973bf90"}
                       />
-                      <div className="absolute top-[50%] left-[50px] bg-gray-600 p-2 rounded-md text-white text-14 font-bold mx-auto hidden group-hover:block cursor-pointer">
-                        Thay đổi logo
+                      <div className="absolute opacity-90 cursor-pointer top-[50%] left-[19%] text-white bg-gray-500 px-2 py-1.5 rounded-md mx-auto hidden group-hover:block">
+                        Chỉnh sửa logo
                       </div>
                     </label>
                     <input
                       type="file"
                       id="upload-image"
                       className="hidden"
-                      onChange={(event) => {
-                        setImageUpload(event.target.files?.[0] || null);
-                      }}
+                      onChange={(e) => setImageUpload(e.target.files?.[0] || null)}
                     />
                   </>
-                ) :
-                (currentClinic?.logo && currentClinic.logo.startsWith('https') ? (
-                  <Image
-                    w='189px'
-                    h='186px'
-                    radius='md'
-                    src={currentClinic.logo}
-                  />
                 ) : (
                   <Image
                     w='189px'
                     h='186px'
-                    radius='md'
-                    src="https://raw.githubusercontent.com/mantinedev/mantine/master/.demo/images/bg-7.png"
+                    src={currentClinic?.logo || "https://firebasestorage.googleapis.com/v0/b/clinus-1d1d1.appspot.com/o/avatars%2Fe6c13d64-83bb-43cd-a2a5-5867168fb4fe%2Flogo-2.png60385af5-5855-412e-81f1-73f5a53fe068?alt=media&token=4b2291e8-9db5-4d35-8e90-f6fc4973bf90"}
                   />
-                ))
+                )
               }
             </Grid.Col>
             <Grid.Col span={8.5}>
               <Box maw={700} mx="auto" >
                 <Form control={control} onSubmit={e => onSubmit(e.data)} onError={e => console.log(e)}>
                   <TextInput label="Tên phòng khám"
-                    //  placeholder={currentClinic?.name}
+                    disabled={!isUpdate}
                     name='name'
                     control={control} />
                   <Grid>
                     <Grid.Col span={6}>
                       <TextInput
                         label="Chuyên môn"
-                        placeholder=""
+                        disabled={!isUpdate}
                         control={control}
                         mt="md"
                         name='specialty'
@@ -238,7 +251,7 @@ export default function ClinicDetail() {
                     <Grid.Col span={6}>
                       <TextInput
                         label="Số điện thoại"
-                        placeholder={currentClinic?.phone}
+                        disabled={!isUpdate}
                         control={control}
                         mt="md"
                         name='phone'
@@ -249,7 +262,7 @@ export default function ClinicDetail() {
                     <Grid.Col span={6}>
                       <TextInput
                         label="Email liên hệ"
-                        placeholder={currentClinic?.email}
+                        disabled={!isUpdate}
                         control={control}
                         mt="md"
                         name='email'
@@ -258,63 +271,70 @@ export default function ClinicDetail() {
                     <Grid.Col span={6}>
                       <TextInput
                         label="Địa chỉ"
-                        placeholder={currentClinic?.address}
+                        disabled={!isUpdate}
                         control={control}
                         mt="md"
                         name='address'
                       />
                     </Grid.Col>
-                    <Text ml='8px' mt='10px' fw={700} mb='7px'>Mô tả</Text>
-                    <RichTextEditor editor={editor} style={{ transform: "translateX(11px)" }}>
-                      <RichTextEditor.Toolbar sticky stickyOffset={60}>
-                        <RichTextEditor.ControlsGroup>
-                          <RichTextEditor.Bold />
-                          <RichTextEditor.Italic />
-                          <RichTextEditor.Underline />
-                          <RichTextEditor.Strikethrough />
-                          <RichTextEditor.ClearFormatting />
-                          <RichTextEditor.Highlight />
-                          <RichTextEditor.Code />
-                        </RichTextEditor.ControlsGroup>
-                        <RichTextEditor.ControlsGroup>
-                          <RichTextEditor.H1 />
-                          <RichTextEditor.H2 />
-                          <RichTextEditor.H3 />
-                          <RichTextEditor.H4 />
-                        </RichTextEditor.ControlsGroup>
-                        <RichTextEditor.ControlsGroup>
-                          <RichTextEditor.Blockquote />
-                          <RichTextEditor.Hr />
-                          <RichTextEditor.BulletList />
-                          <RichTextEditor.OrderedList />
-                          <RichTextEditor.Subscript />
-                          <RichTextEditor.Superscript />
-                        </RichTextEditor.ControlsGroup>
-                        <RichTextEditor.ControlsGroup>
-                          <RichTextEditor.AlignLeft />
-                          <RichTextEditor.AlignCenter />
-                          <RichTextEditor.AlignJustify />
-                          <RichTextEditor.AlignRight />
-                        </RichTextEditor.ControlsGroup>
-                      </RichTextEditor.Toolbar>
-                      <RichTextEditor.Content />
-                    </RichTextEditor>
+                    <Text w='100%' ml='8px' mt='10px' mb='7px'>Mô tả</Text>
+                    {isUpdate ? (
+                      <RichTextEditor editor={editor} style={{ transform: "translateX(11px)" }}>
+                        <RichTextEditor.Toolbar sticky stickyOffset={60}>
+                          <RichTextEditor.ControlsGroup>
+                            <RichTextEditor.Bold />
+                            <RichTextEditor.Italic />
+                            <RichTextEditor.Underline />
+                            <RichTextEditor.Strikethrough />
+                            <RichTextEditor.ClearFormatting />
+                            <RichTextEditor.Highlight />
+                            <RichTextEditor.Code />
+                          </RichTextEditor.ControlsGroup>
+                          <RichTextEditor.ControlsGroup>
+                            <RichTextEditor.H1 />
+                            <RichTextEditor.H2 />
+                            <RichTextEditor.H3 />
+                            <RichTextEditor.H4 />
+                          </RichTextEditor.ControlsGroup>
+                          <RichTextEditor.ControlsGroup>
+                            <RichTextEditor.Blockquote />
+                            <RichTextEditor.Hr />
+                            <RichTextEditor.BulletList />
+                            <RichTextEditor.OrderedList />
+                            <RichTextEditor.Subscript />
+                            <RichTextEditor.Superscript />
+                          </RichTextEditor.ControlsGroup>
+                          <RichTextEditor.ControlsGroup>
+                            <RichTextEditor.AlignLeft />
+                            <RichTextEditor.AlignCenter />
+                            <RichTextEditor.AlignJustify />
+                            <RichTextEditor.AlignRight />
+                          </RichTextEditor.ControlsGroup>
+                        </RichTextEditor.Toolbar>
+                        <RichTextEditor.Content style={{ minHeight: '8em' }} />
+                      </RichTextEditor>
+                    ) : (
+                      <div className="ml-[8px]" dangerouslySetInnerHTML={{ __html: currentClinic?.description || '' }}></div>
+                    )}
                   </Grid>
+                  <Divider my="md" />
                   <Group justify="flex-end" mt="lg">
                     {
                       isUpdate ? (
                         <Button type="submit">Lưu thay đổi</Button>
                       ) : (
-                        <Button onClick={(e) => {
-                          e.preventDefault()
-                          e.stopPropagation()
-                          setIsUpdate(true)
-                        }}>Cập nhật thông tin</Button>
+                        <></>
                       )
                     }
+                    {isUpdate ?
+                      (
+                        <Button variant="outline" onClick={handleCancelChange} color='gray.6'>Hủy thay đổi</Button>
+                      ) :
+                      (
+                        <Button onClick={handleUpdate}>Chỉnh sửa</Button>
+                      )}
                   </Group>
                 </Form>
-
               </Box>
             </Grid.Col>
           </Grid>
