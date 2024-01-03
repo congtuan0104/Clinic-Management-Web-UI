@@ -88,7 +88,7 @@ export default function ClinicDetail() {
   });
 
   const onSubmit = async (data: IUpdateData) => {
-    console.log('im here')
+    // console.log('im here')
     await uploadFile();
     const updateInfo = {
       name: data.name,
@@ -102,7 +102,6 @@ export default function ClinicDetail() {
       const res = await clinicApi.updateClinicInfor(currentClinic?.id, updateInfo)
 
       if (res.status) {
-        const logo = getValues('logo') || '';
         notifications.show({
           title: 'Thành công',
           message: 'Cập nhật thông tin thành công',
@@ -112,17 +111,6 @@ export default function ClinicDetail() {
     }
     setIsUpdate(false);
     navigate(0)
-  }
-
-  useEffect(() => {
-
-  }, []);
-
-  const previewImage = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    setImageUpload(event.target.files?.[0] || null);
-    console.log('setimage upload: ', imageUpload);
-    await uploadFile();
-    console.log('uploading thành công');
   }
 
   const handleCancelChange = () => {
