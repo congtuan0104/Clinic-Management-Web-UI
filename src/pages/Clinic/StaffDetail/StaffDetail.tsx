@@ -1,18 +1,20 @@
 import React, { useState, MouseEvent } from 'react';
-import { Text, Flex, Button, Indicator, Divider, TextInput, Center, Stack, Box, Title, Grid, Group } from '@mantine/core';
+import { Text, Flex, Button, Indicator, Divider, TextInput, Center, Stack, Box, Title, Grid, Group, SimpleGrid } from '@mantine/core';
 import { CgProfile } from 'react-icons/cg';
 import { FaRegCalendar } from 'react-icons/fa';
-import { Calendar } from '@mantine/dates';
+import { FaRegClock } from "react-icons/fa6";
+import { Calendar, TimeInput } from '@mantine/dates';
 import { CgMail } from "react-icons/cg";
 import { useParams } from 'react-router-dom';
 import { useAppSelector } from '@/hooks';
 import { currentClinicSelector } from '@/store';
 
 const StaffDetail = () => {
+  const daysOfWeek = ['Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7', 'Chủ Nhật'];
   const { id: staffId } = useParams()
   const currentClinic = useAppSelector(currentClinicSelector);
   const [selectedButton, setSelectedButton] = useState<'info' | 'schedule'>('info');
-  const [isUpdate, setIsUpdate] = useState<boolean>(false);
+  const [isUpdateInfo, setIsUpdateInfo] = useState<boolean>(false);
 
   const handleButtonClick = (buttonType: 'info' | 'schedule') => {
     if (selectedButton === buttonType) {
@@ -23,11 +25,11 @@ const StaffDetail = () => {
   };
 
   const handleCancelChange = () => {
-    setIsUpdate(false);
+    setIsUpdateInfo(false);
   }
 
   const handleUpdate = () => {
-    setIsUpdate(true);
+    setIsUpdateInfo(true);
   }
 
   return (
@@ -72,14 +74,14 @@ const StaffDetail = () => {
               <Grid.Col>
                 <Box maw={700} mx="auto">
                   <TextInput label="ID nhân viên"
-                    disabled={!isUpdate}
-                    // placeholder={staffId}
+                    disabled={!isUpdateInfo}
+                  // placeholder={staffId}
                   />
                   <Grid>
                     <Grid.Col span={6}>
                       <TextInput
                         label="Họ"
-                        disabled={!isUpdate}
+                        disabled={!isUpdateInfo}
                         mt="md"
                         w={'100%'}
                       />
@@ -87,33 +89,33 @@ const StaffDetail = () => {
                     <Grid.Col span={6}>
                       <TextInput
                         label="Tên"
-                        disabled={!isUpdate}
+                        disabled={!isUpdateInfo}
                         mt="md"
                         w={'100%'}
                       />
                     </Grid.Col>
                   </Grid>
                   <Grid>
-                      <TextInput
-                        label="Email liên hệ"
-                        disabled={!isUpdate}
-                        mt="md"
-                        name='email'
-                        w={'100%'}
-                        px={8}
-                      />
+                    <TextInput
+                      label="Email liên hệ"
+                      disabled={!isUpdateInfo}
+                      mt="md"
+                      name='email'
+                      w={'100%'}
+                      px={8}
+                    />
 
                   </Grid>
-                  <Divider my="md" mt={40}/>
+                  <Divider my="md" mt={40} />
                   <Group justify="flex-end" mt="lg">
                     {
-                      isUpdate ? (
+                      isUpdateInfo ? (
                         <Button type="submit">Lưu thay đổi</Button>
                       ) : (
                         <></>
                       )
                     }
-                    {isUpdate ?
+                    {isUpdateInfo ?
                       (
                         <Button variant="outline" color='gray.6' onClick={handleCancelChange}>Hủy thay đổi</Button>
                       ) :
@@ -129,25 +131,40 @@ const StaffDetail = () => {
 
         {selectedButton === 'schedule' && (
           <Box
-          w="100%"
-          h="100%"
-          px="30px"
-          bg="white"
-          py="20px"
-          style={{display: 'flex', borderRadius: '10px', alignItems: 'center', justifyContent: 'center' }}
-        >
-          <Calendar
-            static
-            renderDay={(date) => {
-              const day = date.getDate();
-              return (
-                <Indicator size={6} color="red" offset={-2} disabled={day !== 16}>
-                  <div>{day}</div>
-                </Indicator>
-              );
-            }}
-          />
-        </Box>
+            w="100%"
+            h="100%"
+            px="30px"
+            bg="white"
+            py="20px"
+          >
+            <Group>
+              <Title size={25} pb={10}>Lịch làm việc</Title>
+            </Group>
+
+            <SimpleGrid cols={2} spacing="xl">
+              {daysOfWeek.map((day, index) => (
+                <div key={index}>
+                  <Text py={10}>{day}:</Text>
+                  <Group style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+                    <TimeInput placeholder="Input placeholder" />
+                    <Text px={2}>-</Text>
+                    <TimeInput placeholder="Input placeholder" />
+                  </Group>
+                </div>
+              ))}
+            </SimpleGrid>
+
+            
+
+            <Center my={20}>
+              
+              <Button mt={30} w={'30%'}>Chỉnh sửa</Button>
+
+            </Center>
+
+
+          </Box>
+
         )}
 
       </Stack>
