@@ -32,7 +32,7 @@ const AdminHeader = () => {
         <Group justify="space-between" h="100%">
           <Box w={userInfo ? undefined : 222}>
             <Link to={PATHS.ADMIN_DASHBOARD}>
-              <Image src={LogoImage} alt='logo' h={50} fit='contain' />
+              <Image src={LogoImage} alt='logo' h={51} w={150} fit='contain' />
             </Link>
           </Box>
 

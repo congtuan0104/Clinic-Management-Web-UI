@@ -13,20 +13,27 @@ import { CurrencyFormatter } from '@/components';
 interface IPlanCardProps {
   plan: IServicePlan;
   actionText?: string;
-  action: () => void;
+  action: (plan: IServicePlan) => void;
 }
 
 const PlanCard = ({ plan, actionText, action }: IPlanCardProps) => {
   return (
-    <Paper w="100%" h='100%' withBorder shadow="md" px={25} py={15} radius="md" display='flex' style={{ flexDirection: 'column' }}>
-      <Text ta="center" tt='uppercase' c={'primary'} fw={700} fz="lg" >{plan.planName}</Text>
-      <Divider pb={10} color='gray.5'></Divider>
-
-      <Text ta="center" c='secondary' size='lg'>
-        <CurrencyFormatter value={plan.currentPrice} />
-        /{plan.duration} ngày
-      </Text>
-      <Text ta='center' c='gray.7'>{plan.description}</Text>
+    <Paper w="100%" h='100%' withBorder shadow="md" radius="md" display='flex' style={{ flexDirection: 'column', borderRadius: '17px' }} /* className='rounded-2xl' */>
+      <Box w='100%' bg={{ base: 'primary' }} style={{ borderRadius: '17px' }}/* className='rounded-2xl' */>
+        <Text ta="center" tt='uppercase' c={'white'} fw={700} fz="lg" style={{ marginTop: '30px', marginBottom: '20px' }}>{plan.planName}</Text>
+        <Text mx='auto' w='288px' h='55px' ta="center" c='primary' size='lg' bg='white' style={{
+          borderRadius: '10px',
+          alignContent: 'center',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          marginBottom: '24px'
+        }}>
+          <CurrencyFormatter value={plan.currentPrice} />
+          /{plan.duration} ngày
+        </Text>
+        <Text lineClamp={2} ta='center' c='white'>{plan.description}</Text>
+      </Box>
 
 
       {/* <Group>
@@ -34,7 +41,7 @@ const PlanCard = ({ plan, actionText, action }: IPlanCardProps) => {
         <Text>{plan} người dùng</Text>
       </Group> */}
 
-      <Box style={{ flex: 1 }}>
+      <Box mx='26px' style={{ flex: 1 }} mt='27.8px'>
         {plan.planOptions.map((option) => (
           <Flex key={option.id} mt={10}>
             <ThemeIcon variant='white' color="primary" >
@@ -45,7 +52,7 @@ const PlanCard = ({ plan, actionText, action }: IPlanCardProps) => {
         ))}
       </Box>
 
-      <Button mt="xl" radius="sm" size="md" type="submit" variant='outline' fullWidth mx='auto' onClick={action}>
+      <Button w='183px' h='50px' mt="xl" mb='24px' radius="25" size="md" type="submit" variant='outline' fullWidth mx='auto' onClick={() => action(plan)} bg='primary' c='white'>
         {actionText}
       </Button>
     </Paper>

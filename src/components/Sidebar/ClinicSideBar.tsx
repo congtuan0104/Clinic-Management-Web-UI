@@ -2,46 +2,48 @@ import { ActionIcon, Divider, Image, Indicator, Modal, rem, ScrollArea, Text, To
 import { useDisclosure } from '@mantine/hooks';
 import dayjs from 'dayjs';
 import { CgNotes } from "react-icons/cg";
-import { FaHome } from "react-icons/fa";
+import { FaHome, FaHospitalUser } from "react-icons/fa";
+import { LuWarehouse } from "react-icons/lu";
 import { IoSettingsOutline } from "react-icons/io5";
-import { MdNotificationsNone, MdOutlineAnalytics, MdOutlinePeopleAlt } from "react-icons/md";
+import { MdCalendarMonth, MdNotificationsNone, MdOutlineAnalytics, MdOutlinePeopleAlt, MdOutlineSchedule, MdPayment } from "react-icons/md";
 import { RiMessage2Fill } from 'react-icons/ri';
-import { Link, useLocation } from 'react-router-dom';
-
-import ClinusLogo from '@/assets/images/logo.png';
-import { PATHS } from '@/config';
+import { useLocation } from 'react-router-dom';
 import { useAuth } from '@/hooks';
 import { INotification } from '@/types';
 
 import { LinksGroup } from './LinksGroup/LinksGroup';
-import classes from './SideBar.module.css';
-import { UserButton } from './UserButton/UserButton';
+import { PATHS } from '@/config';
 
-const mockdata = [
-  { label: 'Trang chủ', icon: FaHome, href: '/clinic/dashboard' },
-  {
-    label: 'Quản trị',
-    icon: CgNotes,
-    children: [
-      { label: 'Overview', link: '#' },
-      { label: 'Forecasts', link: '#' },
-      { label: 'Outlook', link: '#' },
-      { label: 'Real time', link: '#' },
-    ],
-  },
-  {
-    label: 'Nhân viên',
-    icon: MdOutlinePeopleAlt,
-    children: [
-      { label: 'Upcoming releases', link: '#' },
-      { label: 'Previous releases', link: '#' },
-      { label: 'Releases schedule', link: '#' },
-    ],
-  },
-  { label: 'Nhắn tin', icon: RiMessage2Fill, href: '/clinic/messages' },
-  { label: 'Thống kê', icon: MdOutlineAnalytics },
-  { label: 'Cài đặt', icon: IoSettingsOutline },
-];
+const createMenuItem = () => {
+  return [
+    { label: 'Trang chủ', icon: FaHome, href: PATHS.CLINIC_DASHBOARD },
+    {
+      label: 'Quản trị',
+      icon: CgNotes,
+      children: [
+        { label: 'Thông tin phòng khám', href: PATHS.CLINIC_INFO_MANAGEMENT },
+        { label: 'Tin tức, quảng cáo', href: '#' },
+      ],
+    },
+    {
+      label: 'Nhân viên',
+      icon: MdOutlinePeopleAlt,
+      children: [
+        { label: 'Danh sách nhân viên', href: PATHS.CLINIC_STAFF_MANAGEMENT },
+        { label: 'Vai trò nhân viên', href: PATHS.ROLE_MANAGEMENT },
+      ],
+    },
+    { label: 'Nhắn tin tư vấn', icon: RiMessage2Fill, href: PATHS.CLINIC_CHAT },
+    { label: 'Bệnh nhân', icon: FaHospitalUser },
+    { label: 'Lịch hẹn khám', icon: MdCalendarMonth },
+    { label: 'Tiếp nhận bệnh nhân', icon: MdOutlineAnalytics },
+    { label: 'Khám bệnh', icon: MdOutlineAnalytics },
+    { label: 'Thanh toán', icon: MdPayment },
+    { label: 'Kho hàng, vật tư', icon: LuWarehouse },
+    { label: 'Thống kê báo cáo', icon: MdOutlineAnalytics },
+    { label: 'Cài đặt', icon: IoSettingsOutline },
+  ]
+}
 
 interface ISidebarProps {
   notify: INotification[];
@@ -52,7 +54,11 @@ export function ClinicSideBar({ notify }: ISidebarProps) {
   const [opened, { open, close }] = useDisclosure(false);
   const { userInfo } = useAuth();
 
-  const links = mockdata.map((item) => <LinksGroup isActive={item.href === pathname} {...item} key={item.label} />);
+  const menuItems = createMenuItem(); // fix lỗi import config path
+
+  const links = menuItems.map((item) =>
+    <LinksGroup {...item} key={item.label} />
+  );
 
   const renderSendingTime = (sendingTime: Date) => {
     const diff = dayjs(dayjs()).diff(sendingTime, 'second');
@@ -65,10 +71,12 @@ export function ClinicSideBar({ notify }: ISidebarProps) {
 
   return (
     <>
-      <nav style={{ position: 'fixed', top: 0, bottom: 0, left: 0 }} className={classes.navbar}>
-        <div className='flex flex-between items-center px-1 w-full'>
-          <Link className='flex-1 flex justify-start py-2' to={PATHS.CLINIC_DASHBOARD}>
-            <Image src={ClinusLogo} alt='logo' h={50} fit='contain' />
+      <nav
+        className='bg-white pt-[60px] h-screen w-[280px] fixed top-0 bottom-0 left-0 z-[9]'
+      >
+        {/* <div className='flex flex-between items-center pl-3 w-full'>
+          <Link className='flex-1 flex justify-start py-[4px]' to={PATHS.CLINIC_DASHBOARD}>
+            <Image src={ClinusLogo} alt='logo' h={51} fit='contain' />
           </Link>
 
           <Tooltip label='Hiển thị thông báo'>
@@ -83,15 +91,11 @@ export function ClinicSideBar({ notify }: ISidebarProps) {
 
         </div>
 
-        <Divider />
+        <Divider /> */}
 
-        <ScrollArea className={classes.links}>
-          <div className={classes.linksInner}>{links}</div>
+        <ScrollArea>
+          <div>{links}</div>
         </ScrollArea>
-
-        <div className={classes.footer}>
-          <UserButton />
-        </div>
       </nav>
 
       <Modal opened={opened} onClose={close} title={<Text fw={600}>Thông báo của {userInfo?.lastName}</Text>}>

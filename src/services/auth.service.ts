@@ -1,3 +1,4 @@
+import { IInviteClinicMemberRequest } from './../types/clinic.types';
 import {
   IApiResponse,
   IGoogleLoginRequest,
@@ -79,5 +80,13 @@ export const authApi = {
    */
   changePassword(data: IChangePasswordRequest): Promise<any> {
     return axiosClient.post('/auth/change-password', data);
+  },
+
+  inviteClinicMember(data: IInviteClinicMemberRequest): Promise<any> {
+    return axiosClient.post('/auth/invite', data);
+  },
+
+  acceptInviteAccount(token: string): Promise<any> {
+    return axiosClient.get(`/auth/verify-account?token=${token}`);
   },
 };

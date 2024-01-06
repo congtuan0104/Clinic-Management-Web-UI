@@ -32,9 +32,9 @@ export const firebaseApp = !firebase.getApps().length
 
 export const analytics = getAnalytics(firebaseApp);
 export const firebaseAuth = getAuth(firebaseApp);
-export const realtimeDB = getDatabase();
-export const firebaseMessaging = getMessaging();
-export const firebaseStorage = getStorage();
+export const realtimeDB = getDatabase(firebaseApp);
+export const firebaseMessaging = getMessaging(firebaseApp);
+export const firebaseStorage = getStorage(firebaseApp);
 
 export const FirebaseAuthProvider = {
   Google: new GoogleAuthProvider(),
@@ -51,19 +51,19 @@ export const requestForToken = () => {
   return getToken(firebaseMessaging, {
     vapidKey:
       'BPq0Cn7VHMLHhi1BuOCLKVYbbJcR2zTl0b5J6bU0nm9tyXE8KZSzerwUj9GU6h11G4Yx4MtbkO88EzXaSSwKcQs',
-  })
-    .then(currentToken => {
-      if (currentToken) {
-        console.log('current token for client: ', currentToken);
-        // Perform any other neccessary action with the token
-      } else {
-        // Show permission request UI
-        console.log('No registration token available. Request permission to generate one.');
-      }
-    })
-    .catch(err => {
-      console.log('An error occurred while retrieving token. ', err);
-    });
+  });
+  // .then(currentToken => {
+  //   if (currentToken) {
+  //     console.log('Device token: ', currentToken);
+  //     // Perform any other neccessary action with the token
+  //   } else {
+  //     // Show permission request UI
+  //     console.log('Chưa cấp quyền nhận thông báo');
+  //   }
+  // })
+  // .catch(err => {
+  //   console.log('Lỗi trong khi lấy device token từ firbase', err);
+  // });
 };
 
 /**

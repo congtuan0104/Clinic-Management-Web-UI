@@ -1,14 +1,5 @@
-export * from './Home';
-export * from './PricingPlan';
-export * from './Login';
-export * from './NotFound';
-export * from './VerifyAccount';
-export * from './Register';
-export * from './UserProfile';
-export * from './DashboardAdmin';
-export * from './DashboardClinic';
-export * from './RegisterByInvitation';
-export * from './VerifyUserLinkAccount';
-export * from './PricingPlanAdmin';
-export * from './Message';
-export * from './VideoCall';
+export * from './Admin'; // các trang thuộc phân hệ admin
+export * from './Clinic'; // các trang thuộc phân hệ phòng khám
+export * from './Patient'; // các trang thuộc phân hệ bệnh nhân
+export * from './Guest'; // các trang thuộc phân hệ khách (chưa đăng nhập)
+export * from './Shared'; // các trang chung

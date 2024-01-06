@@ -1,4 +1,4 @@
-import { AdminLayout, DefaultLayout, ClinicLayout } from '@/layouts';
+import { AdminLayout, DefaultLayout, ClinicLayout, NoLayout } from '@/layouts';
 import {
   HomePage,
   PricingPlanPage,
@@ -12,7 +12,15 @@ import {
   PricingPlanAdminPage,
   Message,
   DashboardClinic,
-  VideoCall
+  VideoCall,
+  PlanManagement,
+  PaymentResult,
+  NotFoundPage,
+  RoleManagement,
+  ClinicDetail,
+  StaffManagementPage,
+  AcceptInviteAccountPage,
+  StaffDetailPage,
 } from '@/pages';
 
 export const PATHS = {
@@ -24,11 +32,19 @@ export const PATHS = {
   VERIFY: '/verify-account',
   VERIFY_LINK_ACCOUNT: '/verify-user',
   REGISTER_BY_INVITATION: '/verify-account',
+  ACCEPT_INVITE_ACCOUNT: '/invite-account',
   ADMIN_DASHBOARD: '/admin/dashboard',
   ADMIN_PRICING_PLAN: '/admin/bang-gia',
-  CLINIC_CHAT: 'clinic/messages',
+  CLINIC_CHAT: '/clinic/messages',
   CLINIC_DASHBOARD: '/clinic/dashboard',
   VIDEO_CALL: '/clinic/video-call',
+  PLAN_MANAGEMENT: '/clinic/quan-ly-goi',
+  PAYMENT_RESULT: '/thanh-toan/thong-tin-thanh-toan',
+  ROLE_MANAGEMENT: '/clinic/quan-ly-role',
+  CLINIC_INFO_MANAGEMENT: '/clinic/thong-tin-phong-kham',
+  CLINIC_STAFF_MANAGEMENT: '/clinic/nhan-vien',
+  STAFF_DETAIL: '/clinic/nhan-vien/:id',
+  USER_CALENDAR: '/lich-lam-viec',
 };
 
 export const ROUTES = [
@@ -37,6 +53,7 @@ export const ROUTES = [
     title: 'Trang chủ',
     layout: DefaultLayout,
     element: HomePage,
+    isProtected: false,
     children: [],
   },
   {
@@ -44,6 +61,7 @@ export const ROUTES = [
     title: 'Bảng giá',
     layout: DefaultLayout,
     element: PricingPlanPage,
+    isProtected: false,
     children: [],
   },
   {
@@ -60,6 +78,14 @@ export const ROUTES = [
     layout: DefaultLayout,
     element: VerifyUserLinkAccountPage,
     isProtected: false,
+    children: [],
+  },
+  {
+    path: PATHS.ACCEPT_INVITE_ACCOUNT,
+    title: 'Xác nhận lời mời',
+    layout: NoLayout,
+    element: AcceptInviteAccountPage,
+    // isProtected: false,
     children: [],
   },
   {
@@ -83,7 +109,7 @@ export const ROUTES = [
     title: 'Đăng ký',
     layout: DefaultLayout,
     element: RegisterByInvitation,
-    isProtected: true,
+    isProtected: false,
     children: [],
   },
   {
@@ -132,12 +158,59 @@ export const ROUTES = [
     element: VideoCall,
     isProtected: true,
     children: [],
-  }
-  // {
-  //   path: '*',
-  //   title: 'Không tìm thấy trang',
-  //   layout: DefaultLayout,
-  //   element: () => NotFoundPage,
-  //   children: [],
-  // },
+  },
+  {
+    path: PATHS.PLAN_MANAGEMENT,
+    title: 'Plan management',
+    layout: ClinicLayout,
+    element: PlanManagement,
+    isProtected: true,
+    children: [],
+  },
+  {
+    path: PATHS.CLINIC_INFO_MANAGEMENT,
+    title: 'Thông tin phòng khám',
+    layout: ClinicLayout,
+    element: ClinicDetail,
+    isProtected: true,
+    children: [],
+  },
+  {
+    path: PATHS.PAYMENT_RESULT,
+    title: 'Kết quả thanh toán',
+    layout: NoLayout,
+    element: PaymentResult,
+    children: [],
+  },
+  {
+    path: PATHS.ROLE_MANAGEMENT,
+    title: 'Quản lý Role',
+    layout: ClinicLayout,
+    element: RoleManagement,
+    isProtected: true,
+    children: [],
+  },
+  {
+    path: PATHS.CLINIC_STAFF_MANAGEMENT,
+    title: 'Quản lý nhân viên',
+    layout: ClinicLayout,
+    element: StaffManagementPage,
+    isProtected: true,
+    children: [],
+  },
+  {
+    path: PATHS.STAFF_DETAIL,
+    title: 'Thông tin nhân viên',
+    layout: ClinicLayout,
+    element: StaffDetailPage,
+    isProtected: true,
+    children: [],
+  },
+  {
+    path: '*',
+    title: 'Không tìm thấy trang',
+    layout: NoLayout,
+    element: NotFoundPage,
+    children: [],
+  },
 ];
