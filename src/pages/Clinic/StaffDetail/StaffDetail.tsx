@@ -13,23 +13,24 @@ const StaffDetail = () => {
   const daysOfWeek = ['Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7', 'Chủ Nhật'];
   const { id: staffId } = useParams()
   const currentClinic = useAppSelector(currentClinicSelector);
-  const [selectedButton, setSelectedButton] = useState<'info' | 'schedule'>('info');
+  const [selectedTab, setSelectedTab] = useState<'info' | 'schedule'>('info');
   const [isUpdateInfo, setIsUpdateInfo] = useState<boolean>(false);
+  const [isUpdateSchedule, setIsUpdateSchedule] = useState<boolean>(false);
 
-  const handleButtonClick = (buttonType: 'info' | 'schedule') => {
-    if (selectedButton === buttonType) {
+  const handleTabClick = (tabType: 'info' | 'schedule') => {
+    if (selectedTab === tabType) {
       return;
     }
 
-    setSelectedButton(buttonType);
+    setSelectedTab(tabType);
   };
 
-  const handleCancelChange = () => {
-    setIsUpdateInfo(false);
+  const handleOnClickEditInfo = () => {
+    setIsUpdateInfo(!isUpdateInfo);
   }
 
-  const handleUpdate = () => {
-    setIsUpdateInfo(true);
+  const handleOnClickEditSchedule = () => {
+    setIsUpdateSchedule(!isUpdateSchedule);
   }
 
   return (
@@ -41,20 +42,20 @@ const StaffDetail = () => {
 
             <Flex gap={2}>
               <Button
-                onClick={() => handleButtonClick('info')}
+                onClick={() => handleTabClick('info')}
                 leftSection={<CgProfile size={14} />}
-                variant={selectedButton === 'info' ? 'filled' : 'outline'}
-                color={selectedButton === 'info' ? 'primary.3' : 'gray.5'}
+                variant={selectedTab === 'info' ? 'filled' : 'outline'}
+                color={selectedTab === 'info' ? 'primary.3' : 'gray.5'}
                 className={'flex-1 w-full m-2'}
               >
                 Hiển thị thông tin
               </Button>
 
               <Button
-                onClick={() => handleButtonClick('schedule')}
+                onClick={() => handleTabClick('schedule')}
                 leftSection={<FaRegCalendar size={14} />}
-                variant={selectedButton === 'schedule' ? 'filled' : 'outline'}
-                color={selectedButton === 'schedule' ? 'primary.3' : 'gray.5'}
+                variant={selectedTab === 'schedule' ? 'filled' : 'outline'}
+                color={selectedTab === 'schedule' ? 'primary.3' : 'gray.5'}
                 className={'flex-2 w-full m-2'}
               >
                 Hiển thị lịch làm việc
@@ -63,10 +64,10 @@ const StaffDetail = () => {
           </Stack>
         </Flex>}
 
-        {selectedButton === 'info' && (
+        {selectedTab === 'info' && (
           <Box w='100%' h='100%' px='30px' bg='white' py='20px' style={{ borderRadius: '10px' }}>
             <Flex justify={"space-between"}>
-              <Title order={5}>THÔNG TIN CÁ NHÂN</Title>
+              <Title order={5} >THÔNG TIN CÁ NHÂN</Title>
               <Text c='#6B6B6B'>ID Phòng khám: {currentClinic?.id}</Text>
             </Flex>
             <Divider my="md" />
@@ -117,10 +118,10 @@ const StaffDetail = () => {
                     }
                     {isUpdateInfo ?
                       (
-                        <Button variant="outline" color='gray.6' onClick={handleCancelChange}>Hủy thay đổi</Button>
+                        <Button variant="outline" color='gray.6' onClick={handleOnClickEditInfo}>Hủy thay đổi</Button>
                       ) :
                       (
-                        <Button onClick={handleUpdate}>Chỉnh sửa</Button>
+                        <Button onClick={handleOnClickEditInfo}>Chỉnh sửa</Button>
                       )}
                   </Group>
                 </Box>
@@ -129,44 +130,52 @@ const StaffDetail = () => {
           </Box>
         )}
 
-        {selectedButton === 'schedule' && (
+        {selectedTab === 'schedule' && (
           <Box
             w="100%"
             h="100%"
             px="30px"
             bg="white"
             py="20px"
+            style={{ borderRadius: '10px' }}
           >
             <Group>
-              <Title size={25} pb={10}>Lịch làm việc</Title>
+              <Title order={6} size={19}>Lịch làm việc</Title>
             </Group>
+
+            <Divider my="md"></Divider>
 
             <SimpleGrid cols={2} spacing="xl">
               {daysOfWeek.map((day, index) => (
                 <div key={index}>
                   <Text py={10}>{day}:</Text>
                   <Group style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-                    <TimeInput placeholder="Input placeholder" />
-                    <Text px={2}>-</Text>
-                    <TimeInput placeholder="Input placeholder" />
+                    <TimeInput placeholder="Input placeholder" disabled={!isUpdateSchedule} />
+                    <Text>-</Text>
+                    <TimeInput placeholder="Input placeholder" disabled={!isUpdateSchedule}/>
                   </Group>
                 </div>
               ))}
             </SimpleGrid>
+            <Group my={20} justify="flex-end" mt="lg" mr={'23%'}>
 
-            
-
-            <Center my={20}>
-              
-              <Button mt={30} w={'30%'}>Chỉnh sửa</Button>
-
-            </Center>
-
-
+              {
+                isUpdateSchedule? (
+                  <Button type="submit">Lưu thay đổi</Button>
+                ) : (
+                  <></>
+                )
+              }
+              {isUpdateSchedule ?
+                (
+                  <Button variant="outline" color='gray.6' onClick={handleOnClickEditSchedule}>Hủy thay đổi</Button>
+                ) :
+                (
+                  <Button onClick={handleOnClickEditSchedule} w={'25%'}>Chỉnh sửa</Button>
+                )}
+            </Group>
           </Box>
-
         )}
-
       </Stack>
     </Center>
   );
