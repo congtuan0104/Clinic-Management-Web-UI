@@ -13,9 +13,8 @@ import Superscript from '@tiptap/extension-superscript';
 import SubScript from '@tiptap/extension-subscript';
 import { useAppSelector } from '@/hooks';
 import { currentClinicSelector } from '@/store'
-import { useQuery } from 'react-query';
 import { clinicApi, planApi } from '@/services';
-import { IServicePlan } from "@/types";
+import ClinusLogo from '@/assets/images/logo-2.png';
 import { useState, useEffect, useRef, useMemo } from 'react';
 import dayjs from 'dayjs';
 import { notifications } from "@mantine/notifications";
@@ -29,8 +28,6 @@ import {
 } from "firebase/storage";
 import { v4 } from "uuid";
 import { useNavigate } from "react-router-dom";
-import { current } from "@reduxjs/toolkit";
-import classNames from "classnames";
 
 type ImageUploadType = File | null;
 
@@ -209,7 +206,7 @@ export default function ClinicDetail() {
                         w='189px'
                         h='186px'
                         className="cursor-pointer group-hover:opacity-90 rounded-md"
-                        src={imageUrl || currentClinic?.logo || "https://firebasestorage.googleapis.com/v0/b/clinus-1d1d1.appspot.com/o/avatars%2Fe6c13d64-83bb-43cd-a2a5-5867168fb4fe%2Flogo-2.png60385af5-5855-412e-81f1-73f5a53fe068?alt=media&token=4b2291e8-9db5-4d35-8e90-f6fc4973bf90"}
+                        src={imageUrl || currentClinic?.logo || ClinusLogo}
                       />
                       <div className="absolute opacity-90 cursor-pointer top-[50%] left-[19%] text-white bg-gray-500 px-2 py-1.5 rounded-md mx-auto hidden group-hover:block">
                         Chỉnh sửa logo
@@ -226,7 +223,7 @@ export default function ClinicDetail() {
                   <Image
                     w='189px'
                     h='186px'
-                    src={currentClinic?.logo || "https://firebasestorage.googleapis.com/v0/b/clinus-1d1d1.appspot.com/o/avatars%2Fe6c13d64-83bb-43cd-a2a5-5867168fb4fe%2Flogo-2.png60385af5-5855-412e-81f1-73f5a53fe068?alt=media&token=4b2291e8-9db5-4d35-8e90-f6fc4973bf90"}
+                    src={currentClinic?.logo || ClinusLogo}
                   />
                 )
               }
