@@ -20,6 +20,7 @@ export interface IRegisterRequest {
   lastName: string;
   email: string;
   password: string;
+  moduleId: AuthModule;
   // role: string;
 }
 

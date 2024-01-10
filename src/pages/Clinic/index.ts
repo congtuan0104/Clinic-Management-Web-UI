@@ -1,3 +1,4 @@
+export * from './Appointment';
 export * from './DashboardClinic';
 export * from './Message';
 export * from './VideoCall';

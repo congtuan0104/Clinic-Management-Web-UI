@@ -2,7 +2,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { Anchor, Button, Container, Flex, Grid, Image, Paper, Text, Title } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import { Form, useForm } from 'react-hook-form';
-import { PasswordInput, TextInput } from 'react-hook-form-mantine';
+import { Chip, PasswordInput, Radio, TextInput } from 'react-hook-form-mantine';
 import { FaFacebookF } from 'react-icons/fa6';
 import { FcGoogle } from 'react-icons/fc';
 import { RiLockPasswordLine } from 'react-icons/ri';
@@ -18,6 +18,7 @@ import { authApi } from '@/services';
 import { setUserInfo } from '@/store';
 import { cookies } from '@/utils';
 import { AuthModule } from '@/enums';
+import classNames from 'classnames';
 
 interface IRegisterFormData {
   firstName: string;
@@ -25,7 +26,8 @@ interface IRegisterFormData {
   email: string;
   password: string;
   confirmPassword: string;
-  moduleId: number;
+  moduleId: string;
+  emailVerified?: boolean;
 }
 
 const schema = yup.object().shape({
@@ -40,7 +42,7 @@ const schema = yup.object().shape({
     .string()
     .required('Vui lòng xác nhận lại mật khẩu')
     .oneOf([yup.ref('password'), ''], 'Không trùng với mật khẩu đã nhập'),
-  moduleId: yup.number().required(),
+  moduleId: yup.string().required('Bạn cần chọn mục đích sử dụng'),
 });
 
 const RegisterPage = () => {
@@ -49,7 +51,7 @@ const RegisterPage = () => {
   const { loginByOAuth } = useAuth();
 
   // tích hợp react-hook-form với mantine form
-  const { control } = useForm<IRegisterFormData>({
+  const { control, getValues, setValue, register } = useForm<IRegisterFormData>({
     resolver: yupResolver(schema), // gắn điều kiện xác định input hợp lệ vào form
     defaultValues: {
       // giá trị mặc định của các field
@@ -58,58 +60,59 @@ const RegisterPage = () => {
       email: '',
       password: '',
       confirmPassword: '',
-      moduleId: AuthModule.Guest,
-      // emailVerified: false,
+      moduleId: '',
+      emailVerified: import.meta.env.MODE === 'development' ? true : false, // bỏ qua gửi mail xác thực khi chạy local
     },
   });
 
-  const handleRegister = (data: IRegisterFormData) => {
-    const registerData = {
-      firstName: data.firstName,
-      lastName: data.lastName,
-      email: data.email,
-      password: data.password,
-      moduleId: data.moduleId,
-    };
+  const handleRegister = async (data: IRegisterFormData) => {
+    try {
+      const registerData = {
+        firstName: data.firstName,
+        lastName: data.lastName,
+        email: data.email,
+        password: data.password,
+        moduleId: parseInt(data.moduleId),
+      };
 
-    // gọi api đăng ký
-    authApi
-      .register(registerData)
-      .then(res => {
-        if (res.status && !res.errors && res.data) {
-          const userInfo = res.data?.user;
-          const token = res.data?.token;
+      // gọi api đăng ký
+      const res = await authApi.register(registerData)
 
-          // lưu vào thông tin user vào cookie
-          cookies.set(COOKIE_KEY.USER_INFO, userInfo);
-          cookies.set(COOKIE_KEY.TOKEN, token);
+      if (res.status && !res.errors && res.data) {
+        const userInfo = res.data?.user;
+        const token = res.data?.token;
 
-          // lưu thông tin user vào redux
-          dispatch(setUserInfo(userInfo));
+        // lưu vào thông tin user vào cookie
+        cookies.set(COOKIE_KEY.USER_INFO, userInfo);
+        cookies.set(COOKIE_KEY.TOKEN, token);
 
-          // Hiển thị thông báo
-          notifications.show({
-            message: 'Đăng ký tài khoản thành công',
-            color: 'green',
-          });
+        // lưu thông tin user vào redux
+        dispatch(setUserInfo(userInfo));
 
-          // chuyển hướng về trang chủ
-          navigate(PATHS.HOME);
-        } else {
-          console.log('Đăng ký không thành công:', res.message);
-          notifications.show({
-            message: res.message,
-            color: 'red',
-          });
-        }
-      })
-      .catch(error => {
-        console.log(error.message);
+        // Hiển thị thông báo
         notifications.show({
-          message: error.response.data.message,
-          color: 'red',
+          message: 'Đăng ký tài khoản thành công',
+          color: 'green',
         });
+
+        // chuyển hướng về trang chủ
+        navigate(PATHS.HOME);
+      }
+      else {
+        notifications.show({
+          title: 'Lỗi',
+          message: res.message || 'Đăng ký tài khoản không thành công!',
+          color: 'red.5',
+        });
+      }
+    }
+    catch (error: any) {
+      notifications.show({
+        title: 'Lỗi',
+        message: error.response.data.message || 'Đăng ký tài khoản không thành công!',
+        color: 'red.5',
       });
+    }
   };
 
   return (
@@ -175,7 +178,7 @@ const RegisterPage = () => {
           <PasswordInput
             name="confirmPassword"
             label="Xác nhận Mật khẩu"
-            placeholder="Xác nhận mật khẩu của bạn"
+            placeholder="Nhập lại mật khẩu một lần nữa"
             required
             mt="md"
             size="md"
@@ -183,6 +186,62 @@ const RegisterPage = () => {
             control={control}
             leftSection={<RiLockPasswordLine size={18} />}
           />
+          {/* Phân hệ */}
+          <Text mt='md' mb='sm'>Mục đích sử dụng của bạn là gì?</Text>
+
+          {/* <div className="flex gap-3">
+            <input type="hidden" {...control.register('moduleId')} />
+            <button
+              type='button'
+              onClick={() => setValue('moduleId', AuthModule.Patient.toString())}
+              className={classNames(
+                'cursor-pointer w-full text-center py-2 bg-transparent border-solid border-gray-300 rounded',
+                getValues('moduleId') === AuthModule.Patient.toString() ? 'bg-primary-400 text-white' : 'hover:bg-primary-100'
+              )}>
+              Khám chữa bệnh
+            </button>
+            <button
+              type='button'
+              onClick={() => setValue('moduleId', AuthModule.Clinic.toString())}
+              className={classNames(
+                'cursor-pointer w-full text-center py-2 bg-transparent border-solid border-gray-300 rounded',
+                getValues('moduleId') === AuthModule.Clinic.toString() ? 'bg-primary-400 text-white' : 'hover:bg-primary-100'
+              )}>
+              Quản lý phòng khám
+            </button>
+          </div> */}
+
+          <Chip.Group
+            name="moduleId"
+            control={control}
+          >
+            <Flex gap={15}>
+              <Chip.Item
+                value={AuthModule.Patient.toString()}
+                size='md'
+                variant='light'
+                radius='md'
+                w='100%'
+                className='!text-14'
+                color='secondary.4'
+                styles={{ label: { width: '100%', height: '40px' } }}
+              >
+                Khám chữa bệnh
+              </Chip.Item>
+              <Chip.Item
+                value={AuthModule.Clinic.toString()}
+                size='md'
+                variant='light'
+                radius='md'
+                w='100%'
+                color='secondary.4'
+                styles={{ label: { width: '100%', height: '40px' } }}
+              >
+                Quản lý phòng khám
+              </Chip.Item>
+
+            </Flex>
+          </Chip.Group>
           <Button fullWidth mt="xl" radius="sm" size="md" type="submit">
             Đăng ký
           </Button>

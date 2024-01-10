@@ -30,3 +30,49 @@ body:hover::-webkit-scrollbar-thumb {
 //   -webkit-overflow-scrolling: touch;
 //   overscroll-behavior-y: contain;
 // }
+.rbc-btn-group {
+  button {
+    cursor: pointer;
+    padding: 10px 20px !important;
+  }
+}
+
+.rbc-toolbar button:active,
+.rbc-toolbar button.rbc-active {
+  background-color: #6964ff !important;
+  color: white !important;
+}
+
+.rbc-event-content {
+  font-size: 13px;
+}
+
+.rbc-day-slot .rbc-event {
+  justify-content: center;
+}
+
+.rbc-month-header {
+  background-color: #e7e7e791;
+  .rbc-header {
+    padding: 10px 0;
+    span {
+      text-transform: capitalize;
+    }
+  }
+}
+
+.rbc-toolbar-label {
+  text-transform: capitalize;
+  font-weight: 700;
+  font-size: 18px;
+}
+
+.rbc-agenda-table {
+  thead {
+    height: 50px;
+  }
+}
+
+.rbc-toolbar {
+  margin-bottom: 15px !important;
+}

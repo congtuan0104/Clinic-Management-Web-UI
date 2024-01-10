@@ -2,7 +2,7 @@ import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { PATHS } from '@/config';
 import { useAppDispatch, useAppSelector, useAuth } from '@/hooks';
-import { currentClinicSelector, focusModeSelector, listClinicSelector, setCurrentClinic, setUserInfo, userInfoSelector } from '@/store';
+import { currentClinicSelector, focusModeSelector, listClinicSelector, openSidebarClinicSelector, setCurrentClinic, setUserInfo, toggleSidebarClinic, userInfoSelector } from '@/store';
 import { Text, Group, Button, Image, Divider, Menu, TextInput, Flex, ScrollArea, Indicator, ActionIcon, Badge, Title, Tooltip } from '@mantine/core';
 import { useDisclosure, useFullscreen, useNetwork } from '@mantine/hooks';
 import ClinusLogo from '@/assets/images/logo.png';
@@ -10,8 +10,9 @@ import { IClinic } from '@/types';
 import { cookies } from '@/utils';
 import { COOKIE_KEY } from '@/constants';
 import { IoSearch } from 'react-icons/io5';
-import { MdNotificationsNone, MdOutlineHelpOutline, MdOutlineMenuOpen, MdOutlineSchedule } from 'react-icons/md';
+import { MdNotificationsNone, MdOutlineHelpOutline, MdOutlineSchedule } from 'react-icons/md';
 import { CgLogOut, CgProfile } from 'react-icons/cg';
+import { RiMenuFoldFill, RiMenuUnfoldFill } from "react-icons/ri";
 import { FaUserCircle } from "react-icons/fa";
 import { BsCardText } from "react-icons/bs";
 import { BiCollapse, BiExpand } from "react-icons/bi";
@@ -24,6 +25,7 @@ const ClinicHeader = () => {
   const currentClinic = useAppSelector(currentClinicSelector);
   const listClinic = useAppSelector(listClinicSelector);
   const focusMode = useAppSelector(focusModeSelector);
+  const isOpenSidebar = useAppSelector(openSidebarClinicSelector);
   const { userInfo } = useAuth();
 
   const { toggle, fullscreen } = useFullscreen();
@@ -34,15 +36,31 @@ const ClinicHeader = () => {
     dispatch(setCurrentClinic(clinic));
   }
 
+  const toggleMenu = () => {
+    dispatch(toggleSidebarClinic());
+  }
+
   return (
     <header className="h-[60px] flex justify-between items-center pl-3 pr-5 bg-white z-10 
     border-solid border-0 border-b border-gray-300 fixed top-0 right-0 left-0">
-      <Group w={280} justify='space-between' align='center' pr={16}>
-        <Link className='py-[4px] pr-1 w-fit h-[60px]' to={PATHS.CLINIC_DASHBOARD}>
-          <Image src={ClinusLogo} alt='logo' h={51} w={150} fit='contain' />
-        </Link>
+      <Group
+        // className='transition-all duration-300 ease-in-out'
+        w={(isOpenSidebar || focusMode) ? 280 : 70}
+        justify='space-between'
+        align='center'
+        pr={16}>
+        {(isOpenSidebar || focusMode) && (
+          <Link className='py-[4px] pr-1 w-fit h-[60px]' to={PATHS.CLINIC_DASHBOARD}>
+            <Image src={ClinusLogo} alt='logo' h={51} w={150} fit='contain' />
+          </Link>
+        )}
 
-        {!focusMode && <MdOutlineMenuOpen size={35} />}
+        {!focusMode &&
+          <Tooltip label={isOpenSidebar ? 'Thu gọn menu' : 'Mở rộng menu'}>
+            <ActionIcon color='teal.6' variant='transparent' size={45} onClick={toggleMenu}>
+              {isOpenSidebar ? <RiMenuFoldFill size={35} /> : <RiMenuUnfoldFill size={35} />}
+            </ActionIcon>
+          </Tooltip>}
       </Group>
 
       {!focusMode && (
@@ -139,7 +157,7 @@ const ClinicHeader = () => {
               Quản lý gói
             </Menu.Item>
             <Menu.Item
-              onClick={() => navigate(PATHS.USER_CALENDAR)}
+              onClick={() => navigate(PATHS.STAFF_SCHEDULE)}
               leftSection={<MdOutlineSchedule size={15} />}
             >
               Lịch làm việc

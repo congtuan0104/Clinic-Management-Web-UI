@@ -15,11 +15,20 @@ const PaymentResult = () => {
     <Flex justify={'center'} align={'center'} h='100vh'>
       <Paper shadow="xs" p="xl" w={'90%'} maw={'500px'} radius='lg'>
         <Flex direction='column' align='center'>
-          {status === '1' ?
+          <div className="px-20">
+            <Image src={
+              status === '1' ?
+                'https://logowik.com/content/uploads/images/check-badge8301.logowik.com.webp'
+                :
+                'https://t3.ftcdn.net/jpg/05/77/95/38/360_F_577953883_zBPvFb7h53kH4EORs7Cy8C1iTlrBP6lQ.jpg'
+            }
+            />
+          </div>
+          {/* {status === '1' ?
             <Image src={'https://logowik.com/content/uploads/images/check-badge8301.logowik.com.webp'} width={'60px'} height={'60px'} />
             :
             <Image src={'https://t3.ftcdn.net/jpg/05/77/95/38/360_F_577953883_zBPvFb7h53kH4EORs7Cy8C1iTlrBP6lQ.jpg'} width={60} height={60} />
-          }
+          } */}
           <Title order={4} mb={20}>Thanh toán {status === '1' ? 'thành công' : 'thất bại'}</Title>
 
           {status === '1' && <Text mb={20}>Bạn đã thanh toán thành công <CurrencyFormatter value={Number(amount)} /></Text>}

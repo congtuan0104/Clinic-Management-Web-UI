@@ -91,7 +91,7 @@ const ModalRoleManagement = ({ isEditMode, isOpen, onClose, updateRole, selected
     };
     return (
         <Modal
-            title={isEditMode ? 'Chỉnh sửa' : 'Thêm vai trò mới'}
+            title={isEditMode ? 'Chỉnh sửa vai trò' : 'Thêm vai trò mới'}
             opened={isOpen}
             onClose={() => {
                 resetModal();
@@ -148,7 +148,7 @@ const ModalRoleManagement = ({ isEditMode, isOpen, onClose, updateRole, selected
                 </div>
 
                 <Button onClick={handleSubmit}>
-                    {isEditMode ? 'Chỉnh sửa' : 'Thêm'}
+                    {isEditMode ? 'Lưu' : 'Thêm'}
                 </Button>
             </Flex>
         </Modal>

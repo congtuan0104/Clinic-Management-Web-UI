@@ -8,12 +8,14 @@ export interface ClinicState {
   currentClinic: IClinic | undefined;
   listClinic: IClinic[];
   focusMode: boolean;
+  openSidebar: boolean;
 }
 
 const initState: ClinicState = {
   currentClinic: undefined,
   listClinic: [],
   focusMode: false,
+  openSidebar: true,
 };
 
 const clinicSlice = createSlice({
@@ -31,12 +33,18 @@ const clinicSlice = createSlice({
     setFocusMode(state: ClinicState, action: PayloadAction<boolean>) {
       state.focusMode = action.payload;
     },
+
+    toggleSidebarClinic(state: ClinicState) {
+      state.openSidebar = !state.openSidebar;
+    },
   },
 });
 
 export const currentClinicSelector = (state: RootState) => state?.clinicReducer?.currentClinic;
 export const listClinicSelector = (state: RootState) => state?.clinicReducer?.listClinic;
 export const focusModeSelector = (state: RootState) => state?.clinicReducer?.focusMode;
+export const openSidebarClinicSelector = (state: RootState) => state?.clinicReducer?.openSidebar;
 
-export const { setCurrentClinic, setListClinics, setFocusMode } = clinicSlice.actions;
+export const { setCurrentClinic, setListClinics, setFocusMode, toggleSidebarClinic } =
+  clinicSlice.actions;
 export const clinicReducer = clinicSlice.reducer;

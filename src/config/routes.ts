@@ -21,6 +21,7 @@ import {
   StaffManagementPage,
   AcceptInviteAccountPage,
   StaffDetailPage,
+  AppointmentPage,
 } from '@/pages';
 
 export const PATHS = {
@@ -44,7 +45,8 @@ export const PATHS = {
   CLINIC_INFO_MANAGEMENT: '/clinic/thong-tin-phong-kham',
   CLINIC_STAFF_MANAGEMENT: '/clinic/nhan-vien',
   STAFF_DETAIL: '/clinic/nhan-vien/:id',
-  USER_CALENDAR: '/lich-lam-viec',
+  STAFF_SCHEDULE: '/clinic/lich-lam-viec',
+  CLINIC_APPOINTMENT: '/clinic/lich-hen-kham',
 };
 
 export const ROUTES = [
@@ -203,6 +205,14 @@ export const ROUTES = [
     title: 'Thông tin nhân viên',
     layout: ClinicLayout,
     element: StaffDetailPage,
+    isProtected: true,
+    children: [],
+  },
+  {
+    path: PATHS.CLINIC_APPOINTMENT,
+    title: 'Lịch hẹn khám',
+    layout: ClinicLayout,
+    element: AppointmentPage,
     isProtected: true,
     children: [],
   },

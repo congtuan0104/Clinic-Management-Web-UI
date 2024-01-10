@@ -8,11 +8,13 @@ import { IoSettingsOutline } from "react-icons/io5";
 import { MdCalendarMonth, MdNotificationsNone, MdOutlineAnalytics, MdOutlinePeopleAlt, MdOutlineSchedule, MdPayment } from "react-icons/md";
 import { RiMessage2Fill } from 'react-icons/ri';
 import { useLocation } from 'react-router-dom';
-import { useAuth } from '@/hooks';
+import { useAppSelector, useAuth } from '@/hooks';
 import { INotification } from '@/types';
 
 import { LinksGroup } from './LinksGroup/LinksGroup';
 import { PATHS } from '@/config';
+import classNames from 'classnames';
+import { openSidebarClinicSelector } from '@/store';
 
 const createMenuItem = () => {
   return [
@@ -35,7 +37,7 @@ const createMenuItem = () => {
     },
     { label: 'Nhắn tin tư vấn', icon: RiMessage2Fill, href: PATHS.CLINIC_CHAT },
     { label: 'Bệnh nhân', icon: FaHospitalUser },
-    { label: 'Lịch hẹn khám', icon: MdCalendarMonth },
+    { label: 'Lịch hẹn khám', icon: MdCalendarMonth, href: PATHS.CLINIC_APPOINTMENT },
     { label: 'Tiếp nhận bệnh nhân', icon: MdOutlineAnalytics },
     { label: 'Khám bệnh', icon: MdOutlineAnalytics },
     { label: 'Thanh toán', icon: MdPayment },
@@ -53,12 +55,10 @@ export function ClinicSideBar({ notify }: ISidebarProps) {
   const { pathname } = useLocation();
   const [opened, { open, close }] = useDisclosure(false);
   const { userInfo } = useAuth();
+  const isOpenSidebar = useAppSelector(openSidebarClinicSelector);
+
 
   const menuItems = createMenuItem(); // fix lỗi import config path
-
-  const links = menuItems.map((item) =>
-    <LinksGroup {...item} key={item.label} />
-  );
 
   const renderSendingTime = (sendingTime: Date) => {
     const diff = dayjs(dayjs()).diff(sendingTime, 'second');
@@ -71,9 +71,10 @@ export function ClinicSideBar({ notify }: ISidebarProps) {
 
   return (
     <>
-      <nav
-        className='bg-white pt-[60px] h-screen w-[280px] fixed top-0 bottom-0 left-0 z-[9]'
-      >
+      <nav className={classNames(
+        'bg-white pt-[60px] h-screen w-[280px] fixed top-0 bottom-0 left-0 z-[9] transition-all duration-300 ease-in-out  overflow-x-hidden',
+        isOpenSidebar ? 'w-[280px]' : 'w-[60px]'
+      )}     >
         {/* <div className='flex flex-between items-center pl-3 w-full'>
           <Link className='flex-1 flex justify-start py-[4px]' to={PATHS.CLINIC_DASHBOARD}>
             <Image src={ClinusLogo} alt='logo' h={51} fit='contain' />
@@ -94,7 +95,11 @@ export function ClinicSideBar({ notify }: ISidebarProps) {
         <Divider /> */}
 
         <ScrollArea>
-          <div>{links}</div>
+          <div>
+            {menuItems.map((item) =>
+              <LinksGroup {...item} key={item.label} />
+            )}
+          </div>
         </ScrollArea>
       </nav>
 

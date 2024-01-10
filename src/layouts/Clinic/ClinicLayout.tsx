@@ -4,7 +4,7 @@ import { COOKIE_KEY } from '@/constants';
 import { AuthModule, CLINIC_SUBSCRIPTION_STATUS } from '@/enums';
 import { useAppDispatch, useAppSelector, useAuth } from '@/hooks';
 import { clinicApi, notificationApi } from '@/services';
-import { focusModeSelector, setCurrentClinic, setListClinics } from '@/store';
+import { focusModeSelector, openSidebarClinicSelector, setCurrentClinic, setListClinics } from '@/store';
 import { INotification } from '@/types';
 import { cookies } from '@/utils';
 import { Title, Text, Group } from '@mantine/core';
@@ -22,6 +22,7 @@ const ClinicLayout = ({ children }: { children: JSX.Element }) => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const focusMode = useAppSelector(focusModeSelector);
+  const isOpenSidebar = useAppSelector(openSidebarClinicSelector);
   const location = useLocation();
 
   const { data: clinics, isLoading: isLoadingClinic } = useQuery(
@@ -74,8 +75,8 @@ const ClinicLayout = ({ children }: { children: JSX.Element }) => {
         <ClinicHeader />
         {!focusMode && <ClinicSideBar notify={notify} />}
         <div className={classNames(
-          'pt-[60px]',
-          focusMode ? 'pl-0' : 'pl-[280px]',
+          'pt-[60px] transition-all duration-300 ease-in-out',
+          focusMode ? 'pl-0' : isOpenSidebar ? 'pl-[280px]' : 'pl-[70px]',
         )}>
           {children}
         </div>
