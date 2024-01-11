@@ -1,5 +1,4 @@
-import { IAddPlanRequest, IPlanOption, IServicePlan } from '@/types';
-import { IApiResponse } from './../types/common.types';
+import { IAddPlanRequest, IPlanOption, IServicePlan, IApiResponse } from '@/types';
 import { axiosClient } from '@/utils';
 
 export const planApi = {

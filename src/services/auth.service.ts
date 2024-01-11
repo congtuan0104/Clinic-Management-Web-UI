@@ -1,4 +1,3 @@
-import { IInviteClinicMemberRequest } from './../types/clinic.types';
 import {
   IApiResponse,
   IGoogleLoginRequest,
@@ -8,6 +7,7 @@ import {
   IRegisterResponse,
   ILinkAccountRequest,
   IChangePasswordRequest,
+  IInviteClinicMemberRequest,
 } from '@/types';
 import { axiosClient } from '@/utils';
 
