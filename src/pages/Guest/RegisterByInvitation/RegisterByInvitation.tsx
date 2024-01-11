@@ -40,7 +40,7 @@ const schema = yup.object().shape({
     .required('Vui lòng xác nhận lại mật khẩu')
     .oneOf([yup.ref('password'), ''], 'Không trùng với mật khẩu đã nhập'),
   emailVerified: yup.boolean().required(),
-  moduleId: yup.string().required(),
+  moduleId: yup.number().required(),
 });
 
 const decodeToken = (token: string) => {
@@ -83,7 +83,7 @@ const RegisterByInvitation = () => {
       email: token_email,
       password: '',
       confirmPassword: '',
-      moduleId: token_role,
+      moduleId: parseInt(token_role),
       emailVerified: true,
     },
   });
