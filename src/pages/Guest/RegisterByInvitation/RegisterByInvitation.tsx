@@ -15,6 +15,7 @@ import { useAppDispatch } from '@/hooks';
 import { notifications } from '@mantine/notifications';
 import React, { useEffect } from 'react';
 import { JwtPayload, jwtDecode } from 'jwt-decode';
+import { AuthModule } from '@/enums';
 
 interface IRegisterFormData {
   firstName: string;
@@ -23,7 +24,7 @@ interface IRegisterFormData {
   password: string;
   confirmPassword: string;
   emailVerified: boolean;
-  role: string;
+  moduleId: AuthModule;
 }
 
 const schema = yup.object().shape({
@@ -39,7 +40,7 @@ const schema = yup.object().shape({
     .required('Vui lòng xác nhận lại mật khẩu')
     .oneOf([yup.ref('password'), ''], 'Không trùng với mật khẩu đã nhập'),
   emailVerified: yup.boolean().required(),
-  role: yup.string().required(),
+  moduleId: yup.string().required(),
 });
 
 const decodeToken = (token: string) => {
@@ -82,7 +83,7 @@ const RegisterByInvitation = () => {
       email: token_email,
       password: '',
       confirmPassword: '',
-      role: token_role,
+      moduleId: token_role,
       emailVerified: true,
     },
   });
