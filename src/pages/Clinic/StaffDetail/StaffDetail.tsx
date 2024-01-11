@@ -1,5 +1,7 @@
-import React, { useState, MouseEvent } from 'react';
-import { Text, Flex, Button, Indicator, Divider, TextInput, Center, Stack, Box, Title, Grid, Group, SimpleGrid } from '@mantine/core';
+import React, { useState, MouseEvent, useMemo } from 'react';
+import { Text, Flex, Button, Indicator, Divider, Center, Stack, Box, Title, Grid, Group, SimpleGrid} from '@mantine/core';
+import { Form, useForm, Controller } from 'react-hook-form';
+import { TextInput } from 'react-hook-form-mantine';
 import { CgProfile } from 'react-icons/cg';
 import { FaRegCalendar } from 'react-icons/fa';
 import { FaRegClock } from "react-icons/fa6";
@@ -8,6 +10,22 @@ import { CgMail } from "react-icons/cg";
 import { useParams } from 'react-router-dom';
 import { useAppSelector } from '@/hooks';
 import { currentClinicSelector } from '@/store';
+import * as yup from 'yup';
+import { yupResolver } from '@hookform/resolvers/yup';
+
+interface IUpdateInfo {
+  id_staff: string;
+  firstName: string,
+  lastName: string,
+  email: string,
+}
+
+const schema = yup.object().shape({
+  id_staff: yup.string().required(),
+  firstName: yup.string().required('Bạn chưa nhập Họ'),
+  lastName: yup.string().required('Bạn chưa nhập Tên'),
+  email: yup.string().required('Thông tin email là bắt buộc').email('Email không hợp lệ'),
+});
 
 const StaffDetail = () => {
   const daysOfWeek = ['Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7', 'Chủ Nhật'];
@@ -16,6 +34,18 @@ const StaffDetail = () => {
   const [selectedTab, setSelectedTab] = useState<'info' | 'schedule'>('info');
   const [isUpdateInfo, setIsUpdateInfo] = useState<boolean>(false);
   const [isUpdateSchedule, setIsUpdateSchedule] = useState<boolean>(false);
+  const { control, setValue, getValues } = useForm<IUpdateInfo>({
+    resolver: yupResolver(schema), 
+    defaultValues: useMemo(() => {
+      return {
+        id_staff: staffId,
+        firstName: '',
+        lastName: '',
+        email: '',
+      }
+    }
+      , [currentClinic]),
+  });
 
   const handleTabClick = (tabType: 'info' | 'schedule') => {
     if (selectedTab === tabType) {
@@ -31,6 +61,18 @@ const StaffDetail = () => {
 
   const handleOnClickEditSchedule = () => {
     setIsUpdateSchedule(!isUpdateSchedule);
+  }
+
+
+  const onSubmit = async (data: IUpdateInfo) => {
+    const updateInfo = {
+      firstName: data.firstName,
+      lastName: data.lastName,
+      email: data.email,
+    }
+    if (currentClinic?.id && staffId) {
+      console.log(updateInfo);
+    }
   }
 
   return (
@@ -71,62 +113,74 @@ const StaffDetail = () => {
               <Text c='#6B6B6B'>ID Phòng khám: {currentClinic?.id}</Text>
             </Flex>
             <Divider my="md" />
-            <Grid align='center' justify='center'>
-              <Grid.Col>
-                <Box maw={700} mx="auto">
-                  <TextInput label="ID nhân viên"
-                    disabled={!isUpdateInfo}
-                  // placeholder={staffId}
-                  />
-                  <Grid>
-                    <Grid.Col span={6}>
-                      <TextInput
-                        label="Họ"
-                        disabled={!isUpdateInfo}
-                        mt="md"
-                        w={'100%'}
-                      />
-                    </Grid.Col>
-                    <Grid.Col span={6}>
-                      <TextInput
-                        label="Tên"
-                        disabled={!isUpdateInfo}
-                        mt="md"
-                        w={'100%'}
-                      />
-                    </Grid.Col>
-                  </Grid>
-                  <Grid>
-                    <TextInput
-                      label="Email liên hệ"
-                      disabled={!isUpdateInfo}
-                      mt="md"
-                      name='email'
-                      w={'100%'}
-                      px={8}
+            
+              <Grid align='center' justify='center'>
+                <Grid.Col>
+                  <Box maw={700} mx="auto">
+                  <Form control={control} onSubmit={e => onSubmit(e.data)} onError={e => console.log(e)}>
+                    <TextInput label="ID nhân viên"
+                      disabled
+                      name='id_staff'
+                      defaultValue={staffId}
+                      control={control}
                     />
+                    <Grid>
+                      <Grid.Col span={6}>
+                        <TextInput
+                          label="Họ"
+                          disabled={!isUpdateInfo}
+                          mt="md"
+                          w={'100%'}
+                          name='firstName'
+                          control={control}
+                        />
+                      </Grid.Col>
+                      <Grid.Col span={6}>
+                        <TextInput
+                          label="Tên"
+                          disabled={!isUpdateInfo}
+                          mt="md"
+                          w={'100%'}
+                          name='lastName'
+                          control={control}
+                        />
+                      </Grid.Col>
+                    </Grid>
+                    <Grid>
+                      <TextInput
+                        label="Email liên hệ"
+                        disabled={!isUpdateInfo}
+                        mt="md"
+                        name='email'
+                        w={'100%'}
+                        px={8}
+                        control={control}
+                      />
 
-                  </Grid>
-                  <Divider my="md" mt={40} />
-                  <Group justify="flex-end" mt="lg">
-                    {
-                      isUpdateInfo ? (
-                        <Button type="submit">Lưu thay đổi</Button>
-                      ) : (
-                        <></>
-                      )
-                    }
-                    {isUpdateInfo ?
-                      (
-                        <Button variant="outline" color='gray.6' onClick={handleOnClickEditInfo}>Hủy thay đổi</Button>
-                      ) :
-                      (
-                        <Button onClick={handleOnClickEditInfo}>Chỉnh sửa</Button>
-                      )}
-                  </Group>
-                </Box>
-              </Grid.Col>
-            </Grid>
+                    </Grid>
+                    <Divider my="md" mt={40} />
+                    <Group justify="flex-end" mt="lg">
+                      {
+                        isUpdateInfo ? (
+                          <Button type="submit">Lưu thay đổi</Button>
+                        ) : (
+                          <></>
+                        )
+                      }
+                      {isUpdateInfo ?
+                        (
+                          <Button variant="outline" color='gray.6' onClick={handleOnClickEditInfo}>Hủy thay đổi</Button>
+                        ) :
+                        (
+                          <Button onClick={handleOnClickEditInfo}>Chỉnh sửa</Button>
+                        )}
+                    </Group>
+                    </Form>
+                  </Box>
+                </Grid.Col>
+                
+              </Grid>
+            
           </Box>
         )}
 
@@ -152,7 +206,7 @@ const StaffDetail = () => {
                   <Group style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
                     <TimeInput placeholder="Input placeholder" disabled={!isUpdateSchedule} />
                     <Text>-</Text>
-                    <TimeInput placeholder="Input placeholder" disabled={!isUpdateSchedule}/>
+                    <TimeInput placeholder="Input placeholder" disabled={!isUpdateSchedule} />
                   </Group>
                 </div>
               ))}
@@ -160,7 +214,7 @@ const StaffDetail = () => {
             <Group my={20} justify="flex-end" mt="lg" mr={'23%'}>
 
               {
-                isUpdateSchedule? (
+                isUpdateSchedule ? (
                   <Button type="submit">Lưu thay đổi</Button>
                 ) : (
                   <></>
