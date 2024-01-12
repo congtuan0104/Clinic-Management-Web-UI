@@ -94,7 +94,7 @@ export function ClinicSideBar({ notify }: ISidebarProps) {
 
         <Divider /> */}
 
-        <ScrollArea>
+        <ScrollArea scrollbars="y">
           <div>
             {menuItems.map((item) =>
               <LinksGroup {...item} key={item.label} />

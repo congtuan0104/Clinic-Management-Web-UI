@@ -1,14 +1,18 @@
-import { Calendar, ModalAppointmentDetail } from "@/components"
+import { Calendar, ModalAddAppointment, ModalAppointmentDetail } from "@/components"
 import { CalendarEvent, IAppointment } from "@/types";
-import { ActionIcon, Button, Text, Title, Tooltip } from "@mantine/core"
+import { ActionIcon, Button, Select, Text, Title, Tooltip } from "@mantine/core"
 import { useMemo, useState } from "react"
 import { FaCalendarDays } from "react-icons/fa6";
-import { FaThList } from "react-icons/fa";
+import { FaRegCalendarPlus, FaThList } from "react-icons/fa";
 import { APPOINTMENT_STATUS } from "@/enums";
 import { useDisclosure } from "@mantine/hooks";
+import { DateInput } from '@mantine/dates';
+
 
 const AppointmentPage = () => {
-  const [opened, { open, close }] = useDisclosure(false);
+  const [openedAdd, { open: openAdd, close: closeAdd }] = useDisclosure(false);
+  const [openedDetail, { open: openDetail, close: closeDetail }] = useDisclosure(false);
+
   const appointments: Array<IAppointment> = [
     {
       id: '1',
@@ -74,7 +78,7 @@ const AppointmentPage = () => {
     const appointment = event.resource;
     if (appointment) {
       setSelectedAppointment(appointment)
-      open()
+      openDetail();
     }
   }
 
@@ -146,46 +150,91 @@ const AppointmentPage = () => {
     <>
       <div className="p-3">
         <div className="mb-3 flex justify-between items-center">
-          <Title order={3}>Lịch hẹn khám</Title>
-          {/* {selectedAppointment && <Text>Lịch hẹn được chọn là: {selectedAppointment.id}</Text>} */}
-          <div className="flex gap-2">
-            <Tooltip label='Xem theo dạng lịch' position="bottom">
-              <ActionIcon
-                variant={mode === 'calendar' ? 'filled' : 'outline'}
-                size={40}
-                color="primary"
-                onClick={() => setMode('calendar')}
-              >
-                <FaCalendarDays size={22} />
-              </ActionIcon>
-            </Tooltip>
+          <div className="flex gap-3 items-center">
+            <Title order={3}>Lịch hẹn khám</Title>
+            {/* {selectedAppointment && <Text>Lịch hẹn được chọn là: {selectedAppointment.id}</Text>} */}
+            <Button.Group>
+              <Tooltip label='Xem theo dạng lịch' position="bottom">
+                <Button
+                  variant={mode === 'calendar' ? 'filled' : 'outline'}
+                  h={40}
+                  color="primary"
+                  onClick={() => setMode('calendar')}
+                >
+                  <FaCalendarDays size={22} />
+                </Button>
+              </Tooltip>
 
-            <Tooltip label='Xem theo dạng danh sách' position="bottom">
-              <ActionIcon
-                variant={mode === 'list' ? 'filled' : 'outline'}
-                color="primary"
-                size={40}
-                onClick={() => setMode('list')}
-              >
-                <FaThList size={20} />
-              </ActionIcon>
-            </Tooltip>
+              <Tooltip label='Xem theo dạng danh sách' position="bottom">
+                <Button
+                  variant={mode === 'list' ? 'filled' : 'outline'}
+                  color="primary"
+                  h={40}
+                  onClick={() => setMode('list')}
+                >
+                  <FaThList size={20} />
+                </Button>
+              </Tooltip>
 
-            <Button
-              h={40}
-            // onClick={() => { }}
-            >
-              Tạo lịch hẹn mới
-            </Button>
+            </Button.Group>
           </div>
+          <div className="flex gap-2">
+            <Select
+              w={250}
+              placeholder="Bác sĩ khám bệnh"
+              data={['Tất cả bác sĩ', 'Angular', 'Vue', 'Svelte']}
+              searchable
+              styles={{
+                input: {
+                  height: 40,
+                },
+              }}
+            />
+            <DateInput
+              w={200}
+              placeholder="Ngày hẹn khám"
+              valueFormat="DD-MM-YYYY"
+              rightSection={<FaCalendarDays size={18} />}
+              styles={{
+                input: {
+                  height: 40,
+                },
+              }}
+            />
+
+            <Select
+              w={200}
+              placeholder="Trạng thái lịch hẹn"
+              data={['Chưa xác nhận', 'Đã xác nhận', 'Đã đến hẹn', 'Hủy hẹn']}
+              searchable
+              styles={{
+                input: {
+                  height: 40,
+                },
+              }}
+            />
+
+
+          </div>
+
+          <Button
+            h={40}
+            color="secondary"
+            onClick={() => openAdd()}
+            leftSection={<FaRegCalendarPlus size={20} />}
+          >
+            Tạo lịch hẹn mới
+          </Button>
         </div>
 
         {mode === 'calendar' ? renderCalendarViewMode() : renderListViewMode()}
 
       </div>
 
+      <ModalAddAppointment isOpen={openedAdd} onClose={closeAdd} />
+
       {selectedAppointment &&
-        <ModalAppointmentDetail isOpen={opened} onClose={close} data={selectedAppointment} />
+        <ModalAppointmentDetail isOpen={openedDetail} onClose={closeDetail} data={selectedAppointment} />
       }
     </>
   )

@@ -84,10 +84,12 @@ const RoleManagement = () => {
             className='flex-1'
             maw={300}
           />
-          <Button onClick={() => {
-            open();
-            setIsEditMode(false);
-          }}>+ Thêm vai trò</Button>
+          <Button
+            color='secondary'
+            onClick={() => {
+              open();
+              setIsEditMode(false);
+            }}>+ Thêm vai trò</Button>
         </Flex>
 
         <table style={{ borderCollapse: 'collapse', width: '100%', backgroundColor: 'white' }}>
@@ -115,24 +117,28 @@ const RoleManagement = () => {
                   )}
                 </td>
                 <td style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'center' }}>
-                  <FaRegEdit
-                    size={20}
-                    onClick={() => {
-                      open();
-                      setSelectedRole(role);
-                      setIsEditMode(true);
-                    }}
-                    style={{ cursor: 'pointer', marginRight: '6px', color: 'blue' }}
-                    onMouseOver={(e: React.MouseEvent<SVGElement, MouseEvent>) => (e.currentTarget.style.color = 'darkblue')}
-                    onMouseOut={(e: React.MouseEvent<SVGElement, MouseEvent>) => (e.currentTarget.style.color = 'blue')}
-                  />
-                  <FaTrash
-                    size={20}
-                    style={{ cursor: 'pointer', marginLeft: '6px', color: 'red' }}
-                    onMouseOver={(e: React.MouseEvent<SVGElement, MouseEvent>) => (e.currentTarget.style.color = 'darkred')}
-                    onMouseOut={(e: React.MouseEvent<SVGElement, MouseEvent>) => (e.currentTarget.style.color = 'red')}
-                    onClick={() => openDeleteModal(role.id, role.name)}
-                  />
+                  {role.name !== 'Admin' && (
+                    <>
+                      <FaRegEdit
+                        size={20}
+                        onClick={() => {
+                          open();
+                          setSelectedRole(role);
+                          setIsEditMode(true);
+                        }}
+                        style={{ cursor: 'pointer', marginRight: '6px', color: 'blue' }}
+                        onMouseOver={(e: React.MouseEvent<SVGElement, MouseEvent>) => (e.currentTarget.style.color = 'darkblue')}
+                        onMouseOut={(e: React.MouseEvent<SVGElement, MouseEvent>) => (e.currentTarget.style.color = 'blue')}
+                      />
+                      <FaTrash
+                        size={20}
+                        style={{ cursor: 'pointer', marginLeft: '6px', color: 'red' }}
+                        onMouseOver={(e: React.MouseEvent<SVGElement, MouseEvent>) => (e.currentTarget.style.color = 'darkred')}
+                        onMouseOut={(e: React.MouseEvent<SVGElement, MouseEvent>) => (e.currentTarget.style.color = 'red')}
+                        onClick={() => openDeleteModal(role.id, role.name)}
+                      />
+                    </>
+                  )}
                 </td>
               </tr>
             ))}

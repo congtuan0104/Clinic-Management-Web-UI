@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 
 import GroupChatList from "@/components/Message/GroupChatList";
 import Conversation from "@/components/Message/Conversation";
+import { TbMessagePlus } from "react-icons/tb";
 
 import { IGroupChat } from "@/types";
 
@@ -52,7 +53,7 @@ export default function ChatScreen() {
             Tin nhắn
           </Text>
 
-          <Button variant="filled" onClick={open}>
+          <Button color="secondary" variant="filled" onClick={open} leftSection={<TbMessagePlus size={20} />}>
             Tạo nhóm chat
           </Button>
         </div>

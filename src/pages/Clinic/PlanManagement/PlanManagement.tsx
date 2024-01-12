@@ -171,7 +171,7 @@ const ClinicManagePage = () => {
               <Title order={4}>Danh sách gói - phòng khám</Title>
             </Flex>
             <Button
-              color='primary'
+              color='secondary'
               onClick={() => setIsOpenClinicModal(true)}
             >
               Mua gói

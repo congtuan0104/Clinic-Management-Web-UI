@@ -86,7 +86,7 @@ const ModalInviteClinicMember = ({
   return (
     <Modal.Root opened={isOpen} onClose={handleCancel} centered size={'md'}>
       <Modal.Overlay />
-      <Modal.Content>
+      <Modal.Content radius='lg'>
         <ModalHeader>
           <Modal.Title fz={16} fw={600}>Thêm nhân viên mới</Modal.Title>
           <ModalCloseButton />

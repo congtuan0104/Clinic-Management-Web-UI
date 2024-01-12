@@ -1,4 +1,5 @@
-import { Button, createTheme, MantineColorsTuple, Anchor } from '@mantine/core';
+import { Button, createTheme, MantineColorsTuple, Anchor, Select } from '@mantine/core';
+import { DateInput } from '@mantine/dates';
 
 const primary: MantineColorsTuple = [
   '#f5f5fc',
@@ -57,6 +58,22 @@ export const theme = createTheme({
     Button: Button.extend({
       styles: {
         label: { fontWeight: 500 },
+      },
+    }),
+
+    Select: Select.extend({
+      styles: {
+        input: {
+          cursor: 'pointer',
+        },
+      },
+    }),
+
+    DateInput: DateInput.extend({
+      styles: {
+        input: {
+          cursor: 'pointer',
+        },
       },
     }),
   },

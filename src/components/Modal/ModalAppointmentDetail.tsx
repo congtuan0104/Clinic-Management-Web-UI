@@ -10,17 +10,15 @@ interface IProps {
 
 const ModalAppointmentDetail = ({ isOpen, onClose, data }: IProps) => {
   return (
-    <Modal.Root opened={isOpen} onClose={onClose} centered size='md'>
-      <Modal.Overlay />
-      <Modal.Content>
-        <Modal.Header>
-          <Modal.Title fz="lg" fw={600}>Thông tin lịch hẹn khám</Modal.Title>
-          <Modal.CloseButton />
+    <Modal.Root opened={isOpen} onClose={onClose} size='md' centered>
+      <Modal.Overlay blur={7} />
+      <Modal.Content radius='lg'>
+        <Modal.Header bg='secondary.3'>
+          <Modal.Title c='white' fz="lg" fw={600}>Lịch hẹn khám #{data.id}</Modal.Title>
+          <Modal.CloseButton variant="transparent" c="white" />
         </Modal.Header>
-        <Modal.Body>
-          <Text>
-            ID: #{data.id}
-          </Text>
+        <Modal.Body pt={10}>
+
           <Text>
             Tên bệnh nhân: {data.patientName}
           </Text>

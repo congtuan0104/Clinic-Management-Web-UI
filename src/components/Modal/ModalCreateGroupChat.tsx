@@ -74,9 +74,9 @@ const ModalCreateGroupChat = ({ isOpen, onClose, onSuccess }: IProps) => {
   return (
     <Modal.Root opened={isOpen} onClose={onClose} centered size={'md'}>
       <Modal.Overlay />
-      <Modal.Content>
+      <Modal.Content radius='lg'>
         <ModalHeader>
-          <Modal.Title fz={22} fw={700}>Tạo nhóm chat mới</Modal.Title>
+          <Modal.Title fz={18} fw={700}>Tạo nhóm chat mới</Modal.Title>
           <ModalCloseButton />
         </ModalHeader>
         <ModalBody>
