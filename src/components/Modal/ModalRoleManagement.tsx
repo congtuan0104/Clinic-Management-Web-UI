@@ -129,7 +129,7 @@ const ModalRoleManagement = ({ isEditMode, isOpen, onClose, updateRole, selected
           }}
         >
           <div className='grid grid-cols-2 gap-y-1 gap-x-3'>
-            {permissions.map((permission, index) => (
+            {permissions.map((permission) => (
               <Checkbox mt={10} key={permission.id} value={permission.optionName} label={permission.optionName} />
             ))}
           </div>
