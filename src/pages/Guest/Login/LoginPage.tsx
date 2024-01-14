@@ -199,7 +199,7 @@ const LoginPage = () => {
   }
 
   return (
-    <Container size={570} my={40}>
+    <Container size={570} my={40} className='min-h-[calc(100vh_-_145px)]'>
       <Paper withBorder shadow="md" p={30} mt={30} radius="md">
         <Title>Đăng nhập</Title>
         <Text c="dimmed" size="sm" mt={5} mb={15}>

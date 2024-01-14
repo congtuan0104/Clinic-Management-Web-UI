@@ -12,34 +12,35 @@ const HomePage = () => {
   const userInfo = useAppSelector(userInfoSelector);
 
   return (
-    <Stack gap={'xl'} w={'100%'}>
-      <Center>
+    <Stack gap={'xl'} pb={20} w={'100%'} bg='white'>
+      <Center className='max-w-screen-xl mx-auto h-[calc(100vh_-_70px)]'>
         <Flex
           pt={30}
           w={'100%'}
           justify="center"
           align="center"
+          gap={30}
         >
           <div>
             <Stack gap={'xl'}>
-              <Text size='26px' fw={700} w={'95%'}>CLINICUS - Phần Mềm Việt Nam Quản Lí Phòng Khám Hiệu Quả</Text>
-              <Text size='24px' fw={700} c={'primary.3'}>GIÁ CHỈ TỪ 100.000VNĐ/THÁNG</Text>
-              <Button w={'50%'} radius={'xl'}>ĐĂNG KÝ NGAY</Button>
+              <Text fz={40} fw={700} w={'90%'}>CLINUS - Phần Mềm Quản Lí Phòng Khám Hiệu Quả</Text>
+              <Text fz={16} fw={700} c={'gray.6'}>Với sứ mệnh cải thiện trải nghiệm chăm sóc sức khỏe của người dùng, chúng tôi tự hào giới thiệu một nền tảng độc đáo, giúp bạn dễ dàng quản lý lịch hẹn khám và tận hưởng một dịch vụ y tế chất lượng.</Text>
+              <Button size='lg' color='secondary' w={250} radius={'md'}>Đăng ký ngay</Button>
             </Stack>
           </div>
           <Image
             radius="lg"
-            h={400}
-            src="https://healthcaresoftwareguide.files.wordpress.com/2020/06/hospital-and-clinic-management-software.jpg"
+            h={'74vh'}
+            src="https://rescribe.in/assets/img/Product_Clinic_Mgmt_Assets/doctor_management.png"
             fallbackSrc="https://placehold.co/200x200?text=Error"
           />
         </Flex>
       </Center>
-      <Badge w={'108%'} bg={'#081692'} h={50} ml={-60}></Badge>
+
       <Stack align='center' gap={'xl'} >
         <Center>
           <Stack align='center'>
-            <Text size='24px' fw={700} w={'100%'}>CLINUS - SỰ LỰA CHỌN HOÀN HẢO CHO PHÒNG KHÁM CỦA BẠN</Text>
+            <Text size='24px' fw={700} w={'100%'}>Tại sao nên sử dụng Clinus?</Text>
             <Divider size={'lg'} color='black' w={'30%'} />
           </Stack>
         </Center>
@@ -109,15 +110,15 @@ const HomePage = () => {
           />
         </Flex>
       </Stack>
-      <Stack>
-        <Center m={10}>
+      <Stack className='overflow-hidden max-w-screen-xl mx-auto'>
+        <Center p={10} className=''>
           <Stack align='center'>
-            <Text size='24px' fw={700} >Phần mềm CLINICUS Quản Lý Phòng Khám 2024</Text>
-            <Text size='20px' c={'gray.6'}>5 Tính năng cốt lõi</Text>
+            <Text size='24px' fw={700} >Tính năng</Text>
+            <Text size='20px' c={'gray.6'}>6 Tính năng cốt lõi</Text>
           </Stack>
         </Center>
         <Center>
-          <Grid w={'100%'} grow gutter="xl">
+          <Grid w={'100%'} gutter="lg">
             <Grid.Col span={4}>
               <Stack align='center'>
                 <FaUsers size="4rem" color='blue' />
@@ -126,7 +127,7 @@ const HomePage = () => {
                   <Badge color='blue'>01</Badge>
                   <Text c={'blue'}>Hồ sơ sức khỏe</Text>
                 </Group>
-                <Text w={'70%'}>Quản lý hồ sơ sức khỏe của bệnh nhân: huyết áp, mạch, các chỉ định cận lâm sàng, lịch sử khám chữa bệnh ...</Text>
+                <Text ta='center' w={'70%'}>Quản lý hồ sơ sức khỏe của bệnh nhân: huyết áp, mạch, các chỉ định cận lâm sàng, lịch sử khám chữa bệnh ...</Text>
               </Stack>
 
             </Grid.Col>
@@ -137,7 +138,7 @@ const HomePage = () => {
                   <Badge color='red'>02</Badge>
                   <Text c={'red'}>Quản lý nhân viên</Text>
                 </Group>
-                <Text w={'70%'}>Hỗ trợ quản lý thông tin nhân viên, phân quyền,...</Text>
+                <Text ta='center' w={'70%'}>Hỗ trợ quản lý thông tin nhân viên, phân quyền,...</Text>
               </Stack>
             </Grid.Col>
             <Grid.Col span={4}>
@@ -147,7 +148,7 @@ const HomePage = () => {
                   <Badge color='#c688eb'>03</Badge>
                   <Text c={'#c688eb'}>Kết nối</Text>
                 </Group>
-                <Text w={'70%'} >Kết nối bệnh nhân với bác sĩ, giữa các phòng khám với nhau</Text>
+                <Text ta='center' w={'70%'} >Kết nối bệnh nhân với bác sĩ, giữa các phòng khám với nhau</Text>
               </Stack>
             </Grid.Col>
             <Grid.Col span={4}>
@@ -157,7 +158,7 @@ const HomePage = () => {
                   <Badge color='orange'>04</Badge>
                   <Text c={'orange'}>Thanh toán</Text>
                 </Group>
-                <Text w={'70%'}>Hỗ trợ việc thanh toán cho phòng khám qua ZaloPay, VNPAY</Text>
+                <Text ta='center' w={'70%'}>Hỗ trợ việc thanh toán cho phòng khám qua ZaloPay, VNPAY</Text>
               </Stack>
             </Grid.Col>
             <Grid.Col span={4}>
@@ -167,7 +168,7 @@ const HomePage = () => {
                   <Badge color='green'>05</Badge>
                   <Text c={'green'}>Lịch hẹn</Text>
                 </Group>
-                <Text w={'70%'}>Dựa theo lịch tái khám và lịch đăng ký khám lần đầu để tổng hợp lịch làm việc hàng ngày của phòng khám.</Text>
+                <Text ta='center' w={'70%'}>Dựa theo lịch tái khám và lịch đăng ký khám lần đầu để tổng hợp lịch làm việc hàng ngày của phòng khám.</Text>
               </Stack>
             </Grid.Col>
 
@@ -178,7 +179,7 @@ const HomePage = () => {
                   <Badge color='#B85B36'>06</Badge>
                   <Text c={'#B85B36'}>Tin Tức, Quảng cáo</Text>
                 </Group>
-                <Text w={'70%'}>Quản lý, Đăng tải các tin tức quản cáo cho phòng khám</Text>
+                <Text ta='center' w={'70%'}>Quản lý, Đăng tải các tin tức quản cáo cho phòng khám</Text>
               </Stack>
             </Grid.Col>
 
@@ -191,8 +192,7 @@ const HomePage = () => {
           <Divider size={'lg'} color='black' w={'100%'} />
         </Stack>
       </Center>
- </Stack>
-
+    </Stack>
   );
 };
 

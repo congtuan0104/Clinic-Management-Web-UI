@@ -116,7 +116,7 @@ const RegisterPage = () => {
   };
 
   return (
-    <Container size={570} py={30}>
+    <Container size={570} py={30} className='min-h-[calc(100vh_-_145px)]'>
       <Paper withBorder shadow="md" p={30} radius="md">
         <Title>Đăng ký</Title>
         <Text c="dimmed" size="sm" mt={5} mb={15}>

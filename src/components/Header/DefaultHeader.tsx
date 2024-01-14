@@ -22,9 +22,10 @@ import {
   Image,
 } from '@mantine/core';
 
-import { useDisclosure } from '@mantine/hooks';
+import { useDisclosure, useWindowScroll } from '@mantine/hooks';
 import { Link } from 'react-router-dom';
 import ClinusLogo from '@/assets/images/logo.png'
+import classNames from 'classnames';
 
 
 // header cho các trang dành cho khách hàng chưa đăng nhập
@@ -34,9 +35,14 @@ const Header = () => {
 
   const { logout } = useAuth();
 
+  const [scroll] = useWindowScroll();
+
   return (
-    <Box h={60} bg='white' className="shadow-md">
-      <header className="h-full max-w-screen-xxl mx-auto">
+    <Box h={60} bg='white' className={classNames(
+      " fixed top-0 inset-x-0 z-10 transition-all duration-300 ease-in-out",
+      scroll.y > 60 ? 'shadow-lg' : 'shadow-none'
+    )}>
+      <header className="h-full max-w-screen-xl mx-auto">
         <Group justify="space-between" h="100%">
           <Box w={userInfo ? undefined : 222}>
             <Link to={PATHS.HOME}>
@@ -45,16 +51,16 @@ const Header = () => {
           </Box>
 
           <Group h="100%" gap={35} visibleFrom="sm">
-            <Link className="hover:text-[#6964ff]" to={PATHS.HOME}>
+            <Link className="text-primary-300 hover:text-teal-500" to={PATHS.HOME}>
               Trang chủ
             </Link>
-            <Link className="hover:text-[#6964ff]" to="#">
+            <Link className="text-primary-300 hover:text-teal-500" to="#">
               Giới thiệu
             </Link>
-            <Link className="hover:text-[#6964ff]" to={PATHS.PRICING_PLAN}>
+            <Link className="text-primary-300 hover:text-teal-500" to={PATHS.PRICING_PLAN}>
               Bảng giá
             </Link>
-            <Link className="hover:text-[#6964ff]" to="#">
+            <Link className="text-primary-300 hover:text-teal-500" to="#">
               Tin tức
             </Link>
           </Group>
