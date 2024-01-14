@@ -1,3 +1,4 @@
+import { Gender } from "@/enums";
 import { IAppointment } from "@/types";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Box, Modal, Text, Chip, Button } from "@mantine/core";
@@ -19,6 +20,11 @@ const schema = yup.object().shape({
   date: yup.date().required('Chọn ngày hẹn khám'),
   note: yup.string(),
   patientName: yup.string().required('Tên bệnh nhân không được để trống'),
+  patientPhone: yup.string().required('Số điện thoại không được để trống'),
+  patientEmail: yup.string().email('Email không hợp lệ'),
+  reason: yup.string(),
+  birthday: yup.date(),
+  gender: yup.mixed<Gender>().oneOf(Object.values(Gender) as number[]).required('Giới tính không được để trống')
 });
 
 enum Step {
@@ -39,6 +45,11 @@ const ModalAddAppointment = ({ isOpen, onClose }: IProps) => {
       date: new Date(),
       note: '',
       patientName: '',
+      patientPhone: '',
+      birthday: undefined,
+      patientEmail: '',
+      reason: '',
+      gender: undefined,
     },
   });
 
@@ -75,6 +86,7 @@ const ModalAddAppointment = ({ isOpen, onClose }: IProps) => {
             mt={20}
             w={'100%'}
             valueFormat="DD-MM-YYYY"
+            minDate={new Date()}
             control={control}
             rightSection={<FaCalendarDays size={18} />}
           />
@@ -83,28 +95,28 @@ const ModalAddAppointment = ({ isOpen, onClose }: IProps) => {
         <Chip.Group>
           <Text mt={20} mb={5}>Chọn thời gian khám</Text>
           <div className="grid grid-cols-3 gap-x-3 gap-y-2 mt-1 p-3 border-solid border-[1px] border-gray-300 rounded-lg max-h-[200px] overflow-y-auto">
-            <Chip icon={<FaRegClock size={16} />} styles={{ label: { width: '100%' } }} size="md" value="1">09:15 AM - 09:25 AM</Chip>
-            <Chip icon={<FaRegClock size={16} />} styles={{ label: { width: '100%' } }} size="md" value="2">09:30 AM - 09:40 AM</Chip>
-            <Chip icon={<FaRegClock size={16} />} styles={{ label: { width: '100%' } }} size="md" value="3">09:45 AM - 09:55 AM</Chip>
-            <Chip icon={<FaRegClock size={16} />} styles={{ label: { width: '100%' } }} size="md" value="4">10:00 AM - 10:10 AM</Chip>
-            <Chip icon={<FaRegClock size={16} />} styles={{ label: { width: '100%' } }} size="md" value="5">10:15 AM - 10:25 AM</Chip>
-            <Chip icon={<FaRegClock size={16} />} styles={{ label: { width: '100%' } }} size="md" value="6">10:30 AM - 10:40 AM</Chip>
-            <Chip icon={<FaRegClock size={16} />} styles={{ label: { width: '100%' } }} size="md" value="7">10:45 AM - 10:55 AM</Chip>
-            <Chip icon={<FaRegClock size={16} />} styles={{ label: { width: '100%' } }} size="md" value="8">11:00 AM - 11:10 AM</Chip>
-            <Chip icon={<FaRegClock size={16} />} styles={{ label: { width: '100%' } }} size="md" value="9">11:15 AM - 11:25 AM</Chip>
-            <Chip icon={<FaRegClock size={16} />} styles={{ label: { width: '100%' } }} size="md" value="10">11:30 AM - 11:40 AM</Chip>
-            <Chip icon={<FaRegClock size={16} />} styles={{ label: { width: '100%' } }} size="md" value="11">11:45 AM - 11:55 AM</Chip>
-            <Chip icon={<FaRegClock size={16} />} styles={{ label: { width: '100%' } }} size="md" value="12">12:00 AM - 12:10 AM</Chip>
-            <Chip icon={<FaRegClock size={16} />} styles={{ label: { width: '100%' } }} size="md" value="13">12:15 AM - 12:25 AM</Chip>
-            <Chip icon={<FaRegClock size={16} />} styles={{ label: { width: '100%' } }} size="md" value="14">12:30 AM - 12:40 AM</Chip>
-            <Chip icon={<FaRegClock size={16} />} styles={{ label: { width: '100%' } }} size="md" value="15">12:45 AM - 12:55 AM</Chip>
-            <Chip icon={<FaRegClock size={16} />} styles={{ label: { width: '100%' } }} size="md" value="16">13:00 AM - 13:10 AM</Chip>
-            <Chip icon={<FaRegClock size={16} />} styles={{ label: { width: '100%' } }} size="md" value="17">13:15 AM - 13:25 AM</Chip>
-            <Chip icon={<FaRegClock size={16} />} styles={{ label: { width: '100%' } }} size="md" value="18">13:30 AM - 13:40 AM</Chip>
-            <Chip icon={<FaRegClock size={16} />} styles={{ label: { width: '100%' } }} size="md" value="19">13:45 AM - 13:55 AM</Chip>
-            <Chip icon={<FaRegClock size={16} />} styles={{ label: { width: '100%' } }} size="md" value="20">14:00 AM - 14:10 AM</Chip>
-            <Chip icon={<FaRegClock size={16} />} styles={{ label: { width: '100%' } }} size="md" value="21">14:15 AM - 14:25 AM</Chip>
-            <Chip icon={<FaRegClock size={16} />} styles={{ label: { width: '100%' } }} size="md" value="22">14:30 AM - 14:40 AM</Chip>
+            <Chip icon={<FaRegClock size={14} />} styles={{ label: { width: '100%' } }} size="md" value="1">09:15 AM - 09:25 AM</Chip>
+            <Chip icon={<FaRegClock size={14} />} styles={{ label: { width: '100%' } }} size="md" value="2">09:30 AM - 09:40 AM</Chip>
+            <Chip icon={<FaRegClock size={14} />} styles={{ label: { width: '100%' } }} size="md" value="3">09:45 AM - 09:55 AM</Chip>
+            <Chip icon={<FaRegClock size={14} />} styles={{ label: { width: '100%' } }} size="md" value="4">10:00 AM - 10:10 AM</Chip>
+            <Chip icon={<FaRegClock size={14} />} styles={{ label: { width: '100%' } }} size="md" value="5">10:15 AM - 10:25 AM</Chip>
+            <Chip icon={<FaRegClock size={14} />} styles={{ label: { width: '100%' } }} size="md" value="6">10:30 AM - 10:40 AM</Chip>
+            <Chip icon={<FaRegClock size={14} />} styles={{ label: { width: '100%' } }} size="md" value="7">10:45 AM - 10:55 AM</Chip>
+            <Chip icon={<FaRegClock size={14} />} styles={{ label: { width: '100%' } }} size="md" value="8">11:00 AM - 11:10 AM</Chip>
+            <Chip icon={<FaRegClock size={14} />} styles={{ label: { width: '100%' } }} size="md" value="9">11:15 AM - 11:25 AM</Chip>
+            <Chip icon={<FaRegClock size={14} />} styles={{ label: { width: '100%' } }} size="md" value="10">11:30 AM - 11:40 AM</Chip>
+            <Chip icon={<FaRegClock size={14} />} styles={{ label: { width: '100%' } }} size="md" value="11">11:45 AM - 11:55 AM</Chip>
+            <Chip icon={<FaRegClock size={14} />} styles={{ label: { width: '100%' } }} size="md" value="12">12:00 AM - 12:10 AM</Chip>
+            <Chip icon={<FaRegClock size={14} />} styles={{ label: { width: '100%' } }} size="md" value="13">12:15 AM - 12:25 AM</Chip>
+            <Chip icon={<FaRegClock size={14} />} styles={{ label: { width: '100%' } }} size="md" value="14">12:30 AM - 12:40 AM</Chip>
+            <Chip icon={<FaRegClock size={14} />} styles={{ label: { width: '100%' } }} size="md" value="15">12:45 AM - 12:55 AM</Chip>
+            <Chip icon={<FaRegClock size={14} />} styles={{ label: { width: '100%' } }} size="md" value="16">13:00 AM - 13:10 AM</Chip>
+            <Chip icon={<FaRegClock size={14} />} styles={{ label: { width: '100%' } }} size="md" value="17">13:15 AM - 13:25 AM</Chip>
+            <Chip icon={<FaRegClock size={14} />} styles={{ label: { width: '100%' } }} size="md" value="18">13:30 AM - 13:40 AM</Chip>
+            <Chip icon={<FaRegClock size={14} />} styles={{ label: { width: '100%' } }} size="md" value="19">13:45 AM - 13:55 AM</Chip>
+            <Chip icon={<FaRegClock size={14} />} styles={{ label: { width: '100%' } }} size="md" value="20">14:00 AM - 14:10 AM</Chip>
+            <Chip icon={<FaRegClock size={14} />} styles={{ label: { width: '100%' } }} size="md" value="21">14:15 AM - 14:25 AM</Chip>
+            <Chip icon={<FaRegClock size={14} />} styles={{ label: { width: '100%' } }} size="md" value="22">14:30 AM - 14:40 AM</Chip>
           </div>
         </Chip.Group>
 
@@ -145,51 +157,88 @@ const ModalAddAppointment = ({ isOpen, onClose }: IProps) => {
   const renderAddPatientInfoStep = () => {
     return (
       <>
+        <TextInput
+          label="Họ và tên"
+          placeholder="Họ tên bệnh nhân"
+          required
+          name='patientName'
+          size="md"
+          radius='md'
+          w={'100%'}
+          control={control}
+          mt={10}
+        />
         <div className="flex justify-between gap-4 items-end">
           <TextInput
-            label="Họ và tên"
-            placeholder="Họ tên bệnh nhân"
+            label="Số điện thoại"
+            placeholder="Nhập số điện thoại"
             required
-            name='patientName'
+            name='patientPhone'
+            type="tel"
             size="md"
             radius='md'
             w={'100%'}
             control={control}
           />
 
-          {/* <TextInput
-            label="Số điện thoại"
-            placeholder="Nhập số điện thoại"
-            required
-            name='phone'
+          <TextInput
+            label="Email bệnh nhân"
+            placeholder="Nhập email"
+            name='patientEmail'
             size="md"
+            type="email"
             radius='md'
+            mt={20}
             w={'100%'}
             control={control}
-          /> */}
+          />
+
+        </div>
+        <div className="flex justify-between gap-4 items-end">
+          <DateInput
+            label="Ngày sinh"
+            name="birthday"
+            required
+            size="md"
+            radius="md"
+            mt={20}
+            w={'100%'}
+            maxDate={new Date()}
+            valueFormat="DD-MM-YYYY"
+            control={control}
+            rightSection={<FaCalendarDays size={18} />}
+          />
+
+          {/* Giới tính */}
+          <Select
+            label="Giới tính"
+            placeholder="Chọn giới tính"
+            name="gender"
+            searchable
+            data={[
+              { value: Gender.Male.toString(), label: 'Nam' },
+              { value: Gender.Female.toString(), label: 'Nữ' },
+              { value: Gender.Undefined.toString(), label: 'Không rõ' },
+            ]}
+            control={control}
+            size="md"
+            radius="md"
+            mt={20}
+            w={'100%'}
+          />
         </div>
 
-        {/* <TextInput
-          label="Email"
-          placeholder="Nhập email"
-          name='email'
+        <Textarea
+          label="Lý do khám bệnh"
+          placeholder="Thêm nguyên nhân khám bệnh"
+          name='reason'
           size="md"
           radius='md'
           mt={20}
+          minRows={3}
           w={'100%'}
           control={control}
         />
-
-        <TextInput
-          label="Địa chỉ"
-          placeholder="Nhập địa chỉ"
-          name='address'
-          size="md"
-          radius='md'
-          mt={20}
-          w={'100%'}
-          control={control}
-        /> */}
 
         <div className="mt-3 flex justify-end gap-4">
           <Button

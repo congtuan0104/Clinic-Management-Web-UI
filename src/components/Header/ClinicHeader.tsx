@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { PATHS } from '@/config';
 import { useAppDispatch, useAppSelector, useAuth } from '@/hooks';
 import { currentClinicSelector, focusModeSelector, listClinicSelector, openSidebarClinicSelector, setCurrentClinic, setUserInfo, toggleSidebarClinic, userInfoSelector } from '@/store';
-import { Text, Group, Button, Image, Divider, Menu, TextInput, Flex, ScrollArea, Indicator, ActionIcon, Badge, Title, Tooltip } from '@mantine/core';
+import { Text, Group, Button, Image, Divider, Menu, TextInput, Flex, ScrollArea, Indicator, ActionIcon, Badge, Title, Tooltip, Kbd } from '@mantine/core';
 import { useDisclosure, useFullscreen, useNetwork } from '@mantine/hooks';
 import ClinusLogo from '@/assets/images/logo.png';
 import { IClinic } from '@/types';
@@ -16,6 +16,8 @@ import { RiMenuFoldFill, RiMenuUnfoldFill } from "react-icons/ri";
 import { FaUserCircle } from "react-icons/fa";
 import { BsCardText } from "react-icons/bs";
 import { BiCollapse, BiExpand } from "react-icons/bi";
+import { spotlight } from '@mantine/spotlight';
+
 
 const ClinicHeader = () => {
   const { logout } = useAuth();
@@ -43,34 +45,42 @@ const ClinicHeader = () => {
   return (
     <header className="h-[60px] flex justify-between items-center pl-3 pr-5 bg-white z-10 
     border-solid border-0 border-b border-gray-300 fixed top-0 right-0 left-0">
-      <Group
-        // className='transition-all duration-300 ease-in-out'
-        w={(isOpenSidebar || focusMode) ? 280 : 70}
-        justify='space-between'
+      <Flex
+        className='transition-all duration-300 ease-in-out'
+        w={(isOpenSidebar || focusMode) ? 280 : 220}
+        justify={(isOpenSidebar || focusMode) ? 'space-between' : 'flex-end'}
         align='center'
+        direction={(isOpenSidebar || focusMode) ? 'row' : "row-reverse"}
         pr={16}>
-        {(isOpenSidebar || focusMode) && (
-          <Link className='py-[4px] pr-1 w-fit h-[60px]' to={PATHS.CLINIC_DASHBOARD}>
-            <Image src={ClinusLogo} alt='logo' h={51} w={150} fit='contain' />
-          </Link>
-        )}
+        <Link className='py-[4px] pr-1 w-fit h-[60px]' to={PATHS.CLINIC_DASHBOARD}>
+          <Image src={ClinusLogo} alt='logo' h={51} w={150} fit='contain' />
+        </Link>
 
         {!focusMode &&
-          <Tooltip label={isOpenSidebar ? 'Thu gọn menu' : 'Mở rộng menu'}>
+          <Tooltip label={isOpenSidebar ? 'Thu gọn menu (Ctrl + M)' : 'Mở rộng menu (Ctrl + M)'}>
             <ActionIcon color='teal.6' variant='transparent' size={45} onClick={toggleMenu}>
               {isOpenSidebar ? <RiMenuFoldFill size={35} /> : <RiMenuUnfoldFill size={35} />}
             </ActionIcon>
           </Tooltip>}
-      </Group>
+      </Flex>
 
       {!focusMode && (
         <TextInput
-          variant="filled"
           placeholder="Tìm kiếm"
           leftSection={<IoSearch size={20} />}
-          radius='sm'
+          radius='md'
+          readOnly
           w='100%'
+          onClick={() => spotlight.open()}
           maw={300}
+          styles={{
+            input: {
+              cursor: 'pointer',
+              height: '40px',
+            },
+          }}
+          rightSectionWidth={60}
+          rightSection={<><Kbd>Ctrl+K</Kbd></>}
         />
       )}
 

@@ -6,7 +6,7 @@ import { FaHome, FaHospitalUser } from "react-icons/fa";
 import { LuWarehouse } from "react-icons/lu";
 import { IoSettingsOutline } from "react-icons/io5";
 import { MdCalendarMonth, MdNotificationsNone, MdOutlineAnalytics, MdOutlinePeopleAlt, MdOutlineSchedule, MdPayment } from "react-icons/md";
-import { RiMessage2Fill } from 'react-icons/ri';
+import { RiMessage2Fill, RiUserReceived2Line } from 'react-icons/ri';
 import { useLocation } from 'react-router-dom';
 import { useAppSelector, useAuth } from '@/hooks';
 import { INotification } from '@/types';
@@ -15,6 +15,7 @@ import { LinksGroup } from './LinksGroup/LinksGroup';
 import { PATHS } from '@/config';
 import classNames from 'classnames';
 import { openSidebarClinicSelector } from '@/store';
+import { FaBedPulse } from 'react-icons/fa6';
 
 const createMenuItem = () => {
   return [
@@ -35,12 +36,12 @@ const createMenuItem = () => {
         { label: 'Vai trò nhân viên', href: PATHS.ROLE_MANAGEMENT },
       ],
     },
-    { label: 'Nhắn tin tư vấn', icon: RiMessage2Fill, href: PATHS.CLINIC_CHAT },
     { label: 'Bệnh nhân', icon: FaHospitalUser },
     { label: 'Lịch hẹn khám', icon: MdCalendarMonth, href: PATHS.CLINIC_APPOINTMENT },
-    { label: 'Tiếp nhận bệnh nhân', icon: MdOutlineAnalytics },
-    { label: 'Khám bệnh', icon: MdOutlineAnalytics },
+    { label: 'Tiếp nhận bệnh nhân', icon: RiUserReceived2Line },
+    { label: 'Khám bệnh', icon: FaBedPulse },
     { label: 'Thanh toán', icon: MdPayment },
+    { label: 'Nhắn tin tư vấn', icon: RiMessage2Fill, href: PATHS.CLINIC_CHAT },
     { label: 'Kho hàng, vật tư', icon: LuWarehouse },
     { label: 'Thống kê báo cáo', icon: MdOutlineAnalytics },
     { label: 'Cài đặt', icon: IoSettingsOutline },
