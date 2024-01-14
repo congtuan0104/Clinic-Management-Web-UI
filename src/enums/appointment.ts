@@ -1,6 +1,6 @@
 export enum APPOINTMENT_STATUS {
-  BOOK = 'book',
-  CHECK_IN = 'check-in',
-  CHECK_OUT = 'check-out',
-  CANCEL = 'cancel',
+  BOOK = 'Chưa xác nhận',
+  CHECK_IN = 'Đã xác nhận',
+  CHECK_OUT = 'Đã đến hẹn',
+  CANCEL = 'Hủy lịch hẹn',
 }

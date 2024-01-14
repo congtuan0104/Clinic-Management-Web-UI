@@ -2,6 +2,8 @@ import { useAppSelector } from '@/hooks';
 import { userInfoSelector } from '@/store';
 import { Box, Title, Text } from '@mantine/core';
 import { Sparkline } from '@mantine/charts';
+import { PATHS } from '@/config';
+import { Link } from 'react-router-dom';
 
 const DashboardAdmin = () => {
   const userInfo = useAppSelector(userInfoSelector);
@@ -39,6 +41,11 @@ const DashboardAdmin = () => {
           />
         </div>
         <div className="col-span-1 p-2 rounded-md bg-white">
+          Lịch hẹn khám sắp diễn ra
+
+          <Link to={PATHS.CLINIC_APPOINTMENT} className='text-right ml-auto text-primary-300 hover:text-primary-400'>
+            <Text className='text-center'>Xem tất cả lịch hẹn</Text>
+          </Link>
 
         </div>
       </div>

@@ -13,12 +13,13 @@ a {
   color: black;
 }
 
-body::-webkit-scrollbar {
+*::-webkit-scrollbar {
   background-color: transparent;
-  width: 6px;
+  width: 8px;
 }
-body:hover::-webkit-scrollbar-thumb {
+*:hover::-webkit-scrollbar-thumb {
   background-color: gray;
+  border-radius: 10px;
 }
 
 // .mantine-Select-input {

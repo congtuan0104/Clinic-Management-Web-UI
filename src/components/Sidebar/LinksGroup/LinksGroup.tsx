@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Group, Box, Collapse, ThemeIcon, Text, UnstyledButton, rem } from '@mantine/core';
+import { Group, Box, Collapse, ThemeIcon, Text, UnstyledButton, rem, Menu } from '@mantine/core';
 import { IoIosArrowForward } from "react-icons/io";
 import classes from './LinksGroup.module.css';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
@@ -28,32 +28,47 @@ export function LinksGroup({ icon: Icon, label, initiallyOpened, children, href 
 
   return (
     <>
-      <Box
-        onClick={() => href ? navigate(href) : setOpened((o) => !o)}
-        className={classNames(
-          'w-full font-medium text-14 block px-4 py-2.5  cursor-pointer',
-          href === pathname ? 'bg-primary-0' : 'hover:bg-primary-100'
-        )}>
-        <Group justify="space-between" gap={0}>
-          <Box style={{ display: 'flex', alignItems: 'center' }}>
-            <ThemeIcon c='teal.7' variant="light" size={30}>
-              <Icon style={{ width: rem(18), height: rem(18) }} />
-            </ThemeIcon>
-            {isOpenSidebar && <Box ml="md" className='line-clamp-1'>{label}</Box>}
+      <Menu trigger="hover" position='right-start' openDelay={100} closeDelay={200} arrowOffset={20} withArrow arrowSize={15}>
+        <Menu.Target>
+          <Box
+            onClick={() => href ? navigate(href) : setOpened((o) => !o)}
+            className={classNames(
+              'w-full text-14 block px-4 py-2.5 cursor-pointer',
+              href === pathname ? 'bg-primary-0 text-teal-600' : 'hover:bg-primary-100 text-gray-700'
+            )}>
+            <Group justify="space-between" gap={0}>
+              <Box style={{ display: 'flex', alignItems: 'center' }}>
+                <ThemeIcon c={href === pathname ? 'white' : 'teal.7'} bg={href === pathname ? 'teal.7' : 'white'} variant="light" size={30}>
+                  <Icon size={22} />
+                </ThemeIcon>
+                {isOpenSidebar && <Box ml="md" className='line-clamp-1'>{label}</Box>}
+              </Box>
+
+              {hasLinks && isOpenSidebar && (
+                <IoIosArrowForward
+                  className={classes.chevron}
+                  stroke={1.5}
+                  style={{
+                    width: rem(16),
+                    height: rem(16),
+                    transform: opened ? 'rotate(-90deg)' : 'none',
+                  }}
+                />
+              )}
+            </Group>
+
           </Box>
-          {hasLinks && isOpenSidebar && (
-            <IoIosArrowForward
-              className={classes.chevron}
-              stroke={1.5}
-              style={{
-                width: rem(16),
-                height: rem(16),
-                transform: opened ? 'rotate(-90deg)' : 'none',
-              }}
-            />
-          )}
-        </Group>
-      </Box>
+        </Menu.Target>
+        {hasLinks && !isOpenSidebar && (
+          <Menu.Dropdown>
+            {children.map((item) => (
+              <Menu.Item component={Link} to={item.href}>
+                {item.label}
+              </Menu.Item>
+            ))}
+          </Menu.Dropdown>
+        )}
+      </Menu>
       {hasLinks && isOpenSidebar ? <Collapse in={opened}>{
         children.map((item) => (
           <Link

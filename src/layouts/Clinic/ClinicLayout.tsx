@@ -4,7 +4,7 @@ import { COOKIE_KEY } from '@/constants';
 import { AuthModule, CLINIC_SUBSCRIPTION_STATUS } from '@/enums';
 import { useAppDispatch, useAppSelector, useAuth } from '@/hooks';
 import { clinicApi, notificationApi } from '@/services';
-import { focusModeSelector, openSidebarClinicSelector, setCurrentClinic, setListClinics } from '@/store';
+import { focusModeSelector, openSidebarClinicSelector, setCurrentClinic, setListClinics, toggleSidebarClinic } from '@/store';
 import { INotification } from '@/types';
 import { cookies } from '@/utils';
 import { Title, Text, Group } from '@mantine/core';
@@ -12,12 +12,19 @@ import { notifications } from '@mantine/notifications';
 import classNames from 'classnames';
 import { onValue, ref } from 'firebase/database';
 import { MessagePayload } from 'firebase/messaging';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useQuery } from 'react-query';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { Spotlight, spotlight } from '@mantine/spotlight';
+import { BiSearch } from 'react-icons/bi';
+import { FaHome } from 'react-icons/fa';
+import { MdOutlineSchedule } from 'react-icons/md';
+import useClinicSpotlight from '@/hooks/common/useClinicSpotlight';
+import { useHotkeys } from '@mantine/hooks';
 
 const ClinicLayout = ({ children }: { children: JSX.Element }) => {
   const { userInfo } = useAuth();
+  const { actions } = useClinicSpotlight();
   const [notify, setNotify] = useState<INotification[]>([]);
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
@@ -68,6 +75,12 @@ const ClinicLayout = ({ children }: { children: JSX.Element }) => {
     }
   }, [isLoadingClinic])
 
+  useHotkeys([
+    ['ctrl+M', () => dispatch(toggleSidebarClinic())],
+    ['ctrl+K', () => spotlight.open()],
+  ]);
+
+
 
   return (
     <>
@@ -81,6 +94,18 @@ const ClinicLayout = ({ children }: { children: JSX.Element }) => {
           {children}
         </div>
       </main>
+
+      <Spotlight
+        actions={actions}
+        nothingFound="Không tìm thấy chức năng"
+        highlightQuery
+        radius='md'
+        shortcut="ctrl + K"
+        searchProps={{
+          leftSection: <BiSearch size={20} />,
+          placeholder: 'Nhập chức năng mà bạn muốn tìm kiếm',
+        }}
+      />
     </>
   );
 };

@@ -1,5 +1,5 @@
 import { IAppointment } from "@/types";
-import { Modal, Text } from "@mantine/core";
+import { Flex, Modal, Select, Text } from "@mantine/core";
 import dayjs from "dayjs";
 
 interface IProps {
@@ -22,18 +22,25 @@ const ModalAppointmentDetail = ({ isOpen, onClose, data }: IProps) => {
           <Text>
             Tên bệnh nhân: {data.patientName}
           </Text>
-          <Text>
+          <Text mt={5}>
             Tên bác sĩ: {data.doctorName}
           </Text>
-          <Text>
+          <Text mt={5}>
             Thời gian: {dayjs(data.startTime).format('DD/MM/YYYY HH:mm')} - {dayjs(data.endTime).format('HH:mm')}
           </Text>
-          <Text>
+          <Text mt={5}>
             Ghi chú: {data.note}
           </Text>
-          <Text>
-            Trạng thái: {data.status}
-          </Text>
+          <Flex justify='space-between' align='center'>
+            <Text mr={15}>
+              Trạng thái:
+            </Text>
+            <Select
+              defaultValue={data.status}
+              data={['Chưa xác nhận', 'Đã xác nhận', 'Đã đến hẹn', 'Hủy hẹn']}
+              flex={1}
+            />
+          </Flex>
         </Modal.Body>
       </Modal.Content>
     </Modal.Root>
