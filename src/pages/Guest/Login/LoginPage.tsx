@@ -216,6 +216,7 @@ const LoginPage = () => {
             required
             size="md"
             radius="sm"
+            autoFocus
             control={control}
             leftSection={<SiMaildotru size={16} />}
           />

@@ -6,9 +6,12 @@ import { MdOutlineSchedule } from 'react-icons/md';
 import { RiGroupFill } from 'react-icons/ri';
 import { BsCardText } from 'react-icons/bs';
 import { TbUsersGroup } from 'react-icons/tb';
+import { useAuth } from '..';
+import { CgLogOut } from 'react-icons/cg';
 
 const useClinicSpotlight = () => {
   const navigate = useNavigate()
+  const { logout } = useAuth();
 
   const actions = useMemo(() => {
     return [
@@ -46,6 +49,13 @@ const useClinicSpotlight = () => {
         description: 'Xem thông tin gói dịch vụ mà bạn sở hữu',
         onClick: () => navigate(PATHS.PLAN_MANAGEMENT),
         leftSection: <BsCardText size={20} />,
+      },
+      {
+        id: 'logout',
+        label: 'Đăng xuất',
+        description: 'Đăng xuất khỏi hệ thống',
+        onClick: () => logout(),
+        leftSection: <CgLogOut size={20} />,
       }
     ]
   }, [])

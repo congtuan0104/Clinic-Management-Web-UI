@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { PATHS } from '@/config';
 import { useAppDispatch, useAppSelector, useAuth } from '@/hooks';
 import { currentClinicSelector, focusModeSelector, listClinicSelector, openSidebarClinicSelector, setCurrentClinic, setUserInfo, toggleSidebarClinic, userInfoSelector } from '@/store';
-import { Text, Group, Button, Image, Divider, Menu, TextInput, Flex, ScrollArea, Indicator, ActionIcon, Badge, Title, Tooltip, Kbd } from '@mantine/core';
+import { Text, Group, Button, Image, Divider, Menu, TextInput, Flex, ScrollArea, Indicator, ActionIcon, Badge, Title, Tooltip, Kbd, Select } from '@mantine/core';
 import { useDisclosure, useFullscreen, useNetwork } from '@mantine/hooks';
 import ClinusLogo from '@/assets/images/logo.png';
 import { IClinic } from '@/types';
@@ -89,26 +89,28 @@ const ClinicHeader = () => {
         <Text size='sm' c='gray.6' mr={5} fw={500}>
           {networkStatus.online ? 'Online' : 'Offline'}
         </Text> */}
-        {!focusMode && <Menu shadow="md" width={200} position="bottom-end" offset={-3}>
-          <Divider orientation="vertical" />
-          <Menu.Target>
-            <Button variant='subtle' color='black.6' c='gray.7' size='sm' fw={400} radius='md'>
-              {currentClinic?.name}
-            </Button>
-          </Menu.Target>
 
-          <Divider orientation="vertical" mr={5} />
 
-          <Menu.Dropdown>
-            <ScrollArea h={300}>
-              {listClinic?.map((clinic) => (
-                <Menu.Item key={clinic.id} onClick={() => handleChangeClinic(clinic)}>
-                  {clinic.name}
-                </Menu.Item>
-              ))}
-            </ScrollArea>
-          </Menu.Dropdown>
-        </Menu>}
+        {!focusMode && (<Select
+          radius='md'
+          size='sm'
+          placeholder='Chọn phòng khám'
+          value={currentClinic?.id}
+          styles={{
+            input: {
+              height: '40px',
+            }
+          }}
+          onChange={(value) => {
+            const clinic = listClinic?.find((clinic) => clinic.id === value);
+            if (clinic) {
+              handleChangeClinic(clinic);
+            }
+          }}
+          data={listClinic?.map((clinic) => ({ value: clinic.id, label: clinic.name }))}
+        />)}
+
+        <Divider orientation="vertical" ml={5} />
 
         <Tooltip label={fullscreen ? 'Thu nhỏ' : 'Hiển thị toàn màn hình'}>
           <ActionIcon

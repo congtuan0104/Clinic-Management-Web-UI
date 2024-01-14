@@ -5,14 +5,35 @@ import { FaCheck, FaLink, FaRegNewspaper, FaUsers } from 'react-icons/fa';
 import { IoMdPaper } from 'react-icons/io';
 import { AiOutlineSchedule } from "react-icons/ai";
 import { MdOutlinePayment } from 'react-icons/md';
+import { PATHS } from '@/config';
+import { PlanCard } from '@/components';
+import { useQuery } from 'react-query';
+import { useNavigate } from 'react-router-dom';
+import { planApi } from '@/services';
 
 
 
 const HomePage = () => {
   const userInfo = useAppSelector(userInfoSelector);
 
+  const { data: plans, isLoading } = useQuery('plans', () => getAllPlans());
+  const navigate = useNavigate();
+
+  const getAllPlans = async () => {
+    try {
+      const response = await planApi.getAllPlans();
+      return response.data;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  const handleBuyPlan = () => {
+    navigate(`${PATHS.LOGIN}?callback=${PATHS.PLAN_MANAGEMENT}`)
+  }
+
   return (
-    <Stack gap={'xl'} pb={20} w={'100%'} bg='white'>
+    <Stack gap={'xl'} pb={40} w={'100%'} bg='white'>
       <Center className='max-w-screen-xl mx-auto h-[calc(100vh_-_70px)]'>
         <Flex
           pt={30}
@@ -23,8 +44,8 @@ const HomePage = () => {
         >
           <div>
             <Stack gap={'xl'}>
-              <Text fz={40} fw={700} w={'90%'}>CLINUS - Phần Mềm Quản Lí Phòng Khám Hiệu Quả</Text>
-              <Text fz={16} fw={700} c={'gray.6'}>Với sứ mệnh cải thiện trải nghiệm chăm sóc sức khỏe của người dùng, chúng tôi tự hào giới thiệu một nền tảng độc đáo, giúp bạn dễ dàng quản lý lịch hẹn khám và tận hưởng một dịch vụ y tế chất lượng.</Text>
+              <Text fz={40} fw={700} w={'95%'}>Phần Mềm Quản Lý Phòng Khám Hiệu Quả</Text>
+              <Text fz={16} fw={500} c={'gray.6'}>Với sứ mệnh cải thiện trải nghiệm chăm sóc sức khỏe của người dùng, chúng tôi tự hào giới thiệu một nền tảng độc đáo, giúp bạn dễ dàng quản lý lịch hẹn khám và tận hưởng một dịch vụ y tế chất lượng.</Text>
               <Button size='lg' color='secondary' w={250} radius={'md'}>Đăng ký ngay</Button>
             </Stack>
           </div>
@@ -41,7 +62,7 @@ const HomePage = () => {
         <Center>
           <Stack align='center'>
             <Text size='24px' fw={700} w={'100%'}>Tại sao nên sử dụng Clinus?</Text>
-            <Divider size={'lg'} color='black' w={'30%'} />
+            <Divider size={'md'} color='gray.6' w={'70%'} />
           </Stack>
         </Center>
         <Flex
@@ -114,7 +135,8 @@ const HomePage = () => {
         <Center p={10} className=''>
           <Stack align='center'>
             <Text size='24px' fw={700} >Tính năng</Text>
-            <Text size='20px' c={'gray.6'}>6 Tính năng cốt lõi</Text>
+            <Divider size={'md'} color='gray.6' w={'70%'} />
+
           </Stack>
         </Center>
         <Center>
@@ -188,10 +210,22 @@ const HomePage = () => {
       </Stack>
       <Center>
         <Stack align='center'>
-          <Text size='24px' fw={700} w={'100%'}>TIN TỨC</Text>
-          <Divider size={'lg'} color='black' w={'100%'} />
+          <Text size='24px' fw={700} w={'100%'}>Bảng giá</Text>
+          <Divider size={'md'} color='gray.6' w={'70%'} />
+
         </Stack>
       </Center>
+      <Flex className='max-w-screen-xl mx-auto' gap={20} direction={{ base: 'column', md: 'row' }}>
+        {plans && plans.map((plan) => (
+          <PlanCard key={plan.id} plan={plan} actionText='Mua gói' action={handleBuyPlan} />
+        ))}
+        {plans && plans.map((plan) => (
+          <PlanCard key={plan.id} plan={plan} actionText='Mua gói' action={handleBuyPlan} />
+        ))}
+        {plans && plans.map((plan) => (
+          <PlanCard key={plan.id} plan={plan} actionText='Mua gói' action={handleBuyPlan} />
+        ))}
+      </Flex>
     </Stack>
   );
 };

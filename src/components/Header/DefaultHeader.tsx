@@ -51,17 +51,17 @@ const Header = () => {
           </Box>
 
           <Group h="100%" gap={35} visibleFrom="sm">
-            <Link className="text-primary-300 hover:text-teal-500" to={PATHS.HOME}>
+            <Link className=" hover:text-teal-500" to={PATHS.HOME}>
               Trang chủ
             </Link>
-            <Link className="text-primary-300 hover:text-teal-500" to="#">
-              Giới thiệu
-            </Link>
-            <Link className="text-primary-300 hover:text-teal-500" to={PATHS.PRICING_PLAN}>
-              Bảng giá
-            </Link>
-            <Link className="text-primary-300 hover:text-teal-500" to="#">
+            <Link className=" hover:text-teal-500" to="#">
               Tin tức
+            </Link>
+            <Link className=" hover:text-teal-500" to='#'>
+              Phòng khám
+            </Link>
+            <Link className=" hover:text-teal-500" to="#">
+              Đặt lịch khám
             </Link>
           </Group>
 
@@ -107,7 +107,7 @@ const Header = () => {
           <Stack pl={20}>
             <Link to={PATHS.HOME}>Trang chủ</Link>
             <Link to="#">Giới thiệu</Link>
-            <Link to={PATHS.PRICING_PLAN}>Bảng giá</Link>
+            <Link to='#'>Bảng giá</Link>
             <Link to="#">Tin tức</Link>
           </Stack>
 

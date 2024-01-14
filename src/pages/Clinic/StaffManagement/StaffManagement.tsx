@@ -8,6 +8,7 @@ import {
   Badge,
   Box,
   ActionIcon,
+  Title,
 } from '@mantine/core';
 import { useAppSelector, useAuth } from '@/hooks';
 import { currentClinicSelector } from '@/store';
@@ -15,22 +16,58 @@ import { IoSearch } from 'react-icons/io5';
 import { FaRegEdit, FaTrash } from 'react-icons/fa';
 import { clinicApi } from '@/services';
 import { useDisclosure, useHover } from '@mantine/hooks';
-import { ModalInviteClinicMember, ModalRoleManagement } from "@/components";
+import { ClinusTable, ModalInviteClinicMember, ModalRoleManagement } from "@/components";
 import { useQuery, useQueryClient } from 'react-query';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { PATHS } from '@/config';
-import { MRT_ColumnDef, MantineReactTable, useMantineReactTable } from 'mantine-react-table';
+import { MRT_ColumnDef, MantineReactTable, useMantineReactTable, } from 'mantine-react-table';
 import { IClinicMember } from '@/types';
-import { DataTable } from 'mantine-datatable';
+import { MRT_Localization_VI } from '@/config'
 
 
 const StaffManagementPage = () => {
-  const currentClinic = useAppSelector(currentClinicSelector);
+  const columns = useMemo<MRT_ColumnDef<IClinicMember>[]>(
+    () => [
+      {
+        header: 'Email',
+        accessorKey: 'email',
+        enableClickToCopy: true,
+        enableSorting: false,
+      },
+      {
+        header: 'Họ tên nhân viên',
+        id: 'fullName',
+        accessorFn: (dataRow) => `${dataRow.firstName} ${dataRow.lastName}`,
+      },
+      {
+        header: 'Vai trò',
+        accessorKey: 'role.name',
+        filterFn: 'equals',
+        mantineFilterSelectProps: {
+          data: [
+            { value: 'admin', label: 'Quản trị viên' },
+            { value: 'Bác sĩ', label: 'Bác sĩ' },
+            { value: 'Y tá', label: 'Y tá' },
+          ],
+        },
+        filterVariant: 'select',
+        mantineTableHeadCellProps: {
+          align: 'right',
+        },
+        mantineTableBodyCellProps: {
+          align: 'right',
+        },
+      },
+    ],
+    [],
+  );
+  const queryClient = useQueryClient();
   const { userInfo } = useAuth();
   const [opened, { open, close }] = useDisclosure(false);
-  const navigate = useNavigate();
 
-  const queryClient = useQueryClient();
+  const currentClinic = useAppSelector(currentClinicSelector);
+  // const navigate = useNavigate();
+
 
   const { data: members, isLoading } = useQuery(
     ['clinics_user', currentClinic?.id],
@@ -42,7 +79,8 @@ const StaffManagementPage = () => {
     }
   );
 
-  if (isLoading) return <div>Loading...</div>;
+
+  // if (isLoading) return <div>Loading...</div>;
 
   if (!members) return <div>Không có dữ liệu</div>;
 
@@ -59,50 +97,68 @@ const StaffManagementPage = () => {
       />
     </div>;
 
-  const columns = useMemo<MRT_ColumnDef<IClinicMember>[]>(
-    () => [
-      {
-        header: 'Email',
-        accessorKey: 'email', //simple recommended way to define a column
-        //more column options can be added here to enable/disable features, customize look and feel, etc.
-      },
-      {
-        header: 'Họ tên nhân viên',
-        accessorFn: (dataRow) => dataRow.firstName + dataRow.lastName, //alternate way to access data if processing logic is needed
-      },
-    ],
-    [],
-  );
 
-  //pass table options to useMantineReactTable
-  const table = useMantineReactTable({
-    columns,
-    data: members, //must be memoized or stable (useState, useMemo, defined outside of this component, etc.)
-    enableRowSelection: true, //enable some features
-    enableColumnOrdering: true,
-    enableGlobalFilter: false, //turn off a feature
-  });
+
+
 
   return (
     <>
       <Flex direction="column" gap="md" p="md">
         <Flex align="center" justify="space-between">
-          <Input
-            leftSection={<IoSearch size={16} />}
-            placeholder="Tìm kiếm nhân viên"
-            className='flex-1'
-            maw={300}
-          />
-          <Button onClick={open}>Thêm nhân viên</Button>
+
+          <Button color='primary.3' onClick={open}>Thêm nhân viên</Button>
         </Flex>
 
-        <MantineReactTable table={table} />
+        <ClinusTable
+          columns={columns}
+          data={members}
+          renderTopToolbarCustomActions={() => (
+            <Title order={4}>Danh sách nhân viên</Title>
+          )}
+          enableRowSelection
+          enableDensityToggle={false}
+          // enableColumnFilters={false}
+          // columnFilterDisplayMode='popover'
+          memoMode='cells'
+          getRowId={(row) => row.id}
+          state={{
+            isLoading: isLoading
+          }}
+          enableRowActions
+          displayColumnDefOptions={{
+            'mrt-row-actions': {
+              mantineTableHeadCellProps: {
+                align: 'right',
+              },
+            }
+          }}
+          renderRowActions={({ row }) => (
+            <Flex align='center' justify='flex-end' gap={10}>
+              <ActionIcon
+                variant='outline'
+                color='blue'
+                radius='sm'
+                component={Link}
+                to={`/clinic/nhan-vien/${row.id}`}
+              >
+                <FaRegEdit />
+              </ActionIcon>
+              <ActionIcon
+                variant='outline'
+                color='red'
+                radius='sm'
+                onClick={() => { }}
+              >
+                <FaTrash />
+              </ActionIcon>
+            </Flex>
+          )}
 
-        {/* <DataTable
-      columns={[{ accessor: 'email' }, { accessor: 'firstName' }]}
-      records={members}
-    /> */}
-
+        // enableStickyHeader
+        // mantineTableProps={{
+        //   striped: true,
+        // }}
+        />
 
 
       </Flex>
