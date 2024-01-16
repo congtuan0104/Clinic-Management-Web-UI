@@ -52,7 +52,7 @@ const HomePage = () => {
           <Image
             radius="lg"
             h={'74vh'}
-            src="https://rescribe.in/assets/img/Product_Clinic_Mgmt_Assets/doctor_management.png"
+            src="/assets/images/doctor_management.png"
             fallbackSrc="https://placehold.co/200x200?text=Error"
           />
         </Flex>

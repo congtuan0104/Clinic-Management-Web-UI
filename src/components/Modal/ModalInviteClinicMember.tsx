@@ -140,6 +140,7 @@ const ModalInviteClinicMember = ({
               withAsterisk
               mt="md"
               size="md"
+              searchable
               radius="sm"
               required
               disabled={isLoadingRoles}

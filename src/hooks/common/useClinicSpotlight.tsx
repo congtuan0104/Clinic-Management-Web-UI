@@ -3,7 +3,7 @@ import { useMemo } from "react"
 import { useNavigate } from 'react-router-dom';
 import { PATHS } from '@/config';
 import { MdOutlineSchedule } from 'react-icons/md';
-import { RiGroupFill } from 'react-icons/ri';
+import { RiGroupFill, RiMessage2Fill } from 'react-icons/ri';
 import { BsCardText } from 'react-icons/bs';
 import { TbUsersGroup } from 'react-icons/tb';
 import { useAuth } from '..';
@@ -49,6 +49,13 @@ const useClinicSpotlight = () => {
         description: 'Xem thông tin gói dịch vụ mà bạn sở hữu',
         onClick: () => navigate(PATHS.PLAN_MANAGEMENT),
         leftSection: <BsCardText size={20} />,
+      },
+      {
+        id: 'chat',
+        label: 'Nhắn tin, tư vấn',
+        description: 'Nhắn tin, tư vấn trực tiếp với bệnh nhân',
+        onClick: () => navigate(PATHS.CLINIC_CHAT),
+        leftSection: <RiMessage2Fill size={20} />,
       },
       {
         id: 'logout',

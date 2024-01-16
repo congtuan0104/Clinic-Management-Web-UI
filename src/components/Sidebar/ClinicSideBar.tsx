@@ -3,7 +3,7 @@ import { useDisclosure } from '@mantine/hooks';
 import dayjs from 'dayjs';
 import { CgNotes } from "react-icons/cg";
 import { FaHome, FaHospitalUser } from "react-icons/fa";
-import { LuWarehouse } from "react-icons/lu";
+import { GiMedicines } from "react-icons/gi";
 import { IoSettingsOutline } from "react-icons/io5";
 import { MdCalendarMonth, MdNotificationsNone, MdOutlineAnalytics, MdOutlinePeopleAlt, MdOutlineSchedule, MdPayment } from "react-icons/md";
 import { RiMessage2Fill, RiUserReceived2Line } from 'react-icons/ri';
@@ -42,7 +42,7 @@ const createMenuItem = () => {
     { label: 'Khám bệnh', icon: FaBedPulse },
     { label: 'Thanh toán', icon: MdPayment },
     { label: 'Nhắn tin tư vấn', icon: RiMessage2Fill, href: PATHS.CLINIC_CHAT },
-    { label: 'Kho hàng, vật tư', icon: LuWarehouse },
+    { label: 'Kho thuốc, vật tư', icon: GiMedicines },
     { label: 'Thống kê báo cáo', icon: MdOutlineAnalytics },
     { label: 'Cài đặt', icon: IoSettingsOutline },
   ]

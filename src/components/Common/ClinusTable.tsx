@@ -41,15 +41,23 @@ const ClinusTable = <TData extends MRT_RowData>({
   ...rest
 }: Props<TData>) => {
   const table = useMantineReactTable({
+    // enableColumnResizing: true,
+    // columnFilterDisplayMode: 'popover',
     columns,
     data,
     localization: MRT_Localization_VI,
     icons: customTableIcons,
-    // enableColumnResizing: true,
-    // columnFilterDisplayMode: 'popover',
-    // positionGlobalFilter: 'right',
     enableColumnPinning: true,
     enableFullScreenToggle: false,
+    paginationDisplayMode: 'pages',
+    enableFilterMatchHighlighting: true,
+    enableRowNumbers: true,
+    positionGlobalFilter: 'left',
+    positionActionsColumn: 'last',
+    positionToolbarAlertBanner: 'bottom',
+    initialState: {
+      showGlobalFilter: true, //show the global filter by default
+    },
     mantineFilterTextInputProps: {
       style: { borderBottom: 'unset' },
       className: '!mt-2',
@@ -61,16 +69,10 @@ const ClinusTable = <TData extends MRT_RowData>({
       variant: 'filled',
       radius: 'md',
     },
-    paginationDisplayMode: 'pages',
-    // mantinePaginationProps: {
-    //   radius: 'md',
-    //   variant: 'outline',
-    //   color: 'gray',
-    //   checkIconPosition: 'right',
-    // },
-    positionActionsColumn: 'last',
-    enableRowNumbers: true,
-    positionToolbarAlertBanner: 'bottom',
+    mantineSearchTextInputProps: {
+      styles: { wrapper: { width: '300px' } },
+      radius: 'md',
+    },
     ...rest,
   });
 

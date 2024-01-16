@@ -105,21 +105,21 @@ const StaffManagementPage = () => {
     <>
       <Flex direction="column" gap="md" p="md">
         <Flex align="center" justify="space-between">
-
+          <Title order={4}>Danh sách nhân viên</Title>
           <Button color='primary.3' onClick={open}>Thêm nhân viên</Button>
         </Flex>
 
         <ClinusTable
           columns={columns}
           data={members}
-          renderTopToolbarCustomActions={() => (
-            <Title order={4}>Danh sách nhân viên</Title>
-          )}
-          enableRowSelection
-          enableDensityToggle={false}
-          // enableColumnFilters={false}
-          // columnFilterDisplayMode='popover'
-          memoMode='cells'
+          // enableRowSelection
+          mantineSearchTextInputProps={
+            {
+              placeholder: 'Tìm kiếm nhân viên',
+              styles: { wrapper: { width: '300px' } },
+              radius: 'md',
+            }
+          }
           getRowId={(row) => row.id}
           state={{
             isLoading: isLoading

@@ -30,11 +30,16 @@ const Calendar: React.FC<Omit<CalendarProps, 'localizer'>> = (props) => {
         today: 'Hôm nay',
         agenda: 'Lịch biểu',
         showMore: (total: number) => `+Xem thêm ${total} lịch hẹn`,
-        event: 'Sự kiện'
+        event: 'Sự kiện',
+        noEventsInRange: 'Không có lịch hẹn nào',
+        allDay: 'Cả ngày',
+        timeEvent: 'Thời gian',
+        dateEvent: 'Ngày',
+
       },
       formats: {
         weekdayFormat: (date: Date, culture: any, localizer: any) =>
-          localizer.format(date, 'dddd', culture),
+          localizer.format(date, 'dddd DD/MM', culture),
         monthHeaderFormat: (date: Date, culture: any, localizer: any) =>
           localizer.format(date, `MM/YYYY`, culture),
         dayFormat: (date: Date, culture: any, localizer: any) =>
