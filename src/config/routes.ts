@@ -21,6 +21,7 @@ import {
   AcceptInviteAccountPage,
   StaffDetailPage,
   AppointmentPage,
+  ServicePricePage,
 } from '@/pages';
 
 export const PATHS = {
@@ -45,6 +46,7 @@ export const PATHS = {
   STAFF_DETAIL: '/clinic/nhan-vien/:id',
   STAFF_SCHEDULE: '/clinic/lich-lam-viec',
   CLINIC_APPOINTMENT: '/clinic/lich-hen-kham',
+  CLINIC_SERVICE: '/clinic/bang-gia-dich-vu',
 };
 
 export const ROUTES = [
@@ -203,6 +205,14 @@ export const ROUTES = [
     title: 'Lịch hẹn khám',
     layout: ClinicLayout,
     element: AppointmentPage,
+    isProtected: true,
+    children: [],
+  },
+  {
+    path: PATHS.CLINIC_SERVICE,
+    title: 'Bảng giá dịch vụ',
+    layout: ClinicLayout,
+    element: ServicePricePage,
     isProtected: true,
     children: [],
   },

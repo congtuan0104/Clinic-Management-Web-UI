@@ -68,4 +68,8 @@ export const clinicApi = {
   ): Promise<IApiResponse<IUpdateClinic>> {
     return axiosClient.put(`/clinics/${clinicId}`, updateInfo);
   },
+
+  getAllClinicService(clinicId: string): Promise<IApiResponse<any>> {
+    return axiosClient.get(`/clinics/${clinicId}/services`);
+  },
 };

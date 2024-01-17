@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Group, Box, Collapse, ThemeIcon, Text, UnstyledButton, rem, Menu } from '@mantine/core';
+import { Group, Box, Collapse, ThemeIcon, Tooltip, rem, Menu } from '@mantine/core';
 import { IoIosArrowForward } from "react-icons/io";
 import classes from './LinksGroup.module.css';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
@@ -37,12 +37,14 @@ export function LinksGroup({ icon: Icon, label, initiallyOpened, children, href 
               href === pathname ? 'bg-primary-0 text-teal-600' : 'hover:bg-primary-100 text-gray-700'
             )}>
             <Group justify="space-between" gap={0}>
-              <Box style={{ display: 'flex', alignItems: 'center' }}>
-                <ThemeIcon c={href === pathname ? 'white' : 'teal.7'} bg={href === pathname ? 'teal.7' : 'white'} variant="light" size={30}>
-                  <Icon size={22} />
-                </ThemeIcon>
-                {isOpenSidebar && <Box ml="md" className='line-clamp-1'>{label}</Box>}
-              </Box>
+              <Tooltip color='white' c='gray.9' label={label} disabled={isOpenSidebar || hasLinks} withArrow position='right'>
+                <Box style={{ display: 'flex', alignItems: 'center' }}>
+                  <ThemeIcon c={href === pathname ? 'white' : 'teal.7'} bg={href === pathname ? 'teal.7' : 'white'} variant="light" size={30}>
+                    <Icon size={22} />
+                  </ThemeIcon>
+                  {isOpenSidebar && <Box ml="md" className='line-clamp-1'>{label}</Box>}
+                </Box>
+              </Tooltip>
 
               {hasLinks && isOpenSidebar && (
                 <IoIosArrowForward

@@ -7,69 +7,70 @@ import { FaRegCalendarPlus, FaThList } from "react-icons/fa";
 import { APPOINTMENT_STATUS } from "@/enums";
 import { useDisclosure } from "@mantine/hooks";
 import { DateInput } from '@mantine/dates';
+import { SlotInfo } from "react-big-calendar";
 
+const appointments: Array<IAppointment> = [
+  {
+    id: '1',
+    doctorId: '1',
+    doctorName: 'Doctor 1',
+    patientId: '1',
+    patientName: 'Patient 1',
+    startTime: new Date('2024-01-09T13:45:00-05:00'),
+    endTime: new Date('2024-01-09T14:00:00-05:00'),
+    note: 'Note 1',
+    status: APPOINTMENT_STATUS.BOOK,
+  },
+  {
+    id: '2',
+    doctorId: '2',
+    doctorName: 'Doctor 2',
+    patientId: '2',
+    patientName: 'Patient 2',
+    startTime: new Date('2024-01-09T15:45:00-05:00'),
+    endTime: new Date('2024-01-09T16:00:00-05:00'),
+    note: 'Note 2',
+    status: APPOINTMENT_STATUS.CANCEL,
+  },
+  {
+    id: '3',
+    doctorId: '3',
+    doctorName: 'Doctor 3',
+    patientId: '3',
+    patientName: 'Patient 3',
+    startTime: new Date('2024-01-09T15:45:00-05:00'),
+    endTime: new Date('2024-01-09T16:15:00-05:00'),
+    note: 'Note 3',
+    status: APPOINTMENT_STATUS.CHECK_IN,
+  },
+  {
+    id: '4',
+    doctorId: '4',
+    doctorName: 'Doctor 4',
+    patientId: '4',
+    patientName: 'Patient 4',
+    startTime: new Date('2024-01-09T16:45:00-05:00'),
+    endTime: new Date('2024-01-09T17:00:00-05:00'),
+    note: 'Note 4',
+    status: APPOINTMENT_STATUS.CHECK_OUT,
+  },
+  {
+    id: '5',
+    doctorId: '5',
+    doctorName: 'Doctor 5',
+    patientId: '5',
+    patientName: 'Patient 5',
+    startTime: new Date('2024-01-09T17:45:00-05:00'),
+    endTime: new Date('2024-01-09T18:00:00-05:00'),
+    note: 'Note 5',
+    status: APPOINTMENT_STATUS.BOOK,
+  }
+]
 
 const AppointmentPage = () => {
   const [openedAdd, { open: openAdd, close: closeAdd }] = useDisclosure(false);
   const [openedDetail, { open: openDetail, close: closeDetail }] = useDisclosure(false);
-
-  const appointments: Array<IAppointment> = [
-    {
-      id: '1',
-      doctorId: '1',
-      doctorName: 'Doctor 1',
-      patientId: '1',
-      patientName: 'Patient 1',
-      startTime: new Date('2024-01-09T13:45:00-05:00'),
-      endTime: new Date('2024-01-09T14:00:00-05:00'),
-      note: 'Note 1',
-      status: APPOINTMENT_STATUS.BOOK,
-    },
-    {
-      id: '2',
-      doctorId: '2',
-      doctorName: 'Doctor 2',
-      patientId: '2',
-      patientName: 'Patient 2',
-      startTime: new Date('2024-01-09T15:45:00-05:00'),
-      endTime: new Date('2024-01-09T16:00:00-05:00'),
-      note: 'Note 2',
-      status: APPOINTMENT_STATUS.CANCEL,
-    },
-    {
-      id: '3',
-      doctorId: '3',
-      doctorName: 'Doctor 3',
-      patientId: '3',
-      patientName: 'Patient 3',
-      startTime: new Date('2024-01-09T15:45:00-05:00'),
-      endTime: new Date('2024-01-09T16:15:00-05:00'),
-      note: 'Note 3',
-      status: APPOINTMENT_STATUS.CHECK_IN,
-    },
-    {
-      id: '4',
-      doctorId: '4',
-      doctorName: 'Doctor 4',
-      patientId: '4',
-      patientName: 'Patient 4',
-      startTime: new Date('2024-01-09T16:45:00-05:00'),
-      endTime: new Date('2024-01-09T17:00:00-05:00'),
-      note: 'Note 4',
-      status: APPOINTMENT_STATUS.CHECK_OUT,
-    },
-    {
-      id: '5',
-      doctorId: '5',
-      doctorName: 'Doctor 5',
-      patientId: '5',
-      patientName: 'Patient 5',
-      startTime: new Date('2024-01-09T17:45:00-05:00'),
-      endTime: new Date('2024-01-09T18:00:00-05:00'),
-      note: 'Note 5',
-      status: APPOINTMENT_STATUS.BOOK,
-    }
-  ]
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
   const [selectedAppointment, setSelectedAppointment] = useState<IAppointment | undefined>();
   const [mode, setMode] = useState<'list' | 'calendar'>('calendar')
 
@@ -93,6 +94,12 @@ const AppointmentPage = () => {
     })
   }, [appointments])
 
+  const handleSelectSlot = (slotInfo: SlotInfo) => {
+    if (slotInfo.start < new Date()) return;
+    setSelectedDate(slotInfo.start)
+    openAdd();
+  }
+
   const renderCalendarViewMode = () => {
     return (
       <div className="h-[900px] bg-white p-3 rounded-md">
@@ -104,11 +111,13 @@ const AppointmentPage = () => {
           step={15}
           dayLayoutAlgorithm='no-overlap'
           onSelectEvent={handleSelectAppointment}
+          onSelectSlot={handleSelectSlot}
           // views={['week', 'day']}
           // toolbar={false}
           // resourceTitleAccessor={event => event.title}
           // min={new Date('2027-01-09T22:00:00-05:00')}
           // max={new Date('2023-01-09T06:00:00-05:00')}
+          selectable
           eventPropGetter={event => {
             const status = event.resource && event.resource.status
             let bgColor;
@@ -231,7 +240,7 @@ const AppointmentPage = () => {
 
       </div>
 
-      <ModalAddAppointment isOpen={openedAdd} onClose={closeAdd} />
+      <ModalAddAppointment isOpen={openedAdd} onClose={closeAdd} date={selectedDate} />
 
       {selectedAppointment &&
         <ModalAppointmentDetail isOpen={openedDetail} onClose={closeDetail} data={selectedAppointment} />

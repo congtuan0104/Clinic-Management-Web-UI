@@ -1,5 +1,5 @@
 import React, { useState, MouseEvent, useMemo } from 'react';
-import { Text, Flex, Button, Indicator, Divider, Center, Stack, Box, Title, Grid, Group, SimpleGrid} from '@mantine/core';
+import { Text, Flex, Button, Indicator, Divider, Center, Stack, Box, Title, Grid, Group, SimpleGrid } from '@mantine/core';
 import { Form, useForm, Controller } from 'react-hook-form';
 import { TextInput } from 'react-hook-form-mantine';
 import { CgProfile } from 'react-icons/cg';
@@ -35,7 +35,7 @@ const StaffDetail = () => {
   const [isUpdateInfo, setIsUpdateInfo] = useState<boolean>(false);
   const [isUpdateSchedule, setIsUpdateSchedule] = useState<boolean>(false);
   const { control, setValue, getValues } = useForm<IUpdateInfo>({
-    resolver: yupResolver(schema), 
+    resolver: yupResolver(schema),
     defaultValues: useMemo(() => {
       return {
         id_staff: staffId,
@@ -43,8 +43,7 @@ const StaffDetail = () => {
         lastName: '',
         email: '',
       }
-    }
-      , [currentClinic]),
+    }, [currentClinic]),
   });
 
   const handleTabClick = (tabType: 'info' | 'schedule') => {
@@ -113,10 +112,10 @@ const StaffDetail = () => {
               <Text c='#6B6B6B'>ID Phòng khám: {currentClinic?.id}</Text>
             </Flex>
             <Divider my="md" />
-            
-              <Grid align='center' justify='center'>
-                <Grid.Col>
-                  <Box maw={700} mx="auto">
+
+            <Grid align='center' justify='center'>
+              <Grid.Col>
+                <Box maw={700} mx="auto">
                   <Form control={control} onSubmit={e => onSubmit(e.data)} onError={e => console.log(e)}>
                     <TextInput label="ID nhân viên"
                       disabled
@@ -175,12 +174,12 @@ const StaffDetail = () => {
                           <Button onClick={handleOnClickEditInfo}>Chỉnh sửa</Button>
                         )}
                     </Group>
-                    </Form>
-                  </Box>
-                </Grid.Col>
-                
-              </Grid>
-            
+                  </Form>
+                </Box>
+              </Grid.Col>
+
+            </Grid>
+
           </Box>
         )}
 

@@ -3,7 +3,7 @@ import { IAppointment } from "@/types";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Box, Modal, Text, Chip, Button } from "@mantine/core";
 import dayjs from "dayjs";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { DateInput, Select, TextInput, Textarea, } from "react-hook-form-mantine";
 import { FaRegClock } from "react-icons/fa";
@@ -13,6 +13,7 @@ import * as yup from 'yup';
 interface IProps {
   isOpen: boolean;
   onClose: () => void;
+  date?: Date;
 }
 
 enum BLOOD_GROUP {
@@ -42,11 +43,11 @@ enum Step {
 }
 
 
-const ModalAddAppointment = ({ isOpen, onClose }: IProps) => {
+const ModalAddAppointment = ({ isOpen, onClose, date }: IProps) => {
   const [step, setStep] = useState(Step.SelectTime);
 
 
-  const { control, reset, trigger, formState: { errors } } = useForm({
+  const { control, reset, setValue, formState: { errors } } = useForm({
     resolver: yupResolver(schema),
     mode: 'onChange',
     defaultValues: {
@@ -69,6 +70,11 @@ const ModalAddAppointment = ({ isOpen, onClose }: IProps) => {
     }
   }, [isOpen]);
 
+  useEffect(() => {
+    if (date) {
+      setValue('date', date);
+    }
+  }, [date]);
 
   const renderSelectTimeStep = () => {
     return (

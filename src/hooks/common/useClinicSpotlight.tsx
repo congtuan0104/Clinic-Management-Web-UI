@@ -2,7 +2,7 @@ import { FaHome } from 'react-icons/fa';
 import { useMemo } from "react"
 import { useNavigate } from 'react-router-dom';
 import { PATHS } from '@/config';
-import { MdOutlineSchedule } from 'react-icons/md';
+import { MdOutlineMedicalServices, MdOutlineSchedule } from 'react-icons/md';
 import { RiGroupFill, RiMessage2Fill } from 'react-icons/ri';
 import { BsCardText } from 'react-icons/bs';
 import { TbUsersGroup } from 'react-icons/tb';
@@ -56,6 +56,13 @@ const useClinicSpotlight = () => {
         description: 'Nhắn tin, tư vấn trực tiếp với bệnh nhân',
         onClick: () => navigate(PATHS.CLINIC_CHAT),
         leftSection: <RiMessage2Fill size={20} />,
+      },
+      {
+        id: 'service',
+        label: 'Bảng giá dịch vụ',
+        description: 'Quản lý thông tin các dịch vụ mà phòng khám cung cấp',
+        onClick: () => navigate(PATHS.CLINIC_SERVICE),
+        leftSection: <MdOutlineMedicalServices size={20} />,
       },
       {
         id: 'logout',
