@@ -9,6 +9,7 @@ import {
   IUpdateClinic,
   IUpdateRequest,
   IClinicMember,
+  IClinicStaffDetail,
 } from '@/types';
 import { axiosClient } from '@/utils';
 
@@ -33,6 +34,10 @@ export const clinicApi = {
    */
   getClinicMembers(clinicId: string): Promise<IApiResponse<IClinicMember[]>> {
     return axiosClient.get(`/clinics/${clinicId}/users`);
+  },
+
+  getClinicMember(memberId: string): Promise<IApiResponse<IClinicStaffDetail>>{
+    return axiosClient.get(`/staffs/${memberId}`);
   },
 
   getListUserGroupRole(Id?: string): Promise<IApiResponse<IUserGroupRole[]>> {

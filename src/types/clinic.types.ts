@@ -119,3 +119,22 @@ export interface IInviteClinicMemberRequest {
   roleId: number;
   clinicId: string;
 }
+
+export interface IClinicStaffDetail {
+  id: number;
+  memberId: number;
+  specialize?: string;
+  experience?: number;
+  phoneNumber?: string;
+  address?: string;
+  gender?: number;
+  createdAt?: string;
+  updatedAt?: string;
+  isDisabled: boolean;
+  disabledAt?: string;
+  userId: string;
+  clinicId: string;
+  name?: string;
+  firstName: string;
+  lastName: string;
+}

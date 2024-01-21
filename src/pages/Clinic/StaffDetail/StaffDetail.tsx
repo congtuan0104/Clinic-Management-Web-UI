@@ -1,6 +1,6 @@
-import React, { useState, MouseEvent, useMemo } from 'react';
-import { Text, Flex, Button, Indicator, Divider, Center, Stack, Box, Title, Grid, Group, SimpleGrid } from '@mantine/core';
-import { Form, useForm, Controller } from 'react-hook-form';
+import React, { useState, MouseEvent, useMemo, useEffect } from 'react';
+import { Text, Flex, Button, Indicator, Divider, Center, Stack, Box, Title, Grid, Group, SimpleGrid, Select} from '@mantine/core';
+import { Form, useForm} from 'react-hook-form';
 import { TextInput } from 'react-hook-form-mantine';
 import { CgProfile } from 'react-icons/cg';
 import { FaRegCalendar } from 'react-icons/fa';
@@ -12,39 +12,63 @@ import { useAppSelector } from '@/hooks';
 import { currentClinicSelector } from '@/store';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { useQuery } from 'react-query';
+import { clinicApi } from '@/services';
 
 interface IUpdateInfo {
   id_staff: string;
   firstName: string,
   lastName: string,
-  email: string,
+  phoneNumber?: string,
+  gender?: number,
+  address?: string,
+  specialize?: string,
+  experience?: number,
 }
 
 const schema = yup.object().shape({
   id_staff: yup.string().required(),
   firstName: yup.string().required('Bạn chưa nhập Họ'),
   lastName: yup.string().required('Bạn chưa nhập Tên'),
-  email: yup.string().required('Thông tin email là bắt buộc').email('Email không hợp lệ'),
+  phoneNumber: yup.string(),
+  gender: yup.number(),
+  address: yup.string(),
+  specialize: yup.string(),
+  experience: yup.number(),
 });
 
 const StaffDetail = () => {
   const daysOfWeek = ['Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7', 'Chủ Nhật'];
-  const { id: staffId } = useParams()
+  const { id: staffId } = useParams();
   const currentClinic = useAppSelector(currentClinicSelector);
   const [selectedTab, setSelectedTab] = useState<'info' | 'schedule'>('info');
   const [isUpdateInfo, setIsUpdateInfo] = useState<boolean>(false);
   const [isUpdateSchedule, setIsUpdateSchedule] = useState<boolean>(false);
+  const { data: staff, isLoading } = useQuery('staff', () => getStaffInfo());
   const { control, setValue, getValues } = useForm<IUpdateInfo>({
     resolver: yupResolver(schema),
     defaultValues: useMemo(() => {
       return {
         id_staff: staffId,
-        firstName: '',
-        lastName: '',
-        email: '',
+        firstName: staff?.firstName,
+        lastName: staff?.lastName,
+        phoneNumber: staff?.phoneNumber,
+        gender: staff?.gender,
+        address: staff?.address,
+        specialize: staff?.specialize,
+        experience: staff?.experience,
       }
     }, [currentClinic]),
   });
+
+  const getStaffInfo = async () => {
+    try {
+      const response = await clinicApi.getClinicMember(staffId ?? '');
+      return response.data;
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
   const handleTabClick = (tabType: 'info' | 'schedule') => {
     if (selectedTab === tabType) {
@@ -67,10 +91,10 @@ const StaffDetail = () => {
     const updateInfo = {
       firstName: data.firstName,
       lastName: data.lastName,
-      email: data.email,
     }
     if (currentClinic?.id && staffId) {
       console.log(updateInfo);
+      console.log(staff?.firstName);
     }
   }
 
@@ -144,18 +168,60 @@ const StaffDetail = () => {
                           control={control}
                         />
                       </Grid.Col>
+                      <Grid.Col span={6}>
+                        <TextInput
+                          label="SĐT liên lạc"
+                          disabled={!isUpdateInfo}
+                          mt="md"
+                          w={'100%'}
+                          name='phoneNumber'
+                          control={control}
+                        />
+                      </Grid.Col>
+                      <Grid.Col span={6}>
+                        <TextInput
+                          label="Giới tính"
+                          disabled={!isUpdateInfo}
+                          mt="md"
+                          w={'100%'}
+                          name='gender'
+                          control={control}
+                        />
+                      </Grid.Col>
+                      <Grid.Col span={9}>
+                        <TextInput
+                          label="Chuyên khoa"
+                          disabled={!isUpdateInfo}
+                          mt="md"
+                          w={'100%'}
+                          name='specialize'
+                          control={control}
+                        />
+                      </Grid.Col>
+                      <Grid.Col span={3}>
+                        <TextInput
+                          label="Năm kinh nghiệm"
+                          disabled={!isUpdateInfo}
+                          mt="md"
+                          w={'100%'}
+                          name='experience'
+                          control={control}
+                        />
+                      </Grid.Col>
                     </Grid>
+                    
                     <Grid>
                       <TextInput
-                        label="Email liên hệ"
+                        label="Địa chỉ"
                         disabled={!isUpdateInfo}
                         mt="md"
-                        name='email'
+                        name='address'
                         w={'100%'}
                         px={8}
+                        defaultValue={staff?.address}
                         control={control}
                       />
-
+                      
                     </Grid>
                     <Divider my="md" mt={40} />
                     <Group justify="flex-end" mt="lg">
