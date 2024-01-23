@@ -43,7 +43,15 @@ const createMenuItem = () => {
     { label: 'Khám bệnh', icon: FaBedPulse },
     { label: 'Thanh toán', icon: MdPayment },
     { label: 'Nhắn tin tư vấn', icon: RiMessage2Fill, href: PATHS.CLINIC_CHAT },
-    { label: 'Kho thuốc, vật tư', icon: GiMedicines },
+    {
+      label: 'Kho thuốc, vật tư',
+      icon: GiMedicines,
+      children: [
+        { label: 'Nhập hàng', href: '#' },
+        { label: 'Thuốc', href: '#' },
+        { label: 'Thiết bị, vật tư', href: '#' },
+      ],
+    },
     { label: 'Thống kê báo cáo', icon: MdOutlineAnalytics },
     { label: 'Cài đặt', icon: IoSettingsOutline },
   ]

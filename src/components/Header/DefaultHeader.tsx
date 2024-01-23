@@ -50,20 +50,22 @@ const Header = () => {
             </Link>
           </Box>
 
-          <Group h="100%" gap={35} visibleFrom="sm">
-            <Link className=" hover:text-teal-500" to={PATHS.HOME}>
-              Trang chủ
-            </Link>
-            <Link className=" hover:text-teal-500" to="#">
-              Tin tức
-            </Link>
-            <Link className=" hover:text-teal-500" to='#'>
-              Phòng khám
-            </Link>
-            <Link className=" hover:text-teal-500" to="#">
-              Đặt lịch khám
-            </Link>
-          </Group>
+          {!userInfo && (
+            <Group h="100%" gap={35} visibleFrom="sm">
+              <Link className=" hover:text-teal-500" to={PATHS.HOME}>
+                Trang chủ
+              </Link>
+              <Link className=" hover:text-teal-500" to="#">
+                Tin tức
+              </Link>
+              <Link className=" hover:text-teal-500" to='#'>
+                Phòng khám
+              </Link>
+              <Link className=" hover:text-teal-500" to="#">
+                Đặt lịch khám
+              </Link>
+            </Group>
+          )}
 
           <Group visibleFrom="md">
             {userInfo ? (

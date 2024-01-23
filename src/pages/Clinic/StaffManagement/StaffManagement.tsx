@@ -106,7 +106,7 @@ const StaffManagementPage = () => {
       <Flex direction="column" gap="md" p="md">
         <Flex align="center" justify="space-between">
           <Title order={4}>Danh sách nhân viên</Title>
-          <Button color='primary.3' onClick={open}>Thêm nhân viên</Button>
+          <Button color='secondary.3' onClick={open}>Thêm nhân viên</Button>
         </Flex>
 
         <ClinusTable

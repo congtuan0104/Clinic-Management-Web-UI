@@ -28,7 +28,7 @@ export const PATHS = {
   HOME: '/',
   LOGIN: '/dang-nhap',
   REGISTER: '/dang-ky',
-  PROFILE: '/thong-tin-ca-nhan',
+  PROFILE: '/tai-khoan',
   VERIFY: '/verify-account',
   VERIFY_LINK_ACCOUNT: '/verify-user',
   REGISTER_BY_INVITATION: '/verify-account',
@@ -61,7 +61,7 @@ export const ROUTES = [
   {
     path: PATHS.VERIFY,
     title: 'Xác minh tài khoản',
-    layout: DefaultLayout,
+    layout: NoLayout,
     element: VerifyAccountPage,
     isProtected: false,
     children: [],

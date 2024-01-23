@@ -89,4 +89,9 @@ export const authApi = {
   acceptInviteAccount(token: string): Promise<any> {
     return axiosClient.get(`/auth/verify-account?token=${token}`);
   },
+
+  sendVerifyEmail(email: string): Promise<any> {
+    return axiosClient.post('/auth/resend-verify-email', { email });
+    // return axiosClient.get('/auth/find-all-user', { params: { email } });
+  },
 };

@@ -158,9 +158,10 @@ const ClinicHeader = () => {
           <Menu.Dropdown>
             <Menu.Label>Tài khoản</Menu.Label>
             <Menu.Item
+              onClick={() => navigate(PATHS.PROFILE)}
               leftSection={<CgProfile size={15} />}
             >
-              Thông tin cá nhân
+              Quản lý tài khoản
             </Menu.Item>
             <Menu.Item
               onClick={() => navigate(PATHS.PLAN_MANAGEMENT)}

@@ -65,7 +65,7 @@ export const MRT_Localization_VI: MRT_Localization = {
   resetColumnSize: 'Đặt lại kích thước cột',
   resetOrder: 'Đặt lại thứ tự cột',
   rowActions: 'Thao tác',
-  rowNumber: '#',
+  rowNumber: 'STT',
   rowNumbers: 'Số hàng',
   rowsPerPage: 'Số hàng/trang',
   save: 'Lưu',

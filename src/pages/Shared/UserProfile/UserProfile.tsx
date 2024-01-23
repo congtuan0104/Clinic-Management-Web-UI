@@ -170,7 +170,7 @@ const UserProfilePage = () => {
   }
 
   return (
-    <Flex my={30} mx={{ base: 15, md: 0 }} gap={20} direction={{ base: 'column', md: 'row' }}>
+    <Flex my={30} gap={20} direction={{ base: 'column', md: 'row' }} className='max-w-screen-xl mx-auto'>
       <Paper w='100%' withBorder shadow="md" p={30} radius="md">
         <div>
           {/* <Group wrap="nowrap">

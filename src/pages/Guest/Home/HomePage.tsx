@@ -1,7 +1,8 @@
 import { useAppSelector } from '@/hooks';
 import { userInfoSelector } from '@/store';
 import { Box, Title, Text, Group, Image, Flex, Stack, Button, Container, Badge, Center, Divider, ThemeIcon, Grid } from '@mantine/core';
-import { FaCheck, FaLink, FaRegNewspaper, FaUsers } from 'react-icons/fa';
+import { Carousel } from '@mantine/carousel';
+import { FaArrowLeft, FaArrowRight, FaCheck, FaLink, FaRegNewspaper, FaUsers } from 'react-icons/fa';
 import { IoMdPaper } from 'react-icons/io';
 import { AiOutlineSchedule } from "react-icons/ai";
 import { MdOutlinePayment } from 'react-icons/md';
@@ -10,6 +11,7 @@ import { PlanCard } from '@/components';
 import { useQuery } from 'react-query';
 import { useNavigate } from 'react-router-dom';
 import { planApi } from '@/services';
+import { BiChevronLeftCircle, BiChevronRightCircle } from 'react-icons/bi';
 
 
 
@@ -225,6 +227,32 @@ const HomePage = () => {
         {plans && plans.map((plan) => (
           <PlanCard key={plan.id} plan={plan} actionText='Mua gói' action={handleBuyPlan} />
         ))}
+      </Flex>
+
+      <Center>
+        <Stack align='center'>
+          <Text size='24px' fw={700} w={'100%'}>Một số hình ảnh về ứng dụng</Text>
+          <Divider size={'md'} color='gray.6' w={'70%'} />
+
+        </Stack>
+      </Center>
+      <Flex className='max-w-screen-xl mx-auto'>
+        <Carousel
+          nextControlIcon={<FaArrowRight size={40} />}
+          previousControlIcon={<FaArrowLeft size={40} />}
+
+        >
+          <Carousel.Slide>
+            <Image mx='auto' radius='lg' className='border border-solid border-primary-300' w={'85%'} h='auto' fit='contain' src='/assets/images/home-banner-1.png' />
+          </Carousel.Slide>
+          <Carousel.Slide>
+            <Image mx='auto' radius='lg' className='border border-solid border-primary-300' w={'85%'} h='auto' fit='contain' src='/assets/images/home-banner-2.png' />
+          </Carousel.Slide>
+          <Carousel.Slide>
+            <Image mx='auto' radius='lg' className='border border-solid border-primary-300' w={'85%'} h='auto' fit='contain' src='/assets/images/home-banner-3.png' />
+          </Carousel.Slide>
+
+        </Carousel>
       </Flex>
     </Stack>
   );

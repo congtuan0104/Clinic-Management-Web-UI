@@ -5,7 +5,7 @@ export interface IUserInfo {
   email: string;
   firstName: string;
   lastName: string;
-  emailVerified: boolean;
+  // emailVerified: boolean;
   moduleId: AuthModule;
   isInputPassword: boolean;
 }
