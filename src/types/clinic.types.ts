@@ -121,8 +121,8 @@ export interface IInviteClinicMemberRequest {
 }
 
 export interface IClinicStaffDetail {
-  id: number;
-  memberId: number;
+  id?: number;
+  memberId?: number;
   specialize?: string;
   experience?: number;
   phoneNumber?: string;
@@ -130,11 +130,11 @@ export interface IClinicStaffDetail {
   gender?: number;
   createdAt?: string;
   updatedAt?: string;
-  isDisabled: boolean;
+  isDisabled?: boolean;
   disabledAt?: string;
-  userId: string;
-  clinicId: string;
+  userId?: string;
+  clinicId?: string;
   name?: string;
-  firstName: string;
-  lastName: string;
+  firstName?: string;
+  lastName?: string;
 }

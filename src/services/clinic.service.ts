@@ -36,8 +36,12 @@ export const clinicApi = {
     return axiosClient.get(`/clinics/${clinicId}/users`);
   },
 
-  getClinicMember(memberId: string): Promise<IApiResponse<IClinicStaffDetail>>{
-    return axiosClient.get(`/staffs/${memberId}`);
+  getClinicStaff(staffId: string): Promise<IApiResponse<IClinicStaffDetail>>{
+    return axiosClient.get(`/staffs/${staffId}`);
+  },
+
+  updateStaffInfo(staffId: string, data: IClinicStaffDetail): Promise<any> {
+    return axiosClient.put(`/staffs/${staffId}`, data);
   },
 
   getListUserGroupRole(Id?: string): Promise<IApiResponse<IUserGroupRole[]>> {
