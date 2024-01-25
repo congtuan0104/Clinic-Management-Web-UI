@@ -243,7 +243,7 @@ const LoginPage = () => {
               control={control}
               name="isRemember"
             />
-            <Anchor component={Link} size="sm" to='#'>
+            <Anchor component={Link} size="sm" to={PATHS.FORGET_PASSWORD}>
               Quên mật khẩu?
             </Anchor>
           </Group>

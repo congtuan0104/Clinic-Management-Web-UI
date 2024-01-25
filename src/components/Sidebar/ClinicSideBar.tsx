@@ -19,7 +19,7 @@ import { FaBedPulse } from 'react-icons/fa6';
 
 const createMenuItem = () => {
   return [
-    { label: 'Trang chủ', icon: FaHome, href: PATHS.CLINIC_DASHBOARD },
+    { label: 'Tổng quan', icon: FaHome, href: PATHS.CLINIC_DASHBOARD },
     {
       label: 'Quản trị',
       icon: CgNotes,
