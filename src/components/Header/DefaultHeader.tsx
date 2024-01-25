@@ -23,7 +23,7 @@ import {
 } from '@mantine/core';
 
 import { useDisclosure, useWindowScroll } from '@mantine/hooks';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import ClinusLogo from '@/assets/images/logo.png'
 import classNames from 'classnames';
 
@@ -32,15 +32,17 @@ import classNames from 'classnames';
 const Header = () => {
   const userInfo = useAppSelector(userInfoSelector);
   const [drawerOpened, { toggle: toggleDrawer, close: closeDrawer }] = useDisclosure(false);
+  // pathname url hiện tại react router dom
 
   const { logout } = useAuth();
+  const { pathname } = useLocation()
 
   const [scroll] = useWindowScroll();
 
   return (
-    <Box h={60} bg='white' className={classNames(
+    <Box h={(scroll.y > 100 || pathname !== PATHS.HOME) ? 60 : 100} bg='white' className={classNames(
       " fixed top-0 inset-x-0 z-10 transition-all duration-300 ease-in-out",
-      scroll.y > 60 ? 'shadow-lg' : 'shadow-none'
+      (scroll.y > 100 || pathname !== PATHS.HOME) ? 'shadow-lg' : 'shadow-none'
     )}>
       <header className="h-full max-w-screen-xl mx-auto">
         <Group justify="space-between" h="100%">
@@ -50,20 +52,22 @@ const Header = () => {
             </Link>
           </Box>
 
-          <Group h="100%" gap={35} visibleFrom="sm">
-            <Link className=" hover:text-teal-500" to={PATHS.HOME}>
-              Trang chủ
-            </Link>
-            <Link className=" hover:text-teal-500" to="#">
-              Tin tức
-            </Link>
-            <Link className=" hover:text-teal-500" to='#'>
-              Phòng khám
-            </Link>
-            <Link className=" hover:text-teal-500" to="#">
-              Đặt lịch khám
-            </Link>
-          </Group>
+          {!userInfo && (
+            <Group h="100%" gap={35} visibleFrom="sm">
+              <Link className=" hover:text-teal-500" to={PATHS.HOME}>
+                Trang chủ
+              </Link>
+              <Link className=" hover:text-teal-500" to="/tin-tuc">
+                Tin tức
+              </Link>
+              <Link className=" hover:text-teal-500" to='/phong-kham'>
+                Phòng khám
+              </Link>
+              <Link className=" hover:text-teal-500" to="/dat-lich-hen">
+                Đặt lịch khám
+              </Link>
+            </Group>
+          )}
 
           <Group visibleFrom="md">
             {userInfo ? (

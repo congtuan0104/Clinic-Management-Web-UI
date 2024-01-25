@@ -79,15 +79,16 @@ const RegisterPage = () => {
       const res = await authApi.register(registerData)
 
       if (res.status && !res.errors && res.data) {
-        const userInfo = res.data?.user;
-        const token = res.data?.token;
+        // const userInfo = res.data?.user;
+        // const token = res.data?.token;
 
-        // lưu vào thông tin user vào cookie
-        cookies.set(COOKIE_KEY.USER_INFO, userInfo);
-        cookies.set(COOKIE_KEY.TOKEN, token);
+        // // lưu vào thông tin user vào cookie
+        // cookies.set(COOKIE_KEY.USER_INFO, userInfo);
+        // cookies.set(COOKIE_KEY.TOKEN, token);
 
-        // lưu thông tin user vào redux
-        dispatch(setUserInfo(userInfo));
+        // // lưu thông tin user vào redux
+        // dispatch(setUserInfo(userInfo));
+        navigate(`${PATHS.VERIFY}?email=${data.email}`);
 
         // Hiển thị thông báo
         notifications.show({
@@ -95,8 +96,6 @@ const RegisterPage = () => {
           color: 'green',
         });
 
-        // chuyển hướng về trang chủ
-        navigate(PATHS.HOME);
       }
       else {
         notifications.show({

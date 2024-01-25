@@ -169,10 +169,15 @@ const LoginPage = () => {
         }
       })
       .catch(error => {
-        notifications.show({
-          message: error.response.data.message,
-          color: 'red',
-        });
+        if (error.response.data.message === 'Email chưa được xác thực') {
+          navigate(`${PATHS.VERIFY}?email=${data.email}`); // chuyển hướng đến trang xác thực tài khoản
+        }
+        else {
+          notifications.show({
+            message: error.response.data.message,
+            color: 'red',
+          });
+        }
       });
   };
 
@@ -238,7 +243,7 @@ const LoginPage = () => {
               control={control}
               name="isRemember"
             />
-            <Anchor component={Link} size="sm" to='#'>
+            <Anchor component={Link} size="sm" to={PATHS.FORGET_PASSWORD}>
               Quên mật khẩu?
             </Anchor>
           </Group>

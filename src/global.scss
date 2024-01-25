@@ -81,3 +81,10 @@ a {
 .rbc-toolbar {
   margin-bottom: 15px !important;
 }
+
+.rbc-day-bg {
+  cursor: pointer;
+  &:hover {
+    background-color: #f3a756;
+  }
+}
