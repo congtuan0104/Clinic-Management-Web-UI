@@ -1,4 +1,4 @@
-import { Title, Button, Flex, Text, Box, Center, Stack, Divider, Grid, NumberInput, Group, Image } from "@mantine/core"
+import { Title, Button, Flex, Text, Box, Center, Stack, Divider, Grid, NumberInput, Group, Image, CopyButton, ActionIcon, Tooltip } from "@mantine/core"
 import { RichTextEditor, Link } from '@mantine/tiptap';
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Form, useForm } from "react-hook-form";
@@ -32,6 +32,7 @@ import { useNavigate } from "react-router-dom";
 import { current } from "@reduxjs/toolkit";
 import classNames from "classnames";
 import ClinusLogo from '@/assets/images/logo-2.png';
+import { FaCopy } from "react-icons/fa6";
 
 type ImageUploadType = File | null;
 
@@ -175,6 +176,7 @@ export default function ClinicDetail() {
     setValue('logo', url);
   };
 
+  if (!currentClinic) return null;
 
   return (
     <Center>
@@ -197,7 +199,18 @@ export default function ClinicDetail() {
         <Box w='941px' h='636px' px='30px' bg='white' py='20px' style={{ borderRadius: '10px' }}>
           <Flex justify={"space-between"}>
             <Title order={5}>THÔNG TIN CƠ SỞ Y TẾ</Title>
-            <Text c='#6B6B6B'>ID:{currentClinic?.id}</Text>
+            <div className="flex flex-1 justify-end items-center gap-1">
+              <Text c='#6B6B6B'>ID:{currentClinic.id}</Text>
+              <CopyButton value={currentClinic.id}>
+                {({ copied, copy }) => (
+                  <Tooltip label={copied ? 'Đã copy ID phòng khám' : 'Copy ID phòng khám'}>
+                    <ActionIcon variant="outline" color={copied ? 'gray.5' : 'teal.5'} onClick={copy}>
+                      <FaCopy />
+                    </ActionIcon>
+                  </Tooltip>
+                )}
+              </CopyButton>
+            </div>
           </Flex>
           <Divider my="md" />
           <Grid>
@@ -251,7 +264,7 @@ export default function ClinicDetail() {
                     </Grid.Col>
                     <Grid.Col span={6}>
                       <TextInput
-                        label="Số điện thoại"
+                        label="Số điện thoại liên hệ"
                         disabled={!isUpdate}
                         control={control}
                         mt="md"

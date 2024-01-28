@@ -10,6 +10,7 @@ import { authApi } from '@/services';
 import { useEffect, useState } from 'react';
 import { useDisclosure } from '@mantine/hooks';
 import { notificationApi } from '@/services';
+import { AuthModule } from '@/enums';
 
 // description: hook xử lý các tác vụ liên quan đến chức năng đăng nhập, đăng xuất
 
@@ -71,12 +72,13 @@ export const useAuth = () => {
       }
 
       // gửi thông tin user lên server để lấy token (đang chờ api)
-      console.log(`user info from: `, userInfoFromProvider);
+      console.log(`user info from ${providerStr}: `, userInfoFromProvider);
 
       // kiểm tra account có tồn tại, nếu có thì lưu thông tin user và token
       const res = await authApi.getUserByAccountId(userInfoFromProvider.uid, providerStr);
-      console.log(`userAccount: `, res.data.user);
-      if (res.data.user) {
+      console.log('res', res);
+      if (res.data && res.data.user) {
+        const userInfo = res.data.user;
         cookies.set(COOKIE_KEY.TOKEN, res.data.token);
         cookies.set(COOKIE_KEY.USER_INFO, JSON.stringify(res.data.user));
         dispatch(setUserInfo(res.data.user));
@@ -84,7 +86,20 @@ export const useAuth = () => {
           message: 'Đăng nhập thành công',
           color: 'green',
         });
-        navigate(PATHS.PROFILE);
+        switch (userInfo.moduleId) {
+          case AuthModule.Admin:
+            navigate(PATHS.ADMIN_DASHBOARD);
+            break;
+          case AuthModule.Clinic:
+            navigate(PATHS.CLINIC_DASHBOARD);
+            break;
+          case AuthModule.Patient:
+            navigate(PATHS.PROFILE);
+            break;
+          default:
+            navigate(PATHS.PROFILE);
+            break;
+        }
         return;
       } else {
         // chưa có tài khoản, chọn email để đăng ký tài khoản

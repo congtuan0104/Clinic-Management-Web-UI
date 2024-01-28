@@ -38,7 +38,8 @@ const VerifyAccountPage = () => {
           </p>
           <p className="mb-5 mt-3 text-gray-500">Chúng tôi đã gửi một đường link xác thực đến email
             <span className='text-teal-600'> {email}. </span><br />
-            Vui lòng xác thực để tiếp tục sử dụng ứng dụng</p>
+            Vui lòng xác thực để tiếp tục sử dụng ứng dụng.</p>
+
 
           <Button color='gray.3' c='black' leftSection={<IoMdHome size={18} />} onClick={() => navigate(PATHS.HOME)} radius='xl'>
             Về trang chủ
@@ -47,6 +48,7 @@ const VerifyAccountPage = () => {
             ml={20} color='teal.7' leftSection={<BiMailSend size={18} />} onClick={handleResendVerifyEmail} radius='xl'>
             Gửi lại mail xác thực
           </Button>
+
         </div>
         <div>
           <Image src='/assets/images/doctor-welcome.png' alt='faulty' w={450} fit='contain' />

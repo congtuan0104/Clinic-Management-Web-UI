@@ -12,6 +12,7 @@ import { useQuery } from 'react-query';
 import { useNavigate } from 'react-router-dom';
 import { planApi } from '@/services';
 import { BiChevronLeftCircle, BiChevronRightCircle } from 'react-icons/bi';
+import { useScrollIntoView } from '@mantine/hooks';
 
 
 
@@ -19,6 +20,9 @@ const HomePage = () => {
   const userInfo = useAppSelector(userInfoSelector);
 
   const { data: plans, isLoading } = useQuery('plans', () => getAllPlans());
+  const { scrollIntoView, targetRef } = useScrollIntoView<HTMLDivElement>({
+    offset: 80,
+  });
   const navigate = useNavigate();
 
   const getAllPlans = async () => {
@@ -48,12 +52,13 @@ const HomePage = () => {
             <Stack gap={'xl'}>
               <Text fz={40} fw={700} w={'95%'}>Phần Mềm Quản Lý Phòng Khám Hiệu Quả</Text>
               <Text fz={16} fw={500} c={'gray.6'}>Với sứ mệnh cải thiện trải nghiệm chăm sóc sức khỏe của người dùng, chúng tôi tự hào giới thiệu một nền tảng độc đáo, giúp bạn dễ dàng quản lý lịch hẹn khám và tận hưởng một dịch vụ y tế chất lượng.</Text>
-              <Button size='lg' color='secondary' w={250} radius={'md'}>Đăng ký ngay</Button>
+              <Button onClick={() => scrollIntoView()} size='lg' color='primary' w={250} radius={'xl'}>Xem bảng giá</Button>
             </Stack>
           </div>
           <Image
             radius="lg"
-            h={'74vh'}
+            mah={'74vh'}
+            maw={'55%'}
             src="/assets/images/doctor_management.png"
             fallbackSrc="https://placehold.co/200x200?text=Error"
           />
@@ -212,22 +217,17 @@ const HomePage = () => {
       </Stack>
       <Center>
         <Stack align='center'>
-          <Text size='24px' fw={700} w={'100%'}>Bảng giá</Text>
+          <Text ref={targetRef} size='24px' fw={700} w={'100%'}>Bảng giá</Text>
           <Divider size={'md'} color='gray.6' w={'70%'} />
-
         </Stack>
       </Center>
-      <Flex className='max-w-screen-xl mx-auto' gap={20} direction={{ base: 'column', md: 'row' }}>
+      <Grid gutter={20} className='max-w-screen-xl mx-auto'>
         {plans && plans.map((plan) => (
-          <PlanCard key={plan.id} plan={plan} actionText='Mua gói' action={handleBuyPlan} />
+          <Grid.Col span={{ base: 12, md: 6, lg: 4 }}>
+            <PlanCard key={plan.id} plan={plan} actionText='Mua gói' action={handleBuyPlan} />
+          </Grid.Col>
         ))}
-        {plans && plans.map((plan) => (
-          <PlanCard key={plan.id} plan={plan} actionText='Mua gói' action={handleBuyPlan} />
-        ))}
-        {plans && plans.map((plan) => (
-          <PlanCard key={plan.id} plan={plan} actionText='Mua gói' action={handleBuyPlan} />
-        ))}
-      </Flex>
+      </Grid>
 
       <Center>
         <Stack align='center'>

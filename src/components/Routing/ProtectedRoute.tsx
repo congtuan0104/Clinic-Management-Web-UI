@@ -29,6 +29,7 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
     const expDate = new Date(exp);
     const currentDate = new Date();
 
+    // kiểm tra token đã hết hạn
     if (expDate < currentDate) {
       cookies.remove(COOKIE_KEY.TOKEN);
       cookies.remove(COOKIE_KEY.CURRENT_CLINIC_ID);

@@ -31,7 +31,7 @@ const ClinicHeader = () => {
   const { userInfo } = useAuth();
 
   const { toggle, fullscreen } = useFullscreen();
-  const networkStatus = useNetwork();
+
 
   const handleChangeClinic = (clinic: IClinic) => {
     cookies.set(COOKIE_KEY.CURRENT_CLINIC_ID, clinic.id)

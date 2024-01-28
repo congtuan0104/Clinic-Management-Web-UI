@@ -22,6 +22,7 @@ import {
   StaffDetailPage,
   AppointmentPage,
   ServicePricePage,
+  ResetPasswordPage,
 } from '@/pages';
 
 export const PATHS = {
@@ -30,6 +31,7 @@ export const PATHS = {
   REGISTER: '/dang-ky',
   PROFILE: '/tai-khoan',
   FORGET_PASSWORD: '/quen-mat-khau',
+  RESET_PASSWORD: '/cai-lai-mat-khau',
   VERIFY: '/verify-account',
   VERIFY_LINK_ACCOUNT: '/verify-user',
   REGISTER_BY_INVITATION: '/verify-account',
@@ -48,6 +50,17 @@ export const PATHS = {
   STAFF_SCHEDULE: '/clinic/lich-lam-viec',
   CLINIC_APPOINTMENT: '/clinic/lich-hen-kham',
   CLINIC_SERVICE: '/clinic/bang-gia-dich-vu',
+  CLINIC_NEWS: '/clinic/quan-ly-tin-tuc',
+  CLINIC_PATIENT_MANAGEMENT: '/clinic/benh-nhan',
+  CLINIC_RECEPTION: '/clinic/tiep-nhan-benh-nhan',
+  CLINIC_EXAMINATION: '/clinic/kham-benh',
+  CLINIC_SERVICE_EXECUTION: '/clinic/thuc-hien-dich-vu',
+  EXAMINATION_INVOICE: '/clinic/hoa-don-kham-benh',
+  CLINIC_REPORT: '/clinic/bao-cao',
+};
+
+const DEEPLINK = {
+  // https://clinus.page.link?link=https%3A%2F%2Fclinus.page.link%2Fpayment
 };
 
 export const ROUTES = [
@@ -104,6 +117,14 @@ export const ROUTES = [
     title: 'Đăng ký',
     layout: DefaultLayout,
     element: RegisterByInvitation,
+    isProtected: false,
+    children: [],
+  },
+  {
+    path: PATHS.RESET_PASSWORD,
+    title: 'Đặt lại mật khẩu',
+    layout: DefaultLayout,
+    element: ResetPasswordPage,
     isProtected: false,
     children: [],
   },

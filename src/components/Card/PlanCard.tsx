@@ -52,7 +52,7 @@ const PlanCard = ({ plan, actionText, action }: IPlanCardProps) => {
         ))}
       </Box>
 
-      <Button w='183px' h='50px' mt="xl" mb='24px' radius="25" size="md" type="submit" variant='outline' fullWidth mx='auto' onClick={() => action(plan)} bg='primary' c='white'>
+      <Button w='183px' h='50px' mt="xl" mb='24px' radius="25" size="md" type="submit" fullWidth mx='auto' onClick={() => action(plan)} color='primary'>
         {actionText}
       </Button>
     </Paper>

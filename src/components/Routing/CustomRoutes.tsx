@@ -1,6 +1,9 @@
+import { useNetwork } from "@mantine/hooks";
+import { notifications } from "@mantine/notifications";
 import { useEffect, useState } from "react"
 import { Routes, useLocation } from "react-router"
 import TopBarProgress from "react-topbar-progress-indicator"
+import { CiWifiOff, CiWifiOn } from "react-icons/ci";
 
 TopBarProgress.config({
   barColors: {
@@ -14,6 +17,7 @@ const CustomRoutes = ({ children }: { children: React.ReactNode }) => {
   const [progress, setProgress] = useState(false)
   const [prevLoc, setPrevLoc] = useState("")
   const location = useLocation()
+  // const networkStatus = useNetwork();
 
   useEffect(() => {
     setPrevLoc(location.pathname)
@@ -22,6 +26,26 @@ const CustomRoutes = ({ children }: { children: React.ReactNode }) => {
       setPrevLoc('')
     }
   }, [location])
+
+  // useEffect(() => {
+  //   console.log(networkStatus)
+  //   if (networkStatus.online) {
+  //     notifications.show({
+  //       title: "Thông báo",
+  //       message: "Đã có kết nối trở lại",
+  //       color: "teal",
+  //       icon: <CiWifiOn />,
+  //     })
+  //   }
+  //   else {
+  //     notifications.show({
+  //       title: "Thông báo",
+  //       message: "Bạn đang ngoại tuyến",
+  //       color: "red.5",
+  //       icon: <CiWifiOff />,
+  //     })
+  //   }
+  // }, [networkStatus.online])
 
   useEffect(() => {
     setProgress(false)

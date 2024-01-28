@@ -27,13 +27,6 @@ export const authApi = {
   },
 
   /**
-   * API xác thực tài khoản từ email
-   */
-  confirmEmail(email: string): Promise<IApiResponse<any>> {
-    return axiosClient.post('/auth/confirm', { email, role: 'user' });
-  },
-
-  /**
    * API lấy danh sách tất cả tài khoản bên thứ 3 của một user
    */
   getAccountByUser(userId: string): Promise<any> {
@@ -43,7 +36,7 @@ export const authApi = {
   /**
    * API lấy thông tin user dựa trên accountId (uid của tài khoản bên thứ 3)
    */
-  getUserByAccountId(accountId: string, provider: string): Promise<any> {
+  getUserByAccountId(accountId: string, provider: string): Promise<IApiResponse<ILoginResponse>> {
     return axiosClient.get(`/auth/account?key=${accountId}&provider=${provider}`);
   },
 
@@ -80,6 +73,17 @@ export const authApi = {
    */
   changePassword(data: IChangePasswordRequest): Promise<any> {
     return axiosClient.post('/auth/change-password', data);
+  },
+
+  /**
+   * API gửi mail yêu cầu reset password
+   */
+  forgotPassword(email: string): Promise<any> {
+    return axiosClient.post('/auth/reset-password', { email });
+  },
+
+  resetPassword(email: string, password: string): Promise<any> {
+    return axiosClient.put('/auth/add-new-password', { email, password });
   },
 
   inviteClinicMember(data: IInviteClinicMemberRequest): Promise<any> {

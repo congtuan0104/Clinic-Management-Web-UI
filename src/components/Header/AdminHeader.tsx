@@ -28,7 +28,7 @@ const AdminHeader = () => {
 
   return (
     <Box h={60} className="shadow-md">
-      <header className="h-full px-3">
+      <header className="h-full max-w-screen-xxl mx-auto">
         <Group justify="space-between" h="100%">
           <Box w={userInfo ? undefined : 222}>
             <Link to={PATHS.ADMIN_DASHBOARD}>

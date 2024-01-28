@@ -3,9 +3,10 @@ import { AuthModule } from '@/enums';
 export interface IUserInfo {
   id: string;
   email: string;
+  avatar?: string;
   firstName: string;
   lastName: string;
-  // emailVerified: boolean;
+  emailVerified: boolean;
   moduleId: AuthModule;
   isInputPassword: boolean;
 }
@@ -21,7 +22,7 @@ export interface IRegisterRequest {
   email: string;
   password: string;
   moduleId: AuthModule;
-  // role: string;
+  emailVerified: boolean;
 }
 
 export interface ILinkAccountRequest {
@@ -41,8 +42,10 @@ export interface IGoogleLoginRequest {
 }
 
 export interface IChangePasswordRequest {
-  currentPassword: string;
+  userId?: string;
+  currentPassword?: string;
   newPassword: string;
+  isReset?: boolean;
 }
 
 export interface ILoginResponse {

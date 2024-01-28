@@ -1,4 +1,4 @@
-import { Text, Flex, Box, Paper, Title, Button, Loader, Stack, Badge, ActionIcon } from '@mantine/core';
+import { Text, Flex, Box, Paper, Title, Button, Loader, Stack, Badge, ActionIcon, Grid } from '@mantine/core';
 import { useEffect, useState } from 'react';
 import PlanCard from '@/components/Card/PlanCard';
 import { useQuery } from 'react-query';
@@ -196,15 +196,16 @@ const ClinicManagePage = () => {
           </Flex>
         </Box>
       ) : (<Box>
-        <Text ta="center" size="xl" fw={600} mb='31.72px' mt='33.48px' c='secondary'>
+        <Text ta="center" size="xl" fw={600} mt='20px' c='secondary'>
           Bạn chưa đăng ký phòng khám. Vui lòng chọn mua gói và khởi tạo phòng khám
         </Text>
-        <Flex my={30} gap={20} direction={{ base: 'column', md: 'row' }}>
+        <Grid gutter={20} mt={20}>
           {plans && plans.map((plan) => (
-            <PlanCard key={plan.id} plan={plan} actionText='Mua gói' action={handleBuyPlan} />
+            <Grid.Col span={{ base: 12, md: 6, lg: 4 }}>
+              <PlanCard key={plan.id} plan={plan} actionText='Mua gói' action={handleBuyPlan} />
+            </Grid.Col>
           ))}
-
-        </Flex>
+        </Grid>
       </Box>)}
 
       <ModalCreateNewClinic

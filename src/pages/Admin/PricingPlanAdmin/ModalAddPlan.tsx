@@ -4,7 +4,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { Button, Flex, Modal, Text, Checkbox, LoadingOverlay, Box } from "@mantine/core";
 import { useForm, Form, Controller } from 'react-hook-form';
 import { NumberInput, TextInput, Textarea } from "react-hook-form-mantine";
-import { useMutation, useQuery } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 import { notifications } from '@mantine/notifications';
 
 
@@ -21,6 +21,7 @@ const schema = yup.object().shape({
   planName: yup.string().required('Tên gói dịch vụ là thông tin bắt buộc'),
   currentPrice: yup.number().required('Giá gói dịch vụ là thông tin bắt buộc'),
   duration: yup.number().required('Thời hạn gói dịch vụ là thông tin bắt buộc'),
+  // is_activated: yup.boolean(),
   description: yup.string(),
   optionIds: yup.array()
 });
@@ -28,7 +29,7 @@ const schema = yup.object().shape({
 const ModalAddPlan = ({ open, onClose }: IModalAddPlanProps) => {
 
   const { data: features } = useQuery('options', async () => getAllOptionFeatures());
-
+  const queryClient = useQueryClient();
 
   const getAllOptionFeatures = async () => {
     try {
@@ -80,7 +81,7 @@ const ModalAddPlan = ({ open, onClose }: IModalAddPlanProps) => {
     // chuyển đổi optionIds từ dạng string sang dạng number
     data.optionIds = data.optionIds ? data.optionIds.map((optionId) => Number(optionId)) : [];
     console.log(data);
-    mutate(data);
+    queryClient.invalidateQueries({ queryKey: 'plans' });
   }
 
   const handleClose = () => {

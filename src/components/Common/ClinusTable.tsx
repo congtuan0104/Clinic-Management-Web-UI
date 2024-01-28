@@ -6,6 +6,7 @@ import {
   type MRT_RowData, //default shape of TData (Record<string, any>)
   type MRT_TableOptions,
   MRT_Icons,
+  MRT_Localization,
 } from 'mantine-react-table';
 import { MantineProvider, MantineTheme, createTheme } from '@mantine/core';
 import { FaSort } from 'react-icons/fa6';
@@ -15,6 +16,7 @@ import { MdModeEdit } from 'react-icons/md';
 interface Props<TData extends MRT_RowData> extends MRT_TableOptions<TData> {
   columns: MRT_ColumnDef<TData>[];
   data: TData[];
+  localization?: Partial<MRT_Localization>;
 }
 
 const customeTableTheme = createTheme({
@@ -38,6 +40,7 @@ const customTableIcons: Partial<MRT_Icons> = {
 const ClinusTable = <TData extends MRT_RowData>({
   columns,
   data,
+  localization,
   ...rest
 }: Props<TData>) => {
   const table = useMantineReactTable({
@@ -45,7 +48,7 @@ const ClinusTable = <TData extends MRT_RowData>({
     // columnFilterDisplayMode: 'popover',
     columns,
     data,
-    localization: MRT_Localization_VI,
+    localization: { ...MRT_Localization_VI, ...localization },
     icons: customTableIcons,
     enableColumnPinning: true,
     enableFullScreenToggle: false,

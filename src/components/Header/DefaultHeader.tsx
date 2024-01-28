@@ -71,15 +71,15 @@ const Header = () => {
 
           <Group visibleFrom="md">
             {userInfo ? (
-              <Button variant="light" color="red.5" onClick={logout}>
+              <Button variant="outline" color="red.5" onClick={logout} radius='xl'>
                 Đăng xuất
               </Button>
             ) : (
               <>
-                <Button variant="outline" component={Link} to={PATHS.LOGIN}>
+                <Button variant="outline" color='teal.7' component={Link} to={PATHS.LOGIN} radius='xl'>
                   Đăng nhập
                 </Button>
-                <Button component={Link} to={PATHS.REGISTER}>
+                <Button component={Link} to={PATHS.REGISTER} color='teal.6' radius='xl'>
                   Đăng ký{' '}
                 </Button>
               </>
@@ -135,7 +135,7 @@ const Header = () => {
           </Group>
         </ScrollArea>
       </Drawer>
-    </Box>
+    </Box >
   );
 };
 

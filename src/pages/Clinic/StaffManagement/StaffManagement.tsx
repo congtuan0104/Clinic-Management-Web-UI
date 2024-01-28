@@ -16,13 +16,11 @@ import { IoSearch } from 'react-icons/io5';
 import { FaRegEdit, FaTrash } from 'react-icons/fa';
 import { clinicApi } from '@/services';
 import { useDisclosure, useHover } from '@mantine/hooks';
-import { ClinusTable, ModalInviteClinicMember, ModalRoleManagement } from "@/components";
+import { ClinusTable, ModalInviteClinicMember } from "@/components";
 import { useQuery, useQueryClient } from 'react-query';
-import { Link, useNavigate } from 'react-router-dom';
-import { PATHS } from '@/config';
-import { MRT_ColumnDef, MantineReactTable, useMantineReactTable, } from 'mantine-react-table';
+import { Link } from 'react-router-dom';
+import { MRT_ColumnDef } from 'mantine-react-table';
 import { IClinicMember } from '@/types';
-import { MRT_Localization_VI } from '@/config'
 
 
 const StaffManagementPage = () => {
@@ -79,28 +77,6 @@ const StaffManagementPage = () => {
     }
   );
 
-
-  // if (isLoading) return <div>Loading...</div>;
-
-  if (!members) return <div>Không có dữ liệu</div>;
-
-  if (members.length === 0)
-    return <div className='rounded-md flex flex-col justify-center items-center bg-white h-[600px] m-3'>
-      <Text>Phòng khám chưa có nhân viên</Text>
-      <Button onClick={open} mt={15}>Thêm nhân viên</Button>
-      <ModalInviteClinicMember
-        isOpen={opened}
-        onClose={close}
-        onSuccess={() => {
-          queryClient.invalidateQueries('clinics_user');
-        }}
-      />
-    </div>;
-
-
-
-
-
   return (
     <>
       <Flex direction="column" gap="md" p="md">
@@ -111,7 +87,7 @@ const StaffManagementPage = () => {
 
         <ClinusTable
           columns={columns}
-          data={members}
+          data={members || []}
           // enableRowSelection
           mantineSearchTextInputProps={
             {
@@ -153,6 +129,9 @@ const StaffManagementPage = () => {
               </ActionIcon>
             </Flex>
           )}
+          localization={{
+            noRecordsToDisplay: 'Không có nhân viên nào trong phòng khám',
+          }}
 
         // enableStickyHeader
         // mantineTableProps={{

@@ -5,7 +5,7 @@ import { CgNotes } from "react-icons/cg";
 import { FaHome, FaHospitalUser } from "react-icons/fa";
 import { GiMedicines } from "react-icons/gi";
 import { IoSettingsOutline } from "react-icons/io5";
-import { MdCalendarMonth, MdNotificationsNone, MdOutlineAnalytics, MdOutlinePeopleAlt, MdOutlineSchedule, MdPayment } from "react-icons/md";
+import { MdCalendarMonth, MdNotificationsNone, MdOutlineAnalytics, MdOutlineMedicalServices, MdOutlinePeopleAlt, MdOutlineSchedule, MdPayment } from "react-icons/md";
 import { RiMessage2Fill, RiUserReceived2Line } from 'react-icons/ri';
 import { useLocation } from 'react-router-dom';
 import { useAppSelector, useAuth } from '@/hooks';
@@ -26,7 +26,7 @@ const createMenuItem = () => {
       children: [
         { label: 'Thông tin phòng khám', href: PATHS.CLINIC_INFO_MANAGEMENT },
         { label: 'Bảng giá dịch vụ', href: PATHS.CLINIC_SERVICE },
-        { label: 'Tin tức, quảng cáo', href: '#' },
+        { label: 'Tin tức, quảng cáo', href: PATHS.CLINIC_NEWS },
       ],
     },
     {
@@ -37,11 +37,19 @@ const createMenuItem = () => {
         { label: 'Vai trò nhân viên', href: PATHS.ROLE_MANAGEMENT },
       ],
     },
-    { label: 'Bệnh nhân', icon: FaHospitalUser },
+    { label: 'Bệnh nhân', icon: FaHospitalUser, href: PATHS.CLINIC_PATIENT_MANAGEMENT },
     { label: 'Lịch hẹn khám', icon: MdCalendarMonth, href: PATHS.CLINIC_APPOINTMENT },
-    { label: 'Tiếp nhận bệnh nhân', icon: RiUserReceived2Line },
-    { label: 'Khám bệnh', icon: FaBedPulse },
-    { label: 'Thanh toán', icon: MdPayment },
+    { label: 'Tiếp nhận bệnh nhân', icon: RiUserReceived2Line, href: PATHS.CLINIC_RECEPTION },
+    {
+      label: 'Khám bệnh',
+      icon: FaBedPulse,
+      children: [
+        { label: 'Thăm khám', href: PATHS.CLINIC_EXAMINATION },
+        { label: 'Thực hiện dịch vụ', href: PATHS.CLINIC_SERVICE_EXECUTION },
+      ],
+    },
+    // { label: 'Thực hiện dịch vụ', icon: MdOutlineMedicalServices, href: PATHS.CLINIC_SERVICE_EXECUTION },
+    { label: 'Thanh toán', icon: MdPayment, href: PATHS.EXAMINATION_INVOICE },
     { label: 'Nhắn tin tư vấn', icon: RiMessage2Fill, href: PATHS.CLINIC_CHAT },
     {
       label: 'Kho thuốc, vật tư',
@@ -52,7 +60,7 @@ const createMenuItem = () => {
         { label: 'Thiết bị, vật tư', href: '#' },
       ],
     },
-    { label: 'Thống kê báo cáo', icon: MdOutlineAnalytics },
+    { label: 'Thống kê báo cáo', icon: MdOutlineAnalytics, href: PATHS.CLINIC_REPORT },
     { label: 'Cài đặt', icon: IoSettingsOutline },
   ]
 }

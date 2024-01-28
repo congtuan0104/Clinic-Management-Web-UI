@@ -98,16 +98,30 @@ const LoginPage = () => {
 
       // kiểm tra account có tồn tại, nếu có thì lưu thông tin user và token
       const res = await authApi.getUserByAccountId(userInfoFromProvider.uid, providerStr);
-      console.log(`userAccount: `, res.data.user);
-      if (res.data.user) {
+
+      if (res.data && res.data.user) {
+        const userInfo = res.data.user;
         cookies.set(COOKIE_KEY.TOKEN, res.data.token);
-        cookies.set(COOKIE_KEY.USER_INFO, JSON.stringify(res.data.user));
-        dispatch(setUserInfo(res.data.user));
+        cookies.set(COOKIE_KEY.USER_INFO, JSON.stringify(userInfo));
+        dispatch(setUserInfo(userInfo));
         notifications.show({
           message: 'Đăng nhập thành công',
           color: 'green',
         });
-        navigate(PATHS.PROFILE);
+        switch (userInfo.moduleId) {
+          case AuthModule.Admin:
+            navigate(PATHS.ADMIN_DASHBOARD);
+            break;
+          case AuthModule.Clinic:
+            navigate(PATHS.CLINIC_DASHBOARD);
+            break;
+          case AuthModule.Patient:
+            navigate(PATHS.PROFILE);
+            break;
+          default:
+            navigate(PATHS.PROFILE);
+            break;
+        }
         return;
       } else {
         // chưa có tài khoản, chọn email để đăng ký tài khoản 

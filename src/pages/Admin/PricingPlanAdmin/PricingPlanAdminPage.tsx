@@ -1,7 +1,7 @@
 import { PlanCard } from '@/components';
 import { useAppSelector } from '@/hooks';
 import { planApi } from '@/services';
-import { Box, Title, Text, Flex, Button, Loader } from '@mantine/core';
+import { Box, Title, Text, Flex, Button, Loader, Grid } from '@mantine/core';
 import { useState } from 'react';
 import { useQuery } from 'react-query';
 import ModalAddPlan from './ModalAddPlan';
@@ -28,7 +28,7 @@ const PlanAdminPage = () => {
     <>
       <Flex justify='justify-between' pt={30}>
         <Text size="xl" fw={600} style={{ flex: 1 }}>
-          Danh sách gói dịch vụ
+          Quản lý gói dịch vụ
         </Text>
         {!isLoading && <Button color='secondary.4' onClick={() => setOpenAddModal(true)}>Thêm gói</Button>}
       </Flex>
@@ -37,13 +37,13 @@ const PlanAdminPage = () => {
         <Loader color="blue" size="xl" />
       </Flex>}
 
-      <Flex wrap='wrap' justify='space-between' my={10} mx={{ base: 15, md: 0 }} direction={{ base: 'column', md: 'row' }}>
+      <Grid gutter={20} mt={20}>
         {plans && plans.map((plan) => (
-          <Box w='32%'>
-            <PlanCard key={plan.id} plan={plan} actionText='Xem chi tiết' action={() => setPlanDetail(plan)} />
-          </Box>
+          <Grid.Col span={{ base: 12, md: 6, lg: 4 }}>
+            <PlanCard key={plan.id} plan={plan} actionText='Chi tiết' action={() => setPlanDetail(plan)} />
+          </Grid.Col>
         ))}
-      </Flex>
+      </Grid>
 
       <ModalAddPlan open={openAddModal} onClose={() => setOpenAddModal(false)} />
       {planDetail &&

@@ -1,14 +1,15 @@
 import { yupResolver } from '@hookform/resolvers/yup';
-import { Anchor, Button, Container, Flex, Grid, Image, Paper, Text, Title } from '@mantine/core';
+import { Anchor, Button, Container, Flex, Grid, Image, Modal, Paper, Text, Title, TextInput as MantineTextInput } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import { Form, useForm } from 'react-hook-form';
-import { Chip, PasswordInput, Radio, TextInput } from 'react-hook-form-mantine';
+import { Chip, PasswordInput, TextInput } from 'react-hook-form-mantine';
 import { FaFacebookF } from 'react-icons/fa6';
 import { FcGoogle } from 'react-icons/fc';
 import { RiLockPasswordLine } from 'react-icons/ri';
 import { SiMaildotru } from 'react-icons/si';
 import { Link, useNavigate } from 'react-router-dom';
 import * as yup from 'yup';
+
 
 import MicrosoftLogo from '@/assets/icons/microsoft.svg'
 import { FirebaseAuthProvider, PATHS } from '@/config';
@@ -18,7 +19,10 @@ import { authApi } from '@/services';
 import { setUserInfo } from '@/store';
 import { cookies } from '@/utils';
 import { AuthModule } from '@/enums';
+import { AuthProvider } from 'firebase/auth';
 import classNames from 'classnames';
+import { useState } from 'react';
+import { useDisclosure } from '@mantine/hooks';
 
 interface IRegisterFormData {
   firstName: string;
@@ -27,7 +31,6 @@ interface IRegisterFormData {
   password: string;
   confirmPassword: string;
   moduleId: string;
-  emailVerified?: boolean;
 }
 
 const schema = yup.object().shape({
@@ -48,7 +51,13 @@ const schema = yup.object().shape({
 const RegisterPage = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const { loginByOAuth } = useAuth();
+  const { getUserInfoByProvider } = useAuth(); // xử lý đăng nhập bằng tài khoản bên thứ 3 (Google, Facebook, ...)
+
+  const [providerLogin, setProviderLogin] = useState<string>('');
+  const [userIdFromProvider, setUserIdFromProvider] = useState<string>('');
+  const [emailChoose, setEmailChoose] = useState<string>(''); // email được chọn để đăng ký tài khoản
+  const [emailFromProvider, setEmailFromProvider] = useState<string | null>(''); // email được chọn để đăng ký tài khoản
+  const [openedModalChooseEmail, { open, close }] = useDisclosure(false);
 
   // tích hợp react-hook-form với mantine form
   const { control, getValues, setValue, register } = useForm<IRegisterFormData>({
@@ -61,7 +70,6 @@ const RegisterPage = () => {
       password: '',
       confirmPassword: '',
       moduleId: '',
-      emailVerified: import.meta.env.MODE === 'development' ? true : false, // bỏ qua gửi mail xác thực khi chạy local
     },
   });
 
@@ -73,6 +81,7 @@ const RegisterPage = () => {
         email: data.email,
         password: data.password,
         moduleId: parseInt(data.moduleId),
+        emailVerified: import.meta.env.MODE === 'development' ? true : false, // bỏ qua gửi mail xác thực khi chạy local,
       };
 
       // gọi api đăng ký
@@ -88,7 +97,10 @@ const RegisterPage = () => {
 
         // // lưu thông tin user vào redux
         // dispatch(setUserInfo(userInfo));
-        navigate(`${PATHS.VERIFY}?email=${data.email}`);
+        if (import.meta.env.MODE === 'development')
+          navigate(PATHS.LOGIN); // bỏ qua gửi mail xác thực khi chạy local
+        else
+          navigate(`${PATHS.VERIFY}?email=${data.email}`);
 
         // Hiển thị thông báo
         notifications.show({
@@ -113,6 +125,102 @@ const RegisterPage = () => {
       });
     }
   };
+
+  const loginByOAuth = async (provider: AuthProvider) => {
+    // lấy thông tin user từ provider
+    try {
+      const userInfoFromProvider = await getUserInfoByProvider(provider);
+      let providerStr;
+
+      switch (provider) {
+        case FirebaseAuthProvider.Google:
+          providerStr = 'google';
+          break;
+        case FirebaseAuthProvider.Facebook:
+          providerStr = 'facebook';
+          break;
+        case FirebaseAuthProvider.Microsoft:
+          providerStr = 'microsoft';
+          break;
+        default:
+          providerStr = 'google';
+          break;
+      }
+
+      if (!userInfoFromProvider) {
+        notifications.show({
+          message: 'Đăng nhập không thành công',
+          color: 'red',
+        });
+        return;
+      }
+
+      // gửi thông tin user lên server để lấy token (đang chờ api)
+      console.log(`user info from: `, userInfoFromProvider);
+      setUserIdFromProvider(userInfoFromProvider.uid);
+      setProviderLogin(providerStr);
+
+      // kiểm tra account có tồn tại, nếu có thì lưu thông tin user và token
+      const res = await authApi.getUserByAccountId(userInfoFromProvider.uid, providerStr);
+
+      if (res.data && res.data.user) {
+        const userInfo = res.data.user;
+        cookies.set(COOKIE_KEY.TOKEN, res.data.token);
+        cookies.set(COOKIE_KEY.USER_INFO, JSON.stringify(userInfo));
+        dispatch(setUserInfo(userInfo));
+        notifications.show({
+          message: 'Đăng nhập thành công',
+          color: 'green',
+        });
+        switch (userInfo.moduleId) {
+          case AuthModule.Admin:
+            navigate(PATHS.ADMIN_DASHBOARD);
+            break;
+          case AuthModule.Clinic:
+            navigate(PATHS.CLINIC_DASHBOARD);
+            break;
+          case AuthModule.Patient:
+            navigate(PATHS.PROFILE);
+            break;
+          default:
+            navigate(PATHS.PROFILE);
+            break;
+        }
+        return;
+      } else {
+        // chưa có tài khoản, chọn email để đăng ký tài khoản 
+        setEmailFromProvider(userInfoFromProvider.email || userInfoFromProvider.providerData[0].email);
+        open(); // mở modal chọn email để đăng ký tài khoản
+      }
+    } catch (err) {
+      console.error(err);
+      notifications.show({
+        message: 'Đăng nhập không thành công',
+        color: 'red',
+      });
+    }
+  };
+
+  const sendEmailVerifyLinkAccount = async (email: string) => {
+    try {
+      const res = await authApi.sendEmailVerifyUser({ email, key: userIdFromProvider, provider: providerLogin });
+      if (res.status) {
+        notifications.show({
+          message: `Chúng tôi đã gửi mail xác thực đến ${email}.\n Vui lòng kiểm tra mail và xác thực tài khoản`,
+          color: 'green',
+        });
+        close();
+      }
+      setEmailChoose('');
+    }
+    catch (err) {
+      console.error(err);
+      notifications.show({
+        message: 'Gửi mail xác thực không thành công',
+        color: 'red',
+      });
+    }
+  }
 
   return (
     <Container size={570} py={30} className='min-h-[calc(100vh_-_145px)]'>
@@ -279,6 +387,32 @@ const RegisterPage = () => {
           </Flex>
         </Form>
       </Paper>
+      <Modal opened={openedModalChooseEmail} onClose={close} title="Tài khoản của bạn chưa được liên kết, vui lòng chọn email muốn liên kết">
+        {emailFromProvider &&
+          <>
+            <Text size='sm'>Chọn email để liên kết tài khoản</Text>
+            <Button fullWidth variant='outline' color='orange.6' onClick={() => {
+              setEmailChoose(emailFromProvider)
+              sendEmailVerifyLinkAccount(emailFromProvider);
+            }}>
+              <Text>{emailFromProvider}</Text>
+            </Button>
+          </>
+        }
+
+        <Flex align='flex-end' gap={10}>
+          <MantineTextInput
+            mt='md'
+            className='flex-1'
+            label="Hoặc nhập email của bạn"
+            placeholder="Nhập tài khoản mà bạn muốn liên kết"
+            value={emailChoose}
+            name='email-register'
+            onChange={(e) => setEmailChoose(e.currentTarget.value)}
+          />
+          <Button mt='md' onClick={() => sendEmailVerifyLinkAccount(emailChoose)}>Tiếp tục</Button>
+        </Flex>
+      </Modal>
     </Container>
   );
 };

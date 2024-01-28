@@ -1,4 +1,4 @@
-import { Fragment } from 'react';
+import { Fragment, useEffect } from 'react';
 import { BrowserRouter, Route } from 'react-router-dom';
 import { ROUTES } from '@/config';
 import { CustomRoutes, ProtectedRoute, PublicRoute } from '@/components';
