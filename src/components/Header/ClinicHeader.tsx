@@ -132,13 +132,13 @@ const ClinicHeader = () => {
         </Tooltip>
 
         <Tooltip label='Thông báo'>
-          <ActionIcon
-            onClick={() => { }}
-            color='gray.9' variant="subtle" radius="md" size={35} aria-label="Notifications">
-            <Indicator color='secondary.5' inline label={2} size={16}>
+          <Indicator color='secondary.5' inline label={2} size={16} offset={5}>
+            <ActionIcon
+              onClick={() => { }}
+              color='gray.9' variant="subtle" radius="md" size={35} aria-label="Notifications">
               <MdNotificationsNone size={25} />
-            </Indicator>
-          </ActionIcon>
+            </ActionIcon>
+          </Indicator>
         </Tooltip>
 
         <Divider orientation="vertical" ml={5} />
