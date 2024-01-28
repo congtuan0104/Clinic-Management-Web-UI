@@ -50,7 +50,7 @@ const HomePage = () => {
         >
           <div>
             <Stack gap={'xl'}>
-              <Text fz={40} fw={700} w={'95%'}>Phần Mềm Quản Lý Phòng Khám Hiệu Quả</Text>
+              <Text fz={40} fw={700} w={'95%'}>Phần Mềm Quản Lý Khám Bệnh Hiệu Quả</Text>
               <Text fz={16} fw={500} c={'gray.6'}>Với sứ mệnh cải thiện trải nghiệm chăm sóc sức khỏe của người dùng, chúng tôi tự hào giới thiệu một nền tảng độc đáo, giúp bạn dễ dàng quản lý lịch hẹn khám và tận hưởng một dịch vụ y tế chất lượng.</Text>
               <Button onClick={() => scrollIntoView()} size='lg' color='primary' w={250} radius={'xl'}>Xem bảng giá</Button>
             </Stack>
@@ -58,7 +58,7 @@ const HomePage = () => {
           <Image
             radius="lg"
             mah={'74vh'}
-            maw={'55%'}
+            w={'55%'}
             src="/assets/images/doctor_management.png"
             fallbackSrc="https://placehold.co/200x200?text=Error"
           />
@@ -221,7 +221,7 @@ const HomePage = () => {
           <Divider size={'md'} color='gray.6' w={'70%'} />
         </Stack>
       </Center>
-      <Grid gutter={20} className='max-w-screen-xl mx-auto'>
+      <Grid gutter={20} className='max-w-screen-xl mx-auto w-full'>
         {plans && plans.map((plan) => (
           <Grid.Col span={{ base: 12, md: 6, lg: 4 }}>
             <PlanCard key={plan.id} plan={plan} actionText='Mua gói' action={handleBuyPlan} />

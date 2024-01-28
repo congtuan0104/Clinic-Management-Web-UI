@@ -82,7 +82,7 @@ export const authApi = {
     return axiosClient.post('/auth/reset-password', { email });
   },
 
-  resetPassword(email: string, password: string): Promise<any> {
+  initPassword(email: string, password: string): Promise<any> {
     return axiosClient.put('/auth/add-new-password', { email, password });
   },
 

@@ -56,6 +56,7 @@ const ModalAddPlan = ({ open, onClose }: IModalAddPlanProps) => {
         message: 'Thêm gói dịch vụ thành công',
         color: 'green.5',
       });
+      queryClient.invalidateQueries({ queryKey: 'plans' });
       handleClose();
     },
     onError: () => {
@@ -81,7 +82,7 @@ const ModalAddPlan = ({ open, onClose }: IModalAddPlanProps) => {
     // chuyển đổi optionIds từ dạng string sang dạng number
     data.optionIds = data.optionIds ? data.optionIds.map((optionId) => Number(optionId)) : [];
     console.log(data);
-    queryClient.invalidateQueries({ queryKey: 'plans' });
+    mutate(data);
   }
 
   const handleClose = () => {

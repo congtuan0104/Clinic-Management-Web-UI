@@ -33,8 +33,8 @@ const PaymentResult = () => {
 
           {status === '1' && <Text mb={20}>Bạn đã thanh toán thành công <CurrencyFormatter value={Number(amount)} /></Text>}
 
-          <Button fullWidth color='primary.3' size='lg' radius='md'
-            onClick={() => window.location.href = 'https://clinus.page.link?link=https%3A%2F%2Fclinus.page.link%2Fpayment'}>
+          <Button fullWidth color='primary.3' size='lg' radius='md' component='a'
+            href='https://clinus.page.link?link=https%3A%2F%2Fclinus.page.link%2Fpayment'>
             Quay lại trang phòng khám
           </Button>
 

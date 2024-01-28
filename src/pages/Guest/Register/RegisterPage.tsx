@@ -60,7 +60,7 @@ const RegisterPage = () => {
   const [openedModalChooseEmail, { open, close }] = useDisclosure(false);
 
   // tích hợp react-hook-form với mantine form
-  const { control, getValues, setValue, register } = useForm<IRegisterFormData>({
+  const { control, getValues, setValue, register, formState: { errors } } = useForm<IRegisterFormData>({
     resolver: yupResolver(schema), // gắn điều kiện xác định input hợp lệ vào form
     defaultValues: {
       // giá trị mặc định của các field
@@ -348,6 +348,7 @@ const RegisterPage = () => {
               </Chip.Item>
 
             </Flex>
+            {errors.moduleId && <Text c='red.6' mt={5} fz='15px'>{errors.moduleId.message}</Text>}
           </Chip.Group>
           <Button fullWidth mt="xl" radius="sm" size="md" type="submit">
             Đăng ký

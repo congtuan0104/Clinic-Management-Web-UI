@@ -9,6 +9,7 @@ import { Navigate } from "react-router-dom";
 import { Text } from "@mantine/core";
 import { jwtDecode } from "jwt-decode";
 import dayjs from "dayjs";
+import { ModalInitPassword } from "..";
 /**
  * Kiểm tra trạng thái user đã đăng nhập hay chưa
  * @param page Trang cần bảo vệ
@@ -68,7 +69,13 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
       })
       .catch((err) => console.log('Get firebase message failed: ', err));
 
-    return <>{children}</>
+    // if (userInfo.isInputPassword === false) {
+    //   return <h1>Chuwa ddawt mat khau</h1>
+    // }
+    return <>
+      {children}
+      {/* {!userInfo.isInputPassword && <ModalInitPassword email={userInfo.email} />} */}
+    </>
   }
   return <Navigate to={PATHS.LOGIN} replace />
 };

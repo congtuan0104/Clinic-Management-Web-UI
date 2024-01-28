@@ -5,3 +5,4 @@ export { default as ModalRoleManagement } from './ModalRoleManagement';
 export { default as ModalInviteClinicMember } from './ModalInviteClinicMember';
 export { default as ModalAppointmentDetail } from './ModalAppointmentDetail';
 export { default as ModalAddAppointment } from './ModalAddAppointment';
+export { default as ModalInitPassword } from './ModalInitPassword';

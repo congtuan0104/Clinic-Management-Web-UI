@@ -40,12 +40,17 @@ const ClinicLayout = ({ children }: { children: JSX.Element }) => {
     }
   );
 
+  const listActiveClinics = clinics?.filter(
+    (clinic) => clinic.subscriptions &&
+      clinic.subscriptions[0].status === CLINIC_SUBSCRIPTION_STATUS.ACTIVE
+  );
+
   useEffect(() => {
     if (userInfo?.moduleId !== AuthModule.Clinic) {
       navigate(PATHS.HOME, { replace: true });
     }
 
-    if (!isLoadingClinic && clinics?.length === 0 && location.pathname !== PATHS.PLAN_MANAGEMENT) {
+    if (!isLoadingClinic && listActiveClinics?.length === 0 && location.pathname !== PATHS.PLAN_MANAGEMENT) {
       navigate(PATHS.PLAN_MANAGEMENT, { replace: true });
     }
   }, [userInfo, navigate, clinics, isLoadingClinic]);
