@@ -33,7 +33,7 @@ const ClinicManagePage = () => {
 
   const { data: clinics, isLoading: isLoadingClinic } = useQuery(
     ['clinics', userInfo?.id],
-    () => clinicApi.getClinicsByOwner(userInfo?.id).then(res => res.data)
+    () => clinicApi.getClinics({ ownerId: userInfo?.id }).then(res => res.data)
   );
 
   const { data: plans, isLoading: isLoadingPlan } = useQuery('plans', () => getAllPlans());

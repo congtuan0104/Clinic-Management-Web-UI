@@ -10,6 +10,7 @@ import {
   IUpdateRequest,
   IClinicMember,
   IClinicStaffDetail,
+  IClinicQueryParams,
 } from '@/types';
 import { axiosClient } from '@/utils';
 
@@ -18,8 +19,8 @@ export const clinicApi = {
    * @returns Lấy danh sách phòng khám (không truyền ownerId)
    * @returns Lấy danh sách phòng khám theo chủ sở hữu (nếu truyền ownerId)
    */
-  getClinicsByOwner(ownerId?: string): Promise<IApiResponse<IClinic[]>> {
-    return axiosClient.get(`/clinics`, { params: { id: ownerId } });
+  getClinics(params: IClinicQueryParams): Promise<IApiResponse<IClinic[]>> {
+    return axiosClient.get(`/clinics`, { params: params });
   },
 
   /**
@@ -36,7 +37,7 @@ export const clinicApi = {
     return axiosClient.get(`/clinics/${clinicId}/users`);
   },
 
-  getClinicStaff(staffId: string): Promise<IApiResponse<IClinicStaffDetail>>{
+  getClinicStaff(staffId: string): Promise<IApiResponse<IClinicStaffDetail>> {
     return axiosClient.get(`/staffs/${staffId}`);
   },
 

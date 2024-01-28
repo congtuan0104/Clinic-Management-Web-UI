@@ -34,7 +34,7 @@ const ClinicLayout = ({ children }: { children: JSX.Element }) => {
 
   const { data: clinics, isLoading: isLoadingClinic } = useQuery(
     ['clinics', userInfo?.id],
-    () => clinicApi.getClinicsByOwner(userInfo?.id).then(res => res.data),
+    () => clinicApi.getClinics({ ownerId: userInfo?.id }).then(res => res.data),
     {
       refetchOnWindowFocus: false,
     }
@@ -50,7 +50,7 @@ const ClinicLayout = ({ children }: { children: JSX.Element }) => {
       navigate(PATHS.HOME, { replace: true });
     }
 
-    if (!isLoadingClinic && listActiveClinics?.length === 0 && location.pathname !== PATHS.PLAN_MANAGEMENT) {
+    if (!isLoadingClinic && (!listActiveClinics || listActiveClinics.length === 0) && location.pathname !== PATHS.PLAN_MANAGEMENT) {
       navigate(PATHS.PLAN_MANAGEMENT, { replace: true });
     }
   }, [userInfo, navigate, clinics, isLoadingClinic]);

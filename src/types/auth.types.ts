@@ -22,7 +22,7 @@ export interface IRegisterRequest {
   email: string;
   password: string;
   moduleId: AuthModule;
-  emailVerified: boolean;
+  emailVerified?: boolean;
 }
 
 export interface ILinkAccountRequest {

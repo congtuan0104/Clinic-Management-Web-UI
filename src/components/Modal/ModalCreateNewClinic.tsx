@@ -7,7 +7,7 @@ import { NativeSelect, Select, TextInput } from "react-hook-form-mantine";
 import { useQuery } from "react-query";
 import * as yup from 'yup';
 import { CurrencyFormatter } from "..";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { notifications } from "@mantine/notifications";
 
 
@@ -44,20 +44,23 @@ const ModalCreateNewClinic = ({ isOpen, onClose, onSuccess, selectedPlanId }: IP
 
   const { control, setValue } = useForm<IAddClinicFormData>({
     resolver: yupResolver(schema), // gắn điều kiện xác định input hợp lệ vào form
-    defaultValues: {
-      clinicName: '',
-      email: '',
-      phone: '',
-      address: '',
-      planId: selectedPlanId,
-    },
+    defaultValues: useMemo(() => {
+      return {
+        clinicName: '',
+        email: '',
+        phone: '',
+        address: '',
+        planId: selectedPlanId,
+      }
+    }
+      , [selectedPlanId]),
   });
 
-  useEffect(() => {
-    if (selectedPlanId) {
-      setValue('planId', selectedPlanId);
-    }
-  }, [selectedPlanId, setValue]);
+  // useEffect(() => {
+  //   if (selectedPlanId) {
+  //     setValue('planId', selectedPlanId);
+  //   }
+  // }, [selectedPlanId, setValue]);
 
   const handleAddClinic = async (data: IAddClinicFormData) => {
     const newClinicData = {

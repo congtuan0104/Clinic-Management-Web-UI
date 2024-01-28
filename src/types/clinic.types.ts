@@ -10,6 +10,13 @@ export interface IAddClinicRequest {
   planId: string;
 }
 
+export interface IClinicQueryParams {
+  ownerId?: string;
+  name?: string;
+  staffId?: number;
+  isActive?: boolean;
+}
+
 export interface IAddClinicService {
   id: number;
   name: string;

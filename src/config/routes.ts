@@ -33,7 +33,7 @@ export const PATHS = {
   FORGET_PASSWORD: '/quen-mat-khau',
   RESET_PASSWORD: '/cai-lai-mat-khau',
   VERIFY: '/verify-account',
-  VERIFY_LINK_ACCOUNT: '/verify-user',
+  VERIFY_LINK_ACCOUNT: '/verify-user', // xác nhận liên kết tài khoản
   REGISTER_BY_INVITATION: '/verify-account',
   ACCEPT_INVITE_ACCOUNT: '/invite-account',
   ADMIN_DASHBOARD: '/admin/dashboard',
@@ -59,8 +59,8 @@ export const PATHS = {
   CLINIC_REPORT: '/clinic/bao-cao',
 };
 
-const DEEPLINK = {
-  // https://clinus.page.link?link=https%3A%2F%2Fclinus.page.link%2Fpayment
+export const DEEPLINK = {
+  PLAN_MANAGEMENT: 'https://clinus.page.link?link=https%3A%2F%2Fclinus.page.link%2Fpayment',
 };
 
 export const ROUTES = [
