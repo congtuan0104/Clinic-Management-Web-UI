@@ -23,10 +23,12 @@ import {
   AppointmentPage,
   ServicePricePage,
   ResetPasswordPage,
+  ClinicsPage,
 } from '@/pages';
 
 export const PATHS = {
   HOME: '/',
+  CLINICS:'/phong-kham',
   LOGIN: '/dang-nhap',
   REGISTER: '/dang-ky',
   PROFILE: '/tai-khoan',
@@ -69,6 +71,14 @@ export const ROUTES = [
     title: 'Trang chủ',
     layout: DefaultLayout,
     element: HomePage,
+    isProtected: false,
+    children: [],
+  },
+  {
+    path: PATHS.CLINICS,
+    title: 'Phòng khám',
+    layout: DefaultLayout,
+    element: ClinicsPage,
     isProtected: false,
     children: [],
   },
@@ -245,4 +255,5 @@ export const ROUTES = [
     element: NotFoundPage,
     children: [],
   },
+  
 ];

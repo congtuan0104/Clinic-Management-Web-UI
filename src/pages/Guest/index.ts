@@ -6,3 +6,4 @@ export * from './RegisterByInvitation';
 export * from './VerifyUserLinkAccount';
 export * from './AcceptInviteAccount';
 export * from './ResetPassword';
+export * from './Clinics';
