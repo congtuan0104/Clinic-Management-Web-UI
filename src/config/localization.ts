@@ -66,7 +66,7 @@ export const MRT_Localization_VI: MRT_Localization = {
   resetOrder: 'Đặt lại thứ tự cột',
   rowActions: 'Thao tác',
   rowNumber: 'STT',
-  rowNumbers: 'Số hàng',
+  rowNumbers: 'Số thứ tự',
   rowsPerPage: 'Số hàng/trang',
   save: 'Lưu',
   search: 'Tìm kiếm',

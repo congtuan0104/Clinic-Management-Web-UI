@@ -1,4 +1,4 @@
-import { AuthModule } from '@/enums';
+import { AuthModule, Gender } from '@/enums';
 
 export interface IUserInfo {
   id: string;
@@ -6,6 +6,10 @@ export interface IUserInfo {
   avatar?: string;
   firstName: string;
   lastName: string;
+  phone?: string;
+  address?: string;
+  gender: Gender;
+  birthday?: Date;
   emailVerified: boolean;
   moduleId: AuthModule;
   isInputPassword: boolean;

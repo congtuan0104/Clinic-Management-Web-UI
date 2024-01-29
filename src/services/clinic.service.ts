@@ -30,13 +30,6 @@ export const clinicApi = {
     return axiosClient.post(`/clinics`, data);
   },
 
-  /**
-   * @returns Lấy danh sách thành viên trong phòng khám
-   */
-  getClinicMembers(clinicId: string): Promise<IApiResponse<IClinicMember[]>> {
-    return axiosClient.get(`/clinics/${clinicId}/users`);
-  },
-
   getClinicStaff(staffId: string): Promise<IApiResponse<IClinicStaffDetail>> {
     return axiosClient.get(`/staffs/${staffId}`);
   },

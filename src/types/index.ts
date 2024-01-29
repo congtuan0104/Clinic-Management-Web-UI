@@ -5,3 +5,4 @@ export * from './chat.types';
 export * from './plan.types';
 export * from './notification.type';
 export * from './clinic.types';
+export * from './staff.types';
