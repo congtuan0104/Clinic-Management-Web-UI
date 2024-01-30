@@ -7,3 +7,4 @@ export * from './VerifyUserLinkAccount';
 export * from './AcceptInviteAccount';
 export * from './ResetPassword';
 export * from './Clinics';
+export * from './ClinicDetail';

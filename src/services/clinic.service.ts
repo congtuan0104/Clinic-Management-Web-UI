@@ -23,6 +23,10 @@ export const clinicApi = {
     return axiosClient.get(`/clinics`, { params: params });
   },
 
+  getClinicDetail(clinicId: string): Promise<IApiResponse<IClinic>> {
+    return axiosClient.get(`/clinics/${clinicId}`);
+  },
+
   /**
    * @returns Tạo mới phòng khám kèm gói dịch vụ
    */

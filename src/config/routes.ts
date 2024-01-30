@@ -24,11 +24,13 @@ import {
   ServicePricePage,
   ResetPasswordPage,
   ClinicsPage,
+  ClinicDetailPage,
 } from '@/pages';
 
 export const PATHS = {
   HOME: '/',
   CLINICS:'/phong-kham',
+  CLICNIC_DETAIL:'/phong-kham/:id',
   LOGIN: '/dang-nhap',
   REGISTER: '/dang-ky',
   PROFILE: '/tai-khoan',
@@ -79,6 +81,14 @@ export const ROUTES = [
     title: 'Phòng khám',
     layout: DefaultLayout,
     element: ClinicsPage,
+    isProtected: false,
+    children: [],
+  },
+  {
+    path: PATHS.CLICNIC_DETAIL,
+    title: 'Chi tiết phòng khám',
+    layout: DefaultLayout,
+    element: ClinicDetailPage,
     isProtected: false,
     children: [],
   },
