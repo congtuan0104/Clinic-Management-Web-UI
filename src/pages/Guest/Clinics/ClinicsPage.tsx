@@ -15,8 +15,7 @@ import { useDebouncedState } from '@mantine/hooks';
 
 const ClinicsPage = () => {
     const { data: clinics, isLoading, refetch } = useQuery('clinics', () => getAllClinics(value));
-    const [clinicDetail, setClinicDetail] = useState<IClinic | undefined>(undefined);
-    const [value, setValue] = useDebouncedState('', 500);
+    const [value, setValue] = useDebouncedState('', 1000);
 
     const getAllClinics = async (searchValue?: string) => {
         try {
@@ -47,7 +46,8 @@ const ClinicsPage = () => {
                 </Center>
                 <Center>
                     <TextInput
-                        w={'30%'}
+                        w={350}
+                        size='md'
                         radius={'md'}
                         leftSection={<CiSearch />}
                         placeholder='Tìm kiếm phòng khám'
@@ -55,14 +55,14 @@ const ClinicsPage = () => {
                     />
                 </Center>
 
-                <Flex pt={30} pb={30} wrap="wrap" gap={'md'}>
+                <Grid pt={30} pb={30}>
                     {clinics && clinics.map((clinic) => (
-                        <div key={clinic.id} style={{ flex: '0 0 auto', width: clinics.length === 1 ? '100%' : clinics.length === 2 ? '100%': '48%' }}>
-                            <ClinicCard clinic={clinic} actionText='Chi tiết' action={() => setClinicDetail(clinic)} />
-                        </div>
+                        <GridCol span={clinics.length === 1 ? 12 : clinics.length === 2 ? 12 : 6}>
+                            <ClinicCard key={clinic.id} clinic={clinic}/>
+                        </GridCol>
+                        
                     ))}
-                    
-                </Flex>
+                </Grid>
             </div>
 
         </Center>
