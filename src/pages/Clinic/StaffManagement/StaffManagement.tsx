@@ -16,7 +16,7 @@ import { IoSearch } from 'react-icons/io5';
 import { FaRegEdit, FaTrash } from 'react-icons/fa';
 import { staffApi } from '@/services';
 import { useDisclosure, useHover } from '@mantine/hooks';
-import { ClinusTable, ModalInviteClinicMember } from "@/components";
+import { ClinusTable, ModalAddStaff } from "@/components";
 import { useQuery, useQueryClient } from 'react-query';
 import { Link } from 'react-router-dom';
 import { MRT_ColumnDef } from 'mantine-react-table';
@@ -86,8 +86,8 @@ const StaffManagementPage = () => {
 
   // const navigate = useNavigate();
 
-  const { data, isLoading } = useQuery(
-    ['clinic_staffs'],
+  const { data, refetch } = useQuery(
+    ['staffs'],
     () => staffApi.getStaffs({ clinicId: currentClinic?.id }),
     {
       enabled: !!currentClinic?.id,
@@ -162,11 +162,11 @@ const StaffManagementPage = () => {
 
       </Flex>
 
-      <ModalInviteClinicMember
+      <ModalAddStaff
         isOpen={opened}
         onClose={close}
         onSuccess={() => {
-          queryClient.invalidateQueries('clinics_user');
+          refetch();
         }}
       />
     </>
