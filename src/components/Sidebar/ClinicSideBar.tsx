@@ -25,6 +25,7 @@ const createMenuItem = () => {
       icon: CgNotes,
       children: [
         { label: 'Thông tin phòng khám', href: PATHS.CLINIC_INFO_MANAGEMENT },
+        { label: 'Danh mục, phân loại', href: PATHS.CLINIC_CATEGORY },
         { label: 'Bảng giá dịch vụ', href: PATHS.CLINIC_SERVICE },
         { label: 'Tin tức, quảng cáo', href: PATHS.CLINIC_NEWS },
       ],

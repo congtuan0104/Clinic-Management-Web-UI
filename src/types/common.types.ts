@@ -1,21 +1,17 @@
 import { Event as BigCalendarEvent } from 'react-big-calendar';
 
 export interface IApiResponse<T> {
-  // config: any;
-  // header?: AxiosHeaders;
-  // request: XMLHttpRequest;
   data?: T;
   message?: string;
   status?: boolean;
   errors?: boolean;
-  // status: number;
-  // statusText?: string;
 }
 
-export interface IListDataResponse {
+export interface IPagination<T> {
   total: number;
-  skip: number;
-  limit: number;
+  pageSize: number;
+  currentPage: number;
+  data: T[];
 }
 
 export interface CalendarEvent<T> extends Omit<BigCalendarEvent, 'resource'> {

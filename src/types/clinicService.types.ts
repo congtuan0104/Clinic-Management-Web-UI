@@ -7,6 +7,7 @@ export interface IClinicService {
   serviceName: string;
   price: number;
   categoryId?: number;
+  categoryName?: string;
   description?: string;
   createdAt: Date;
   updatedAt: Date;

@@ -3,7 +3,7 @@ import { axiosClient } from '@/utils';
 
 export const clinicServiceApi = {
   getClinicServices(clinicId: string): Promise<IApiResponse<IClinicService[]>> {
-    return axiosClient.get(`/clinics/${clinicId}.services`);
+    return axiosClient.get(`/clinics/${clinicId}/services`);
   },
 
   getClinicServiceDetail(serviceId: string): Promise<IApiResponse<IClinicService>> {
