@@ -86,17 +86,14 @@ const StaffManagementPage = () => {
 
   // const navigate = useNavigate();
 
-  const { data, refetch } = useQuery(
+  const { data: staffs, refetch } = useQuery(
     ['staffs'],
-    () => staffApi.getStaffs({ clinicId: currentClinic?.id }),
+    () => staffApi.getStaffs({ clinicId: currentClinic?.id }).then(res => res.data),
     {
       enabled: !!currentClinic?.id,
       refetchOnWindowFocus: false,
     }
   );
-
-
-  const staffs = data?.data || [];
 
   console.log(staffs);
 

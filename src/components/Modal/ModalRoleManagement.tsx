@@ -69,6 +69,7 @@ const ModalRoleManagement = ({ isEditMode, isOpen, onClose, updateRole, selected
 
   const handleSubmit = async () => {
     try {
+      if (!currentClinic) return;
       const requestData: IAddUserGroupRoleRequest = {
         name: newRole,
         description: roleDescription,
@@ -79,7 +80,7 @@ const ModalRoleManagement = ({ isEditMode, isOpen, onClose, updateRole, selected
         const response = await clinicApi.updateUserGroupRole(requestData, currentClinic?.id, selectedRole?.id);
         console.log('API Response (Update):', response);
       } else {
-        const response = await clinicApi.createClinicRole(requestData, currentClinic?.id);
+        const response = await clinicApi.createClinicRole(requestData, currentClinic.id);
         console.log('API Response (Add):', response);
       }
 
