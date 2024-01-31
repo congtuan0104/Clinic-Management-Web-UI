@@ -22,12 +22,10 @@ interface IClinicCardProps {
 
 const ClinicCard = ({ clinic }: IClinicCardProps) => {
   return (
-    <Paper w="100%" h='100%' withBorder shadow="md" radius="md" >
+    <Paper w={580} h='100%' withBorder shadow="md" radius="md" >
       <Flex justify='flex-start' align='center' p={20}>
-        <Box w={200} h={200}>
+        <Box w={150} h={150}>
           <Image
-            pl={20}
-            pr={30}
             radius="xl"
             src={clinic.logo}
             h={150}
@@ -35,7 +33,7 @@ const ClinicCard = ({ clinic }: IClinicCardProps) => {
           />
         </Box>
 
-        <Stack align="flex-start" gap="xs">
+        <Stack align="flex-start" gap="xs" pl={30}>
           <Text fw={700} size='25px'>{clinic.name}</Text>
           <Group pt={20}>
             <HiOutlineLocationMarker size={'20px'} color='gray' />

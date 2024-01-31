@@ -11,6 +11,9 @@ import {
   IClinicMember,
   IClinicStaffDetail,
   IClinicQueryParams,
+  IStaffQueryParams,
+  IClinicStaff,
+  IClinicService,
 } from '@/types';
 import { axiosClient } from '@/utils';
 
@@ -39,6 +42,10 @@ export const clinicApi = {
    */
   getClinicMembers(clinicId: string): Promise<IApiResponse<IClinicMember[]>> {
     return axiosClient.get(`/clinics/${clinicId}/users`);
+  },
+
+  getClinicStaffs(params: IStaffQueryParams): Promise<IApiResponse<IClinicStaff[]>> {
+    return axiosClient.get(`/staffs`, { params: params });
   },
 
   getClinicStaff(staffId: string): Promise<IApiResponse<IClinicStaffDetail>> {
@@ -83,7 +90,7 @@ export const clinicApi = {
     return axiosClient.put(`/clinics/${clinicId}`, updateInfo);
   },
 
-  getAllClinicService(clinicId: string): Promise<IApiResponse<any>> {
+  getAllClinicService(clinicId: string): Promise<IApiResponse<IClinicService[]>> {
     return axiosClient.get(`/clinics/${clinicId}/services`);
   },
 };

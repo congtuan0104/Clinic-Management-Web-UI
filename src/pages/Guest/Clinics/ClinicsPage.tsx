@@ -35,6 +35,7 @@ const ClinicsPage = () => {
     }, [value, refetch]);
 
     return (
+        <div className='max-w-screen-xl mx-auto'>
         <Center>
             <div>
                 <Center>
@@ -57,15 +58,15 @@ const ClinicsPage = () => {
 
                 <Grid pt={30} pb={30}>
                     {clinics && clinics.map((clinic) => (
-                        <GridCol span={clinics.length === 1 ? 12 : clinics.length === 2 ? 12 : 6}>
+                        <GridCol span={ 6}>
                             <ClinicCard key={clinic.id} clinic={clinic}/>
-                        </GridCol>
-                        
+                        </GridCol>                
                     ))}
                 </Grid>
             </div>
 
         </Center>
+        </div>
 
     );
 };
