@@ -167,14 +167,9 @@ const ClinicHeader = () => {
               onClick={() => navigate(PATHS.PLAN_MANAGEMENT)}
               leftSection={<BsCardText size={15} />}
             >
-              Quản lý gói
+              Quản lý gói và phòng khám
             </Menu.Item>
-            <Menu.Item
-              onClick={() => navigate(PATHS.STAFF_SCHEDULE)}
-              leftSection={<MdOutlineSchedule size={15} />}
-            >
-              Lịch làm việc
-            </Menu.Item>
+
             <Menu.Item
               onClick={() => logout()}
               color="red.8"

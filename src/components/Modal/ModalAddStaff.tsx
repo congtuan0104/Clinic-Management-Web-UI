@@ -1,9 +1,12 @@
+import { Gender } from "@/enums";
 import { useAppSelector } from "@/hooks";
-import { authApi, clinicApi } from "@/services";
+import { authApi, clinicApi, staffApi } from "@/services";
 import { currentClinicSelector } from "@/store";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Button, Flex, Grid, Modal, ModalBody, ModalCloseButton, ModalHeader } from "@mantine/core";
+import { useDebouncedValue } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
+import { useEffect } from "react";
 import { Form, useForm } from "react-hook-form";
 import { Select, TextInput } from "react-hook-form-mantine";
 import { SiMaildotru } from "react-icons/si";
@@ -22,6 +25,12 @@ interface IFormData {
   lastName: string;
   email: string;
   roleId: string;
+  phone?: string;
+  address?: string;
+  gender?: Gender;
+  birthday?: Date;
+  specialize?: string;
+  experience?: string;
 }
 
 const validateSchema = yup.object().shape({
@@ -31,7 +40,7 @@ const validateSchema = yup.object().shape({
   roleId: yup.string().required('Bạn phải chọn một vai trò cho nhân viên'),
 });
 
-const ModalInviteClinicMember = ({
+const ModalAddStaff = ({
   isOpen,
   onClose,
   onSuccess
@@ -41,13 +50,14 @@ const ModalInviteClinicMember = ({
 
   const { data: roles, isLoading: isLoadingRoles } = useQuery(
     ['roles', currentClinic?.id],
-    () => clinicApi.getListUserGroupRole(currentClinic!.id).then(res => res.data),
+    () => clinicApi.getClinicRoles(currentClinic!.id).then(res => res.data),
     {
       refetchOnWindowFocus: false,
     }
   );
 
-  const { control, reset } = useForm<IFormData>({
+  const { control, reset, watch, setError, setValue, formState: { errors } } = useForm<IFormData>({
+    mode: 'onChange',
     resolver: yupResolver(validateSchema),
     defaultValues: {
       firstName: '',
@@ -56,6 +66,32 @@ const ModalInviteClinicMember = ({
       roleId: '',
     },
   });
+
+  console.log(errors);
+
+
+  const [debouncedEmail] = useDebouncedValue(watch('email'), 500);
+
+  /**
+   * Kiểm tra nhân viên đã tồn tại chưa
+   */
+  const checkStaffExists = async (clinicId: string, email: string) => {
+    const res = await staffApi.getStaffs({ clinicId, email })
+    if (res.data && res.data.length > 0 && res.data[0].users.email === email) {
+      const staff = res.data[0];
+      setError('email', { message: 'Nhân viên đã tồn tại trong phòng khám' })
+      // setValue('firstName', staff.users.firstName);
+      // setValue('lastName', staff.users.lastName);
+    }
+    else {
+      setError('email', { message: '' })
+    }
+  }
+
+  useEffect(() => {
+    if (!debouncedEmail || !currentClinic) return;
+    checkStaffExists(currentClinic.id, debouncedEmail);
+  }, [debouncedEmail])
 
   const handleSubmitForm = async (data: IFormData) => {
     console.log(data);
@@ -82,6 +118,8 @@ const ModalInviteClinicMember = ({
     onClose();
   }
 
+  const isDisabled = !!errors.email?.message || watch('email') === '';
+
 
   return (
     <Modal.Root opened={isOpen} onClose={handleCancel} centered size={'md'}>
@@ -96,15 +134,26 @@ const ModalInviteClinicMember = ({
             control={control}
             onSubmit={e => handleSubmitForm(e.data)}
             onError={e => console.log(e)}>
-            <Grid>
+            <TextInput
+              label="Email"
+              name="email"
+              placeholder="Email tài khoản đăng nhập"
+              required
+              size="md"
+              radius="sm"
+              control={control}
+              leftSection={<SiMaildotru size={16} />}
+            />
+            <Grid mt="md">
               <Grid.Col span={4}>
                 <TextInput
                   label="Họ"
                   name="firstName"
-                  placeholder="Nguyễn"
                   required
+                  autoComplete="off"
                   size="md"
                   radius="sm"
+                  disabled={isDisabled}
                   control={control}
                 />
               </Grid.Col>
@@ -112,30 +161,21 @@ const ModalInviteClinicMember = ({
                 <TextInput
                   label="Tên"
                   name="lastName"
-                  placeholder="Văn A"
                   required
                   size="md"
+                  autoComplete="off"
                   radius="sm"
+                  disabled={isDisabled}
                   control={control}
                 />
               </Grid.Col>
             </Grid>
-            <TextInput
-              label="Email"
-              name="email"
-              placeholder="example@gmail.com"
-              required
-              mt="md"
-              size="md"
-              radius="sm"
-              control={control}
-              leftSection={<SiMaildotru size={16} />}
-            />
+
 
             <Select
               name="roleId"
               control={control}
-              label="Chọn vai trò cho nhân viên"
+              label="Vai trò"
               placeholder={isLoadingRoles ? 'Đang lấy danh sách role có thể gán' : ''}
               withAsterisk
               mt="md"
@@ -143,7 +183,7 @@ const ModalInviteClinicMember = ({
               searchable
               radius="sm"
               required
-              disabled={isLoadingRoles}
+              disabled={isLoadingRoles || isDisabled}
               comboboxProps={{ shadow: 'md', transitionProps: { transition: 'pop', duration: 200 } }}
               checkIconPosition="right"
               data={roles?.map((role) => ({
@@ -168,4 +208,4 @@ const ModalInviteClinicMember = ({
   )
 }
 
-export default ModalInviteClinicMember
+export default ModalAddStaff

@@ -14,68 +14,89 @@ import { useAppSelector, useAuth } from '@/hooks';
 import { currentClinicSelector } from '@/store';
 import { IoSearch } from 'react-icons/io5';
 import { FaRegEdit, FaTrash } from 'react-icons/fa';
-import { clinicApi } from '@/services';
+import { staffApi } from '@/services';
 import { useDisclosure, useHover } from '@mantine/hooks';
-import { ClinusTable, ModalInviteClinicMember } from "@/components";
+import { ClinusTable, ModalAddStaff } from "@/components";
 import { useQuery, useQueryClient } from 'react-query';
 import { Link } from 'react-router-dom';
 import { MRT_ColumnDef } from 'mantine-react-table';
-import { IClinicMember } from '@/types';
+import { IClinicStaff } from '@/types';
+import { PATHS } from '@/config';
+import { Gender } from '@/enums';
 
 
 const StaffManagementPage = () => {
-  const columns = useMemo<MRT_ColumnDef<IClinicMember>[]>(
+  const columns = useMemo<MRT_ColumnDef<IClinicStaff>[]>(
     () => [
       {
         header: 'Email',
-        accessorKey: 'email',
+        accessorKey: 'users.email',
         enableClickToCopy: true,
         enableSorting: false,
       },
       {
-        header: 'Họ tên nhân viên',
+        header: 'Họ và tên',
         id: 'fullName',
-        accessorFn: (dataRow) => `${dataRow.firstName} ${dataRow.lastName}`,
+        accessorFn: (dataRow) => `${dataRow.users.firstName} ${dataRow.users.lastName}`,
       },
+      {
+        header: 'Giới tính',
+        id: 'gender',
+        accessorFn: (dataRow) =>
+          dataRow.users.gender === Gender.Male ? 'Nam' :
+            dataRow.users.gender === Gender.Female ? 'Nữ' :
+              '',
+      },
+      {
+        header: 'Số điện thoại',
+        accessorKey: 'users.phone',
+      },
+      // {
+      //   header: 'Đã xác thực',
+      //   accessorKey: 'users.emailVerified',
+      // },
       {
         header: 'Vai trò',
         accessorKey: 'role.name',
-        filterFn: 'equals',
-        mantineFilterSelectProps: {
-          data: [
-            { value: 'admin', label: 'Quản trị viên' },
-            { value: 'Bác sĩ', label: 'Bác sĩ' },
-            { value: 'Y tá', label: 'Y tá' },
-          ],
-        },
-        filterVariant: 'select',
-        mantineTableHeadCellProps: {
-          align: 'right',
-        },
-        mantineTableBodyCellProps: {
-          align: 'right',
-        },
+        enableSorting: false,
+        enableColumnFilter: false,
+        // filterFn: 'equals',
+        // mantineFilterSelectProps: {
+        //   data: [
+        //     { value: 'Admin', label: 'Quản trị viên' },
+        //     { value: 'Bác sĩ', label: 'Bác sĩ' },
+        //     { value: 'Y tá', label: 'Y tá' },
+        //   ],
+        // },
+        // filterVariant: 'select',
+        // mantineTableHeadCellProps: {
+        //   align: 'right',
+        // },
+        // mantineTableBodyCellProps: {
+        //   align: 'right',
+        // },
       },
     ],
     [],
   );
   const queryClient = useQueryClient();
   const { userInfo } = useAuth();
+  const currentClinic = useAppSelector(currentClinicSelector);
   const [opened, { open, close }] = useDisclosure(false);
 
-  const currentClinic = useAppSelector(currentClinicSelector);
   // const navigate = useNavigate();
 
-
-  const { data: members, isLoading } = useQuery(
-    ['clinics_user', currentClinic?.id],
-    () => clinicApi.getClinicMembers(currentClinic!.id)
-      .then(res => res.data?.filter((member) => member.id !== userInfo?.id)),
+  const { data: staffs, refetch } = useQuery(
+    ['staffs'],
+    () => staffApi.getStaffs({ clinicId: currentClinic?.id }).then(res => res.data),
     {
       enabled: !!currentClinic?.id,
       refetchOnWindowFocus: false,
     }
   );
+
+  console.log(staffs);
+
 
   return (
     <>
@@ -87,7 +108,7 @@ const StaffManagementPage = () => {
 
         <ClinusTable
           columns={columns}
-          data={members || []}
+          data={staffs || []}
           // enableRowSelection
           mantineSearchTextInputProps={
             {
@@ -96,10 +117,10 @@ const StaffManagementPage = () => {
               radius: 'md',
             }
           }
-          getRowId={(row) => row.id}
-          state={{
-            isLoading: isLoading
-          }}
+          getRowId={(row) => row.id.toString()}
+          // state={{
+          //   isLoading: isLoading,
+          // }}
           enableRowActions
           displayColumnDefOptions={{
             'mrt-row-actions': {
@@ -133,20 +154,16 @@ const StaffManagementPage = () => {
             noRecordsToDisplay: 'Không có nhân viên nào trong phòng khám',
           }}
 
-        // enableStickyHeader
-        // mantineTableProps={{
-        //   striped: true,
-        // }}
         />
 
 
       </Flex>
 
-      <ModalInviteClinicMember
+      <ModalAddStaff
         isOpen={opened}
         onClose={close}
         onSuccess={() => {
-          queryClient.invalidateQueries('clinics_user');
+          refetch();
         }}
       />
     </>

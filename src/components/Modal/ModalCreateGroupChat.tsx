@@ -1,6 +1,4 @@
-import { chatApi, clinicApi, planApi } from "@/services";
-import { IClinicWithSubscription, IServicePlan } from "@/types";
-import { yupResolver } from "@hookform/resolvers/yup";
+import { chatApi, clinicApi, planApi, staffApi } from "@/services";
 import { Button, Flex, Grid, Modal, ModalBody, ModalCloseButton, ModalHeader } from "@mantine/core";
 import { Form, useForm } from "react-hook-form";
 import { MultiSelect, NativeSelect, Select, TextInput } from "react-hook-form-mantine";
@@ -27,12 +25,13 @@ const ModalCreateGroupChat = ({ isOpen, onClose, onSuccess }: IProps) => {
   const { userInfo } = useAuth();
   const currentClinic = useAppSelector(currentClinicSelector);
 
-  const { data: clinicMembers, isLoading } = useQuery(
-    ['clinicMembers', userInfo?.id],
-    () => currentClinic &&
-      clinicApi
-        .getClinicMembers(currentClinic.id)
-        .then(res => res.data)
+  const { data: staffs, isLoading } = useQuery(
+    ['staffs'],
+    () => staffApi.getStaffs({ clinicId: currentClinic?.id }).then(res => res.data),
+    {
+      enabled: !!currentClinic?.id,
+      refetchOnWindowFocus: false,
+    }
   );
 
   const { control, handleSubmit, setValue, reset } = useForm<FormAddGroupChatData>({
@@ -91,10 +90,10 @@ const ModalCreateGroupChat = ({ isOpen, onClose, onSuccess }: IProps) => {
 
           <MultiSelect
             label="Thêm thành viên vào nhóm chat"
-            data={clinicMembers?.map((member) => ({
-              value: member.id,
-              label: member.firstName + ' ' + member.lastName,
-            }))}
+            data={staffs ? staffs.map((staff) => ({
+              value: staff.id.toString(),
+              label: staff.users.firstName + ' ' + staff.users.lastName,
+            })) : []}
             searchable
             mt={10}
             name="memberIds"

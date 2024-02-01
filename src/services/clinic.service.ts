@@ -56,16 +56,16 @@ export const clinicApi = {
     return axiosClient.put(`/staffs/${staffId}`, data);
   },
 
-  getListUserGroupRole(Id?: string): Promise<IApiResponse<IUserGroupRole[]>> {
-    return axiosClient.get(`/clinics/${Id}/user-group-role`);
+  getClinicRoles(clinicId: string): Promise<IApiResponse<IUserGroupRole[]>> {
+    return axiosClient.get(`/clinics/${clinicId}/user-group-role`);
   },
 
   getListPermissions(): Promise<IApiResponse<IRolePermission[]>> {
     return axiosClient.get('/clinics/permissions');
   },
 
-  addUserGroupRole(data: IAddUserGroupRoleRequest, Id?: string): Promise<any> {
-    return axiosClient.post(`/clinics/${Id}/create-user-group-role`, data);
+  createClinicRole(data: IAddUserGroupRoleRequest, clinicId: string): Promise<any> {
+    return axiosClient.post(`/clinics/${clinicId}/create-user-group-role`, data);
   },
 
   deleteUserGroupRole(Id?: string, userGroupRoleId?: number): Promise<any> {

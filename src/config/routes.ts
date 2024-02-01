@@ -61,6 +61,7 @@ export const PATHS = {
   CLINIC_SERVICE_EXECUTION: '/clinic/thuc-hien-dich-vu',
   EXAMINATION_INVOICE: '/clinic/hoa-don-kham-benh',
   CLINIC_REPORT: '/clinic/bao-cao',
+  CLINIC_CATEGORY: '/clinic/danh-muc',
 };
 
 export const DEEPLINK = {

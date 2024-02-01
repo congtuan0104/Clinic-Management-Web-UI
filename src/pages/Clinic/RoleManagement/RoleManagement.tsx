@@ -29,7 +29,7 @@ const RoleManagement = () => {
   const fetchData = async () => {
     try {
       if (!currentClinic) return;
-      const response = await clinicApi.getListUserGroupRole(currentClinic.id);
+      const response = await clinicApi.getClinicRoles(currentClinic.id);
       if (response.data) {
         setRoles(response.data);
       } else {
