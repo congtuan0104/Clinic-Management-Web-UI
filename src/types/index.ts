@@ -7,3 +7,4 @@ export * from './notification.type';
 export * from './clinic.types';
 export * from './staff.types';
 export * from './clinicService.types';
+export * from './news.type';

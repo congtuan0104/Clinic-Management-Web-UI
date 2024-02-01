@@ -6,8 +6,9 @@ import { useEffect, useState } from 'react';
 import { IClinic } from '@/types';
 import ClinicLogoDefault from '@/assets/images/hospital-logo.png';
 import DoctorAvatarDefault from '@/assets/images/doctor-avatar.png';
+import NewLogoDefault from '@/assets/images/new-logo.png';
 import { useParams } from 'react-router-dom';
-import { clinicApi } from '@/services';
+import { clinicApi, staffApi, clinicServiceApi, newsApi } from '@/services';
 import { HiOutlineLocationMarker } from "react-icons/hi";
 import { FiMail, FiPhone } from "react-icons/fi";
 import { CurrencyFormatter } from '@/components';
@@ -24,6 +25,7 @@ const ClinicDetailPage = () => {
     const { data: clinic, isLoading } = useQuery(['clinic', clinicId], () => getClinicDetail());
     const { data: doctors } = useQuery(['doctors', clinicId], () => getDoctorDetail());
     const { data: services } = useQuery(['services', clinicId], () => getClinicServices());
+    const { data: news } = useQuery(['news', clinicId], () => getClinicNews());
 
     const getClinicDetail = async () => {
         try {
@@ -36,7 +38,7 @@ const ClinicDetailPage = () => {
 
     const getDoctorDetail = async () => {
         try {
-            const response = await clinicApi.getClinicStaffs({ clinicId: clinicId });
+            const response = await staffApi.getClinicStaffs({ clinicId: clinicId });
             const data = response.data;
             // if (data) {
             //     const doctorDetails = data && data.filter(item => item.role && item.role.name === 'doctor');
@@ -51,9 +53,18 @@ const ClinicDetailPage = () => {
 
     const getClinicServices = async () => {
         try {
-            const response = await clinicApi.getAllClinicService(clinicId ?? '');
+            const response = await clinicServiceApi.getClinicServices(clinicId ?? '');
             if (response.data?.length === 0) return null
             return response.data;
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    const getClinicNews = async () => {
+        try {
+            const response = await newsApi.getNews({clinicId: clinicId});
+            return response.data?.data;
         } catch (error) {
             console.log(error);
         }
@@ -185,24 +196,24 @@ const ClinicDetailPage = () => {
                 <Stack p={20}>
                     <Text fw={700} size='25px'>Tin tức, Quảng cáo</Text>
                     <Group>
-                        {advertises.slice(0, 4).map((advertise) => (
+                        {news && news.slice(0, 4).map((news) => (
 
-                            <Card withBorder radius="md" p="md" mr={27} w={250} h={300} bg={'light-dark(var(--mantine-color-white), var(--mantine-color-dark-7)'}>
+                            <Card withBorder radius="md" p="md" mr={27} w={250} h={250} bg={'light-dark(var(--mantine-color-white), var(--mantine-color-dark-7)'}>
                                 <Card.Section>
-                                    <Image src={advertise.logo} fallbackSrc='https://bvranghammat.com/wp-content/uploads/2021/03/Thumbnails16432021034343icon.png' height={150} />
+                                    <Image src={news.logo} fallbackSrc={NewLogoDefault} height={150} />
                                 </Card.Section>
 
                                 <Card.Section m={5}>
                                     <Center>
                                     <Text fz="lg" fw={700}>
-                                        {advertise.title}
+                                        {news.title}
                                     </Text>
                                     </Center>
-                                    <Divider/>
+                                    {/* <Divider/>
                                     
                                     <Text fz="sm" mt="md" >
                                         {advertise.content}
-                                    </Text>
+                                    </Text> */}
                                 </Card.Section>
                             </Card>
                         ))}

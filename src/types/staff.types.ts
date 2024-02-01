@@ -1,23 +1,42 @@
 import { Gender } from '@/enums';
-import { IUserInfo } from '.';
+import { IUserGroupRole, IUserInfo } from '.';
 
-export interface IStaffQueryParams {
+
+export interface IStaffQueryParams{
   userId?: string;
-  roleId?: number;
+  roleId?: string;
   clinicId?: string;
-  gender?: Gender;
+  gender?: number;
   phoneNumber?: string;
   email?: string;
+  name?: string;
 }
 
-export interface IClinicStaff {
+export interface IClinicStaff{
   id: number;
+  experience?: number;
+  description?: string;
+  specialize?: string;
+  users: IClinicStaffDetail;
+  role: IUserGroupRole;
+}
+
+export interface IClinicStaffDetail {
+  id?: number;
+  memberId?: number;
   specialize?: string;
   experience?: number;
-  users: IUserInfo;
-  // userInfo: IUser; // --> thông tin user lấy từ userId
-  // role?: IClinicRole; // --> thông tin vai trò lấy từ roleId
-  // clinic?: IClinic; // --> thông tin phòng khám lấy từ clinicId
-  // services?: IStaffService[]; // --> danh sách dịch vụ mà nhân viên có thể thực hiện lấy từ bảng staff_service
-  // schedule?: IStaffSchedule[]; // --> lịch làm việc của nhân viên lấy từ bảng staff_schedule
+  phoneNumber?: string;
+  address?: string;
+  gender?: number;
+  createdAt?: string;
+  updatedAt?: string;
+  isDisabled?: boolean;
+  avatar?: string;
+  disabledAt?: string;
+  userId?: string;
+  clinicId?: string;
+  name?: string;
+  firstName?: string;
+  lastName?: string;
 }
