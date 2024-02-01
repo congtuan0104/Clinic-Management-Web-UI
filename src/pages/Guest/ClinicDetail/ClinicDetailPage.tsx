@@ -31,7 +31,7 @@ const ClinicDetailPage = () => {
 
     const getDoctorDetail = async () => {
         try {
-            const response = await staffApi.getClinicStaffs({ clinicId: clinicId });
+            const response = await staffApi.getStaffs({ clinicId: clinicId });
             const data = response.data;
             // if (data) {
             //     const doctorDetails = data && data.filter(item => item.role && item.role.name === 'doctor');

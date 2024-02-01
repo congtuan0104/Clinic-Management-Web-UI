@@ -13,7 +13,7 @@ import { currentClinicSelector } from '@/store';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useQuery } from 'react-query';
-import { clinicApi } from '@/services';
+import { clinicApi, staffApi } from '@/services';
 import { notifications } from '@mantine/notifications';
 import { Label } from 'recharts';
 
@@ -92,7 +92,7 @@ const StaffDetail = () => {
 
   const getStaffInfo = async () => {
     try {
-      const response = await clinicApi.getClinicStaff(staffId ?? '');
+      const response = await staffApi.getStaff(staffId ?? '');
       return response.data;
     } catch (error) {
       console.log(error);
