@@ -6,19 +6,12 @@ import { useEffect, useState } from 'react';
 import { IClinic } from '@/types';
 import ClinicLogoDefault from '@/assets/images/hospital-logo.png';
 import DoctorAvatarDefault from '@/assets/images/doctor-avatar.png';
-import NewLogoDefault from '@/assets/images/new-logo.png';
+import NewsLogoDefault from '@/assets/images/news-logo.png';
 import { useParams } from 'react-router-dom';
 import { clinicApi, staffApi, clinicServiceApi, newsApi } from '@/services';
 import { HiOutlineLocationMarker } from "react-icons/hi";
 import { FiMail, FiPhone } from "react-icons/fi";
 import { CurrencyFormatter } from '@/components';
-
-const advertises = [
-    { logo: '6', title: 'Quản lý khám và chữa bệnh ở đâu?', content: 'Hello', },
-    { logo: '7', title: 'Tiêu đề', content: 'Hello', },
-    { logo: '39', title: 'Tiêu đề', content: 'Hellooooo', },
-    { logo: '56', title: 'Tiêu đề', content: 'BHello', },
-];
 
 const ClinicDetailPage = () => {
     const { id: clinicId } = useParams();
@@ -63,7 +56,12 @@ const ClinicDetailPage = () => {
 
     const getClinicNews = async () => {
         try {
-            const response = await newsApi.getNews({clinicId: clinicId});
+            const response = await newsApi.getNews({
+                clinicId: clinicId,
+                isShow: true,
+                pageSize: '4',
+                pageIndex: '0',
+            });
             return response.data?.data;
         } catch (error) {
             console.log(error);
@@ -200,7 +198,7 @@ const ClinicDetailPage = () => {
 
                             <Card withBorder radius="md" p="md" mr={27} w={250} h={250} bg={'light-dark(var(--mantine-color-white), var(--mantine-color-dark-7)'}>
                                 <Card.Section>
-                                    <Image src={news.logo} fallbackSrc={NewLogoDefault} height={150} />
+                                    <Image src={news.logo} fallbackSrc={NewsLogoDefault} height={150} />
                                 </Card.Section>
 
                                 <Card.Section m={5}>
