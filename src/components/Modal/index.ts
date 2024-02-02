@@ -7,3 +7,4 @@ export { default as ModalAppointmentDetail } from './ModalAppointmentDetail';
 export { default as ModalAddAppointment } from './ModalAddAppointment';
 export { default as ModalInitPassword } from './ModalInitPassword';
 export { default as ModalNewClinicService } from './ModalNewClinicService';
+export { default as ModalPackagePurchaseHistory } from './ModalPackagePurchaseHistory';

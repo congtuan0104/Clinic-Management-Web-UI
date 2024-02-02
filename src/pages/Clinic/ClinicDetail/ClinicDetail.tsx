@@ -34,6 +34,7 @@ import classNames from "classnames";
 import ClinusLogo from '@/assets/images/logo-2.png';
 import { FaCopy } from "react-icons/fa6";
 import { useDisclosure } from "@mantine/hooks";
+import { ModalPackagePurchaseHistory } from "@/components";
 
 type ImageUploadType = File | null;
 
@@ -357,40 +358,7 @@ export default function ClinicDetail() {
         </Box>
       </Stack>
 
-      <Modal.Root opened={opened} onClose={close} centered size={'md'}>
-        <Modal.Overlay />
-        <Modal.Content radius='lg'>
-          <ModalHeader>
-            <Modal.Title fz={16} fw={600}>Lịch sử đăng ký gói</Modal.Title>
-            <ModalCloseButton />
-          </ModalHeader>
-          <ModalBody>
-            {currentClinic && currentClinic.subscriptions && currentClinic.subscriptions.map((history) => (
-              <Card withBorder radius="md" px="md" mr={27} w={'100%'} h={150}>
-                <Card.Section bg={'#081692'} c={'white'} h={50}>
-                  <Center>
-                    <Text fw={700} pt={12}>{history?.plans?.planName}</Text>
-                  </Center>
-
-                </Card.Section>
-
-                <Card.Section m={5}>
-                  <Text>Thời hạn: <strong>{history.plans?.duration} ngày </strong></Text>
-                  <Text>Ngày mua: <b>{dayjs(history.createdAt).format('DD/MM/YYYY')}</b></Text>
-                  <Text>Thời hạn đến: <b>{dayjs(history.expiredAt).format('DD/MM/YYYY')}</b></Text>
-                  <Text>Trạng thái: {history.status}</Text>
-                  {/* <Divider/>
-        
-        <Text fz="sm" mt="md" >
-            {advertise.content}
-        </Text> */}
-                </Card.Section>
-              </Card>
-            ))}
-
-          </ModalBody>
-        </Modal.Content>
-      </Modal.Root>
+      <ModalPackagePurchaseHistory isOpen={opened} onClose={close}/>
     </Center>
   )
 }
