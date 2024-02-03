@@ -57,10 +57,10 @@ const Header = () => {
               <Link className=" hover:text-teal-500" to={PATHS.HOME}>
                 Trang chủ
               </Link>
-              <Link className=" hover:text-teal-500" to="/tin-tuc">
+              <Link className=" hover:text-teal-500" to={PATHS.NEWS}>
                 Tin tức
               </Link>
-              <Link className=" hover:text-teal-500" to='/phong-kham'>
+              <Link className=" hover:text-teal-500" to={PATHS.CLINICS}>
                 Phòng khám
               </Link>
               <Link className=" hover:text-teal-500" to="/dat-lich-hen">

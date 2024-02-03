@@ -31,6 +31,7 @@ export const PATHS = {
   HOME: '/',
   CLINICS: '/phong-kham',
   CLINIC_DETAIL: '/phong-kham/:id',
+  NEWS: '/tin-tuc',
   LOGIN: '/dang-nhap',
   REGISTER: '/dang-ky',
   PROFILE: '/tai-khoan',

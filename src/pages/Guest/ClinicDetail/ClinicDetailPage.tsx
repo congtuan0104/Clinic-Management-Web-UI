@@ -7,11 +7,14 @@ import { IClinic } from '@/types';
 import ClinicLogoDefault from '@/assets/images/hospital-logo.png';
 import DoctorAvatarDefault from '@/assets/images/doctor-avatar.png';
 import NewsLogoDefault from '@/assets/images/news-logo.png';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { clinicApi, staffApi, clinicServiceApi, newsApi } from '@/services';
 import { HiOutlineLocationMarker } from "react-icons/hi";
 import { FiMail, FiPhone } from "react-icons/fi";
 import { CurrencyFormatter } from '@/components';
+import Map, { Marker, FullscreenControl, NavigationControl, AttributionControl } from 'react-map-gl';
+import { IoLocation } from 'react-icons/io5';
+import { PATHS } from '@/config';
 
 const ClinicDetailPage = () => {
   const { id: clinicId } = useParams();
@@ -71,10 +74,10 @@ const ClinicDetailPage = () => {
 
   return (
     <div className='max-w-screen-xl mx-auto'>
-      <Center m={20}>
+      <Center my={20}>
         <Grid>
-          <GridCol w={200} span={5}>
-            <Paper w="100%" h='100%' withBorder shadow="md" radius="md">
+          <GridCol span={5}>
+            <Paper w="100%" withBorder shadow="md" radius="md">
               <Stack justify='center' align='center' pt={20} pb={20}>
                 <Box w={200} h={200}>
                   <Image
@@ -88,15 +91,18 @@ const ClinicDetailPage = () => {
                   {clinic?.name}
                 </Text>
               </Stack >
-              <Divider my={'md'} pb={20} />
-              <Center>
+              <Divider my={'md'} pb={16} />
+              <Center px={26}>
                 <Stack pb={20}>
-                  {clinic?.address ? (<Group>
-                    <HiOutlineLocationMarker size={'20px'} />
-                    <Text>
-                      {clinic?.address}
-                    </Text>
-                  </Group>) : null}
+                  {clinic?.address ? (
+                    <Flex>
+                      <Box w={20} h={20}>
+                        <HiOutlineLocationMarker size={'20px'} />
+                      </Box>
+                      <Text ml={16}>
+                        {clinic?.address}
+                      </Text>
+                    </Flex>) : null}
                   {clinic?.email ? (<Group>
                     <FiMail size={'20px'} />
                     <Text>
@@ -109,17 +115,39 @@ const ClinicDetailPage = () => {
                       {clinic?.phone}
                     </Text>
                   </Group>) : null}
-
-
                 </Stack>
               </Center>
             </Paper>
+
+            <Paper mt={16} w="100%" h={470} withBorder shadow="md" radius="md">
+              <Text fw={700} size='18px' ml={10} my={15}>Bản đồ</Text>
+              {clinic && clinic.lat && clinic.long && (
+                <Map
+                  mapboxAccessToken="pk.eyJ1IjoiY29uZ3R1YW4wMTA0IiwiYSI6ImNsczF2eXRxYTBmbmcya2xka3B6cGZrMnQifQ.AHAzE7JIHyehx-m1YJbzFg"
+                  initialViewState={{
+                    zoom: 15,
+                    latitude: clinic.lat,
+                    longitude: clinic.long
+                  }}
+                  scrollZoom={true}
+                  style={{ width: '96%', height: 400, marginTop: 10, marginLeft: 8 }}
+                  mapStyle="mapbox://styles/mapbox/streets-v12"
+                  attributionControl={false}
+                >
+                  <FullscreenControl />
+                  <NavigationControl />
+                  <Marker latitude={clinic.lat} longitude={clinic.long}>
+                    <IoLocation style={{ color: 'red' }} size={40} />
+                  </Marker>
+                  <AttributionControl customAttribution={clinic.name} />
+                </Map>)}
+            </Paper>
           </GridCol>
-          <GridCol w={1200} span={7}>
+          <GridCol span={7}>
             <Stack w={'100%'} h={'100%'}>
               <Paper w="100%" h='100%' withBorder shadow="md" radius="md">
                 <Stack p={20}>
-                  <Text fw={700} size='25px'>Giới thiệu {clinic?.name}</Text>
+                  <Text fw={700} size='18px'>Giới thiệu</Text>
                   <div
                     className="ml-[8px]"
                     dangerouslySetInnerHTML={{ __html: clinic?.description || '' }}>
@@ -128,7 +156,7 @@ const ClinicDetailPage = () => {
               </Paper>
               <Paper w="100%" h='100%' withBorder shadow="md" radius="md">
                 <Stack p={20}>
-                  <Text fw={700} size='25px'>Đội ngũ nhân viên</Text>
+                  <Text fw={700} size='18px'>Đội ngũ nhân viên</Text>
                   <Group>
                     {doctors && doctors.slice(0, 4).map((doctor) => (
 
@@ -154,7 +182,7 @@ const ClinicDetailPage = () => {
               </Paper>
               <Paper w="100%" h='100%' withBorder shadow="md" radius="md">
                 <Stack p={20} justify='flex-start' align='flex-start'>
-                  <Text fw={700} size='25px'>Dịch vụ</Text>
+                  <Text fw={700} size='18px'>Dịch vụ</Text>
                   {services ? (
                     <Table withTableBorder withColumnBorders>
                       <Table.Thead>
@@ -162,6 +190,7 @@ const ClinicDetailPage = () => {
                           <Table.Th>Dịch vụ</Table.Th>
                           <Table.Th>Giá</Table.Th>
                           <Table.Th>Mô tả</Table.Th>
+                          <Table.Th>Đăng ký dịch vụ</Table.Th>
                         </Table.Tr>
                       </Table.Thead>
                       <Table.Tbody>
@@ -176,11 +205,41 @@ const ClinicDetailPage = () => {
                                 <Table.Td></Table.Td>
                               )}
                             <Table.Td>{service.description}</Table.Td>
+                            <Table.Td><Button w='100%' variant="white">Đăng ký</Button></Table.Td>
                           </Table.Tr>
                         ))}
                       </Table.Tbody>
                     </Table>
                   ) : null}
+                </Stack>
+              </Paper>
+              <Paper w="100%" h='100%' withBorder shadow="md" radius="md" mb={30}>
+                <Stack p={20}>
+                  <Flex justify='space-between' align='center' gap={20}>
+                    <Text fw={700} size='18px'>Tin tức, thông báo</Text>
+                    <Text fw={500} size='14px' component={Link} to={PATHS.NEWS}>Xem tất cả tin tức</Text>
+                  </Flex>
+
+                  <Grid>
+                    {news && news.map((news) => (
+
+                      <Grid.Col span={4}>
+                        <Card withBorder radius="md" p="md" w={'100%'} h={'100%'} bg={'white'}>
+                          <Card.Section>
+                            <Image src={news.logo} fallbackSrc={NewsLogoDefault} height={150} />
+                          </Card.Section>
+
+                          <Card.Section m={5}>
+                            <Center>
+                              <Text fz="md" fw={500}>
+                                {news.title}
+                              </Text>
+                            </Center>
+                          </Card.Section>
+                        </Card>
+                      </Grid.Col>
+                    ))}
+                  </Grid>
                 </Stack>
               </Paper>
             </Stack>
@@ -190,34 +249,7 @@ const ClinicDetailPage = () => {
         </Grid>
 
       </Center>
-      <Paper w="100%" h='100%' withBorder shadow="md" radius="md" mb={30}>
-        <Stack p={20}>
-          <Text fw={700} size='25px'>Tin tức, Quảng cáo</Text>
-          <Group>
-            {news && news.slice(0, 4).map((news) => (
 
-              <Card withBorder radius="md" p="md" mr={27} w={250} h={250} bg={'light-dark(var(--mantine-color-white), var(--mantine-color-dark-7)'}>
-                <Card.Section>
-                  <Image src={news.logo} fallbackSrc={NewsLogoDefault} height={150} />
-                </Card.Section>
-
-                <Card.Section m={5}>
-                  <Center>
-                    <Text fz="lg" fw={700}>
-                      {news.title}
-                    </Text>
-                  </Center>
-                  {/* <Divider/>
-                                    
-                                    <Text fz="sm" mt="md" >
-                                        {advertise.content}
-                                    </Text> */}
-                </Card.Section>
-              </Card>
-            ))}
-          </Group>
-        </Stack>
-      </Paper>
     </div>
   );
 };
