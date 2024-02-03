@@ -14,61 +14,56 @@ import { useDebouncedState } from '@mantine/hooks';
 
 
 const ClinicsPage = () => {
-    const { data: clinics, isLoading, refetch } = useQuery('clinics', () => getAllClinics(value));
-    const [value, setValue] = useDebouncedState('', 1000);
+  const { data: clinics, isLoading, refetch } = useQuery('clinics', () => getAllClinics(value));
+  const [value, setValue] = useDebouncedState('', 1000);
 
-    const getAllClinics = async (searchValue?: string) => {
-        try {
-            const response = await clinicApi.getClinics({name: searchValue});
-            return response.data;
-        } catch (error) {
-            console.log(error);
-        }
+  const getAllClinics = async (searchValue?: string) => {
+    try {
+      const response = await clinicApi.getClinics({ name: searchValue });
+      return response.data;
+    } catch (error) {
+      console.log(error);
     }
+  }
 
-    useEffect(() => {
-        const fetchData = async () => {      
-            refetch();
-        };
+  useEffect(() => {
+    const fetchData = async () => {
+      refetch();
+    };
 
-        fetchData();
-    }, [value, refetch]);
+    fetchData();
+  }, [value, refetch]);
 
-    return (
-        <div className='max-w-screen-xl mx-auto'>
-        <Center>
-            <div>
-                <Center>
-                    <Text fw={700} size='30px' m={20} c={'primary.3'}>Phòng khám</Text>
-                    
-                </Center>
-                <Center>
-                <Text size='15px' mb={20}>Với những phòng khám hàng đầu sẽ giúp trải nghiệm khám, chữa bệnh của bạn tốt hơn</Text>
-                </Center>
-                <Center>
-                    <TextInput
-                        w={350}
-                        size='md'
-                        radius={'md'}
-                        leftSection={<CiSearch />}
-                        placeholder='Tìm kiếm phòng khám'
-                        onChange={(event) => setValue(event.currentTarget.value)}
-                    />
-                </Center>
+  return (
+    <div className='max-w-screen-xl mx-auto'>
+      <Center>
+        <div>
+          <Stack align='center'>
+            <Text fw={700} size='30px' m={20} c={'primary.3'}>Phòng khám</Text>
+            <Text size='15px'>Với những phòng khám hàng đầu sẽ giúp trải nghiệm khám, chữa bệnh của bạn tốt hơn</Text>
+            <TextInput
+              w={660}
+              size='lg'
+              radius={'md'}
+              leftSection={<CiSearch />}
+              placeholder='Tìm kiếm phòng khám'
+              onChange={(event) => setValue(event.currentTarget.value)}
+            />
+          </Stack>
 
-                <Grid pt={30} pb={30}>
-                    {clinics && clinics.map((clinic) => (
-                        <GridCol span={ 6}>
-                            <ClinicCard key={clinic.id} clinic={clinic}/>
-                        </GridCol>                
-                    ))}
-                </Grid>
-            </div>
-
-        </Center>
+          <Grid pt={30} pb={30}>
+            {clinics && clinics.map((clinic) => (
+              <GridCol span={6}>
+                <ClinicCard key={clinic.id} clinic={clinic} />
+              </GridCol>
+            ))}
+          </Grid>
         </div>
 
-    );
+      </Center>
+    </div>
+
+  );
 };
 
 export default ClinicsPage;

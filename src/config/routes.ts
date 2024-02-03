@@ -29,8 +29,8 @@ import {
 
 export const PATHS = {
   HOME: '/',
-  CLINICS:'/phong-kham',
-  CLICNIC_DETAIL:'/phong-kham/:id',
+  CLINICS: '/phong-kham',
+  CLINIC_DETAIL: '/phong-kham/:id',
   LOGIN: '/dang-nhap',
   REGISTER: '/dang-ky',
   PROFILE: '/tai-khoan',
@@ -86,7 +86,7 @@ export const ROUTES = [
     children: [],
   },
   {
-    path: PATHS.CLICNIC_DETAIL,
+    path: PATHS.CLINIC_DETAIL,
     title: 'Chi tiết phòng khám',
     layout: DefaultLayout,
     element: ClinicDetailPage,
@@ -266,5 +266,4 @@ export const ROUTES = [
     element: NotFoundPage,
     children: [],
   },
-  
 ];

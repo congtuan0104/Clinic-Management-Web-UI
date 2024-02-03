@@ -29,27 +29,30 @@ const ClinicCard = ({ clinic }: IClinicCardProps) => {
             radius="xl"
             src={clinic.logo}
             h={150}
+            w={150}
             fallbackSrc={ClinicLogoDefault}
           />
         </Box>
 
         <Stack align="flex-start" gap="xs" pl={30}>
           <Text fw={700} size='25px'>{clinic.name}</Text>
-          <Group pt={20}>
-            <HiOutlineLocationMarker size={'20px'} color='gray' />
-            <Text c='gray.6'>
+          <Flex gap={8}>
+            <div className='w-5 h-5'>
+              <HiOutlineLocationMarker size={'20px'} color='gray' />
+            </div>
+            <Text c='gray.6' span>
               {clinic.address}
             </Text>
-          </Group>
+          </Flex>
           <Group>
             <FiMail size={'20px'} color='gray' />
-            <Text c='gray.6'>
+            <Text c='gray.6' component='a' href={`mailto:${clinic.email}`} className='hover:!text-gray-600'>
               {clinic.email}
             </Text>
           </Group>
           <Group>
             <FiPhone size={'20px'} color='gray' />
-            <Text c='gray.6'>
+            <Text c='gray.6' component='a' href={`tel:${clinic.phone}`} className='hover:!text-gray-600'>
               {clinic.phone}
             </Text>
           </Group>
