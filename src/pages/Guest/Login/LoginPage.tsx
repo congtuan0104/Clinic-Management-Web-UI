@@ -86,7 +86,7 @@ const LoginPage = () => {
       if (!userInfoFromProvider) {
         notifications.show({
           message: 'Đăng nhập không thành công',
-          color: 'red',
+          color: 'red.5',
         });
         return;
       }
@@ -112,7 +112,7 @@ const LoginPage = () => {
           case AuthModule.Admin:
             navigate(PATHS.ADMIN_DASHBOARD);
             break;
-          case AuthModule.Clinic:
+          case AuthModule.ClinicOwner:
             navigate(PATHS.CLINIC_DASHBOARD);
             break;
           case AuthModule.Patient:
@@ -125,6 +125,7 @@ const LoginPage = () => {
         return;
       } else {
         // chưa có tài khoản, chọn email để đăng ký tài khoản 
+        console.log('chưa có tài khoản, chọn email để đăng ký tài khoản');
         setEmailFromProvider(userInfoFromProvider.email || userInfoFromProvider.providerData[0].email);
         open(); // mở modal chọn email để đăng ký tài khoản
       }
@@ -166,7 +167,7 @@ const LoginPage = () => {
             case AuthModule.Admin:
               navigate(PATHS.ADMIN_DASHBOARD);
               break;
-            case AuthModule.Clinic:
+            case AuthModule.ClinicOwner:
               navigate(PATHS.CLINIC_DASHBOARD);
               break;
             default:

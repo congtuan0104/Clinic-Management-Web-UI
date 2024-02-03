@@ -1,3 +1,4 @@
+import { IUserInfo } from './../types/auth.types';
 import {
   IApiResponse,
   IGoogleLoginRequest,
@@ -94,8 +95,11 @@ export const authApi = {
     return axiosClient.get(`/auth/verify-account?token=${token}`);
   },
 
-  sendVerifyEmail(email: string): Promise<any> {
-    return axiosClient.post('/auth/resend-verify-email', { email });
-    // return axiosClient.get('/auth/find-all-user', { params: { email } });
+  sendVerifyEmail(email: string): Promise<IApiResponse<IUserInfo | undefined | null>> {
+    return axiosClient.post('/auth/resend-verify-email', { params: { email } });
+  },
+
+  findUserByEmail(email: string, emailVerified?: string): Promise<IApiResponse<IUserInfo>> {
+    return axiosClient.get('/auth/find-user-by-email', { params: { email, emailVerified } });
   },
 };

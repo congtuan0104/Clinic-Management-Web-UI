@@ -176,7 +176,7 @@ const RegisterPage = () => {
           case AuthModule.Admin:
             navigate(PATHS.ADMIN_DASHBOARD);
             break;
-          case AuthModule.Clinic:
+          case AuthModule.ClinicOwner:
             navigate(PATHS.CLINIC_DASHBOARD);
             break;
           case AuthModule.Patient:
@@ -309,10 +309,10 @@ const RegisterPage = () => {
             </button>
             <button
               type='button'
-              onClick={() => setValue('moduleId', AuthModule.Clinic.toString())}
+              onClick={() => setValue('moduleId', AuthModule.ClinicOwner.toString())}
               className={classNames(
                 'cursor-pointer w-full text-center py-2 bg-transparent border-solid border-gray-300 rounded',
-                getValues('moduleId') === AuthModule.Clinic.toString() ? 'bg-primary-400 text-white' : 'hover:bg-primary-100'
+                getValues('moduleId') === AuthModule.ClinicOwner.toString() ? 'bg-primary-400 text-white' : 'hover:bg-primary-100'
               )}>
               Quản lý phòng khám
             </button>
@@ -336,7 +336,7 @@ const RegisterPage = () => {
                 Khám chữa bệnh
               </Chip.Item>
               <Chip.Item
-                value={AuthModule.Clinic.toString()}
+                value={AuthModule.ClinicOwner.toString()}
                 size='md'
                 variant='light'
                 radius='md'

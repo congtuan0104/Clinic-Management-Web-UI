@@ -167,7 +167,7 @@ const ClinicHeader = () => {
               onClick={() => navigate(PATHS.PLAN_MANAGEMENT)}
               leftSection={<BsCardText size={15} />}
             >
-              Quản lý gói và phòng khám
+              Quản lý gói
             </Menu.Item>
 
             <Menu.Item

@@ -16,6 +16,7 @@ import { PATHS } from '@/config';
 import { cookies } from '@/utils';
 import { COOKIE_KEY } from '@/constants';
 import classNames from 'classnames';
+import Map, { Marker } from 'react-map-gl';
 
 
 const ClinicManagePage = () => {
@@ -179,7 +180,7 @@ const ClinicManagePage = () => {
           </Flex>
           <Flex direction='column' gap={15}>
             {clinics.map((clinic) => (
-              <Paper shadow="xs" radius='md' p='lg'>
+              <Paper shadow="xs" radius='md' p='lg' key={clinic.id}>
                 <div className='flex justify-between'>
                   <div>
                     <Text fw='semibold' tt='uppercase'>{clinic.name}</Text>
@@ -201,7 +202,7 @@ const ClinicManagePage = () => {
         </Text>
         <Grid gutter={20} mt={20}>
           {plans && plans.map((plan) => (
-            <Grid.Col span={{ base: 12, md: 6, lg: 4 }}>
+            <Grid.Col span={{ base: 12, md: 6, lg: 4 }} key={plan.id}>
               <PlanCard key={plan.id} plan={plan} actionText='Mua gói' action={handleBuyPlan} />
             </Grid.Col>
           ))}

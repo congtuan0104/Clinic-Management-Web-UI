@@ -29,10 +29,10 @@ import {
 } from "firebase/storage";
 import { v4 } from "uuid";
 import { useNavigate } from "react-router-dom";
-import { current } from "@reduxjs/toolkit";
-import classNames from "classnames";
 import ClinusLogo from '@/assets/images/logo-2.png';
 import { FaCopy } from "react-icons/fa6";
+import Map, { Marker, NavigationControl, FullscreenControl, AttributionControl } from 'react-map-gl';
+import { IoLocation } from "react-icons/io5";
 
 type ImageUploadType = File | null;
 
@@ -43,6 +43,8 @@ interface IUpdateData {
   address: string,
   phone: string,
   logo?: string,
+  lat?: number,
+  long?: number,
 }
 
 const schema = yup.object().shape({
@@ -75,8 +77,7 @@ export default function ClinicDetail() {
 
   const subscription = currentClinic?.subscriptions?.[0];
 
-  console.log('thong tin phong kham: ', currentClinic);
-  const { control, setValue, getValues } = useForm<IUpdateData>({
+  const { control, setValue, getValues, watch } = useForm<IUpdateData>({
     resolver: yupResolver(schema), // gắn điều kiện xác định input hợp lệ vào form
     defaultValues: useMemo(() => {
       return {
@@ -86,10 +87,15 @@ export default function ClinicDetail() {
         address: currentClinic?.address || '',
         phone: currentClinic?.phone || '',
         logo: currentClinic?.logo || '',
+        lat: currentClinic?.lat,
+        long: currentClinic?.long,
       }
     }
       , [currentClinic]),
   });
+
+  const lat = watch('lat')
+  const long = watch('long')
 
   const onSubmit = async (data: IUpdateData) => {
     // console.log('im here')
@@ -100,6 +106,8 @@ export default function ClinicDetail() {
       phone: data.phone,
       address: data.address,
       logo: getValues('logo'),
+      lat: data.lat,
+      long: data.long,
       description: editorContent
     }
     if (currentClinic?.id) {
@@ -126,6 +134,8 @@ export default function ClinicDetail() {
 
   const handleUpdate = () => {
     setIsUpdate(true);
+    setValue('lat', currentClinic?.lat);
+    setValue('long', currentClinic?.long);
     editor?.setEditable(true)
   }
 
@@ -155,6 +165,9 @@ export default function ClinicDetail() {
       setValue('email', currentClinic?.email);
       setValue('phone', currentClinic?.phone);
       setValue('address', currentClinic?.address);
+      setValue('logo', currentClinic?.logo);
+      setValue('lat', currentClinic?.lat);
+      setValue('long', currentClinic?.long);
     }
     if (currentClinic?.description)
       editor?.commands.setContent(currentClinic?.description)
@@ -180,27 +193,28 @@ export default function ClinicDetail() {
 
   return (
     <Center>
-      <Stack>
-        {subscription && <Flex w='941px' h='160px' px='30px' align="center" justify={'space-between'} bg='#081692' style={{ borderRadius: '10px' }} mt='30px' c='white'>
-          <Stack>
-            <Title order={5}>BẠN ĐANG SỬ SỬ DỤNG GÓI {subscription?.plans?.planName}</Title>
-            <Flex>
-              Thời gian sử dụng đến &nbsp; <b>{dayjs(subscription?.expiredAt).format('DD/MM/YYYY')}</b>
-            </Flex>
-            <Flex>
-              Còn lại &nbsp; <b>{dayjs(subscription?.expiredAt).diff(dayjs(), 'day')}</b> &nbsp; ngày
-            </Flex>
-          </Stack>
-          <Stack justify='right'>
+      <Stack pb={20}>
+        {subscription &&
+          <Flex px='30px' py={25} align="center" justify={'space-between'} bg='primary.9' style={{ borderRadius: '10px' }} mt='30px' c='white'>
+            <Stack>
+              <Title order={5}>BẠN ĐANG SỬ SỬ DỤNG GÓI {subscription?.plans?.planName}</Title>
+              <Flex>
+                Thời gian sử dụng đến &nbsp; <b>{dayjs(subscription?.expiredAt).format('DD/MM/YYYY')}</b>
+              </Flex>
+              <Flex>
+                Còn lại &nbsp; <b>{dayjs(subscription?.expiredAt).diff(dayjs(), 'day')}</b> &nbsp; ngày
+              </Flex>
+            </Stack>
+            <Stack justify='right'>
 
-            <Text>Xem lịch sử đăng ký gói</Text>
-          </Stack>
-        </Flex>}
-        <Box w='941px' h='636px' px='30px' bg='white' py='20px' style={{ borderRadius: '10px' }}>
+              <Text>Xem lịch sử đăng ký gói</Text>
+            </Stack>
+          </Flex>}
+        <Box px='30px' bg='white' py='20px' style={{ borderRadius: '10px' }}>
           <Flex justify={"space-between"}>
             <Title order={5}>THÔNG TIN CƠ SỞ Y TẾ</Title>
             <div className="flex flex-1 justify-end items-center gap-1">
-              <Text c='#6B6B6B'>ID:{currentClinic.id}</Text>
+              <Text c='#6B6B6B'>ID: {currentClinic.id}</Text>
               <CopyButton value={currentClinic.id}>
                 {({ copied, copy }) => (
                   <Tooltip label={copied ? 'Đã copy ID phòng khám' : 'Copy ID phòng khám'}>
@@ -220,8 +234,8 @@ export default function ClinicDetail() {
                   <>
                     <label htmlFor="upload-image" className="relative group">
                       <Image
-                        w='189px'
-                        h='186px'
+                        w={200}
+                        h={200}
                         className="cursor-pointer group-hover:opacity-90 rounded-md"
                         src={imageUrl || currentClinic?.logo || ClinusLogo}
                       />
@@ -238,8 +252,8 @@ export default function ClinicDetail() {
                   </>
                 ) : (
                   <Image
-                    w='189px'
-                    h='186px'
+                    w={200}
+                    h={200}
                     src={imageUrl || currentClinic?.logo || ClinusLogo}
                   />
                 )
@@ -255,11 +269,11 @@ export default function ClinicDetail() {
                   <Grid>
                     <Grid.Col span={6}>
                       <TextInput
-                        label="Chuyên môn"
+                        label="Email liên hệ"
                         disabled={!isUpdate}
                         control={control}
                         mt="md"
-                        name='specialty'
+                        name='email'
                       />
                     </Grid.Col>
                     <Grid.Col span={6}>
@@ -273,16 +287,8 @@ export default function ClinicDetail() {
                     </Grid.Col>
                   </Grid>
                   <Grid>
-                    <Grid.Col span={6}>
-                      <TextInput
-                        label="Email liên hệ"
-                        disabled={!isUpdate}
-                        control={control}
-                        mt="md"
-                        name='email'
-                      />
-                    </Grid.Col>
-                    <Grid.Col span={6}>
+
+                    <Grid.Col span={12}>
                       <TextInput
                         label="Địa chỉ"
                         disabled={!isUpdate}
@@ -291,9 +297,40 @@ export default function ClinicDetail() {
                         name='address'
                       />
                     </Grid.Col>
-                    <Text w='100%' ml='8px' mt='10px' mb='7px'>Mô tả</Text>
+
+                    <Map
+                      mapboxAccessToken="pk.eyJ1IjoiY29uZ3R1YW4wMTA0IiwiYSI6ImNsczF2eXRxYTBmbmcya2xka3B6cGZrMnQifQ.AHAzE7JIHyehx-m1YJbzFg"
+                      latitude={lat}
+                      longitude={long}
+                      initialViewState={{
+                        zoom: 15,
+                      }}
+                      scrollZoom={true}
+                      style={{ width: 692, height: 400, marginTop: 10, marginLeft: 8 }}
+                      mapStyle="mapbox://styles/mapbox/streets-v12"
+                      attributionControl={false}
+                      onMove={(e) => {
+                        setValue('lat', e.viewState.latitude);
+                        setValue('long', e.viewState.longitude);
+                      }}
+                    >
+                      <FullscreenControl />
+                      <NavigationControl />
+                      {currentClinic.lat && currentClinic.long && !isUpdate && (
+                        <Marker latitude={currentClinic.lat} longitude={currentClinic.long}>
+                          <IoLocation style={{ color: 'red' }} size={40} />
+                        </Marker>
+                      )}
+                      {lat && long && isUpdate && (
+                        <Marker latitude={lat} longitude={long}>
+                          <IoLocation style={{ color: 'red' }} size={40} />
+                        </Marker>
+                      )}
+                      <AttributionControl customAttribution={getValues('name')} />
+                    </Map>
+                    {currentClinic?.description || isUpdate && (<Text w='100%' ml='8px' mt='10px' mb='7px'>Mô tả</Text>)}
                     {isUpdate ? (
-                      <RichTextEditor editor={editor} style={{ transform: "translateX(11px)" }}>
+                      <RichTextEditor editor={editor} w='100%' style={{ transform: "translateX(11px)" }}>
                         <RichTextEditor.Toolbar sticky stickyOffset={60}>
                           <RichTextEditor.ControlsGroup>
                             <RichTextEditor.Bold />
@@ -331,7 +368,7 @@ export default function ClinicDetail() {
                       <div className="ml-[8px]" dangerouslySetInnerHTML={{ __html: currentClinic?.description || '' }}></div>
                     )}
                   </Grid>
-                  <Divider my="md" />
+
                   <Group justify="flex-end" mt="lg">
                     {
                       isUpdate ? (

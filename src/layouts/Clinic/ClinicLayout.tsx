@@ -46,7 +46,7 @@ const ClinicLayout = ({ children }: { children: JSX.Element }) => {
   );
 
   useEffect(() => {
-    if (userInfo?.moduleId !== AuthModule.Clinic) {
+    if (userInfo?.moduleId !== AuthModule.ClinicOwner) {
       navigate(PATHS.HOME, { replace: true });
     }
 
