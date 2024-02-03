@@ -90,7 +90,7 @@ export const useAuth = () => {
           case AuthModule.Admin:
             navigate(PATHS.ADMIN_DASHBOARD);
             break;
-          case AuthModule.Clinic:
+          case AuthModule.ClinicOwner:
             navigate(PATHS.CLINIC_DASHBOARD);
             break;
           case AuthModule.Patient:

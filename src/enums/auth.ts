@@ -7,7 +7,8 @@ export enum AuthProvider {
 
 export enum AuthModule {
   Admin = 1,
-  Clinic = 2,
+  ClinicOwner = 2,
   Patient = 3,
   Guest = 4,
+  ClinicStaff = 5,
 }
