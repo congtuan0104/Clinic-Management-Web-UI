@@ -7,6 +7,7 @@ import { useEffect, useRef, useState } from 'react';
 import NewsLogoDefault from '@/assets/images/news-logo.png';
 import { INews } from '@/types';
 import { MdOutlineNavigateNext } from "react-icons/md";
+import { Link } from 'react-router-dom';
 
 const NewsPage = () => {
     const [pageIndex, setPageIndex] = useState(1);
@@ -49,13 +50,13 @@ const NewsPage = () => {
     return (
         <div className='max-w-screen-xl mx-auto'>
             <Stack>
-                <Grid pt={30} pb={30}>
+                <Grid pt={30} pb={30} grow gutter="xl">
                     <GridCol span={7} >
                         {firstNewsRef && (
                             <Card withBorder radius="md" w={'100%'} h={'100%'} bg={'white'}>
                                 <Card.Section>
-                                    <Box w={'100%'} h={350}>
-                                        <Image src={firstNewsRef.current?.logo} fallbackSrc={NewsLogoDefault} height={350} />
+                                    <Box w={'100%'} h={'100%'}>
+                                        <Image src={firstNewsRef.current?.logo} fallbackSrc={NewsLogoDefault} height={'100%'} />
                                     </Box>
 
                                 </Card.Section>
@@ -72,20 +73,20 @@ const NewsPage = () => {
                                         dangerouslySetInnerHTML={{ __html: firstNewsRef.current?.content || '' }}>
                                     </div>
                                 </Text>
-                                <Card.Section mr={20} mt={10} style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'flex-end' }}>
-                                    <Anchor underline='always'>Xem chi tiết</Anchor>
+                                <Card.Section mr={20} my={10} style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'flex-end' }}>
+                                    <Anchor underline='always' component={Link} to={`${PATHS.NEWS}/${firstNewsRef.current?.id}`}>Xem chi tiết</Anchor>
                                 </Card.Section>
                             </Card>
                         )}
                     </GridCol>
                     <GridCol span={5}>
-                        <Stack h={470}>
+                        <Stack h={500}>
                             {news &&
                                 news.map((newsItem, index) => (
                                     <NewsCard news={newsItem} />
                                 ))}
                         </Stack>
-                        <Group align='center' justify='center' mt={20}>
+                        <Group align='center' justify='center' mt={30}>
 
                             <Button onClick={handlePrevPage} disabled={pageIndex === 1 || isFetching}>
                                 Trang trước

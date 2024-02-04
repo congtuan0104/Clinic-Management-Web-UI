@@ -27,12 +27,14 @@ import {
   ClinicDetailPage,
 } from '@/pages';
 import { NewsPage } from '@/pages/Guest/News';
+import { NewsDetailPage } from '@/pages/Guest/NewsDetail';
 
 export const PATHS = {
   HOME: '/',
   CLINICS: '/phong-kham',
   CLINIC_DETAIL: '/phong-kham/:id',
   NEWS: '/tin-tuc',
+  NEWS_DETAIL: '/tin-tuc/:id',
   LOGIN: '/dang-nhap',
   REGISTER: '/dang-ky',
   PROFILE: '/tai-khoan',
@@ -84,6 +86,14 @@ export const ROUTES = [
     title: 'Tin tức',
     layout: DefaultLayout,
     element: NewsPage,
+    isProtected: false,
+    children: [],
+  },
+  {
+    path: PATHS.NEWS_DETAIL,
+    title: 'Chi tiết tin tức',
+    layout: DefaultLayout,
+    element: NewsDetailPage,
     isProtected: false,
     children: [],
   },

@@ -6,6 +6,8 @@ import { IClinic, INews, IServicePlan } from '@/types';
 import NewsLogoDefault from '@/assets/images/news-logo.png';
 import dayjs from 'dayjs';
 import { FaRegCalendar } from "react-icons/fa6";
+import { Link } from 'react-router-dom';
+import { PATHS } from '@/config';
 
 /**
  * @param {INews} news
@@ -20,14 +22,14 @@ const NewsCard = ({ news }: INewsCardProps) => {
     
     return (
         <Group>
-        <Box w={150} h={100}>
-            <Image src={news.logo} fallbackSrc={NewsLogoDefault} height={100} radius={'md'}/>
+        <Box w={150} h={100} component={Link} to={`${PATHS.NEWS}/${news.id}`}>
+            <Image src={news.logo} fallbackSrc={NewsLogoDefault} height={100} radius={'md'} />
         </Box>
         <Stack>
         <Text>
 
         </Text>
-        <Anchor fz="md" fw={700} maw={300} c={'black'}>
+        <Anchor fz="md" fw={700} maw={300} c={'black'} component={Link} to={`${PATHS.NEWS}/${news.id}`}>
             {news.title}
         </Anchor>
 
