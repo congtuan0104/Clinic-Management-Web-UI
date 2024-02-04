@@ -26,6 +26,7 @@ import {
   ClinicsPage,
   ClinicDetailPage,
 } from '@/pages';
+import { NewsPage } from '@/pages/Guest/News';
 
 export const PATHS = {
   HOME: '/',
@@ -75,6 +76,14 @@ export const ROUTES = [
     title: 'Trang chủ',
     layout: DefaultLayout,
     element: HomePage,
+    isProtected: false,
+    children: [],
+  },
+  {
+    path: PATHS.NEWS,
+    title: 'Tin tức',
+    layout: DefaultLayout,
+    element: NewsPage,
     isProtected: false,
     children: [],
   },
