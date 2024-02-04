@@ -23,7 +23,7 @@ interface IClinicCardProps {
 const ClinicCard = ({ clinic }: IClinicCardProps) => {
   return (
     <Paper w={580} h='100%' withBorder shadow="md" radius="md" >
-      <Flex justify='flex-start' align='center' p={20}>
+      <Flex justify='flex-start' align='center' p={20} >
         <Box w={150} h={150}>
           <Image
             radius="xl"
@@ -33,34 +33,34 @@ const ClinicCard = ({ clinic }: IClinicCardProps) => {
             fallbackSrc={ClinicLogoDefault}
           />
         </Box>
-
         <Stack align="flex-start" gap="xs" pl={30}>
           <Text fw={700} size='25px'>{clinic.name}</Text>
-          <Flex gap={8}>
-            <div className='w-5 h-5'>
-              <HiOutlineLocationMarker size={'20px'} color='gray' />
-            </div>
-            <Text c='gray.6' span>
-              {clinic.address}
-            </Text>
-          </Flex>
-          <Group>
-            <FiMail size={'20px'} color='gray' />
-            <Text c='gray.6' component='a' href={`mailto:${clinic.email}`} className='hover:!text-gray-600'>
-              {clinic.email}
-            </Text>
-          </Group>
-          <Group>
-            <FiPhone size={'20px'} color='gray' />
-            <Text c='gray.6' component='a' href={`tel:${clinic.phone}`} className='hover:!text-gray-600'>
-              {clinic.phone}
-            </Text>
-          </Group>
+          <Stack justify='center' h={180} mt={-10}>
+            <Flex gap={8}>
+              <div className='w-5 h-5'>
+                <HiOutlineLocationMarker size={'20px'} color='gray' />
+              </div>
+              <Text c='gray.6' span>
+                {clinic.address}
+              </Text>
+            </Flex>
+            <Group>
+              <FiMail size={'20px'} color='gray' />
+              <Text c='gray.6' component='a' href={`mailto:${clinic.email}`} className='hover:!text-gray-600'>
+                {clinic.email}
+              </Text>
+            </Group>
+            <Group>
+              <FiPhone size={'20px'} color='gray' />
+              <Text c='gray.6' component='a' href={`tel:${clinic.phone}`} className='hover:!text-gray-600'>
+                {clinic.phone}
+              </Text>
+            </Group>
+          </Stack>
+
           <Button
             w='150px'
             h='40px'
-            mt="xl"
-            mb='24px'
             ml={0}
             radius="25"
             size="md"
