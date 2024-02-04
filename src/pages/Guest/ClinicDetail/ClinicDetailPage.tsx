@@ -73,9 +73,9 @@ const ClinicDetailPage = () => {
 
 
   return (
-    <div className='max-w-screen-xl mx-auto'>
-      <Center my={20}>
-        <Grid>
+    <div className='max-w-screen-xl mx-auto w-full'>
+      <Center my={20} w='100%'>
+        <Grid w='100%'>
           <GridCol span={5}>
             <Paper w="100%" withBorder shadow="md" radius="md">
               <Stack justify='center' align='center' pt={20} pb={20}>
@@ -163,7 +163,7 @@ const ClinicDetailPage = () => {
                       <Stack justify='center' align='center' gap="xs" pr={35}>
                         <Box w={100} h={100}>
                           <Image
-                            radius="xl"
+                            radius="50%"
                             src={doctor.users.avatar}
                             h={100}
                             fallbackSrc={DoctorAvatarDefault}
@@ -224,7 +224,7 @@ const ClinicDetailPage = () => {
                     {news && news.map((news) => (
 
                       <Grid.Col span={4}>
-                        <Card withBorder radius="md" p="md" w={'100%'} h={'100%'} bg={'white'}>
+                        <Card withBorder radius="md" p="md" w={'100%'} h={'100%'} bg={'white'} component={Link} to={`${PATHS.NEWS}/${news.id}`}>
                           <Card.Section>
                             <Image src={news.logo} fallbackSrc={NewsLogoDefault} height={150} />
                           </Card.Section>

@@ -1,4 +1,4 @@
-import { IUserInfo } from './../types/auth.types';
+import { IUserInfo } from '@/types';
 import {
   IApiResponse,
   IGoogleLoginRequest,
@@ -73,7 +73,7 @@ export const authApi = {
    * API đổi mật khẩu
    */
   changePassword(data: IChangePasswordRequest): Promise<any> {
-    return axiosClient.post('/auth/change-password', data);
+    return axiosClient.post(`/auth/${data.userId}/change-password`, data);
   },
 
   /**
@@ -83,7 +83,7 @@ export const authApi = {
     return axiosClient.post('/auth/reset-password', { email });
   },
 
-  initPassword(email: string, password: string): Promise<any> {
+  initPassword(email: string, password: string): Promise<IApiResponse<IUserInfo>> {
     return axiosClient.put('/auth/add-new-password', { email, password });
   },
 

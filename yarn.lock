@@ -2116,24 +2116,24 @@
   dependencies:
     remove-accents "0.4.2"
 
-"@tanstack/react-table@8.11.3":
-  version "8.11.3"
-  resolved "https://registry.yarnpkg.com/@tanstack/react-table/-/react-table-8.11.3.tgz#0af6f7d074a319920f5149eba0a64a5b71125368"
-  integrity sha512-Gwwm7po1MaObBguw69L+UiACkaj+eOtThQEArj/3fmUwMPiWaJcXvNG2X5Te5z2hg0HMx8h0T0Q7p5YmQlTUfw==
+"@tanstack/react-table@8.11.6":
+  version "8.11.6"
+  resolved "https://registry.yarnpkg.com/@tanstack/react-table/-/react-table-8.11.6.tgz#ae234355eaae230ede95ebcbadb3251482eb6087"
+  integrity sha512-i0heTVZtuHF9VPMwcYoZ21hbzGDmLjxHYemDMvbGpjk5fUZ8nLF3S8qjVRU79XfPW8KK9o7iTU2fGFVQQmxMSQ==
   dependencies:
-    "@tanstack/table-core" "8.11.3"
+    "@tanstack/table-core" "8.11.6"
 
-"@tanstack/react-virtual@3.0.1":
-  version "3.0.1"
-  resolved "https://registry.yarnpkg.com/@tanstack/react-virtual/-/react-virtual-3.0.1.tgz#b04c492e4dd5733b72b10a974870880f83ff4698"
-  integrity sha512-IFOFuRUTaiM/yibty9qQ9BfycQnYXIDHGP2+cU+0LrFFGNhVxCXSQnaY6wkX8uJVteFEBjUondX0Hmpp7TNcag==
+"@tanstack/react-virtual@3.0.2":
+  version "3.0.2"
+  resolved "https://registry.yarnpkg.com/@tanstack/react-virtual/-/react-virtual-3.0.2.tgz#e5a979f2585d3f583944840319cddf2c2d1b0e51"
+  integrity sha512-9XbRLPKgnhMwwmuQMnJMv+5a9sitGNCSEtf/AZXzmJdesYk7XsjYHaEDny+IrJzvPNwZliIIDwCRiaUqR3zzCA==
   dependencies:
     "@tanstack/virtual-core" "3.0.0"
 
-"@tanstack/table-core@8.11.3":
-  version "8.11.3"
-  resolved "https://registry.yarnpkg.com/@tanstack/table-core/-/table-core-8.11.3.tgz#89b2914b2bc6f1aaffd31582e268a52273c49179"
-  integrity sha512-nkcFIL696wTf1QMvhGR7dEg60OIRwEZm1OqFTYYDTRc4JOWspgrsJO3IennsOJ7ptumHWLDjV8e5BjPkZcSZAQ==
+"@tanstack/table-core@8.11.6":
+  version "8.11.6"
+  resolved "https://registry.yarnpkg.com/@tanstack/table-core/-/table-core-8.11.6.tgz#ab753617b64d72f868f6ea4666059912f0c98441"
+  integrity sha512-69WEY1PaZROaGYUrseng4/4sMYnRGhDe1vM6888CnWekGz/wuCnvqwOoOuKGYivnaiI4BVmZq4WKWhvahyj3/g==
 
 "@tanstack/virtual-core@3.0.0":
   version "3.0.0"
@@ -5190,19 +5190,14 @@ make-error@^1.3.6:
   resolved "https://registry.yarnpkg.com/make-error/-/make-error-1.3.6.tgz#2eb2e37ea9b67c4891f684a1394799af484cf7a2"
   integrity sha512-s8UhlNe7vPKomQhC1qFelMokr/Sc3AgNbso3n74mVPA5LTZwkB9NlXf4XPamLxJE8h0gh73rM94xvwRT2CVInw==
 
-mantine-datatable@^7.4.1:
-  version "7.4.3"
-  resolved "https://registry.yarnpkg.com/mantine-datatable/-/mantine-datatable-7.4.3.tgz#ac816df91ed6b48a2e73f5b89af48c173fccf92b"
-  integrity sha512-AgsgN78hOKhC8yqhG2WkrATl4vto1rEQUMMjLa2ZkYQIMbCabNkZPHqUVyO/bEotYHilRPB5BmTVrGChLB449w==
-
-mantine-react-table@^2.0.0-alpha.9:
-  version "2.0.0-alpha.10"
-  resolved "https://registry.yarnpkg.com/mantine-react-table/-/mantine-react-table-2.0.0-alpha.10.tgz#675c5da5f2d47dc000aa7c97512e6e846c707275"
-  integrity sha512-YEvq7BbHAbNqrNCG83yGcSAitBYDltOkBxsNH0QLEHxtAISLxJTYzF395e6o9GJajtrCUgiGncrAjFdB0B1zVQ==
+mantine-react-table@2.0.0-alpha.11:
+  version "2.0.0-alpha.11"
+  resolved "https://registry.yarnpkg.com/mantine-react-table/-/mantine-react-table-2.0.0-alpha.11.tgz#ebd7ea203de2a1bc74518bb47973f46bdbeb930e"
+  integrity sha512-xSUkFl2L4B+MsptJ+HXg9du8wP37si4/viqTN0/bcIyY9HVrKWWTOaX3SKpl2kwcslssecdHOAJmp/LIeIZs+g==
   dependencies:
     "@tanstack/match-sorter-utils" "8.11.3"
-    "@tanstack/react-table" "8.11.3"
-    "@tanstack/react-virtual" "3.0.1"
+    "@tanstack/react-table" "8.11.6"
+    "@tanstack/react-virtual" "3.0.2"
     clsx "^2.1.0"
 
 mapbox-gl@^3.1.2:
