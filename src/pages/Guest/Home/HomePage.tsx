@@ -223,7 +223,7 @@ const HomePage = () => {
       </Center>
       <Grid gutter={20} className='max-w-screen-xl mx-auto w-full'>
         {plans && plans.map((plan) => (
-          <Grid.Col span={{ base: 12, md: 6, lg: 4 }}>
+          <Grid.Col span={{ base: 12, md: 6, lg: 4 }} key={plan.id}>
             <PlanCard key={plan.id} plan={plan} actionText='Mua gói' action={handleBuyPlan} />
           </Grid.Col>
         ))}

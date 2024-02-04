@@ -25,6 +25,7 @@ import {
   ResetPasswordPage,
   ClinicsPage,
   ClinicDetailPage,
+  ClinicCategoryPage,
 } from '@/pages';
 
 export const PATHS = {
@@ -257,6 +258,14 @@ export const ROUTES = [
     title: 'Bảng giá dịch vụ',
     layout: ClinicLayout,
     element: ServicePricePage,
+    isProtected: true,
+    children: [],
+  },
+  {
+    path: PATHS.CLINIC_CATEGORY,
+    title: 'Danh mục',
+    layout: ClinicLayout,
+    element: ClinicCategoryPage,
     isProtected: true,
     children: [],
   },

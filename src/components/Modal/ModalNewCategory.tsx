@@ -2,6 +2,7 @@ import { CATEGORY_TYPE, Gender } from "@/enums";
 import { useAppSelector } from "@/hooks";
 import { authApi, categoryApi, clinicApi, clinicServiceApi, staffApi } from "@/services";
 import { currentClinicSelector } from "@/store";
+import { ICreateCategoryPayload } from "@/types";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Button, Flex, Grid, Modal, ModalBody, ModalCloseButton, ModalHeader } from "@mantine/core";
 import { useDebouncedValue } from "@mantine/hooks";
@@ -22,66 +23,44 @@ interface IModalProps {
   onSuccess: () => void;
 }
 
-interface IFormData {
-  serviceName: string;
-  price: number;
-  description?: string;
-  categoryId?: number;
-}
-
 const validateSchema = yup.object().shape({
-  serviceName: yup.string().required('Tên dịch vụ không được để trống'),
-  price: yup.number().required('Giá dịch vụ không được để trống'),
+  name: yup.string().required('Vui lòng nhập tên danh mục'),
+  type: yup.number().required('Vui lòng chọn loại danh mục'),
+  note: yup.string(),
   description: yup.string(),
-  categoryId: yup.number(),
 });
 
-const ModalNewClinicService = ({
+const ModalNewCategory = ({
   isOpen,
   onClose,
   onSuccess
 }: IModalProps) => {
-
   const currentClinic = useAppSelector(currentClinicSelector);
 
-  const { data: cates, isLoading } = useQuery(
-    ['category', currentClinic?.id, CATEGORY_TYPE.SERVICE],
-    () => categoryApi.getCategories(currentClinic!.id, { type: CATEGORY_TYPE.SERVICE })
-      .then(res => res.data),
-    {
-      enabled: !!currentClinic?.id,
-      refetchOnWindowFocus: false,
-    }
-  );
 
-  const { control, reset } = useForm<IFormData>({
+  const { control, reset } = useForm<ICreateCategoryPayload>({
     resolver: yupResolver(validateSchema),
     defaultValues: {
-      serviceName: '',
-      price: 0,
+      name: '',
       description: '',
-      categoryId: undefined,
+      note: '',
     },
   });
-
 
   const handleCancel = () => {
     reset();
     onClose();
   }
 
-
-
-  const handleSubmitForm = async (data: IFormData) => {
-    const res = await clinicServiceApi.createClinicService(
-      currentClinic!.id,
-      { ...data, isDisabled: false }
+  const handleSubmitForm = async (data: ICreateCategoryPayload) => {
+    const res = await categoryApi.createCategory(
+      currentClinic!.id, data
     )
 
     if (res.status) {
       notifications.show({
-        title: 'Thêm dịch vụ thành công',
-        message: 'Dịch vụ đã được thêm thành công',
+        title: 'Thao tác thành công',
+        message: 'Danh mục mới đã được tạo thành công',
         color: 'teal.5',
       });
       reset();
@@ -90,8 +69,8 @@ const ModalNewClinicService = ({
     }
     else {
       notifications.show({
-        title: 'Thêm dịch vụ thất bại',
-        message: 'Đã có lỗi xảy ra khi thêm dịch vụ',
+        title: 'Thao tác thất bại',
+        message: 'Đã có lỗi xảy ra. Vui lòng thử lại sau!',
         color: 'red.5',
       });
     }
@@ -102,7 +81,7 @@ const ModalNewClinicService = ({
       <Modal.Overlay />
       <Modal.Content radius='lg'>
         <ModalHeader>
-          <Modal.Title fz={16} fw={600}>Thêm dịch vụ mới</Modal.Title>
+          <Modal.Title fz={16} fw={600}>Thêm danh mục mới</Modal.Title>
           <ModalCloseButton />
         </ModalHeader>
         <ModalBody>
@@ -110,55 +89,47 @@ const ModalNewClinicService = ({
             control={control}
             onSubmit={e => handleSubmitForm(e.data)}
             onError={e => console.log(e)}>
-            <TextInput
-              label="Tên dịch vụ"
-              name="serviceName"
-              required
-              size="md"
-              radius="sm"
-              control={control}
-            />
-
-            <NumberInput
-              label="Giá dịch vụ"
-              name="price"
-              required
-              size="md"
-              radius="sm"
-              control={control}
-              suffix="₫"
-              min={0}
-              thousandSeparator="."
-              decimalSeparator=","
-              rightSection={<></>}
-            />
-
             <Select
-              name="categoryId"
+              name="type"
               control={control}
-              label="Loại dịch vụ"
-              placeholder={'Chọn loại dịch vụ (không bắt buộc)'}
+              label="Phân loại danh mục"
               withAsterisk
-              mt="md"
               size="md"
               searchable
               radius="sm"
               required
-              disabled={isLoading}
               comboboxProps={{ shadow: 'md', transitionProps: { transition: 'pop', duration: 200 } }}
               checkIconPosition="right"
-              data={cates?.map((cate) => ({
-                value: cate.id.toString(),
-                label: cate.name,
-              }))
-              }
+              data={[
+                { label: 'Dịch vụ y tế', value: CATEGORY_TYPE.SERVICE.toString() },
+                { label: 'Vật tư y tế', value: CATEGORY_TYPE.SUPPLIER.toString() }
+              ]}
             />
 
+            <TextInput
+              label="Tên danh mục"
+              name="name"
+              required
+              mt="md"
+              size="md"
+              radius="sm"
+              control={control}
+            />
+
+            <TextInput
+              label="Ghi chú"
+              placeholder="Ghi chú (không bắt buộc)"
+              name="note"
+              mt='sm'
+              size="md"
+              radius="sm"
+              control={control}
+            />
 
             <Textarea
-              label="Mô tả dịch vụ"
+              label="Mô tả"
               name="description"
-              required
+              placeholder="Thêm mô tả về danh mục (không bắt buộc)"
               size="md"
               radius="sm"
               mt='sm'
@@ -182,4 +153,4 @@ const ModalNewClinicService = ({
   )
 }
 
-export default ModalNewClinicService
+export default ModalNewCategory

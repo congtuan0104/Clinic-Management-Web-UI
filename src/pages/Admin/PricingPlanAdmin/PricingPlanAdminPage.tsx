@@ -34,7 +34,7 @@ const PlanAdminPage = () => {
       </Flex>
 
       {isLoading && <Flex justify='center' align='center' h='500px'>
-        <Loader color="blue" size="xl" />
+        <Loader color="primary" size="xl" />
       </Flex>}
 
       <Grid gutter={20} mt={20}>

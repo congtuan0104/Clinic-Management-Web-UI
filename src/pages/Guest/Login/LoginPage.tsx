@@ -58,7 +58,7 @@ const LoginPage = () => {
       // giá trị mặc định của các field
       email: '',
       password: '',
-      isRemember: false,
+      isRemember: true,
     },
   });
 
@@ -152,7 +152,9 @@ const LoginPage = () => {
 
           // lưu vào token và thông tin user vào cookie
           cookies.set(COOKIE_KEY.TOKEN, token);
-          cookies.set(COOKIE_KEY.USER_INFO, userInfo);
+
+          if (data.isRemember)
+            cookies.set(COOKIE_KEY.USER_INFO, userInfo);
 
           // lưu thông tin user vào redux
           dispatch(setUserInfo(userInfo));

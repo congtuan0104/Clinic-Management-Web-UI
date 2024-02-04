@@ -54,6 +54,7 @@ export const theme = createTheme({
   primaryShade: 3,
   fontFamily: 'Montserrat, sans-serif',
   defaultRadius: 'sm',
+  cursorType: 'pointer',
   components: {
     Button: Button.extend({
       styles: {

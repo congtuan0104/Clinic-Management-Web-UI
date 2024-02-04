@@ -37,7 +37,10 @@ interface IAddClinicFormData {
 const schema = yup.object().shape({
   clinicName: yup.string().required('Bạn chưa nhập tên phòng khám'),
   email: yup.string().required('Thông tin email là bắt buộc').email('Email không hợp lệ'),
-  phone: yup.string().required('Thông tin số điện thoại là bắt buộc'),
+  phone: yup.string()
+    .required('Thông tin số điện thoại là bắt buộc')
+    .typeError("Số điện thoại không đúng định dạng")
+    .length(10),
   address: yup.string().required('Thông tin địa chỉ phòng khám là bắt buộc'),
   planId: yup.number().required('Bạn chưa chọn gói dịch vụ'),
   lat: yup.number(),

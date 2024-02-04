@@ -29,7 +29,9 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
   <ReduxProvider store={store}>
     <QueryClientProvider client={queryClient}>
       <MantineProvider theme={theme} defaultColorScheme="light">
-        <ModalsProvider labels={{ confirm: 'Xác nhận', cancel: 'Hủy' }}>
+        <ModalsProvider
+          labels={{ confirm: 'Xác nhận', cancel: 'Hủy' }}
+          modalProps={{ radius: 'md', }}>
           <DatesProvider settings={{ locale: 'vi' }}>
             <Notifications autoClose={2000} limit={5} />
             <App />

@@ -7,3 +7,6 @@ export { default as ModalAppointmentDetail } from './ModalAppointmentDetail';
 export { default as ModalAddAppointment } from './ModalAddAppointment';
 export { default as ModalInitPassword } from './ModalInitPassword';
 export { default as ModalNewClinicService } from './ModalNewClinicService';
+export { default as ModalUpdateClinicService } from './ModalUpdateClinicService';
+export { default as ModalNewCategory } from './ModalNewCategory';
+export { default as ModalUpdateCategory } from './ModalUpdateCategory';

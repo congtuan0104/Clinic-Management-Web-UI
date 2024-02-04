@@ -7,7 +7,7 @@ import { IClinic } from '@/types';
 import ClinicLogoDefault from '@/assets/images/hospital-logo.png';
 import DoctorAvatarDefault from '@/assets/images/doctor-avatar.png';
 import NewsLogoDefault from '@/assets/images/news-logo.png';
-import { Link, useParams } from 'react-router-dom';
+import { Link, Navigate, useParams } from 'react-router-dom';
 import { clinicApi, staffApi, clinicServiceApi, newsApi } from '@/services';
 import { HiOutlineLocationMarker } from "react-icons/hi";
 import { FiMail, FiPhone } from "react-icons/fi";
@@ -18,6 +18,7 @@ import { PATHS } from '@/config';
 
 const ClinicDetailPage = () => {
   const { id: clinicId } = useParams();
+
   const { data: clinic, isLoading } = useQuery(['clinic', clinicId], () => getClinicDetail());
   const { data: doctors } = useQuery(['doctors', clinicId], () => getDoctorDetail());
   const { data: services } = useQuery(['services', clinicId], () => getClinicServices());
@@ -49,7 +50,8 @@ const ClinicDetailPage = () => {
 
   const getClinicServices = async () => {
     try {
-      const response = await clinicServiceApi.getClinicServices(clinicId ?? '');
+      if (!clinicId) return null;
+      const response = await clinicServiceApi.getClinicServices(clinicId, false);
       if (response.data?.length === 0) return null
       return response.data;
     } catch (error) {
@@ -71,6 +73,7 @@ const ClinicDetailPage = () => {
     }
   }
 
+  if (!isLoading && !clinic) return <Navigate to={PATHS.CLINICS} />
 
   return (
     <div className='max-w-screen-xl mx-auto w-full'>
@@ -182,15 +185,15 @@ const ClinicDetailPage = () => {
               </Paper>
               <Paper w="100%" h='100%' withBorder shadow="md" radius="md">
                 <Stack p={20} justify='flex-start' align='flex-start'>
-                  <Text fw={700} size='18px'>Dịch vụ</Text>
+                  <Text fw={700} size='18px'>Bảng giá dịch vụ</Text>
                   {services ? (
                     <Table withTableBorder withColumnBorders>
                       <Table.Thead>
                         <Table.Tr>
-                          <Table.Th>Dịch vụ</Table.Th>
+                          <Table.Th>Tên dịch vụ</Table.Th>
                           <Table.Th>Giá</Table.Th>
                           <Table.Th>Mô tả</Table.Th>
-                          <Table.Th>Đăng ký dịch vụ</Table.Th>
+                          <Table.Th ta='center'>Đăng ký dịch vụ</Table.Th>
                         </Table.Tr>
                       </Table.Thead>
                       <Table.Tbody>
