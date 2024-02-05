@@ -22,8 +22,8 @@ interface IClinicCardProps {
 
 const ClinicCard = ({ clinic }: IClinicCardProps) => {
   return (
-    <Paper w='100%' h='100%' withBorder shadow="md" radius="md" >
-      <Flex justify='flex-start' align='center' p={20}>
+    <Paper w={580} h='100%' withBorder shadow="md" radius="md" >
+      <Flex justify='flex-start' align='center' p={20} >
         <Box w={150} h={150}>
           <Image
             radius="xl"
@@ -33,10 +33,9 @@ const ClinicCard = ({ clinic }: IClinicCardProps) => {
             fallbackSrc={ClinicLogoDefault}
           />
         </Box>
-
-        <div className='flex flex-col items-start gap-3 pl-[30px]'>
-          <div className='flex-1 flex flex-col items-start gap-3'>
-            <Text fw={700} size='25px'>{clinic.name}</Text>
+        <Stack align="flex-start" gap="xs" pl={30}>
+          <Text fw={700} size='25px'>{clinic.name}</Text>
+          <Stack justify='center' h={180} mt={-10}>
             <Flex gap={8}>
               <div className='w-5 h-5'>
                 <HiOutlineLocationMarker size={'20px'} color='gray' />
@@ -57,12 +56,11 @@ const ClinicCard = ({ clinic }: IClinicCardProps) => {
                 {clinic.phone}
               </Text>
             </Group>
-          </div>
+          </Stack>
+
           <Button
             w='150px'
             h='40px'
-            mt="xl"
-            mb='24px'
             ml={0}
             radius="25"
             size="md"
@@ -74,7 +72,7 @@ const ClinicCard = ({ clinic }: IClinicCardProps) => {
           >
             Chi tiết
           </Button>
-        </div>
+        </Stack>
       </Flex>
     </Paper>
   );
