@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { PATHS } from '@/config';
 import { useAppDispatch, useAppSelector, useAuth } from '@/hooks';
 import { currentClinicSelector, focusModeSelector, listClinicSelector, openSidebarClinicSelector, setCurrentClinic, setUserInfo, toggleSidebarClinic, userInfoSelector } from '@/store';
-import { Text, Group, Button, Image, Divider, Menu, TextInput, Flex, ScrollArea, Indicator, ActionIcon, Badge, Title, Tooltip, Kbd, Select } from '@mantine/core';
+import { Text, Group, Button, Image, Divider, Menu, TextInput, Flex, ScrollArea, Indicator, ActionIcon, Badge, Title, Tooltip, Kbd, Select, Avatar } from '@mantine/core';
 import { useDisclosure, useFullscreen, useNetwork } from '@mantine/hooks';
 import ClinusLogo from '@/assets/images/logo.png';
 import { IClinic } from '@/types';
@@ -149,7 +149,7 @@ const ClinicHeader = () => {
               onClick={() => { }}
               mx={5}
               color='black.5' variant="subtle" radius="md"
-              leftSection={<FaUserCircle size={25} />}
+              leftSection={userInfo?.avatar ? <Avatar src={userInfo?.avatar} size={26} /> : <FaUserCircle size={20} />}
             >
               {userInfo?.firstName} {userInfo?.lastName}
             </Button>

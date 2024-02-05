@@ -59,9 +59,12 @@ const UserProfilePage = () => {
 
   const handleChangePassword = async (data: ChangePasswordFormData) => {
     try {
+      if (!userInfo) return;
       const res = await authApi.changePassword({
+        userId: userInfo.id,
         currentPassword: data.currentPassword,
         newPassword: data.newPassword,
+        isReset: false,
       });
 
       if (res.status) {

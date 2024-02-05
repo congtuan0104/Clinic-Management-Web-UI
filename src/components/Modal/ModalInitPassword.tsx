@@ -1,8 +1,12 @@
+import { COOKIE_KEY } from "@/constants";
 import { useAppDispatch, useAuth } from "@/hooks";
 import { authApi } from "@/services";
+import { setUserInfo } from "@/store";
+import { cookies } from "@/utils";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Button, Modal, Text, Flex } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
+import { notifications } from "@mantine/notifications";
 import { Form, useForm } from "react-hook-form";
 import { PasswordInput, TextInput } from "react-hook-form-mantine";
 import { RiLockPasswordLine } from "react-icons/ri";
@@ -29,6 +33,7 @@ const schema = yup.object().shape({
 
 const ModalInitPassword = ({ email }: { email: string }) => {
   const [opened, { close, open }] = useDisclosure(true);
+  const dispatch = useAppDispatch();
 
   const { control } = useForm<IInitPasswordFormData>({
     resolver: yupResolver(schema), // gắn điều kiện xác định input hợp lệ vào form
@@ -42,7 +47,15 @@ const ModalInitPassword = ({ email }: { email: string }) => {
   const handleInitPassword = async (data: IInitPasswordFormData) => {
     try {
       const res = await authApi.initPassword(data.email, data.password);
-      if (res.status) {
+      if (res.status && res.data) {
+        const userInfo = res.data;
+        cookies.set(COOKIE_KEY.USER_INFO, JSON.stringify(userInfo));
+        dispatch(setUserInfo(userInfo));
+        notifications.show({
+          title: 'Thành công',
+          message: 'Đổi mật khẩu thành công',
+          color: 'teal',
+        });
         close();
       }
     } catch (error) {

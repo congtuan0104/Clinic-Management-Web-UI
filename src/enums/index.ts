@@ -4,3 +4,4 @@ export * from './common';
 export * from './chat';
 export * from './payment';
 export * from './subscription';
+export * from './category';

@@ -7,7 +7,7 @@ import { IClinic } from '@/types';
 import ClinicLogoDefault from '@/assets/images/hospital-logo.png';
 import DoctorAvatarDefault from '@/assets/images/doctor-avatar.png';
 import NewsLogoDefault from '@/assets/images/news-logo.png';
-import { Link, useParams } from 'react-router-dom';
+import { Link, Navigate, useParams } from 'react-router-dom';
 import { clinicApi, staffApi, clinicServiceApi, newsApi } from '@/services';
 import { HiOutlineLocationMarker } from "react-icons/hi";
 import { FiMail, FiPhone } from "react-icons/fi";
@@ -18,6 +18,7 @@ import { PATHS } from '@/config';
 
 const ClinicDetailPage = () => {
   const { id: clinicId } = useParams();
+
   const { data: clinic, isLoading } = useQuery(['clinic', clinicId], () => getClinicDetail());
   const { data: doctors } = useQuery(['doctors', clinicId], () => getDoctorDetail());
   const { data: services } = useQuery(['services', clinicId], () => getClinicServices());
@@ -49,7 +50,8 @@ const ClinicDetailPage = () => {
 
   const getClinicServices = async () => {
     try {
-      const response = await clinicServiceApi.getClinicServices(clinicId ?? '');
+      if (!clinicId) return null;
+      const response = await clinicServiceApi.getClinicServices(clinicId, false);
       if (response.data?.length === 0) return null
       return response.data;
     } catch (error) {
@@ -71,11 +73,12 @@ const ClinicDetailPage = () => {
     }
   }
 
+  if (!isLoading && !clinic) return <Navigate to={PATHS.CLINICS} />
 
   return (
-    <div className='max-w-screen-xl mx-auto'>
-      <Center my={20}>
-        <Grid>
+    <div className='max-w-screen-xl mx-auto w-full'>
+      <Center my={20} w='100%'>
+        <Grid w='100%'>
           <GridCol span={5}>
             <Paper w="100%" withBorder shadow="md" radius="md">
               <Stack justify='center' align='center' pt={20} pb={20}>
@@ -163,7 +166,7 @@ const ClinicDetailPage = () => {
                       <Stack justify='center' align='center' gap="xs" pr={35}>
                         <Box w={100} h={100}>
                           <Image
-                            radius="xl"
+                            radius="50%"
                             src={doctor.users.avatar}
                             h={100}
                             fallbackSrc={DoctorAvatarDefault}
@@ -182,15 +185,15 @@ const ClinicDetailPage = () => {
               </Paper>
               <Paper w="100%" h='100%' withBorder shadow="md" radius="md">
                 <Stack p={20} justify='flex-start' align='flex-start'>
-                  <Text fw={700} size='18px'>Dịch vụ</Text>
+                  <Text fw={700} size='18px'>Bảng giá dịch vụ</Text>
                   {services ? (
                     <Table withTableBorder withColumnBorders>
                       <Table.Thead>
                         <Table.Tr>
-                          <Table.Th>Dịch vụ</Table.Th>
+                          <Table.Th>Tên dịch vụ</Table.Th>
                           <Table.Th>Giá</Table.Th>
                           <Table.Th>Mô tả</Table.Th>
-                          <Table.Th>Đăng ký dịch vụ</Table.Th>
+                          <Table.Th ta='center'>Đăng ký dịch vụ</Table.Th>
                         </Table.Tr>
                       </Table.Thead>
                       <Table.Tbody>
@@ -224,7 +227,7 @@ const ClinicDetailPage = () => {
                     {news && news.map((news) => (
 
                       <Grid.Col span={4}>
-                        <Card withBorder radius="md" p="md" w={'100%'} h={'100%'} bg={'white'}>
+                        <Card withBorder radius="md" p="md" w={'100%'} h={'100%'} bg={'white'} component={Link} to={`${PATHS.NEWS}/${news.id}`}>
                           <Card.Section>
                             <Image src={news.logo} fallbackSrc={NewsLogoDefault} height={150} />
                           </Card.Section>

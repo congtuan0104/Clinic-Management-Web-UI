@@ -47,7 +47,7 @@ export interface IGoogleLoginRequest {
 }
 
 export interface IChangePasswordRequest {
-  userId?: string;
+  userId: string;
   currentPassword?: string;
   newPassword: string;
   isReset?: boolean;

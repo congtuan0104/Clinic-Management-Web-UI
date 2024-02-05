@@ -9,3 +9,4 @@ export * from './ClinicDetail';
 export * from './StaffManagement';
 export * from './StaffDetail';
 export * from './ServicePrice';
+export * from './Category';

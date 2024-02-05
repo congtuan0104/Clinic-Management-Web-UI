@@ -22,7 +22,7 @@ interface IClinicCardProps {
 
 const ClinicCard = ({ clinic }: IClinicCardProps) => {
   return (
-    <Paper w={580} h='100%' withBorder shadow="md" radius="md" >
+    <Paper w='100%' h='100%' withBorder shadow="md" radius="md" >
       <Flex justify='flex-start' align='center' p={20}>
         <Box w={150} h={150}>
           <Image
@@ -34,28 +34,30 @@ const ClinicCard = ({ clinic }: IClinicCardProps) => {
           />
         </Box>
 
-        <Stack align="flex-start" gap="xs" pl={30}>
-          <Text fw={700} size='25px'>{clinic.name}</Text>
-          <Flex gap={8}>
-            <div className='w-5 h-5'>
-              <HiOutlineLocationMarker size={'20px'} color='gray' />
-            </div>
-            <Text c='gray.6' span>
-              {clinic.address}
-            </Text>
-          </Flex>
-          <Group>
-            <FiMail size={'20px'} color='gray' />
-            <Text c='gray.6' component='a' href={`mailto:${clinic.email}`} className='hover:!text-gray-600'>
-              {clinic.email}
-            </Text>
-          </Group>
-          <Group>
-            <FiPhone size={'20px'} color='gray' />
-            <Text c='gray.6' component='a' href={`tel:${clinic.phone}`} className='hover:!text-gray-600'>
-              {clinic.phone}
-            </Text>
-          </Group>
+        <div className='flex flex-col items-start gap-3 pl-[30px]'>
+          <div className='flex-1 flex flex-col items-start gap-3'>
+            <Text fw={700} size='25px'>{clinic.name}</Text>
+            <Flex gap={8}>
+              <div className='w-5 h-5'>
+                <HiOutlineLocationMarker size={'20px'} color='gray' />
+              </div>
+              <Text c='gray.6' span>
+                {clinic.address}
+              </Text>
+            </Flex>
+            <Group>
+              <FiMail size={'20px'} color='gray' />
+              <Text c='gray.6' component='a' href={`mailto:${clinic.email}`} className='hover:!text-gray-600'>
+                {clinic.email}
+              </Text>
+            </Group>
+            <Group>
+              <FiPhone size={'20px'} color='gray' />
+              <Text c='gray.6' component='a' href={`tel:${clinic.phone}`} className='hover:!text-gray-600'>
+                {clinic.phone}
+              </Text>
+            </Group>
+          </div>
           <Button
             w='150px'
             h='40px'
@@ -65,7 +67,6 @@ const ClinicCard = ({ clinic }: IClinicCardProps) => {
             radius="25"
             size="md"
             type="submit"
-            // onClick={() => action(clinic)}
             component={Link} to={`${PATHS.CLINICS}/${clinic.id}`}
             mx='auto'
             color='primary'
@@ -73,11 +74,10 @@ const ClinicCard = ({ clinic }: IClinicCardProps) => {
           >
             Chi tiết
           </Button>
-        </Stack>
+        </div>
       </Flex>
     </Paper>
   );
 };
 
 export default ClinicCard;
-

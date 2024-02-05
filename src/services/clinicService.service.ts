@@ -2,8 +2,11 @@ import { IApiResponse, IClinicService, IPostClinicServiceParams } from '@/types'
 import { axiosClient } from '@/utils';
 
 export const clinicServiceApi = {
-  getClinicServices(clinicId: string): Promise<IApiResponse<IClinicService[]>> {
-    return axiosClient.get(`/clinics/${clinicId}/services`);
+  getClinicServices(
+    clinicId: string,
+    isDisabled?: boolean,
+  ): Promise<IApiResponse<IClinicService[]>> {
+    return axiosClient.get(`/clinics/${clinicId}/services`, { params: { isDisabled } });
   },
 
   getClinicServiceDetail(serviceId: string): Promise<IApiResponse<IClinicService>> {
@@ -18,7 +21,7 @@ export const clinicServiceApi = {
   },
 
   updateClinicService(
-    serviceId: string,
+    serviceId: number,
     data: IPostClinicServiceParams,
   ): Promise<IApiResponse<IClinicService>> {
     return axiosClient.put(`/clinics/services/${serviceId}`, data);
