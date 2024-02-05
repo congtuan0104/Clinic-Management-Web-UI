@@ -13,36 +13,42 @@ import { PATHS } from '@/config';
  * @param {INews} news
  */
 interface INewsCardProps {
-    news: INews;
+	news: INews;
 }
 
 // Import necessary components and libraries
 
 const NewsCard = ({ news }: INewsCardProps) => {
-    
-    return (
-        <Group>
-        <Box w={150} h={100} component={Link} to={`${PATHS.NEWS}/${news.id}`}>
-            <Image src={news.logo} fallbackSrc={NewsLogoDefault} height={100} radius={'md'} />
-        </Box>
-        <Stack>
-        <Text>
 
-        </Text>
-        <Anchor fz="md" fw={700} maw={300} c={'black'} component={Link} to={`${PATHS.NEWS}/${news.id}`}>
-            {news.title}
-        </Anchor>
+	return (
+		<Stack className='rounded-md p-3 border border-solid border-primary-100 bg-white'>
+			<Group align='flex-start'>
+				<Box w={150} h={100} component={Link} to={`${PATHS.NEWS}/${news.id}`}>
+					<Image src={news.logo} fallbackSrc={NewsLogoDefault} height={100} radius={'md'} />
+				</Box>
+				<Stack gap={5}>
+					<Anchor fz="md" fw={700} c={'teal.3'} component={Link} to={`${PATHS.NEWS}/${news.id}`}>
+						{news.title}
+					</Anchor>
 
-        <Group>
-            <FaRegCalendar color={'gray'}/>
-            <Text c={'gray.5'}><b>{dayjs(news.createdAt).format('DD/MM/YYYY')}</b></Text>
-        </Group>
-        
-        </Stack>
-        
-    </Group>
-    
-    );
+					<Group>
+						<FaRegCalendar color={'gray'} />
+						<Text c={'gray.5'}><b>{dayjs(news.createdAt).format('DD/MM/YYYY')}</b></Text>
+					</Group>
+					<Group>
+
+						<Text component={Link} to={`${PATHS.CLINICS}/${news.clinicId}`} c={'gray.5'}>{news.clinicName}</Text>
+					</Group>
+				</Stack>
+			</Group>
+			<div className='bg-black-10 p-2 rounded-md'>
+				<div className='text-justify line-clamp-2 text-gray-600 '
+					dangerouslySetInnerHTML={{ __html: news.content || '' }}>
+				</div>
+				<Anchor ml='auto' mr={0} underline='always' component={Link} to={`${PATHS.NEWS}/${news.id}`}>Xem chi tiết</Anchor>
+			</div>
+		</Stack>
+	);
 };
 
 export default NewsCard;
