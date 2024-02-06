@@ -10,3 +10,4 @@ export { default as ModalNewClinicService } from './ModalNewClinicService';
 export { default as ModalUpdateClinicService } from './ModalUpdateClinicService';
 export { default as ModalNewCategory } from './ModalNewCategory';
 export { default as ModalUpdateCategory } from './ModalUpdateCategory';
+export { default as ModalNewPatient } from './ModalNewPatient';

@@ -56,9 +56,9 @@ const createMenuItem = () => {
       label: 'Kho thuốc, vật tư',
       icon: GiMedicines,
       children: [
+        { label: 'Danh sách vật tư', href: PATHS.CLINIC_SUPPLIES },
         { label: 'Nhập hàng', href: '#' },
         { label: 'Thuốc', href: '#' },
-        { label: 'Thiết bị, vật tư', href: '#' },
       ],
     },
     { label: 'Thống kê báo cáo', icon: MdOutlineAnalytics, href: PATHS.CLINIC_REPORT },

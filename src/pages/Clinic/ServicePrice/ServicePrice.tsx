@@ -42,6 +42,13 @@ const ServicePricePage = () => {
         header: 'Loại dịch vụ',
         accessorKey: 'categoryName',
       },
+      {
+        header: 'Trạng thái',
+        accessorKey: 'isDisabled',
+        Cell: ({ cell }) => (
+          <div>{cell.getValue<boolean>() ? 'Không hoạt động' : 'Đang hoạt động'}</div>
+        ),
+      }
 
     ],
     [],
@@ -49,7 +56,6 @@ const ServicePricePage = () => {
 
   const currentClinic = useAppSelector(currentClinicSelector);
   const [isOpenCreateModal, setOpenCreateModal] = useState(false);
-  const [isOpenUpdateModal, setOpenUpdateModal] = useState(false);
   const [selectedService, setSelectedService] = useState<IClinicService | undefined>(undefined);
 
 
@@ -65,7 +71,6 @@ const ServicePricePage = () => {
 
   const handleOpenUpdateModal = (service: IClinicService) => {
     setSelectedService(service);
-    setOpenUpdateModal(true);
   }
 
   const handleDeleteService = async (id: string) => {

@@ -70,7 +70,7 @@ const ModalUpdateCategory = ({
 
   return (
     <Modal.Root opened={isOpen} onClose={handleCancel} centered size={'md'}>
-      <Modal.Overlay />
+      <Modal.Overlay blur={7} />
       <Modal.Content radius='lg'>
         <ModalHeader>
           <Modal.Title fz={16} fw={600}>Cạp nhật thông tin danh mục</Modal.Title>

@@ -29,15 +29,15 @@ const StaffManagementPage = () => {
   const columns = useMemo<MRT_ColumnDef<IClinicStaff>[]>(
     () => [
       {
+        header: 'Họ và tên',
+        id: 'fullName',
+        accessorFn: (dataRow) => `${dataRow.users.firstName} ${dataRow.users.lastName}`,
+      },
+      {
         header: 'Email',
         accessorKey: 'users.email',
         enableClickToCopy: true,
         enableSorting: false,
-      },
-      {
-        header: 'Họ và tên',
-        id: 'fullName',
-        accessorFn: (dataRow) => `${dataRow.users.firstName} ${dataRow.users.lastName}`,
       },
       {
         header: 'Giới tính',

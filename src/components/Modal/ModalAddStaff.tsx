@@ -67,9 +67,6 @@ const ModalAddStaff = ({
     },
   });
 
-  console.log(errors);
-
-
   const [debouncedEmail] = useDebouncedValue(watch('email'), 500);
 
   /**
@@ -123,7 +120,7 @@ const ModalAddStaff = ({
 
   return (
     <Modal.Root opened={isOpen} onClose={handleCancel} centered size={'md'}>
-      <Modal.Overlay />
+      <Modal.Overlay blur={7} />
       <Modal.Content radius='lg'>
         <ModalHeader>
           <Modal.Title fz={16} fw={600}>Thêm nhân viên mới</Modal.Title>
