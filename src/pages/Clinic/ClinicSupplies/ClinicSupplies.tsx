@@ -9,13 +9,13 @@ import {
 import { useAppSelector } from '@/hooks';
 import { currentClinicSelector } from '@/store';
 import { FaRegEdit, FaTrash } from 'react-icons/fa';
-import { suppliesService } from '@/services';
 import { ClinusTable, CurrencyFormatter } from "@/components";
 import { useQuery } from 'react-query';
 import { MRT_ColumnDef } from 'mantine-react-table';
 import { ISupplies } from '@/types';
 import { notifications } from '@mantine/notifications';
 import { modals } from '@mantine/modals';
+import { suppliesApi } from '@/services';
 
 const ClinicSuppliesPage = () => {
   // khai báo thông tin hiển thị của bảng (đọc tài liệu tại https://v2.mantine-react-table.com/)
@@ -49,55 +49,56 @@ const ClinicSuppliesPage = () => {
 
   const currentClinic = useAppSelector(currentClinicSelector);
   const [isOpenCreateModal, setOpenCreateModal] = useState(false);
-  const [selectedService, setSelectedService] = useState<ISupplies | undefined>(undefined);
+  const [selectedSupplies, setSelectedSupplies] = useState<ISupplies | undefined>(undefined);
 
 
   // lấy dữ liệu từ api
   const { data: supplies, refetch, isLoading } = useQuery(
     ['clinic_supplies', currentClinic?.id],
-    () => suppliesService.getSupplies({ clinicId: currentClinic!.id }).then(res => res.data),
+    () => suppliesApi.getSupplies({ clinicId: currentClinic!.id }).then(res => res.data),
     {
       enabled: !!currentClinic?.id,
       refetchOnWindowFocus: false,
     }
   );
 
-  const handleOpenUpdateModal = (service: ISupplies) => {
-    setSelectedService(service);
+  const handleOpenUpdateModal = (supplies: ISupplies) => {
+    setSelectedSupplies(supplies);
   }
 
-  // const handleDeleteService = async (id: string) => {
-  //   modals.openConfirmModal({
-  //     title: <Text size='md' fw={700}>Xác nhận</Text>,
-  //     children: (
-  //       <Text size="sm" lh={1.6}>
-  //         Bạn có chắc muốn xóa dịch vụ này không?<br />
-  //         Thao tác này không thể hoàn tác sau khi xác nhận
-  //       </Text>
-  //     ),
-  //     confirmProps: { color: 'red.5' },
-  //     onCancel: () => console.log('Cancel'),
-  //     onConfirm: async () => {
-  //       const res = await clinicServiceApi.deleteClinicService(id)
-  //       if (res.status) {
-  //         notifications.show({
-  //           title: 'Thành công',
-  //           message: 'Dịch vụ đã được xóa',
-  //           color: 'teal.5',
-  //         })
-  //         refetch();
-  //       }
-  //       else {
-  //         notifications.show({
-  //           title: 'Thất bại',
-  //           message: 'Đã có lỗi xảy ra',
-  //           color: 'red.5',
-  //         })
-  //       }
-  //     },
-  //   });
+  const handleDeleteSupplies = async (id: string) => {
+    console.log('Delete supplies', id);
+    // modals.openConfirmModal({
+    //   title: <Text size='md' fw={700}>Xác nhận</Text>,
+    //   children: (
+    //     <Text size="sm" lh={1.6}>
+    //       Bạn có chắc muốn xóa dịch vụ này không?<br />
+    //       Thao tác này không thể hoàn tác sau khi xác nhận
+    //     </Text>
+    //   ),
+    //   confirmProps: { color: 'red.5' },
+    //   onCancel: () => console.log('Cancel'),
+    //   onConfirm: async () => {
+    //     const res = await suppliesApi.deleteClinicSupplies(id)
+    //     if (res.status) {
+    //       notifications.show({
+    //         title: 'Thành công',
+    //         message: 'Dịch vụ đã được xóa',
+    //         color: 'teal.5',
+    //       })
+    //       refetch();
+    //     }
+    //     else {
+    //       notifications.show({
+    //         title: 'Thất bại',
+    //         message: 'Đã có lỗi xảy ra',
+    //         color: 'red.5',
+    //       })
+    //     }
+    //   },
+    // });
 
-  // }
+  }
 
   return (
     <>
@@ -144,7 +145,7 @@ const ClinicSuppliesPage = () => {
                 variant='outline'
                 color='red'
                 radius='sm'
-              // onClick={() => handleDeleteService(row.id)} // xử lý khi click button xóa dịch vụ
+                onClick={() => handleDeleteSupplies(row.id)} // xử lý khi click button xóa dịch vụ
               >
                 <FaTrash />
               </ActionIcon>
@@ -153,16 +154,16 @@ const ClinicSuppliesPage = () => {
         />
       </Flex>
 
-      {/* <ModalNewClinicService
+      {/* <ModalNewClinicSupplies
         isOpen={isOpenCreateModal}
         onClose={() => setOpenCreateModal(false)}
         onSuccess={() => refetch()}
       />
 
-      {selectedService && (<ModalUpdateClinicService
-        isOpen={!!selectedService}
-        onClose={() => setSelectedService(undefined)}
-        service={selectedService}
+      {selectedSupplies && (<ModalUpdateClinicSupplies
+        isOpen={!!selectedSupplies}
+        onClose={() => setSelectedSupplies(undefined)}
+        supplies={selectedSupplies}
         onSuccess={() => refetch()}
       />)} */}
     </>
