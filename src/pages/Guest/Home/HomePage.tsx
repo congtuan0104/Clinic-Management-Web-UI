@@ -231,7 +231,7 @@ const HomePage = () => {
 
       <Center>
         <Stack align='center'>
-          <Text size='24px' fw={700} w={'100%'}>Một số hình ảnh về ứng dụng</Text>
+          <Text size='24px' fw={700} w={'100%'}>Hình ảnh ứng dụng</Text>
           <Divider size={'md'} color='gray.6' w={'70%'} />
 
         </Stack>
@@ -254,6 +254,14 @@ const HomePage = () => {
 
         </Carousel>
       </Flex>
+
+      <Center>
+        <Stack align='center'>
+          <Text size='24px' fw={700} w={'100%'}>Tải ứng dụng trên mobile</Text>
+          <Divider size={'md'} color='gray.6' w={'70%'} />
+
+        </Stack>
+      </Center>
     </Stack>
   );
 };

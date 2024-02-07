@@ -9,6 +9,12 @@ import { DateInput, Select, TextInput, Textarea, } from "react-hook-form-mantine
 import { FaRegClock } from "react-icons/fa";
 import { FaCalendarDays } from "react-icons/fa6";
 import * as yup from 'yup';
+import { ModalNewPatient } from "@/components";
+import { useAppSelector } from "@/hooks";
+import { currentClinicSelector } from "@/store";
+import { useQuery } from "react-query";
+import { patientApi } from "@/services";
+import { BiPlus } from "react-icons/bi";
 
 interface IProps {
   isOpen: boolean;
@@ -27,6 +33,7 @@ const schema = yup.object().shape({
   doctor: yup.string().required('Bác sĩ không được để trống'),
   date: yup.date().required('Chọn ngày hẹn khám'),
   note: yup.string(),
+  patientId: yup.string(),
   patientName: yup.string().required('Tên bệnh nhân không được để trống'),
   patientPhone: yup.string().required('Số điện thoại không được để trống'),
   patientEmail: yup.string().email('Email không hợp lệ'),
@@ -45,7 +52,17 @@ enum Step {
 
 const ModalAddAppointment = ({ isOpen, onClose, date }: IProps) => {
   const [step, setStep] = useState(Step.SelectTime);
+  const [isOpenCreateModal, setOpenCreateModal] = useState(false);
+  const currentClinic = useAppSelector(currentClinicSelector);
 
+  const { data: patients, refetch, isLoading } = useQuery(
+    ['clinic_patients', currentClinic?.id],
+    () => patientApi.getPatients({ clinicId: currentClinic?.id }).then(res => res.data),
+    {
+      enabled: !!currentClinic?.id,
+      refetchOnWindowFocus: false,
+    }
+  );
 
   const { control, reset, setValue, formState: { errors } } = useForm({
     resolver: yupResolver(schema),
@@ -106,6 +123,38 @@ const ModalAddAppointment = ({ isOpen, onClose, date }: IProps) => {
             w={'100%'}
             control={control}
           />
+        </div>
+
+        <div className="flex justify-between gap-4 items-end mt-3">
+
+          <Select
+            label="Người đặt lịch hẹn"
+            placeholder="Tìm kiếm tên bệnh nhân"
+            required
+            name='patientId'
+            size="md"
+            clearable
+            radius='md'
+            data={patients?.map((patient) => ({
+              value: patient.id.toString(),
+              label: `${patient.firstName} ${patient.lastName} (${patient.phone}) - ${patient.address}`
+            })) || []}
+            searchable
+            w={'100%'}
+            control={control}
+          />
+
+          <Button
+            type="button"
+            color="primary.3"
+            size="md"
+            onClick={() => setOpenCreateModal(true)}
+            w={250}
+            leftSection={<BiPlus />}
+          >
+            Bệnh nhân mới
+          </Button>
+
         </div>
 
         <Chip.Group>
@@ -322,24 +371,32 @@ const ModalAddAppointment = ({ isOpen, onClose, date }: IProps) => {
   }
 
   return (
-    <Modal.Root opened={isOpen} onClose={onClose} size={step === Step.SelectTime ? 'auto' : 'lg'}>
-      <Modal.Overlay blur={7} />
-      <Modal.Content radius='lg'>
-        <Modal.Header bg='secondary.3'>
-          <Modal.Title c='white' fz="lg" fw={600}>
-            Đặt lịch hẹn khám
-            {step === Step.SelectTime && ' - Chọn thời gian khám'}
-            {step === Step.AddPatientInfo && ' - Thông tin bệnh nhân'}
-          </Modal.Title>
-          <Modal.CloseButton variant="transparent" c="white" />
-        </Modal.Header>
-        <Modal.Body>
-          <form>
-            {renderForm()}
-          </form>
-        </Modal.Body>
-      </Modal.Content>
-    </Modal.Root>
+    <>
+      <Modal.Root opened={isOpen} onClose={onClose} size={step === Step.SelectTime ? 'auto' : 'lg'}>
+        <Modal.Overlay blur={7} />
+        <Modal.Content radius='lg'>
+          <Modal.Header bg='secondary.3'>
+            <Modal.Title c='white' fz="lg" fw={600}>
+              Đặt lịch hẹn khám
+              {step === Step.SelectTime && ' - Chọn thời gian khám'}
+              {step === Step.AddPatientInfo && ' - Thông tin bệnh nhân'}
+            </Modal.Title>
+            <Modal.CloseButton variant="transparent" c="white" />
+          </Modal.Header>
+          <Modal.Body>
+            <form>
+              {renderForm()}
+            </form>
+          </Modal.Body>
+        </Modal.Content>
+      </Modal.Root>
+
+      <ModalNewPatient
+        isOpen={isOpenCreateModal}
+        onClose={() => setOpenCreateModal(false)}
+        onSuccess={() => { }}
+      />
+    </>
   )
 }
 

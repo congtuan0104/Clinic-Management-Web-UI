@@ -66,7 +66,7 @@ const ClinicHeader = () => {
 
       {!focusMode && (
         <TextInput
-          placeholder="Tìm kiếm"
+          placeholder="Tìm kiếm Clinus"
           leftSection={<IoSearch size={20} />}
           radius='md'
           readOnly

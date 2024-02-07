@@ -7,11 +7,13 @@ import {
   Text,
   Image,
   Avatar,
+  Badge,
+  Tooltip,
 } from '@mantine/core';
 import { useAppSelector } from '@/hooks';
 import { currentClinicSelector } from '@/store';
 import { FaRegEdit, FaTrash } from 'react-icons/fa';
-import { patientApi } from '@/services';
+import { authApi, patientApi } from '@/services';
 import { ClinusTable, ModalNewPatient } from "@/components";
 import { useQuery } from 'react-query';
 import { MRT_ColumnDef } from 'mantine-react-table';
@@ -20,24 +22,29 @@ import { notifications } from '@mantine/notifications';
 import { modals } from '@mantine/modals';
 import { Link } from 'react-router-dom';
 import { PATHS } from '@/config';
+import { MdEmail } from 'react-icons/md';
 
 const PatientListPage = () => {
   // khai báo thông tin hiển thị của bảng (đọc tài liệu tại https://v2.mantine-react-table.com/)
   const columns = useMemo<MRT_ColumnDef<IPatient>[]>(
     () => [
       {
-        header: 'Ảnh',
-        id: 'avatar',
-        accessorFn: (row) => <Avatar src={row.avatar} alt={row.lastName} radius="xl" >{row.lastName.charAt(0)}</Avatar>,
-      },
-      {
-        header: 'Tên bệnh nhân',
-        accessorFn: (dataRow) => `${dataRow.firstName} ${dataRow.lastName}`,
-        enableClickToCopy: true,
-      },
-      {
-        header: 'Email',
-        accessorKey: 'email',
+        header: 'Bệnh nhân',
+        id: 'fullName',
+        accessorFn: (dataRow) =>
+          <div className='flex items-center'>
+            <Avatar
+              src={dataRow.avatar}
+              size={40}
+              alt={dataRow.lastName}
+              radius="xl" >
+              {dataRow.lastName?.charAt(0)}
+            </Avatar>
+            <div className='flex flex-col flex-1 ml-2'>
+              <p className='text-primary-300'>{dataRow.firstName} {dataRow.lastName}</p>
+              <p className='text-gray-500'>{dataRow.email}</p>
+            </div>
+          </div>,
       },
       {
         header: 'Số điện thoại',
@@ -46,6 +53,14 @@ const PatientListPage = () => {
       {
         header: 'Địa chỉ',
         accessorKey: 'address',
+      },
+      {
+        header: 'Trạng thái',
+        id: 'status',
+        accessorFn: (dataRow) => {
+          if (dataRow.emailVerified) return <Badge color='green'>Đã xác thực</Badge>;
+          return <Badge color='red'>Chưa xác thực</Badge>;
+        }
       },
 
     ],
@@ -99,12 +114,31 @@ const PatientListPage = () => {
 
   // }
 
+  const handleResendEmail = async (email: string) => {
+    const res = await authApi.sendVerifyEmail(email);
+
+    if (res.status) {
+      notifications.show({
+        title: 'Thành công',
+        message: 'Đã gửi lại mail xác thực',
+        color: 'teal.5',
+      })
+    }
+    else {
+      notifications.show({
+        title: 'Thất bại',
+        message: 'Đã có lỗi xảy ra',
+        color: 'red.5',
+      })
+    }
+  }
+
   return (
     <>
       <Flex direction="column" gap="md" p="md">
         <Flex align="center" justify="space-between">
           <Title order={4}>Danh sách bệnh nhân</Title>
-          <Button color='secondary.3' onClick={() => setOpenCreateModal(true)}>Tạo hồ sơ</Button>
+          <Button color='secondary.3' onClick={() => setOpenCreateModal(true)}>Bệnh nhân mới</Button>
         </Flex>
 
         <ClinusTable
@@ -112,6 +146,7 @@ const PatientListPage = () => {
           data={patients || []}
           enableRowActions
           enableColumnFilters={false}
+          enableRowNumbers={false}
           // state={{
           //   isLoading: isLoading,
           // }}
@@ -132,16 +167,30 @@ const PatientListPage = () => {
           }}
           renderRowActions={({ row }) => (
             <Flex align='center' justify='flex-end' gap={10}>
-              <ActionIcon
-                variant='outline'
-                color='blue'
-                radius='sm'
-                component={Link}
-                to={`${PATHS.CLINIC_PATIENT_MANAGEMENT}/${row.id}`}
-              // onClick={() => handleOpenUpdateModal(row.original)} // xử lý khi chọn sửa dịch vụ
-              >
-                <FaRegEdit />
-              </ActionIcon>
+              {(!row.original.emailVerified) && (
+                <Tooltip label='Gửi lại mail xác thực'>
+                  <ActionIcon
+                    variant='outline'
+                    color='gray.8'
+                    radius='sm'
+                    onClick={() => handleResendEmail(row.original.email)}
+                  >
+                    <MdEmail />
+                  </ActionIcon>
+                </Tooltip>
+              )}
+              <Tooltip label='Xem hồ sơ bệnh nhân'>
+                <ActionIcon
+                  variant='outline'
+                  color='blue'
+                  radius='sm'
+                  component={Link}
+                  to={`${PATHS.CLINIC_PATIENT_MANAGEMENT}/${row.id}`}
+                // onClick={() => handleOpenUpdateModal(row.original)} // xử lý khi chọn sửa dịch vụ
+                >
+                  <FaRegEdit />
+                </ActionIcon>
+              </Tooltip>
               {/* <ActionIcon
                 variant='outline'
                 color='red'

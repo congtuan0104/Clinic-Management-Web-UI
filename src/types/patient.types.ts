@@ -10,6 +10,13 @@ export interface IPatient {
   address?: string;
   gender?: Gender;
   avatar?: string;
+  emailVerified: boolean;
+  clinicId: string;
+  userId: string;
+  bloodGroup?: string;
+  anamnesis?: string;
+  idCard?: string;
+  healthInsuranceCode?: string;
 }
 
 export interface IPatientQueryParams {

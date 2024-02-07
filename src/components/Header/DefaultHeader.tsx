@@ -40,10 +40,13 @@ const Header = () => {
   const [scroll] = useWindowScroll();
 
   return (
-    <Box h={(scroll.y > 100 || pathname !== PATHS.HOME) ? 60 : 100} bg='white' className={classNames(
-      " fixed top-0 inset-x-0 z-10 transition-all duration-300 ease-in-out",
-      (scroll.y > 100 || pathname !== PATHS.HOME) ? 'shadow-lg' : 'shadow-none'
-    )}>
+    <Box
+      h={(scroll.y > 100 || pathname !== PATHS.HOME) ? 60 : 100}
+      bg='white'
+      className={classNames(
+        " fixed top-0 inset-x-0 z-10 transition-all duration-300 ease-in-out",
+        (scroll.y > 100 || pathname !== PATHS.HOME) ? 'shadow-lg' : 'shadow-none'
+      )}>
       <header className="h-full max-w-screen-xl mx-auto">
         <Group justify="space-between" h="100%">
           <Box w={userInfo ? undefined : 222}>

@@ -3,6 +3,7 @@ import { useAppSelector } from "@/hooks";
 import { authApi, patientApi } from "@/services";
 import { currentClinicSelector } from "@/store";
 import { ICreatePatientPayload } from "@/types";
+import { phoneRegExp } from "@/utils";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Button, Flex, Grid, Modal, ModalBody, ModalCloseButton, ModalHeader } from "@mantine/core";
 import { useDebouncedValue } from "@mantine/hooks";
@@ -45,10 +46,12 @@ const validateSchema = yup.object().shape({
     email: yup.string().required('Vui lòng nhập email').email('Email không hợp lệ'),
     firstName: yup.string().required('Vui lòng nhập họ'),
     lastName: yup.string().required('Vui lòng nhập tên'),
-    phone: yup.string(),
+    phone: yup.string()
+      .length(10, 'Số điện thoại phải có 10 số')
+      .matches(phoneRegExp, 'Số điện thoại không hợp lệ'),
     address: yup.string(),
     gender: yup.string(),
-    birthday: yup.date(),
+    birthday: yup.date().max(dayjs().toDate(), 'Ngày sinh không hợp lệ')
   }),
   userId: yup.string(),
   bloodGroup: yup.string(),
@@ -189,14 +192,17 @@ const ModalNewPatient = ({
   useEffect(() => {
     handleCheckEmail();
   }, [debounceEmail]);
+
   console.log('errors', errors.userInfo);
   return <Modal.Root opened={isOpen} onClose={handleClose} centered size={'auto'}>
     <Modal.Overlay blur={7} />
     <Modal.Content radius='lg'>
-      <ModalHeader>
-        <Modal.Title fz={16} fw={600}>Tạo hồ sơ bệnh nhân</Modal.Title>
+      <Modal.Header bg='secondary.3'>
+        <Modal.Title c='white' fz="lg" fw={600}>
+          Bệnh nhân mới
+        </Modal.Title>
         <ModalCloseButton />
-      </ModalHeader>
+      </Modal.Header>
       <ModalBody>
         <Form
           control={control}
@@ -208,6 +214,7 @@ const ModalNewPatient = ({
             name="userInfo.email"
             required
             size="md"
+            mt='md'
             radius="sm"
             control={control}
           />

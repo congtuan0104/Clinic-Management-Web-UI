@@ -232,7 +232,7 @@ const AppointmentPage = () => {
             onClick={() => openAdd()}
             leftSection={<FaRegCalendarPlus size={20} />}
           >
-            Tạo lịch hẹn mới
+            Lịch hẹn mới
           </Button>
         </div>
 

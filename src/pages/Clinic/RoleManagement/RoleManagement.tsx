@@ -6,6 +6,7 @@ import {
   Button,
   Input,
   Badge,
+  Stack,
 } from '@mantine/core';
 import { useAppSelector } from '@/hooks';
 import { currentClinicSelector } from '@/store';
@@ -103,18 +104,22 @@ const RoleManagement = () => {
           <tbody>
             {roles.map((role, index) => (
               <tr key={index}>
-                <td style={{ border: '1px solid #ddd', padding: '8px' }}>{role.name}</td>
+                <td style={{ border: '1px solid #ddd', paddingLeft: '16px' }}>{role.name}</td>
                 <td style={{ border: '1px solid #ddd', padding: '8px' }}>
-                  {role.rolePermissions.map(permission =>
+                  {/* <div className='flex flex-col gap-1'> */}
+                  {role.rolePermissions.map((permission, index) =>
                     <Badge
                       key={`${role.id}-${permission.id}`}
-                      color="gray.5"
+                      color={index % 2 === 0 ? 'primary.3' : 'gray.6'}
+                      // fz={15}
                       size='lg'
+                      tt='capitalize'
                       className='m-1'
                     >
                       {permission.optionName}
                     </Badge>
                   )}
+                  {/* </div> */}
                 </td>
                 <td style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'center' }}>
                   {role.name !== 'Admin' && (
