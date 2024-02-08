@@ -45,7 +45,7 @@ const ClinicsPage = () => {
               w={660}
               size='lg'
               radius={'md'}
-              leftSection={<CiSearch />}
+              leftSection={<CiSearch size={26} />}
               placeholder='Tìm kiếm phòng khám'
               onChange={(event) => setValue(event.currentTarget.value)}
             />
