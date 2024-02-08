@@ -219,7 +219,7 @@ const NewsManagementPage = () => {
                         </Stack>
                         {news && news?.length > 0 &&
                             <Group align='center' justify='center' bg='white' className='rounded-md py-2'>
-                                <Pagination total={news.length} value={activePage} onChange={setPage} mt="sm" />
+                                <Pagination total={news.length - 1} value={activePage} onChange={setPage} mt="sm" />
                             </Group>}
                     </GridCol>
                     <Grid.Col span={7}>

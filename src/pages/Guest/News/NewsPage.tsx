@@ -1,4 +1,4 @@
-import { Text, Center, Stack, Grid, GridCol, Button, Card, Image, Group, Anchor, Box, Divider, Badge, TextInput } from '@mantine/core';
+import { Text, Center, Stack, Grid, GridCol, Button, Card, Image, Group, Anchor, Box, Divider, Badge, TextInput, Pagination } from '@mantine/core';
 import { PATHS } from '@/config';
 import { NewsCard } from '@/components';
 import { useQuery } from 'react-query';
@@ -15,10 +15,11 @@ const NewsPage = () => {
 	const [pageIndex, setPageIndex] = useState(0);
 	const firstNewsRef = useRef<INews | null>(null);
 	const [searchValue, setSearchValue] = useDebouncedState('', 500);
+	const [activePage, setPage] = useState(1);
 
 	const pageSize = 4;
 
-	const { data: news, isFetching } = useQuery(['news', pageIndex, searchValue], () =>
+	const { data: news, isFetching } = useQuery(['news', activePage, searchValue], () =>
 		getNews()
 	);
 
@@ -34,7 +35,7 @@ const NewsPage = () => {
 				title: searchValue,
 				isShow: true,
 				pageSize: pageSize,
-				pageIndex: pageIndex,
+				pageIndex: activePage - 1,
 			});
 			return response.data?.data;
 		} catch (error) {
@@ -105,16 +106,7 @@ const NewsPage = () => {
 						</Stack>
 						{news && news?.length > 0 &&
 							<Group align='center' justify='center' mt={10} bg='white' className='rounded-md py-2'>
-
-								<Button onClick={handlePrevPage} disabled={pageIndex === 0 || isFetching}>
-									Trang trước
-								</Button>
-								<Text mx={2}>Trang {pageIndex + 1}</Text>
-								{(
-									<Button onClick={handleNextPage} disabled={!news || news.length < pageSize || isFetching}>
-										Trang sau
-									</Button>
-								)}
+								<Pagination total={news.length - 1} value={activePage} onChange={setPage} mt="sm" />
 							</Group>}
 					</GridCol>
 				</Grid>
