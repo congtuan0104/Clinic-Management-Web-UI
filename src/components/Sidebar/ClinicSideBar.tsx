@@ -66,11 +66,7 @@ const createMenuItem = () => {
   ]
 }
 
-interface ISidebarProps {
-  notify: INotification[];
-}
-
-export function ClinicSideBar({ notify }: ISidebarProps) {
+export function ClinicSideBar() {
   const { pathname } = useLocation();
   const [opened, { open, close }] = useDisclosure(false);
   const { userInfo } = useAuth();
@@ -78,15 +74,6 @@ export function ClinicSideBar({ notify }: ISidebarProps) {
 
 
   const menuItems = createMenuItem(); // fix lỗi import config path
-
-  const renderSendingTime = (sendingTime: Date) => {
-    const diff = dayjs(dayjs()).diff(sendingTime, 'second');
-    if (diff < 60) return `${diff} giây trước`;
-    else if (diff < 3600) return `${Math.floor(diff / 60)} phút trước`;
-    else if (diff < 86400) return `${Math.floor(diff / 3600)} giờ trước`;
-    else return `${Math.floor(diff / 86400)} ngày trước`;
-  }
-
 
   return (
     <>
@@ -123,15 +110,7 @@ export function ClinicSideBar({ notify }: ISidebarProps) {
       </nav>
 
       <Modal opened={opened} onClose={close} title={<Text fw={600}>Thông báo của {userInfo?.lastName}</Text>}>
-        <div className="flex flex-col">
-          {notify.length === 0 && <p>Bạn không có thông báo nào</p>}
-          {notify.reverse().map((item) => (
-            <div key={item.id} className="flex flex-col border-0 border-y border-gray-300 border-solid py-2">
-              <p>{item.body}</p>
-              <p className='text-primary-300 text-14'>{renderSendingTime(item.sendingTime)}</p>
-            </div>
-          ))}
-        </div>
+
       </Modal>
     </>
   );

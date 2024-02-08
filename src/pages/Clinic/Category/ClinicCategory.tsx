@@ -97,7 +97,7 @@ const ClinicCategoryPage = () => {
       <Flex direction="column" gap="md" p="md">
         <Flex align="center" justify="space-between">
           <Title order={4}>Danh mục, phân loại</Title>
-          <Button color='primary.3' onClick={() => setOpenCreateModal(true)}>Thêm danh mục</Button>
+          <Button color='secondary.3' onClick={() => setOpenCreateModal(true)}>Thêm danh mục</Button>
         </Flex>
 
         {(isLoading || isFetching) ? (<div className='flex justify-center items-center h-[90vh]'><Loader color="primary" size="xl" /></div>) : (

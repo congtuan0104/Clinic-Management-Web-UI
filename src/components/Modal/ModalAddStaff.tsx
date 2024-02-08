@@ -5,7 +5,7 @@ import { currentClinicSelector } from "@/store";
 import { ICreateStaffPayload } from "@/types";
 import { phoneRegExp } from "@/utils";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { Button, Flex, Grid, Modal, ModalBody, ModalCloseButton, ModalHeader, TagsInput } from "@mantine/core";
+import { Button, Flex, Grid, Modal, ModalBody, ModalCloseButton, ModalHeader, ScrollArea, TagsInput } from "@mantine/core";
 import { useDebouncedValue } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
 import dayjs from "dayjs";
@@ -225,12 +225,12 @@ const ModalAddStaff = ({
   }
 
   return (
-    <Modal.Root opened={isOpen} onClose={handleClose} centered size='lg'>
+    <Modal.Root opened={isOpen} onClose={handleClose} centered size='lg' scrollAreaComponent={ScrollArea.Autosize}>
       <Modal.Overlay blur={7} />
       <Modal.Content radius='lg'>
         <Modal.Header bg='secondary.3'>
           <Modal.Title c='white' fz="lg" fw={600}>
-            Thông tin nhân viên
+            Nhân viên mới
           </Modal.Title>
           <ModalCloseButton />
         </Modal.Header>
@@ -423,11 +423,11 @@ const ModalAddStaff = ({
 
 
             <Flex justify='end' gap={10}>
+              <Button mt="lg" radius="md" size="md" color='gray.5' onClick={handleClose}>
+                Hủy
+              </Button>
               <Button mt="lg" radius="md" size="md" type="submit" color="primary.3">
                 Lưu thông tin
-              </Button>
-              <Button mt="lg" radius="md" size="md" variant='outline' color='red.5' onClick={handleClose}>
-                Hủy
               </Button>
             </Flex>
           </Form>

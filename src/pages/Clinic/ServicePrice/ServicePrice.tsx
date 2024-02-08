@@ -111,7 +111,7 @@ const ServicePricePage = () => {
       <Flex direction="column" gap="md" p="md">
         <Flex align="center" justify="space-between">
           <Title order={4}>Bảng giá dịch vụ</Title>
-          <Button color='primary.3' onClick={() => setOpenCreateModal(true)}>Thêm dịch vụ</Button>
+          <Button color='secondary.3' onClick={() => setOpenCreateModal(true)}>Thêm dịch vụ</Button>
         </Flex>
 
         <ClinusTable  // component custom từ mantine-react-table

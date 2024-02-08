@@ -101,10 +101,10 @@ const ModalNewClinicService = ({
     <Modal.Root opened={isOpen} onClose={handleCancel} centered size={'md'}>
       <Modal.Overlay />
       <Modal.Content radius='lg'>
-        <ModalHeader>
-          <Modal.Title fz={16} fw={600}>Thêm dịch vụ mới</Modal.Title>
+        <Modal.Header bg='secondary.3'>
+          <Modal.Title c='white' fz="lg" fw={600}>Dịch vụ mới</Modal.Title>
           <ModalCloseButton />
-        </ModalHeader>
+        </Modal.Header>
         <ModalBody>
           <Form
             control={control}
@@ -114,8 +114,8 @@ const ModalNewClinicService = ({
               label="Tên dịch vụ"
               name="serviceName"
               required
+              mt='md'
               size="md"
-              radius="sm"
               control={control}
             />
 
@@ -124,7 +124,6 @@ const ModalNewClinicService = ({
               name="price"
               required
               size="md"
-              radius="sm"
               control={control}
               suffix="₫"
               min={0}
@@ -142,7 +141,6 @@ const ModalNewClinicService = ({
               mt="md"
               size="md"
               searchable
-              radius="sm"
               required
               disabled={isLoading}
               comboboxProps={{ shadow: 'md', transitionProps: { transition: 'pop', duration: 200 } }}
@@ -160,7 +158,6 @@ const ModalNewClinicService = ({
               name="description"
               required
               size="md"
-              radius="sm"
               mt='sm'
               autosize
               minRows={3}
@@ -168,11 +165,11 @@ const ModalNewClinicService = ({
             />
 
             <Flex justify='end' gap={10}>
-              <Button mt="lg" radius="sm" size="md" type="submit">
-                Lưu
-              </Button>
-              <Button mt="lg" radius="sm" size="md" variant='outline' color='red.5' onClick={handleCancel}>
+              <Button mt="lg" radius="sm" size="md" color='gray.5' onClick={handleCancel}>
                 Hủy
+              </Button>
+              <Button mt="lg" radius="sm" size="md" type="submit" color="primary.3">
+                Lưu
               </Button>
             </Flex>
           </Form>

@@ -11,3 +11,13 @@ export interface IAppointment {
   note: string;
   status: APPOINTMENT_STATUS;
 }
+
+export interface INewAppointmentPayload {
+  clinicId: string;
+  doctorId: number;
+  patientId: number;
+  date: string;
+  startTime: string;
+  endTime: string;
+  description?: string;
+}
