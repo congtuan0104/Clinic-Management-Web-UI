@@ -1,4 +1,4 @@
-import { IApiResponse, INews, INewsQueryParams, IPagination } from '@/types';
+import { IApiResponse, INews, INewsQueryParams, IPagination, IUpdateNewsRequest } from '@/types';
 import { axiosClient } from '@/utils';
 
 export const newsApi = {
@@ -7,5 +7,8 @@ export const newsApi = {
       },
     getNewsDetail(newsId: string): Promise<IApiResponse<INews>> {
       return axiosClient.get(`/news/${newsId}`);
+    },
+    updateNewsInfo(newsId: string, updateInfo: IUpdateNewsRequest): Promise<IApiResponse<INews>> {
+      return axiosClient.put(`/news/${newsId}`, updateInfo);
     },
 };

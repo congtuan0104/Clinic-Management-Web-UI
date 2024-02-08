@@ -17,3 +17,9 @@ export interface INews {
   createdAt?: string;
   updatedAt?: string;
 }
+
+export interface IUpdateNewsRequest {
+  title: string;
+  content?: string;
+  logo?: string;
+}

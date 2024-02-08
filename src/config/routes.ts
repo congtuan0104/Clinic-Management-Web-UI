@@ -29,6 +29,7 @@ import {
   ClinicSuppliesPage,
   PatientListPage,
 } from '@/pages';
+import { NewsManagementPage } from '@/pages/Clinic/NewsManagement';
 import { NewsPage } from '@/pages/Guest/News';
 import { NewsDetailPage } from '@/pages/Guest/NewsDetail';
 
@@ -304,6 +305,14 @@ export const ROUTES = [
     title: 'Danh sách bệnh nhân',
     layout: ClinicLayout,
     element: PatientListPage,
+    isProtected: true,
+    children: [],
+  },
+  {
+    path: PATHS.CLINIC_NEWS,
+    title: 'Quản lý tin tức',
+    layout: ClinicLayout,
+    element: NewsManagementPage,
     isProtected: true,
     children: [],
   },

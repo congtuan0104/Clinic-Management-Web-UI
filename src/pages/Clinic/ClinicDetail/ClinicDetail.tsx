@@ -99,16 +99,18 @@ export default function ClinicDetail() {
   const onSubmit = async (data: IUpdateData) => {
     console.log('data', data)
     const logoUrl = await uploadFile();
-    const updateInfo = {
+    const updateInfo: IUpdateData = {
       name: data.name,
       email: data.email,
       phone: data.phone,
       address: data.address,
-      logo: logoUrl,
       lat: data.lat,
       long: data.long,
       description: data.description,
     }
+    if (imageUrl !== null) {
+      updateInfo.logo = logoUrl;
+  }
     if (currentClinic?.id) {
       const res = await clinicApi.updateClinicInfo(currentClinic?.id, updateInfo)
 
