@@ -1,8 +1,17 @@
-import { IApiResponse, INewAppointmentPayload } from '@/types';
+import {
+  IApiResponse,
+  IAppointment,
+  IAppointmentQueryParams,
+  INewAppointmentPayload,
+} from '@/types';
 import { axiosClient } from '@/utils';
 
 export const appointmentApi = {
-  createAppointment: (payload: INewAppointmentPayload): Promise<IApiResponse<any>> => {
+  getAppointmentList: (params: IAppointmentQueryParams): Promise<IApiResponse<IAppointment[]>> => {
+    return axiosClient.get('/appointments', { params });
+  },
+
+  createAppointment: (payload: INewAppointmentPayload): Promise<IApiResponse<IAppointment>> => {
     return axiosClient.post('/appointments', payload);
   },
 };

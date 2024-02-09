@@ -81,7 +81,7 @@ const ModalNewCategory = ({
       <Modal.Overlay />
       <Modal.Content radius='lg'>
         <Modal.Header bg='secondary.3'>
-          <Modal.Title c='white' fz="lg" fw={600}>Thêm danh mục mới</Modal.Title>
+          <Modal.Title c='white' fz="lg" fw={600}>Danh mục mới</Modal.Title>
           <ModalCloseButton />
         </Modal.Header>
         <ModalBody>
@@ -103,7 +103,7 @@ const ModalNewCategory = ({
               checkIconPosition="right"
               data={[
                 { label: 'Dịch vụ y tế', value: CATEGORY_TYPE.SERVICE.toString() },
-                { label: 'Vật tư y tế', value: CATEGORY_TYPE.SUPPLIER.toString() }
+                { label: 'Vật tư y tế', value: CATEGORY_TYPE.SUPPLIES.toString() }
               ]}
             />
 
@@ -143,7 +143,7 @@ const ModalNewCategory = ({
               <Button mt="lg" size="md" color='gray.5' onClick={handleCancel}>
                 Hủy
               </Button>
-              <Button mt="lg" size="md" type="submit">
+              <Button mt="lg" size="md" type="submit" color="primary.3">
                 Lưu
               </Button>
             </Flex>

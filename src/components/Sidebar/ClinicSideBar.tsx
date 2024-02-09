@@ -15,7 +15,7 @@ import { LinksGroup } from './LinksGroup/LinksGroup';
 import { PATHS } from '@/config';
 import classNames from 'classnames';
 import { openSidebarClinicSelector } from '@/store';
-import { FaBedPulse } from 'react-icons/fa6';
+import { FaBedPulse, FaUserDoctor } from 'react-icons/fa6';
 
 const createMenuItem = () => {
   return [
@@ -32,7 +32,7 @@ const createMenuItem = () => {
     },
     {
       label: 'Nhân viên',
-      icon: MdOutlinePeopleAlt,
+      icon: FaUserDoctor,
       children: [
         { label: 'Danh sách nhân viên', href: PATHS.CLINIC_STAFF_MANAGEMENT },
         { label: 'Vai trò nhân viên', href: PATHS.ROLE_MANAGEMENT },

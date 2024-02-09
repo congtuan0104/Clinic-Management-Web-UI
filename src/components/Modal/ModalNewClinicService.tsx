@@ -124,6 +124,7 @@ const ModalNewClinicService = ({
               name="price"
               required
               size="md"
+              mt='md'
               control={control}
               suffix="₫"
               min={0}
@@ -165,10 +166,10 @@ const ModalNewClinicService = ({
             />
 
             <Flex justify='end' gap={10}>
-              <Button mt="lg" radius="sm" size="md" color='gray.5' onClick={handleCancel}>
+              <Button mt="lg" size="md" color='gray.5' onClick={handleCancel}>
                 Hủy
               </Button>
-              <Button mt="lg" radius="sm" size="md" type="submit" color="primary.3">
+              <Button mt="lg" size="md" type="submit" color="primary.3">
                 Lưu
               </Button>
             </Flex>

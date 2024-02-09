@@ -25,6 +25,7 @@ interface IProps {
   isOpen: boolean;
   onClose: () => void;
   date?: Date;
+  onSuccess: () => void;
 }
 
 interface IFormData {

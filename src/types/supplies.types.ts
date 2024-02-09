@@ -1,6 +1,6 @@
-export interface ISupplies {
+export interface IMedicalSupplies {
   id: number;
-  name: string;
+  medicineName: string;
   stock: number;
   expiry?: string;
   unit: string;
@@ -28,10 +28,16 @@ export interface ICreateSuppliesPayload {
   medicineName: string;
   stock: number;
   expiry?: string;
+  expiredAt?: Date;
   unit: string;
   description?: string;
-  note?: string;
+  // note?: string;
   vendor?: string;
   categoryId?: number;
   clinicId: string;
+  // price: number;
+}
+
+export interface IUpdateSuppliesPayload extends ICreateSuppliesPayload {
+  isDisabled: boolean;
 }

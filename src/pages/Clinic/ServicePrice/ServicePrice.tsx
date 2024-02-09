@@ -16,6 +16,7 @@ import { MRT_ColumnDef } from 'mantine-react-table';
 import { IClinicService } from '@/types';
 import { notifications } from '@mantine/notifications';
 import { modals } from '@mantine/modals';
+import { TiPlus } from 'react-icons/ti';
 
 const ServicePricePage = () => {
   // khai báo thông tin hiển thị của bảng (đọc tài liệu tại https://v2.mantine-react-table.com/)
@@ -111,7 +112,12 @@ const ServicePricePage = () => {
       <Flex direction="column" gap="md" p="md">
         <Flex align="center" justify="space-between">
           <Title order={4}>Bảng giá dịch vụ</Title>
-          <Button color='secondary.3' onClick={() => setOpenCreateModal(true)}>Thêm dịch vụ</Button>
+          <Button
+            color='secondary.3'
+            leftSection={<TiPlus size={18} />}
+            onClick={() => setOpenCreateModal(true)}>
+            Dịch vụ mới
+          </Button>
         </Flex>
 
         <ClinusTable  // component custom từ mantine-react-table
