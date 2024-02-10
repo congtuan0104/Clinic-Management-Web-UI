@@ -1,6 +1,7 @@
 import { Paper, Text, Group, Avatar, Input, Divider, Button, Flex, Modal, Center, Stack, InputWrapper } from '@mantine/core';
 import { PasswordInput, TextInput, DateInput, Select } from 'react-hook-form-mantine';
 import { useDisclosure } from '@mantine/hooks';
+import { cookies } from '@/utils';
 
 import { useForm, Form } from 'react-hook-form';
 import { RiLockPasswordLine } from 'react-icons/ri';
@@ -11,7 +12,7 @@ import dayjs from 'dayjs';
 
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { useAuth } from '@/hooks';
+import { useAppDispatch, useAuth } from '@/hooks';
 import { firebaseStorage } from '@/config';
 import { FirebaseAuthProvider } from '@/config';
 import { useNavigate } from 'react-router-dom';
@@ -24,6 +25,8 @@ import { FiPhone } from "react-icons/fi";
 import { GrLocation } from "react-icons/gr";
 import { v4 } from 'uuid';
 import { ref, getDownloadURL, uploadBytes } from 'firebase/storage';
+import { setUserInfo } from '@/store';
+import { COOKIE_KEY } from '@/constants';
 
 type ImageUploadType = File | null;
 
@@ -74,7 +77,7 @@ const UserProfilePage = () => {
   }, [imageUpload]);
 
   const navigate = useNavigate();
-
+  const dispatch = useAppDispatch();
   const { userInfo, linkAccount } = useAuth();
 
   const [googleAccoutId, setgoogleAccoutId] = useState<string>('')
@@ -264,6 +267,10 @@ const UserProfilePage = () => {
           color: 'green',
         });
       }
+      if(res.data){
+        cookies.set(COOKIE_KEY.USER_INFO, res?.data);
+        dispatch(setUserInfo(res?.data));
+      } 
     }
     setIsUpdate(false);
     navigate(0)
