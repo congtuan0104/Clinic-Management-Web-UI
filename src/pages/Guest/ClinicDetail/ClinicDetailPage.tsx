@@ -64,8 +64,8 @@ const ClinicDetailPage = () => {
       const response = await newsApi.getNews({
         clinicId: clinicId,
         isShow: true,
-        pageSize: '4',
-        pageIndex: '0',
+        pageSize: 4,
+        pageIndex: 0,
       });
       return response.data?.data;
     } catch (error) {

@@ -107,7 +107,7 @@ const NewsManagementPage = () => {
             if (res.status) {
                 notifications.show({
                     title: 'Thông báo',
-                    message: 'Cập nhật thông tin phòng khám thành công',
+                    message: 'Cập nhật thông tin tin tức thành công',
                     color: 'green',
                 });
             }
