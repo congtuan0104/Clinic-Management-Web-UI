@@ -10,3 +10,4 @@ export * from './news.service';
 export * from './category.service';
 export * from './supplies.service';
 export * from './patient.service';
+export * from './appointment.service';

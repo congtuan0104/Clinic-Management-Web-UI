@@ -80,10 +80,10 @@ const ModalNewCategory = ({
     <Modal.Root opened={isOpen} onClose={handleCancel} centered size={'md'}>
       <Modal.Overlay />
       <Modal.Content radius='lg'>
-        <ModalHeader>
-          <Modal.Title fz={16} fw={600}>Thêm danh mục mới</Modal.Title>
+        <Modal.Header bg='secondary.3'>
+          <Modal.Title c='white' fz="lg" fw={600}>Danh mục mới</Modal.Title>
           <ModalCloseButton />
-        </ModalHeader>
+        </Modal.Header>
         <ModalBody>
           <Form
             control={control}
@@ -95,14 +95,15 @@ const ModalNewCategory = ({
               label="Phân loại danh mục"
               withAsterisk
               size="md"
+              mt='md'
               searchable
-              radius="sm"
+
               required
               comboboxProps={{ shadow: 'md', transitionProps: { transition: 'pop', duration: 200 } }}
               checkIconPosition="right"
               data={[
                 { label: 'Dịch vụ y tế', value: CATEGORY_TYPE.SERVICE.toString() },
-                { label: 'Vật tư y tế', value: CATEGORY_TYPE.SUPPLIER.toString() }
+                { label: 'Vật tư y tế', value: CATEGORY_TYPE.SUPPLIES.toString() }
               ]}
             />
 
@@ -112,7 +113,7 @@ const ModalNewCategory = ({
               required
               mt="md"
               size="md"
-              radius="sm"
+
               control={control}
             />
 
@@ -122,7 +123,7 @@ const ModalNewCategory = ({
               name="note"
               mt='sm'
               size="md"
-              radius="sm"
+
               control={control}
             />
 
@@ -131,7 +132,7 @@ const ModalNewCategory = ({
               name="description"
               placeholder="Thêm mô tả về danh mục (không bắt buộc)"
               size="md"
-              radius="sm"
+
               mt='sm'
               autosize
               minRows={3}
@@ -139,11 +140,11 @@ const ModalNewCategory = ({
             />
 
             <Flex justify='end' gap={10}>
-              <Button mt="lg" radius="sm" size="md" type="submit">
-                Lưu
-              </Button>
-              <Button mt="lg" radius="sm" size="md" variant='outline' color='red.5' onClick={handleCancel}>
+              <Button mt="lg" size="md" color='gray.5' onClick={handleCancel}>
                 Hủy
+              </Button>
+              <Button mt="lg" size="md" type="submit" color="primary.3">
+                Lưu
               </Button>
             </Flex>
           </Form>

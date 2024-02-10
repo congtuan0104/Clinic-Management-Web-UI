@@ -18,6 +18,7 @@ import { notifications } from '@mantine/notifications';
 import { BsXDiamondFill } from 'react-icons/bs';
 import { modals } from '@mantine/modals';
 import { ICategory } from '@/types';
+import { TbCategoryPlus } from 'react-icons/tb';
 
 const ClinicCategoryPage = () => {
   const currentClinic = useAppSelector(currentClinicSelector);
@@ -97,7 +98,12 @@ const ClinicCategoryPage = () => {
       <Flex direction="column" gap="md" p="md">
         <Flex align="center" justify="space-between">
           <Title order={4}>Danh mục, phân loại</Title>
-          <Button color='primary.3' onClick={() => setOpenCreateModal(true)}>Thêm danh mục</Button>
+          <Button
+            color='secondary.3'
+            rightSection={<TbCategoryPlus size={18} />}
+            onClick={() => setOpenCreateModal(true)}>
+            Danh mục mới
+          </Button>
         </Flex>
 
         {(isLoading || isFetching) ? (<div className='flex justify-center items-center h-[90vh]'><Loader color="primary" size="xl" /></div>) : (
@@ -110,7 +116,7 @@ const ClinicCategoryPage = () => {
                 fontWeight: 600,
               },
             }}
-            defaultValue={[CATEGORY_TYPE.SERVICE.toString(), CATEGORY_TYPE.SUPPLIER.toString()]}>
+            defaultValue={[CATEGORY_TYPE.SERVICE.toString(), CATEGORY_TYPE.SUPPLIES.toString()]}>
             <Accordion.Item value={CATEGORY_TYPE.SERVICE.toString()}>
               <Paper bg='white' radius='md'>
                 <Accordion.Control>Loại dịch vụ</Accordion.Control>
@@ -123,12 +129,12 @@ const ClinicCategoryPage = () => {
               </Paper>
             </Accordion.Item>
 
-            <Accordion.Item value={CATEGORY_TYPE.SUPPLIER.toString()}>
+            <Accordion.Item value={CATEGORY_TYPE.SUPPLIES.toString()}>
               <Paper bg='white' radius='md' mt={12}>
-                <Accordion.Control>Loại thiết bị</Accordion.Control>
+                <Accordion.Control>Loại vật tư</Accordion.Control>
                 <Accordion.Panel>
                   <Flex direction="column" gap="md">
-                    {renderCateByType(CATEGORY_TYPE.SUPPLIER)}
+                    {renderCateByType(CATEGORY_TYPE.SUPPLIES)}
                   </Flex>
                 </Accordion.Panel>
 
