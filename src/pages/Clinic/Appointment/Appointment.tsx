@@ -1,71 +1,19 @@
-import { Calendar, ModalAddAppointment, ModalAppointmentDetail } from "@/components"
+import { Calendar, ClinusTable, ModalAddAppointment, ModalAppointmentDetail } from "@/components"
 import { CalendarEvent, IAppointment } from "@/types";
-import { ActionIcon, Button, Select, Text, Title, Tooltip } from "@mantine/core"
+import { ActionIcon, Avatar, Button, Flex, Select, Text, Title, Tooltip } from "@mantine/core"
 import { useMemo, useState } from "react"
 import { FaCalendarDays } from "react-icons/fa6";
-import { FaRegCalendarPlus, FaThList } from "react-icons/fa";
+import { FaEye, FaRegCalendarPlus, FaRegEdit, FaThList, FaTrash } from "react-icons/fa";
 import { APPOINTMENT_STATUS } from "@/enums";
 import { useDisclosure } from "@mantine/hooks";
 import { DateInput } from '@mantine/dates';
 import { SlotInfo } from "react-big-calendar";
-
-const appointments: Array<IAppointment> = [
-  {
-    id: '1',
-    doctorId: '1',
-    doctorName: 'Doctor 1',
-    patientId: '1',
-    patientName: 'Patient 1',
-    startTime: new Date('2024-01-09T13:45:00-05:00'),
-    endTime: new Date('2024-01-09T14:00:00-05:00'),
-    note: 'Note 1',
-    status: APPOINTMENT_STATUS.BOOK,
-  },
-  {
-    id: '2',
-    doctorId: '2',
-    doctorName: 'Doctor 2',
-    patientId: '2',
-    patientName: 'Patient 2',
-    startTime: new Date('2024-01-09T15:45:00-05:00'),
-    endTime: new Date('2024-01-09T16:00:00-05:00'),
-    note: 'Note 2',
-    status: APPOINTMENT_STATUS.CANCEL,
-  },
-  {
-    id: '3',
-    doctorId: '3',
-    doctorName: 'Doctor 3',
-    patientId: '3',
-    patientName: 'Patient 3',
-    startTime: new Date('2024-01-09T15:45:00-05:00'),
-    endTime: new Date('2024-01-09T16:15:00-05:00'),
-    note: 'Note 3',
-    status: APPOINTMENT_STATUS.CHECK_IN,
-  },
-  {
-    id: '4',
-    doctorId: '4',
-    doctorName: 'Doctor 4',
-    patientId: '4',
-    patientName: 'Patient 4',
-    startTime: new Date('2024-01-09T16:45:00-05:00'),
-    endTime: new Date('2024-01-09T17:00:00-05:00'),
-    note: 'Note 4',
-    status: APPOINTMENT_STATUS.CHECK_OUT,
-  },
-  {
-    id: '5',
-    doctorId: '5',
-    doctorName: 'Doctor 5',
-    patientId: '5',
-    patientName: 'Patient 5',
-    startTime: new Date('2024-01-09T17:45:00-05:00'),
-    endTime: new Date('2024-01-09T18:00:00-05:00'),
-    note: 'Note 5',
-    status: APPOINTMENT_STATUS.BOOK,
-  }
-]
+import { useQuery } from "react-query";
+import { appointmentApi } from "@/services";
+import { useAppSelector } from "@/hooks";
+import { currentClinicSelector } from "@/store";
+import dayjs from "dayjs";
+import { MRT_ColumnDef } from "mantine-react-table";
 
 const AppointmentPage = () => {
   const [openedAdd, { open: openAdd, close: closeAdd }] = useDisclosure(false);
@@ -74,8 +22,17 @@ const AppointmentPage = () => {
   const [selectedAppointment, setSelectedAppointment] = useState<IAppointment | undefined>();
   const [mode, setMode] = useState<'list' | 'calendar'>('calendar')
 
+  const currentClinic = useAppSelector(currentClinicSelector);
+
+  const { data: appointments, isLoading, refetch } = useQuery('appointments',
+    () => appointmentApi.getAppointmentList({
+      clinicId: currentClinic?.id,
+    }).then(res => res.data), {
+    refetchOnWindowFocus: false,
+    enabled: !!currentClinic?.id,
+  })
+
   const handleSelectAppointment = (event: CalendarEvent<IAppointment>) => {
-    console.log(event)
     const appointment = event.resource;
     if (appointment) {
       setSelectedAppointment(appointment)
@@ -83,16 +40,80 @@ const AppointmentPage = () => {
     }
   }
 
-  const events: Array<CalendarEvent<IAppointment>> = useMemo(() => {
-    return appointments.map(appointment => {
+  const columns = useMemo<MRT_ColumnDef<IAppointment>[]>(
+    () => [
+      {
+        header: 'Người hẹn khám',
+        id: 'patient',
+        accessorFn: (dataRow) =>
+          <div className='flex items-center'>
+            <Avatar
+              src={dataRow.patient.avatar}
+              size={40}
+              alt={dataRow.patient.lastName}
+              radius="xl" >
+              {dataRow.patient.lastName?.charAt(0)}
+            </Avatar>
+            <div className='flex flex-col flex-1 ml-2'>
+              <p className='text-primary-300'>{dataRow.patient.firstName} {dataRow.patient.lastName}</p>
+              <p className='text-gray-500'>{dataRow.patient.email}</p>
+            </div>
+          </div>,
+        enableSorting: false,
+        enableColumnFilter: false,
+      },
+      {
+        header: 'Ngày hẹn',
+        id: 'date',
+        accessorFn: (dataRow) => dayjs(dataRow.date).format('DD/MM/YYYY'),
+      },
+      {
+        header: 'Thời gian khám',
+        accessorFn: (dataRow) => `${dataRow.startTime} - ${dataRow.endTime}`,
+      },
+      {
+        header: 'Bác sĩ khám',
+        id: 'doctor',
+        accessorFn: (dataRow) =>
+          <div className='flex items-center'>
+            <Avatar
+              src={dataRow.doctor.avatar}
+              size={40}
+              alt={dataRow.doctor.lastName}
+              radius="xl" >
+              {dataRow.doctor.lastName.charAt(0)}
+            </Avatar>
+            <div className='flex flex-col flex-1 ml-2'>
+              <p className='text-primary-300'>{dataRow.doctor.firstName} {dataRow.doctor.lastName}</p>
+              <p className='text-gray-500'>{dataRow.doctor.email}</p>
+            </div>
+          </div>,
+        enableSorting: false,
+        enableColumnFilter: false,
+      },
+      {
+        header: 'Trạng thái',
+        accessorKey: 'status',
+      },
+    ],
+    [],
+  );
+
+  const events = useMemo(() => {
+    if (!appointments) return undefined;
+    const appointmentEvents: Array<CalendarEvent<IAppointment>> = appointments.map(appointment => {
+      const startTime = dayjs(`${appointment.date} ${appointment.startTime}`).toDate();
+      const endTime = dayjs(`${appointment.date} ${appointment.endTime}`).toDate();
       return {
-        title: appointment.patientName,
-        start: appointment.startTime,
-        end: appointment.endTime,
+        title: appointment.status,
+        start: startTime,
+        end: endTime,
         resource: appointment,
       }
     })
+    return appointmentEvents;
   }, [appointments])
+
 
   const handleSelectSlot = (slotInfo: SlotInfo) => {
     if (slotInfo.start < new Date()) return;
@@ -150,9 +171,61 @@ const AppointmentPage = () => {
   }
 
   const renderListViewMode = () => {
-    return <>
-      Table
-    </>
+    return <ClinusTable
+      columns={columns}
+      data={appointments || []}
+      enableRowNumbers={false}
+      enableTopToolbar={false}
+      mantineSearchTextInputProps={
+        {
+          placeholder: 'Tìm kiếm người đặt lịch hẹn, bác sĩ khám bệnh',
+          styles: { wrapper: { width: '300px' } },
+          radius: 'md',
+        }
+      }
+      getRowId={(row) => row.id.toString()}
+      // state={{
+      //   isLoading: isLoading,
+      // }}
+      enableRowActions
+      displayColumnDefOptions={{
+        'mrt-row-actions': {
+          mantineTableHeadCellProps: {
+            align: 'right',
+          },
+        }
+      }}
+      renderRowActions={({ row }) => (
+        <Flex align='center' justify='flex-end' gap={10}>
+          <Tooltip label='Xem chi tiết lịch hẹn'>
+            <ActionIcon
+              variant='outline'
+              color='blue'
+              radius='sm'
+              onClick={() => {
+                setSelectedAppointment(row.original)
+                openDetail()
+              }}
+            >
+              <FaEye />
+            </ActionIcon>
+          </Tooltip>
+          <Tooltip label='Xóa lịch hẹn'>
+            <ActionIcon
+              variant='outline'
+              color='red'
+              radius='sm'
+              onClick={() => { }}
+            >
+              <FaTrash />
+            </ActionIcon>
+          </Tooltip>
+        </Flex>
+      )}
+      localization={{
+        noRecordsToDisplay: 'Không có lịch hẹn nào trong khoảng thời gian này',
+      }}
+    />
   }
 
   return (
@@ -166,8 +239,8 @@ const AppointmentPage = () => {
               <Tooltip label='Xem theo dạng lịch' position="bottom">
                 <Button
                   variant={mode === 'calendar' ? 'filled' : 'outline'}
-                  h={40}
-                  color="primary"
+                  h={38}
+                  color="primary.3"
                   onClick={() => setMode('calendar')}
                 >
                   <FaCalendarDays size={22} />
@@ -177,8 +250,8 @@ const AppointmentPage = () => {
               <Tooltip label='Xem theo dạng danh sách' position="bottom">
                 <Button
                   variant={mode === 'list' ? 'filled' : 'outline'}
-                  color="primary"
-                  h={40}
+                  color="primary.3"
+                  h={38}
                   onClick={() => setMode('list')}
                 >
                   <FaThList size={20} />
@@ -228,11 +301,11 @@ const AppointmentPage = () => {
 
           <Button
             h={40}
-            color="secondary"
+            color="secondary.3"
             onClick={() => openAdd()}
             leftSection={<FaRegCalendarPlus size={20} />}
           >
-            Tạo lịch hẹn mới
+            Lịch hẹn mới
           </Button>
         </div>
 
@@ -240,7 +313,12 @@ const AppointmentPage = () => {
 
       </div>
 
-      <ModalAddAppointment isOpen={openedAdd} onClose={closeAdd} date={selectedDate} />
+      <ModalAddAppointment
+        isOpen={openedAdd}
+        onClose={closeAdd}
+        date={selectedDate}
+        onSuccess={() => refetch()}
+      />
 
       {selectedAppointment &&
         <ModalAppointmentDetail isOpen={openedDetail} onClose={closeDetail} data={selectedAppointment} />

@@ -3,8 +3,9 @@ import { useAppSelector } from "@/hooks";
 import { authApi, patientApi } from "@/services";
 import { currentClinicSelector } from "@/store";
 import { ICreatePatientPayload } from "@/types";
+import { phoneRegExp } from "@/utils";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { Button, Flex, Grid, Modal, ModalBody, ModalCloseButton, ModalHeader } from "@mantine/core";
+import { Button, Flex, Grid, Modal, ModalBody, ModalCloseButton, ModalHeader, ScrollArea } from "@mantine/core";
 import { useDebouncedValue } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
 import classNames from "classnames";
@@ -45,10 +46,12 @@ const validateSchema = yup.object().shape({
     email: yup.string().required('Vui lòng nhập email').email('Email không hợp lệ'),
     firstName: yup.string().required('Vui lòng nhập họ'),
     lastName: yup.string().required('Vui lòng nhập tên'),
-    phone: yup.string(),
+    phone: yup.string()
+      .length(10, 'Số điện thoại phải có 10 số')
+      .matches(phoneRegExp, 'Số điện thoại không hợp lệ'),
     address: yup.string(),
     gender: yup.string(),
-    birthday: yup.date(),
+    birthday: yup.date().max(dayjs().toDate(), 'Ngày sinh không hợp lệ')
   }),
   userId: yup.string(),
   bloodGroup: yup.string(),
@@ -189,14 +192,17 @@ const ModalNewPatient = ({
   useEffect(() => {
     handleCheckEmail();
   }, [debounceEmail]);
+
   console.log('errors', errors.userInfo);
-  return <Modal.Root opened={isOpen} onClose={handleClose} centered size={'auto'}>
+  return <Modal.Root opened={isOpen} onClose={handleClose} centered size={'auto'} scrollAreaComponent={ScrollArea.Autosize}>
     <Modal.Overlay blur={7} />
     <Modal.Content radius='lg'>
-      <ModalHeader>
-        <Modal.Title fz={16} fw={600}>Tạo hồ sơ bệnh nhân</Modal.Title>
+      <Modal.Header bg='secondary.3'>
+        <Modal.Title c='white' fz="lg" fw={600}>
+          Bệnh nhân mới
+        </Modal.Title>
         <ModalCloseButton />
-      </ModalHeader>
+      </Modal.Header>
       <ModalBody>
         <Form
           control={control}
@@ -208,7 +214,8 @@ const ModalNewPatient = ({
             name="userInfo.email"
             required
             size="md"
-            radius="sm"
+            mt='md'
+            radius="md"
             control={control}
           />
 
@@ -225,7 +232,7 @@ const ModalNewPatient = ({
                 required
                 autoComplete="off"
                 size="md"
-                radius="sm"
+                radius="md"
                 control={control}
                 disabled={isDisabled}
               />
@@ -237,7 +244,7 @@ const ModalNewPatient = ({
                 required
                 size="md"
                 autoComplete="off"
-                radius="sm"
+                radius="md"
                 control={control}
                 disabled={isDisabled}
               />
@@ -255,7 +262,7 @@ const ModalNewPatient = ({
                 required
                 mt="sm"
                 size="md"
-                radius="sm"
+                radius="md"
                 disabled={isDisabled}
                 data={[
                   { label: 'Nam', value: Gender.Male.toString() },
@@ -274,7 +281,7 @@ const ModalNewPatient = ({
                 disabled={isDisabled}
                 valueFormat="DD/MM/YYYY"
                 maxDate={dayjs().toDate()}
-                radius="sm"
+                radius="md"
                 control={control}
               />
             </Grid.Col>
@@ -285,7 +292,7 @@ const ModalNewPatient = ({
                 mt="sm"
                 data={[{ label: 'Không rõ', value: '' }, "A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"]}
                 size="md"
-                radius="sm"
+                radius="md"
                 control={control}
               />
             </Grid.Col>
@@ -299,7 +306,7 @@ const ModalNewPatient = ({
                 mt="sm"
                 size="md"
                 disabled={isDisabled}
-                radius="sm"
+                radius="md"
                 control={control}
               />
             </Grid.Col>
@@ -310,7 +317,7 @@ const ModalNewPatient = ({
                 mt="sm"
                 disabled={isDisabled}
                 size="md"
-                radius="sm"
+                radius="md"
                 control={control}
               />
             </Grid.Col>
@@ -324,7 +331,7 @@ const ModalNewPatient = ({
                 name="idCard"
                 mt="sm"
                 size="md"
-                radius="sm"
+                radius="md"
                 control={control}
               />
             </Grid.Col>
@@ -334,7 +341,7 @@ const ModalNewPatient = ({
                 name="healthInsuranceCode"
                 mt="sm"
                 size="md"
-                radius="sm"
+                radius="md"
                 control={control}
               />
             </Grid.Col>
@@ -348,16 +355,16 @@ const ModalNewPatient = ({
             mt="sm"
             rows={3}
             size="md"
-            radius="sm"
+            radius="md"
             control={control}
           />
 
 
           <Flex justify='end' gap={10}>
-            <Button mt="lg" radius="sm" size="md" variant='outline' color='red.5' onClick={handleClose}>
+            <Button mt="lg" radius="md" size="md" color='gray.5' onClick={handleClose}>
               Hủy
             </Button>
-            <Button mt="lg" radius="sm" size="md" type="submit" color="primary.3">
+            <Button mt="lg" radius="md" size="md" type="submit" color="primary.3">
               Lưu hồ sơ
             </Button>
           </Flex>

@@ -175,7 +175,7 @@ const ClinicDetailPage = () => {
 
                         <Text fw={700}>{doctor.role.name}</Text>
                         <Text mt={-10}>{doctor.users.firstName} {doctor.users.lastName}</Text>
-                        {doctor.users.specialize ? <Text mt={-10} c={'gray'}>Chuyên khoa {doctor.users.specialize}</Text> : null}
+                        {doctor.specialize ? <Text mt={-10} c={'gray'}>Chuyên khoa {doctor.specialize}</Text> : null}
                       </Stack>
                     ))}
                     <Stack>

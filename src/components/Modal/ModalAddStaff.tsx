@@ -1,14 +1,17 @@
-import { Gender } from "@/enums";
+import { AuthModule, Gender } from "@/enums";
 import { useAppSelector } from "@/hooks";
-import { authApi, clinicApi, staffApi } from "@/services";
+import { authApi, clinicApi, clinicServiceApi, staffApi } from "@/services";
 import { currentClinicSelector } from "@/store";
+import { ICreateStaffPayload } from "@/types";
+import { phoneRegExp } from "@/utils";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { Button, Flex, Grid, Modal, ModalBody, ModalCloseButton, ModalHeader } from "@mantine/core";
+import { Button, Flex, Grid, Modal, ModalBody, ModalCloseButton, ModalHeader, ScrollArea, TagsInput } from "@mantine/core";
 import { useDebouncedValue } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
-import { useEffect } from "react";
+import dayjs from "dayjs";
+import { useEffect, useState } from "react";
 import { Form, useForm } from "react-hook-form";
-import { Select, TextInput } from "react-hook-form-mantine";
+import { DateInput, MultiSelect, Select, TextInput, Textarea } from "react-hook-form-mantine";
 import { SiMaildotru } from "react-icons/si";
 import { useQuery } from "react-query";
 import * as yup from "yup";
@@ -19,25 +22,42 @@ interface IModalProps {
   onClose: () => void;
   onSuccess: () => void;
 }
-
 interface IFormData {
-  firstName: string;
-  lastName: string;
-  email: string;
+  userInfo: {
+    email: string;
+    firstName: string;
+    lastName: string;
+    phone?: string;
+    address?: string;
+    gender?: string;
+    birthday?: Date;
+  };
+  userId?: string;
   roleId: string;
-  phone?: string;
-  address?: string;
-  gender?: Gender;
-  birthday?: Date;
-  specialize?: string;
-  experience?: string;
+  specialize?: string[];
+  experience?: number;
+  description?: string;
+  services?: string[];
 }
 
 const validateSchema = yup.object().shape({
-  firstName: yup.string().required('Bạn chưa nhập họ'),
-  lastName: yup.string().required('Bạn chưa nhập tên nhân viên'),
-  email: yup.string().required('Thông tin email là bắt buộc').email('Email không hợp lệ'),
-  roleId: yup.string().required('Bạn phải chọn một vai trò cho nhân viên'),
+  userInfo: yup.object().shape({
+    email: yup.string().required('Vui lòng nhập email').email('Email không hợp lệ'),
+    firstName: yup.string().required('Vui lòng nhập họ'),
+    lastName: yup.string().required('Vui lòng nhập tên'),
+    phone: yup.string()
+      .length(10, 'Số điện thoại phải có 10 số')
+      .matches(phoneRegExp, 'Số điện thoại không hợp lệ'),
+    address: yup.string(),
+    gender: yup.string(),
+    birthday: yup.date().max(dayjs().toDate(), 'Ngày sinh không hợp lệ')
+  }),
+  userId: yup.string(),
+  roleId: yup.string().required('Vui lòng chọn vai trò'),
+  specialize: yup.array().of(yup.string().required('Vui lòng nhập chuyên môn')),
+  experience: yup.number().min(0, 'Số năm kinh nghiệm không hợp lệ').typeError('Số năm kinh nghiệm không hợp lệ'),
+  description: yup.string(),
+  services: yup.array().of(yup.string().required('Vui lòng chọn dịch vụ')),
 });
 
 const ModalAddStaff = ({
@@ -52,150 +72,362 @@ const ModalAddStaff = ({
     ['roles', currentClinic?.id],
     () => clinicApi.getClinicRoles(currentClinic!.id).then(res => res.data),
     {
+      enabled: !!currentClinic?.id,
+      refetchOnWindowFocus: false,
+    }
+  );
+
+  const { data: services, isLoading: isLoadingService } = useQuery(
+    ['clinic_service', currentClinic?.id],
+    () => clinicServiceApi.getClinicServices(currentClinic!.id, false)
+      .then(res => res.data),
+    {
+      enabled: !!currentClinic?.id,
       refetchOnWindowFocus: false,
     }
   );
 
   const { control, reset, watch, setError, setValue, formState: { errors } } = useForm<IFormData>({
     mode: 'onChange',
-    resolver: yupResolver(validateSchema),
+    resolver: yupResolver<IFormData>(validateSchema),
     defaultValues: {
-      firstName: '',
-      lastName: '',
-      email: '',
+      userInfo: {
+        email: '',
+        firstName: '',
+        lastName: '',
+        phone: '',
+        address: '',
+        birthday: undefined,
+        gender: Gender.Male.toString(),
+      },
+      // userId: '',
       roleId: '',
-    },
+      specialize: undefined,
+      description: '',
+      services: undefined,
+    }
   });
 
-  const [debouncedEmail] = useDebouncedValue(watch('email'), 500);
+  const email = watch('userInfo.email');
+  const specialize = watch('specialize');
+
+  const [debounceEmail] = useDebouncedValue(email, 500);
+  const [isDisabled, setIsDisabled] = useState(false);
+
 
   /**
    * Kiểm tra nhân viên đã tồn tại chưa
    */
-  const checkStaffExists = async (clinicId: string, email: string) => {
-    const res = await staffApi.getStaffs({ clinicId, email })
-    if (res.data && res.data.length > 0 && res.data[0].users.email === email) {
-      const staff = res.data[0];
-      setError('email', { message: 'Nhân viên đã tồn tại trong phòng khám' })
-      // setValue('firstName', staff.users.firstName);
-      // setValue('lastName', staff.users.lastName);
+  const handleCheckEmail = async () => {
+    if (!debounceEmail || debounceEmail == '') {
+      setIsDisabled(false);
+      reset();
+      return;
+    }
+
+    const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i;
+    if (!emailRegex.test(debounceEmail)) {
+      reset({
+        userInfo: {
+          email: debounceEmail,
+          firstName: '',
+          lastName: '',
+          phone: '',
+          address: '',
+          birthday: undefined,
+        }
+      });
+      return;
+    }
+
+    const res = await authApi.findUserByEmail(debounceEmail);
+    if (res.status && res.data) {
+      const userInfo = res.data;
+      setIsDisabled(true);
+
+      if (userInfo.moduleId !== AuthModule.ClinicStaff) {
+        setError('userInfo.email', { message: 'Email đã tồn tại' });
+        return;
+      }
+
+      const resStaff = await staffApi.getStaffs({
+        clinicId: currentClinic?.id,
+        email: email
+      });
+
+      if (resStaff.status && resStaff.data && resStaff.data.length > 0) {
+        setError('userInfo.email', { message: 'Nhân viên đã tồn tại' });
+        return;
+      }
+
+      setValue('userId', userInfo.id);
+      setValue('userInfo.firstName', userInfo.firstName);
+      setValue('userInfo.lastName', userInfo.lastName);
+      userInfo.phone && setValue('userInfo.phone', userInfo.phone);
+      userInfo.address && setValue('userInfo.address', userInfo.address);
+      userInfo.birthday && setValue('userInfo.birthday', dayjs(userInfo.birthday).toDate());
+      userInfo.gender && setValue('userInfo.gender', userInfo.gender.toString())
     }
     else {
-      setError('email', { message: '' })
+      setIsDisabled(false);
     }
+
   }
 
   useEffect(() => {
-    if (!debouncedEmail || !currentClinic) return;
-    checkStaffExists(currentClinic.id, debouncedEmail);
-  }, [debouncedEmail])
+    handleCheckEmail();
+  }, [debounceEmail]);
 
   const handleSubmitForm = async (data: IFormData) => {
-    console.log(data);
-    if (!currentClinic) return;
-    const response = await authApi.inviteClinicMember({
-      ...data,
-      roleId: parseInt(data.roleId),
-      clinicId: currentClinic?.id
-    });
+    if (!currentClinic?.id) return;
 
-    if (response.status) {
-      notifications.show({
-        message: 'Đã gửi lời mời thành công',
-        color: 'green',
-      });
+    const payload: ICreateStaffPayload = {
+      clinicId: currentClinic.id,
+      userId: data.userId,
+      userInfo: {
+        email: data.userInfo.email,
+        firstName: data.userInfo.firstName,
+        lastName: data.userInfo.lastName,
+        phone: data.userInfo.phone,
+        address: data.userInfo.address,
+        gender: Number(data.userInfo.gender)
+      },
+      roleId: Number(data.roleId),
+      specialize: data.specialize?.join(', ') || '',
+      experience: data.experience,
+      description: data.description,
+      services: data.services?.map(Number) || [],
+    }
+
+    if (payload.userId && payload.userId !== '') {
+      delete payload.userInfo;
+    }
+
+    console.log(payload);
+
+    const res = await staffApi.createStaff(payload);
+
+    if (res.status) {
       onSuccess();
-      reset();
-      onClose();
+      handleClose();
+      notifications.show({
+        title: 'Thành công',
+        message: 'Thông tin nhân viên đã được lưu thành công, một email xác thực sẽ được gửi đến tài khoản nhân viên của bạn',
+        color: 'teal.5',
+      });
     }
   }
 
-  const handleCancel = () => {
+  const handleClose = () => {
     reset();
+    setIsDisabled(false);
     onClose();
   }
 
-  const isDisabled = !!errors.email?.message || watch('email') === '';
-
-
   return (
-    <Modal.Root opened={isOpen} onClose={handleCancel} centered size={'md'}>
+    <Modal.Root opened={isOpen} onClose={handleClose} centered size='lg' scrollAreaComponent={ScrollArea.Autosize}>
       <Modal.Overlay blur={7} />
       <Modal.Content radius='lg'>
-        <ModalHeader>
-          <Modal.Title fz={16} fw={600}>Thêm nhân viên mới</Modal.Title>
+        <Modal.Header bg='secondary.3'>
+          <Modal.Title c='white' fz="lg" fw={600}>
+            Nhân viên mới
+          </Modal.Title>
           <ModalCloseButton />
-        </ModalHeader>
+        </Modal.Header>
         <ModalBody>
           <Form
             control={control}
             onSubmit={e => handleSubmitForm(e.data)}
             onError={e => console.log(e)}>
-            <TextInput
-              label="Email"
-              name="email"
-              placeholder="Email tài khoản đăng nhập"
-              required
-              size="md"
-              radius="sm"
-              control={control}
-              leftSection={<SiMaildotru size={16} />}
-            />
-            <Grid mt="md">
-              <Grid.Col span={4}>
+
+            <Grid mt="sm" w='100%'>
+              <Grid.Col span={12}>
                 <TextInput
-                  label="Họ"
-                  name="firstName"
+                  label="Email"
+                  // miw={350}
+                  name="userInfo.email"
                   required
-                  autoComplete="off"
                   size="md"
-                  radius="sm"
-                  disabled={isDisabled}
+                  mt='sm'
+                  radius="md"
                   control={control}
                 />
+
+                {isDisabled &&
+                  <div className="mt-2 text-teal-700 text-14">
+                    Tài khoản nhân viên đã tồn tại, thông tin nhân viên sẽ được cập nhật từ tài khoản này
+                  </div>}
+                <Grid>
+                  <Grid.Col span={6}>
+                    <TextInput
+                      label="Họ"
+                      name="userInfo.firstName"
+                      required
+                      autoComplete="off"
+                      mt='sm'
+                      size="md"
+                      radius="md"
+                      control={control}
+                      disabled={isDisabled}
+                    />
+                  </Grid.Col>
+                  <Grid.Col span={6}>
+                    <TextInput
+                      label="Tên"
+                      name="userInfo.lastName"
+                      required
+                      mt='sm'
+                      size="md"
+                      autoComplete="off"
+                      radius="md"
+                      control={control}
+                      disabled={isDisabled}
+                    />
+                  </Grid.Col>
+                </Grid>
+
+                <Grid>
+                  <Grid.Col span={6}>
+                    <Select
+                      name="userInfo.gender"
+                      control={control}
+                      label="Giới tính"
+                      placeholder="Chọn giới tính"
+                      required
+                      mt="sm"
+                      size="md"
+                      radius="md"
+                      disabled={isDisabled}
+                      data={[
+                        { label: 'Nam', value: Gender.Male.toString() },
+                        { label: 'Nữ', value: Gender.Female.toString() },
+                      ]}
+                    />
+                  </Grid.Col>
+                  <Grid.Col span={6}>
+                    <DateInput
+                      label="Ngày sinh"
+                      name="userInfo.birthday"
+                      required
+                      mt="sm"
+                      size="md"
+                      disabled={isDisabled}
+                      valueFormat="DD/MM/YYYY"
+                      maxDate={dayjs().toDate()}
+                      radius="md"
+                      control={control}
+                    />
+                  </Grid.Col>
+                </Grid>
+
+                <Grid>
+                  <Grid.Col span={6}>
+                    <TextInput
+                      label="Số điện thoại"
+                      name="userInfo.phone"
+                      mt="sm"
+                      size="md"
+                      disabled={isDisabled}
+                      radius="md"
+                      control={control}
+                    />
+                  </Grid.Col>
+                  <Grid.Col span={6}>
+                    <TextInput
+                      label="Địa chỉ"
+                      name="userInfo.address"
+                      mt="sm"
+                      disabled={isDisabled}
+                      size="md"
+                      radius="md"
+                      control={control}
+                    />
+                  </Grid.Col>
+                </Grid>
+
               </Grid.Col>
-              <Grid.Col span={8}>
-                <TextInput
-                  label="Tên"
-                  name="lastName"
-                  required
+              <Grid.Col span={12}>
+                <Select
+                  name="roleId"
+                  control={control}
+                  label="Vai trò"
+                  placeholder={isLoadingRoles ? 'Đang lấy danh sách role có thể gán' : ''}
+                  withAsterisk
+                  mt="sm"
                   size="md"
-                  autoComplete="off"
-                  radius="sm"
-                  disabled={isDisabled}
+                  searchable
+                  radius="md"
+                  required
+                  disabled={isLoadingRoles}
+                  comboboxProps={{ shadow: 'md', transitionProps: { transition: 'pop', duration: 200 } }}
+                  checkIconPosition="right"
+                  data={roles?.map((role) => ({
+                    value: role.id.toString(),
+                    label: role.name,
+                  }))
+                  }
+                />
+
+                <TagsInput
+                  label="Chuyên môn"
+                  name="specialize"
+                  mt="sm"
+                  size="md"
+                  radius="md"
+                  clearable
+                  value={specialize}
+                  onChange={(value) => setValue('specialize', value)}
+                />
+
+                <TextInput
+                  label="Số năm kinh nghiệm"
+                  name="experience"
+                  mt="sm"
+                  size="md"
+                  type="number"
+                  radius="md"
                   control={control}
                 />
+
+                <MultiSelect
+                  label="Dịch vụ"
+                  name="services"
+                  mt="sm"
+                  size="md"
+                  placeholder="Những dịch vụ mà nhân viên có thể thực hiện"
+                  radius="md"
+                  searchable
+                  clearable
+                  comboboxProps={{ shadow: 'md', transitionProps: { transition: 'pop', duration: 200 } }}
+                  checkIconPosition="right"
+                  data={services?.map((service) => ({
+                    value: service.id.toString(),
+                    label: service.serviceName,
+                  })) || []}
+                  control={control}
+                />
+
+
+                <Textarea
+                  label="Mô tả"
+                  name="description"
+                  mt="sm"
+                  size="md"
+                  radius="md"
+                  rows={3}
+                  control={control}
+                />
+
               </Grid.Col>
             </Grid>
 
 
-            <Select
-              name="roleId"
-              control={control}
-              label="Vai trò"
-              placeholder={isLoadingRoles ? 'Đang lấy danh sách role có thể gán' : ''}
-              withAsterisk
-              mt="md"
-              size="md"
-              searchable
-              radius="sm"
-              required
-              disabled={isLoadingRoles || isDisabled}
-              comboboxProps={{ shadow: 'md', transitionProps: { transition: 'pop', duration: 200 } }}
-              checkIconPosition="right"
-              data={roles?.map((role) => ({
-                value: role.id.toString(),
-                label: role.name,
-              }))
-              }
-            />
-
             <Flex justify='end' gap={10}>
-              <Button mt="lg" radius="sm" size="md" type="submit">
-                Xác nhận
-              </Button>
-              <Button mt="lg" radius="sm" size="md" variant='outline' color='red.5' onClick={handleCancel}>
+              <Button mt="lg" radius="md" size="md" color='gray.5' onClick={handleClose}>
                 Hủy
+              </Button>
+              <Button mt="lg" radius="md" size="md" type="submit" color="primary.3">
+                Lưu thông tin
               </Button>
             </Flex>
           </Form>
