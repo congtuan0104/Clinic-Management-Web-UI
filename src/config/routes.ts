@@ -26,6 +26,8 @@ import {
   ClinicsPage,
   ClinicDetailPage,
   ClinicCategoryPage,
+  ClinicSuppliesPage,
+  PatientListPage,
 } from '@/pages';
 import { NewsPage } from '@/pages/Guest/News';
 import { NewsDetailPage } from '@/pages/Guest/NewsDetail';
@@ -67,6 +69,7 @@ export const PATHS = {
   EXAMINATION_INVOICE: '/clinic/hoa-don-kham-benh',
   CLINIC_REPORT: '/clinic/bao-cao',
   CLINIC_CATEGORY: '/clinic/danh-muc',
+  CLINIC_SUPPLIES: '/clinic/vat-tu',
 };
 
 export const DEEPLINK = {
@@ -285,6 +288,22 @@ export const ROUTES = [
     title: 'Danh mục',
     layout: ClinicLayout,
     element: ClinicCategoryPage,
+    isProtected: true,
+    children: [],
+  },
+  {
+    path: PATHS.CLINIC_SUPPLIES,
+    title: 'Danh sách vật tư',
+    layout: ClinicLayout,
+    element: ClinicSuppliesPage,
+    isProtected: true,
+    children: [],
+  },
+  {
+    path: PATHS.CLINIC_PATIENT_MANAGEMENT,
+    title: 'Danh sách bệnh nhân',
+    layout: ClinicLayout,
+    element: PatientListPage,
     isProtected: true,
     children: [],
   },

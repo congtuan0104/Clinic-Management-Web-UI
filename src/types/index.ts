@@ -9,3 +9,5 @@ export * from './staff.types';
 export * from './clinicService.types';
 export * from './news.types';
 export * from './category.types';
+export * from './supplies.types';
+export * from './patient.types';

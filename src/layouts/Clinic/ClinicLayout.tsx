@@ -86,12 +86,11 @@ const ClinicLayout = ({ children }: { children: JSX.Element }) => {
   ]);
 
 
-
   return (
     <>
       <main className='bg-primary-0 min-h-screen relative'>
-        <ClinicHeader />
-        {!focusMode && <ClinicSideBar notify={notify} />}
+        <ClinicHeader notify={notify} />
+        {!focusMode && <ClinicSideBar />}
         <div className={classNames(
           'pt-[60px] transition-all duration-300 ease-in-out',
           focusMode ? 'pl-0' : isOpenSidebar ? 'pl-[280px]' : 'pl-[70px]',

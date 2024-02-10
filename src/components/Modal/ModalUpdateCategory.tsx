@@ -70,12 +70,12 @@ const ModalUpdateCategory = ({
 
   return (
     <Modal.Root opened={isOpen} onClose={handleCancel} centered size={'md'}>
-      <Modal.Overlay />
+      <Modal.Overlay blur={7} />
       <Modal.Content radius='lg'>
-        <ModalHeader>
-          <Modal.Title fz={16} fw={600}>Cạp nhật thông tin danh mục</Modal.Title>
+        <Modal.Header bg='secondary.3'>
+          <Modal.Title c='white' fz="lg" fw={600}>Cập nhật thông tin danh mục</Modal.Title>
           <ModalCloseButton />
-        </ModalHeader>
+        </Modal.Header>
         <ModalBody>
           <Form
             control={control}
@@ -88,7 +88,6 @@ const ModalUpdateCategory = ({
               required
               mt="md"
               size="md"
-              radius="sm"
               control={control}
             />
 
@@ -98,7 +97,6 @@ const ModalUpdateCategory = ({
               name="note"
               mt='sm'
               size="md"
-              radius="sm"
               control={control}
             />
 
@@ -107,7 +105,6 @@ const ModalUpdateCategory = ({
               name="description"
               placeholder="Thêm mô tả về danh mục (không bắt buộc)"
               size="md"
-              radius="sm"
               mt='sm'
               autosize
               minRows={3}
@@ -115,11 +112,11 @@ const ModalUpdateCategory = ({
             />
 
             <Flex justify='end' gap={10}>
-              <Button mt="lg" radius="sm" size="md" type="submit">
-                Lưu thay đổi
-              </Button>
-              <Button mt="lg" radius="sm" size="md" variant='outline' color='red.5' onClick={handleCancel}>
+              <Button mt="lg" size="md" color='gray.5' onClick={handleCancel}>
                 Hủy
+              </Button>
+              <Button mt="lg" size="md" type="submit">
+                Lưu thay đổi
               </Button>
             </Flex>
           </Form>

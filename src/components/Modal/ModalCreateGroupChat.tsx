@@ -72,18 +72,19 @@ const ModalCreateGroupChat = ({ isOpen, onClose, onSuccess }: IProps) => {
 
   return (
     <Modal.Root opened={isOpen} onClose={onClose} centered size={'md'}>
-      <Modal.Overlay />
+      <Modal.Overlay blur={7} />
       <Modal.Content radius='lg'>
-        <ModalHeader>
-          <Modal.Title fz={18} fw={700}>Tạo nhóm chat mới</Modal.Title>
+        <Modal.Header bg='secondary.3'>
+          <Modal.Title c='white' fz="lg" fw={600}>Nhóm chat mới</Modal.Title>
           <ModalCloseButton />
-        </ModalHeader>
+        </Modal.Header>
         <ModalBody>
           <TextInput
             label="Tên nhóm chat"
             name="groupName"
             required
             size="md"
+            mt='md'
             radius="sm"
             control={control}
           />
@@ -105,16 +106,16 @@ const ModalCreateGroupChat = ({ isOpen, onClose, onSuccess }: IProps) => {
             disabled={isLoading}
           />
 
-          <div style={{ display: 'flex', justifyContent: 'flex-end', }}>
-            <Button mt="lg" radius="sm" size="md" type="submit" onClick={handleSubmit(onSubmitAddGroupChat)}>
-              Xác nhận
-            </Button>
-            <Button mt="lg" ml="sm" radius="sm" size="md" variant='outline' color='red.5'
+          <div className="flex justify-end gap-2">
+            <Button mt="lg" ml="sm" radius="sm" size="md" color='gray.5'
               onClick={() => {
                 onClose();
                 reset();
               }}>
               Hủy
+            </Button>
+            <Button mt="lg" radius="sm" size="md" type="submit" onClick={handleSubmit(onSubmitAddGroupChat)}>
+              Xác nhận
             </Button>
 
           </div>

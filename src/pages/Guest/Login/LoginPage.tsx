@@ -222,7 +222,7 @@ const LoginPage = () => {
 
   return (
     <Container size={570} my={40} className='min-h-[calc(100vh_-_145px)]'>
-      <Paper withBorder shadow="md" p={30} mt={30} radius="md">
+      <Paper withBorder shadow="md" p={30} mt={30} radius="lg">
         <Title>Đăng nhập</Title>
         <Text c="dimmed" size="sm" mt={5} mb={15}>
           hoặc{' '}
@@ -237,7 +237,7 @@ const LoginPage = () => {
             placeholder="example@gmail.com"
             required
             size="md"
-            radius="sm"
+            radius="md"
             autoFocus
             control={control}
             leftSection={<SiMaildotru size={16} />}
@@ -249,7 +249,7 @@ const LoginPage = () => {
             required
             mt="md"
             size="md"
-            radius="sm"
+            radius="md"
             control={control}
             leftSection={<RiLockPasswordLine size={18} />}
           />
@@ -264,14 +264,14 @@ const LoginPage = () => {
               Quên mật khẩu?
             </Anchor>
           </Group>
-          <Button fullWidth mt="xl" radius="sm" size="md" type="submit">
+          <Button fullWidth mt="xl" radius="md" size='md' type="submit">
             Đăng nhập
           </Button>
 
           <Text mt='md' mb='sm' fw='500' c='gray.7' ta='center'>Hoặc đăng nhập bằng tài khoản</Text>
           <Flex gap='md' justify='space-between'>
             <Button
-              radius='sm'
+              radius='md'
               size='md'
               variant="outline"
               fullWidth
@@ -281,7 +281,7 @@ const LoginPage = () => {
               Google
             </Button>
             <Button
-              radius='sm'
+              radius='md'
               size='md'
               variant="outline"
               fullWidth
@@ -291,7 +291,7 @@ const LoginPage = () => {
               Facebook
             </Button>
             <Button
-              radius='sm'
+              radius='md'
               size='md'
               variant="outline"
               fullWidth

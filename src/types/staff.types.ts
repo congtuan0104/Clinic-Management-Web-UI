@@ -1,8 +1,7 @@
 import { Gender } from '@/enums';
 import { IUserGroupRole, IUserInfo } from '.';
 
-
-export interface IStaffQueryParams{
+export interface IStaffQueryParams {
   userId?: string;
   roleId?: string;
   clinicId?: string;
@@ -10,15 +9,19 @@ export interface IStaffQueryParams{
   phoneNumber?: string;
   email?: string;
   name?: string;
+  isDisabled?: boolean;
+  isAcceptInvite?: boolean;
 }
 
-export interface IClinicStaff{
+export interface IClinicStaff {
   id: number;
   experience?: number;
   description?: string;
   specialize?: string;
-  users: IClinicStaffDetail;
+  users: IUserInfo;
   role: IUserGroupRole;
+  isAcceptInvite: boolean;
+  isDisabled: boolean;
 }
 
 export interface IClinicStaffDetail {
@@ -40,4 +43,23 @@ export interface IClinicStaffDetail {
   firstName?: string;
   lastName?: string;
   email?: string;
+}
+
+export interface ICreateStaffPayload {
+  userInfo?: {
+    email: string;
+    firstName: string;
+    lastName: string;
+    phone?: string;
+    address?: string;
+    gender?: Gender;
+    birthday?: Date;
+  };
+  userId?: string;
+  clinicId: string;
+  roleId: number;
+  specialize?: string;
+  experience?: number;
+  description?: string;
+  services?: number[];
 }

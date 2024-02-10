@@ -9,6 +9,8 @@ import {
   Box,
   ActionIcon,
   Title,
+  Avatar,
+  Tooltip,
 } from '@mantine/core';
 import { useAppSelector, useAuth } from '@/hooks';
 import { currentClinicSelector } from '@/store';
@@ -23,21 +25,29 @@ import { MRT_ColumnDef } from 'mantine-react-table';
 import { IClinicStaff } from '@/types';
 import { PATHS } from '@/config';
 import { Gender } from '@/enums';
+import { MdEmail } from 'react-icons/md';
 
 
 const StaffManagementPage = () => {
   const columns = useMemo<MRT_ColumnDef<IClinicStaff>[]>(
     () => [
       {
-        header: 'Email',
-        accessorKey: 'users.email',
-        enableClickToCopy: true,
-        enableSorting: false,
-      },
-      {
-        header: 'Họ và tên',
+        header: 'Nhân viên',
         id: 'fullName',
-        accessorFn: (dataRow) => `${dataRow.users.firstName} ${dataRow.users.lastName}`,
+        accessorFn: (dataRow) =>
+          <div className='flex items-center'>
+            <Avatar
+              src={dataRow.users.avatar}
+              size={40}
+              alt={dataRow.users.lastName}
+              radius="xl" >
+              {dataRow.users?.lastName?.charAt(0)}
+            </Avatar>
+            <div className='flex flex-col flex-1 ml-2'>
+              <p className='text-primary-300'>{dataRow.users.firstName} {dataRow.users.lastName}</p>
+              <p className='text-gray-500'>{dataRow.users.email}</p>
+            </div>
+          </div>,
       },
       {
         header: 'Giới tính',
@@ -50,37 +60,25 @@ const StaffManagementPage = () => {
       {
         header: 'Số điện thoại',
         accessorKey: 'users.phone',
+        enableClickToCopy: true,
       },
-      // {
-      //   header: 'Đã xác thực',
-      //   accessorKey: 'users.emailVerified',
-      // },
       {
         header: 'Vai trò',
         accessorKey: 'role.name',
         enableSorting: false,
         enableColumnFilter: false,
-        // filterFn: 'equals',
-        // mantineFilterSelectProps: {
-        //   data: [
-        //     { value: 'Admin', label: 'Quản trị viên' },
-        //     { value: 'Bác sĩ', label: 'Bác sĩ' },
-        //     { value: 'Y tá', label: 'Y tá' },
-        //   ],
-        // },
-        // filterVariant: 'select',
-        // mantineTableHeadCellProps: {
-        //   align: 'right',
-        // },
-        // mantineTableBodyCellProps: {
-        //   align: 'right',
-        // },
+      },
+      {
+        header: 'Trạng thái',
+        id: 'status',
+        accessorFn: (dataRow) => {
+          if (dataRow.users.emailVerified) return <Badge color='green'>Đã xác thực</Badge>;
+          return <Badge color='red'>Chưa xác thực</Badge>;
+        }
       },
     ],
     [],
   );
-  const queryClient = useQueryClient();
-  const { userInfo } = useAuth();
   const currentClinic = useAppSelector(currentClinicSelector);
   const [opened, { open, close }] = useDisclosure(false);
 
@@ -95,21 +93,18 @@ const StaffManagementPage = () => {
     }
   );
 
-  console.log(staffs);
-
-
   return (
     <>
       <Flex direction="column" gap="md" p="md">
         <Flex align="center" justify="space-between">
           <Title order={4}>Danh sách nhân viên</Title>
-          <Button color='secondary.3' onClick={open}>Thêm nhân viên</Button>
+          <Button color='secondary.3' onClick={open}>Nhân viên mới</Button>
         </Flex>
 
         <ClinusTable
           columns={columns}
           data={staffs || []}
-          // enableRowSelection
+          enableRowNumbers={false}
           mantineSearchTextInputProps={
             {
               placeholder: 'Tìm kiếm nhân viên',
@@ -131,32 +126,45 @@ const StaffManagementPage = () => {
           }}
           renderRowActions={({ row }) => (
             <Flex align='center' justify='flex-end' gap={10}>
-              <ActionIcon
-                variant='outline'
-                color='blue'
-                radius='sm'
-                component={Link}
-                to={`/clinic/nhan-vien/${row.id}`}
-              >
-                <FaRegEdit />
-              </ActionIcon>
-              <ActionIcon
-                variant='outline'
-                color='red'
-                radius='sm'
-                onClick={() => { }}
-              >
-                <FaTrash />
-              </ActionIcon>
+              {(!row.original.isAcceptInvite || !row.original.users.emailVerified) && (
+                <Tooltip label='Gửi lại mail xác thực'>
+                  <ActionIcon
+                    variant='outline'
+                    color='gray.8'
+                    radius='sm'
+                    onClick={() => { }}
+                  >
+                    <MdEmail />
+                  </ActionIcon>
+                </Tooltip>
+              )}
+              <Tooltip label='Xem thông tin nhân viên'>
+                <ActionIcon
+                  variant='outline'
+                  color='blue'
+                  radius='sm'
+                  component={Link}
+                  to={`${PATHS.CLINIC_STAFF_MANAGEMENT}/${row.id}`}
+                >
+                  <FaRegEdit />
+                </ActionIcon>
+              </Tooltip>
+              <Tooltip label='Xóa nhân viên'>
+                <ActionIcon
+                  variant='outline'
+                  color='red'
+                  radius='sm'
+                  onClick={() => { }}
+                >
+                  <FaTrash />
+                </ActionIcon>
+              </Tooltip>
             </Flex>
           )}
           localization={{
             noRecordsToDisplay: 'Không có nhân viên nào trong phòng khám',
           }}
-
         />
-
-
       </Flex>
 
       <ModalAddStaff

@@ -68,7 +68,7 @@ const ModalUpdateClinicService = ({
     defaultValues: {
       serviceName: service.serviceName,
       price: service.price,
-      description: service.description,
+      description: service.description || '',
       categoryId: service.categoryId?.toString(),
       isDisabled: !service.isDisabled,
     }
@@ -122,7 +122,7 @@ const ModalUpdateClinicService = ({
 
   return (
     <Modal.Root opened={isOpen} onClose={handleCancel} centered size={'md'}>
-      <Modal.Overlay />
+      <Modal.Overlay blur={7} />
       <Modal.Content radius='lg'>
         <ModalHeader>
           <Modal.Title fz={16} fw={600}>Dịch vụ {service.serviceName}</Modal.Title>
