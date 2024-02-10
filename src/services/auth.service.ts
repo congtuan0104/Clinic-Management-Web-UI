@@ -9,6 +9,7 @@ import {
   ILinkAccountRequest,
   IChangePasswordRequest,
   IInviteClinicMemberRequest,
+  IChangeProfileRequest,
 } from '@/types';
 import { axiosClient } from '@/utils';
 
@@ -101,5 +102,9 @@ export const authApi = {
 
   findUserByEmail(email: string, emailVerified?: string): Promise<IApiResponse<IUserInfo>> {
     return axiosClient.get('/auth/find-user-by-email', { params: { email, emailVerified } });
+  },
+
+  changeProfile(userId: string, data: IChangeProfileRequest): Promise<any> {
+    return axiosClient.put(`/auth/user/${userId}`, data);
   },
 };
