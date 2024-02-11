@@ -1,4 +1,5 @@
 import { APPOINTMENT_STATUS, Gender } from '@/enums';
+import { IClinicService } from '@/types';
 
 export interface IAppointment {
   id: string;
@@ -7,7 +8,7 @@ export interface IAppointment {
   date: string;
   status: APPOINTMENT_STATUS;
   clinicId: string;
-  clinic: {
+  clinics: {
     id: string;
     name: string;
     address: string;
@@ -40,7 +41,10 @@ export interface IAppointment {
     phone?: string;
     avatar?: string;
     gender?: Gender;
+    birthday?: Date;
   };
+  serviceId: number;
+  clinicServices: IClinicService;
   description?: string;
 }
 
@@ -55,6 +59,7 @@ export interface IAppointmentQueryParams {
 export interface INewAppointmentPayload {
   clinicId: string;
   doctorId: number;
+  serviceId: number;
   patientId: number;
   date: string;
   startTime: string;

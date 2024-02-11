@@ -1,23 +1,109 @@
-import { Flex, Text } from "@mantine/core";
+import { Gender } from "@/enums";
+import { IAppointment } from "@/types";
+import { Checkbox, Flex, Text } from "@mantine/core";
+import dayjs from "dayjs";
 import { forwardRef } from "react";
+import { CurrencyFormatter } from "..";
 
-const AppointmentPrintContext = forwardRef<HTMLDivElement>((_, ref) => {
+interface IProps {
+  data: IAppointment;
+}
+
+const AppointmentPrintContext = forwardRef<HTMLDivElement, IProps>((props, ref) => {
+  const { data } = props;
   return (
-    <div ref={ref}>
-      <Flex justify='center' align='center' direction='column'>
-        <Text fz='2xl' fw={600}>
-          PHIẾU HẸN KHÁM BỆNH
-        </Text>
-        <Text mt={8}>
-          Phòng khám: Phòng khám đa khoa Hà Nội
-        </Text>
-        <Text mt={8}>
-          Địa chỉ: 123 Phố Vọng, Hai Bà Trưng, Hà Nội
-        </Text>
-        <Text mt={8}>
-          Số điện thoại: 0987654321
-        </Text>
-      </Flex>
+    <div ref={ref} className="border border-dash border-gray-400 rounded-md py-10 px-16">
+      <div className="flex items-center">
+        {data.clinics.logo && (
+          <img src={data.clinics.logo} alt="logo" className="w-[100px] h-[100px] mr-5" />
+        )}
+        <div className="flex flex-col flex-1">
+          <p className="uppercase font-semibold">{data.clinics.name}</p>
+          <p>Địa chỉ: {data.clinics.address}</p>
+          <p>Số điện thoại: {data.clinics.phone}</p>
+          <p>Email: {data.clinics.email}</p>
+        </div>
+      </div>
+      <Text ta='center' fz={34} fw={600} my={10}>
+        PHIẾU HẸN KHÁM
+      </Text>
+      <table className="w-full">
+        <tbody>
+          <tr>
+            <td colSpan={2}>
+              <b>Thông tin người hẹn khám</b>
+            </td>
+          </tr>
+          <tr>
+            <td className="w-1/3">Họ và tên:</td>
+            <td className="uppercase w-2/3">{data.patient.firstName} {data.patient.lastName}</td>
+          </tr>
+          <tr>
+            <td>Giới tính:</td>
+            <td>{data.patient.gender === Gender.Male ? 'Nam' : 'Nữ'}</td>
+          </tr>
+          {data.patient.birthday && (
+            <tr>
+              <td>Tuổi:</td>
+              <td>
+                {dayjs().diff(data.patient.birthday, 'month') < 12 ? dayjs().diff(data.patient.birthday, 'month') + ' tháng' : dayjs().diff(data.patient.birthday, 'year')}
+              </td>
+            </tr>
+          )}
+          <tr>
+            <td>Địa chỉ:</td>
+            <td>{data.patient.address}</td>
+          </tr>
+          <tr>
+            <td>Điện thoại:</td>
+            <td>{data.patient.phone}</td>
+          </tr>
+          <tr>
+            <td>Email:</td>
+            <td>{data.patient.email}</td>
+          </tr>
+          <tr>
+            <td>Số thẻ bảo hiểm y tế:</td>
+            <td>{data.patient.healthInsuranceCode}</td>
+          </tr>
+
+          <tr>
+            <td colSpan={2} className="pt-3">
+              <b>Thông tin lịch hẹn</b>
+            </td>
+          </tr>
+          <tr>
+            <td>Ngày hẹn:</td>
+            <td>{dayjs(data.date).format('DD/MM/YYYY')}</td>
+          </tr>
+
+          <tr>
+            <td>Giờ khám dự kiến</td>
+            <td>{data.startTime} - {data.endTime}</td>
+          </tr>
+
+          <tr>
+            <td>Dịch vụ:</td>
+            <td> {data.clinicServices.serviceName}</td>
+          </tr>
+          <tr>
+            <td>Phí dịch vụ</td>
+            <td><CurrencyFormatter value={data.clinicServices.price} /></td>
+          </tr>
+
+          <tr>
+            <td>Bác sĩ:</td>
+            <td>{data.doctor.firstName} {data.doctor.lastName}</td>
+          </tr>
+
+          <tr>
+            <td>Mô tả:</td>
+            <td>{data.description}</td>
+          </tr>
+
+        </tbody>
+      </table>
+
     </div>
   );
 });

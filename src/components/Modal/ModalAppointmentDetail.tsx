@@ -1,6 +1,6 @@
 import { PATHS } from "@/config";
 import { IAppointment } from "@/types";
-import { Badge, Button, Flex, Modal, Select, Text, Tooltip } from "@mantine/core";
+import { Badge, Button, Flex, Modal, Anchor, Text, Tooltip } from "@mantine/core";
 import dayjs from "dayjs";
 import { IoPrintSharp } from "react-icons/io5";
 import { Link } from "react-router-dom";
@@ -41,6 +41,9 @@ const ModalAppointmentDetail = ({ isOpen, onClose, data }: IProps) => {
 
   const handlePrintAppointment = useReactToPrint({
     content: () => contentRef.current,
+    onAfterPrint() {
+      onClose();
+    },
   });
 
   const handleDownloadAppointment = useReactToPrint({
@@ -79,9 +82,9 @@ const ModalAppointmentDetail = ({ isOpen, onClose, data }: IProps) => {
                 Người đặt lịch hẹn:
               </Text>
               <Tooltip label='Xem hồ sơ bệnh nhân'>
-                <Text ml={4} component={Link} to={`${PATHS.CLINIC_PATIENT_MANAGEMENT}/${data.patientId}`}>
+                <Anchor ml={4} href={`${PATHS.CLINIC_PATIENT_MANAGEMENT}/${data.patientId}`}>
                   {data.patient.firstName} {data.patient.lastName}
-                </Text>
+                </Anchor>
               </Tooltip>
             </Flex>
 
@@ -90,16 +93,19 @@ const ModalAppointmentDetail = ({ isOpen, onClose, data }: IProps) => {
                 Bác sĩ:
               </Text>
               <Tooltip label='Xem thông tin bác sĩ'>
-                <Text ml={4} component={Link} to={`${PATHS.CLINIC_STAFF_MANAGEMENT}/${data.doctorId}`}>
-                  {data.doctorId}
-                </Text>
+                <Anchor ml={4} href={`${PATHS.CLINIC_STAFF_MANAGEMENT}/${data.doctorId}`}>
+                  {data.doctor.firstName} {data.doctor.lastName}
+                </Anchor>
               </Tooltip>
             </Flex>
             <Text mt={8}>
-              Ngày hẹn: {dayjs(data.date).format('DD-MM-YYYY')}
+              Ngày hẹn: {dayjs(data.date).format('DD/MM/YYYY')}
             </Text>
             <Text mt={8}>
               Thời gian dự kiến: {data.startTime} - {data.endTime}
+            </Text>
+            <Text mt={8}>
+              Dịch vụ: {data.clinicServices.serviceName}
             </Text>
             {data.description && (<Text mt={8}>
               Ghi chú: {data.description}
@@ -148,7 +154,7 @@ const ModalAppointmentDetail = ({ isOpen, onClose, data }: IProps) => {
       </Modal.Root>
 
       <div className="hidden">
-        <AppointmentPrintContext ref={contentRef} />
+        <AppointmentPrintContext ref={contentRef} data={data} />
       </div>
     </>
   )

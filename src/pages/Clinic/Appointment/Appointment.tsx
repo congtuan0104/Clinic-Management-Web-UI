@@ -9,28 +9,52 @@ import { useDisclosure } from "@mantine/hooks";
 import { DateInput } from '@mantine/dates';
 import { SlotInfo } from "react-big-calendar";
 import { useQuery } from "react-query";
-import { appointmentApi } from "@/services";
+import { appointmentApi, staffApi } from "@/services";
 import { useAppSelector } from "@/hooks";
 import { currentClinicSelector } from "@/store";
 import dayjs from "dayjs";
 import { MRT_ColumnDef } from "mantine-react-table";
+
+interface ISearchTerm {
+  doctor?: number | null;
+  date?: Date | null;
+  status?: string;
+}
 
 const AppointmentPage = () => {
   const [openedAdd, { open: openAdd, close: closeAdd }] = useDisclosure(false);
   const [openedDetail, { open: openDetail, close: closeDetail }] = useDisclosure(false);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
   const [selectedAppointment, setSelectedAppointment] = useState<IAppointment | undefined>();
-  const [mode, setMode] = useState<'list' | 'calendar'>('calendar')
+  const [mode, setMode] = useState<'list' | 'calendar'>('list')
+  const [searchTerm, setSearchTerm] = useState<ISearchTerm>({
+    doctor: undefined,
+    date: undefined,
+    status: undefined,
+  })
 
   const currentClinic = useAppSelector(currentClinicSelector);
 
   const { data: appointments, isLoading, refetch } = useQuery('appointments',
     () => appointmentApi.getAppointmentList({
       clinicId: currentClinic?.id,
+      doctorId: searchTerm.doctor ?? undefined,
+      date: searchTerm.date ? dayjs(searchTerm.date).format('YYYY-MM-DD') : undefined,
+      // status: searchTerm.status,
     }).then(res => res.data), {
     refetchOnWindowFocus: false,
     enabled: !!currentClinic?.id,
   })
+
+  const { data: staffs } = useQuery(
+    ['staffs'],
+    () => staffApi.getStaffs({ clinicId: currentClinic?.id })
+      .then(res => res.data),
+    {
+      enabled: !!currentClinic?.id,
+      refetchOnWindowFocus: false,
+    }
+  );
 
   const handleSelectAppointment = (event: CalendarEvent<IAppointment>) => {
     const appointment = event.resource;
@@ -62,15 +86,7 @@ const AppointmentPage = () => {
         enableSorting: false,
         enableColumnFilter: false,
       },
-      {
-        header: 'Ngày hẹn',
-        id: 'date',
-        accessorFn: (dataRow) => dayjs(dataRow.date).format('DD/MM/YYYY'),
-      },
-      {
-        header: 'Thời gian khám',
-        accessorFn: (dataRow) => `${dataRow.startTime} - ${dataRow.endTime}`,
-      },
+
       {
         header: 'Bác sĩ khám',
         id: 'doctor',
@@ -92,6 +108,18 @@ const AppointmentPage = () => {
         enableColumnFilter: false,
       },
       {
+        header: 'Thời gian hẹn',
+        id: 'time',
+        accessorFn: (dataRow) => <div className="bg-primary-300 text-13 p-1 rounded-md text-white flex flex-col items-center">
+          <p>{dataRow.startTime} - {dataRow.endTime}</p>
+          <p>{dayjs(dataRow.date).format('DD/MM/YYYY')}</p>
+        </div>,
+      },
+      {
+        header: 'Yêu cầu khám',
+        accessorKey: 'clinicServices.serviceName',
+      },
+      {
         header: 'Trạng thái',
         accessorKey: 'status',
       },
@@ -105,7 +133,7 @@ const AppointmentPage = () => {
       const startTime = dayjs(`${appointment.date} ${appointment.startTime}`).toDate();
       const endTime = dayjs(`${appointment.date} ${appointment.endTime}`).toDate();
       return {
-        title: appointment.status,
+        title: `${appointment.clinicServices.serviceName} (Bs. ${appointment.doctor.firstName} ${appointment.doctor.lastName})`,
         start: startTime,
         end: endTime,
         resource: appointment,
@@ -143,13 +171,13 @@ const AppointmentPage = () => {
             const status = event.resource && event.resource.status
             let bgColor;
             switch (status) {
-              case APPOINTMENT_STATUS.BOOK:
+              case APPOINTMENT_STATUS.PENDING:
                 bgColor = '#FFC107'
                 break;
-              case APPOINTMENT_STATUS.CHECK_IN:
+              case APPOINTMENT_STATUS.CONFIRM:
                 bgColor = '#28A745'
                 break;
-              case APPOINTMENT_STATUS.CHECK_OUT:
+              case APPOINTMENT_STATUS.CHECK_IN:
                 bgColor = '#007BFF'
                 break;
               case APPOINTMENT_STATUS.CANCEL:
@@ -236,17 +264,6 @@ const AppointmentPage = () => {
             <Title order={3}>Lịch hẹn khám</Title>
             {/* {selectedAppointment && <Text>Lịch hẹn được chọn là: {selectedAppointment.id}</Text>} */}
             <Button.Group>
-              <Tooltip label='Xem theo dạng lịch' position="bottom">
-                <Button
-                  variant={mode === 'calendar' ? 'filled' : 'outline'}
-                  h={38}
-                  color="primary.3"
-                  onClick={() => setMode('calendar')}
-                >
-                  <FaCalendarDays size={22} />
-                </Button>
-              </Tooltip>
-
               <Tooltip label='Xem theo dạng danh sách' position="bottom">
                 <Button
                   variant={mode === 'list' ? 'filled' : 'outline'}
@@ -257,26 +274,43 @@ const AppointmentPage = () => {
                   <FaThList size={20} />
                 </Button>
               </Tooltip>
-
+              <Tooltip label='Xem theo dạng lịch' position="bottom">
+                <Button
+                  variant={mode === 'calendar' ? 'filled' : 'outline'}
+                  h={38}
+                  color="primary.3"
+                  onClick={() => setMode('calendar')}
+                >
+                  <FaCalendarDays size={22} />
+                </Button>
+              </Tooltip>
             </Button.Group>
           </div>
           <div className="flex gap-2">
             <Select
               w={250}
               placeholder="Bác sĩ khám bệnh"
-              data={['Tất cả bác sĩ', 'Angular', 'Vue', 'Svelte']}
+              data={staffs?.map(staff => {
+                return {
+                  value: staff.id.toString(),
+                  label: `${staff.users.firstName} ${staff.users.lastName}`
+                }
+              })}
               searchable
               styles={{
                 input: {
                   height: 40,
                 },
               }}
+              onChange={(value) => value && setSearchTerm({ ...searchTerm, doctor: Number(value) })}
             />
             <DateInput
               w={200}
               placeholder="Ngày hẹn khám"
               valueFormat="DD-MM-YYYY"
               rightSection={<FaCalendarDays size={18} />}
+              maxDate={new Date()}
+              onChange={(value) => setSearchTerm({ ...searchTerm, date: value })}
               styles={{
                 input: {
                   height: 40,
