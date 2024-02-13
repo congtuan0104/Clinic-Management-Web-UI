@@ -1,4 +1,4 @@
-import { Text, Center, Stack, Grid, GridCol, Button, Card, Image, Group, Anchor, Box, Divider, Badge, MantineProvider, Input, Pagination } from '@mantine/core';
+import { Text, Center, Stack, Grid, GridCol, Button, Card, Image, Group, Anchor, Box, Divider, Badge, MantineProvider, Input, Pagination, TypographyStylesProvider } from '@mantine/core';
 import { TextInput } from "react-hook-form-mantine";
 import { firebaseStorage } from '@/config';
 import { useQuery } from 'react-query';
@@ -176,7 +176,7 @@ const NewsManagementPage = () => {
     return (
         <div className='max-w-screen-xl mx-auto'>
             <Stack align='center'>
-                <Text fw={700} size='30px' m={20} c={'teal.3'}>Tin tức - Thông báo</Text>
+                <Text fw={700} size='30px' m={20} c={'teal.7'}>Tin tức - Thông báo</Text>
                 <Input
                     name=''
                     w={660}
@@ -203,7 +203,7 @@ const NewsManagementPage = () => {
                                                     fz="md"
                                                     fw={700}
                                                     maw={250}
-                                                    c={'teal.3'}
+                                                    c={'teal.7'}
                                                     onClick={() => handleSelectedNews(newsItem)}
                                                 >
                                                     {newsItem.title}
@@ -305,7 +305,9 @@ const NewsManagementPage = () => {
                                         </RichTextEditor>
                                     </Center>
                                 ) : (
+                                    <TypographyStylesProvider>
                                     <div className="p-5 w-full rounded-md" dangerouslySetInnerHTML={{ __html: selectedNews?.content || '' }}></div>
+                                    </TypographyStylesProvider>
                                 )}
 
 
