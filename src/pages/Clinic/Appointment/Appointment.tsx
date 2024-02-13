@@ -1,9 +1,10 @@
 import { Calendar, ClinusTable, ModalAddAppointment, ModalAppointmentDetail } from "@/components"
 import { CalendarEvent, IAppointment } from "@/types";
-import { ActionIcon, Avatar, Button, Flex, Select, Text, Title, Tooltip } from "@mantine/core"
-import { useMemo, useState } from "react"
-import { FaCalendarDays } from "react-icons/fa6";
+import { ActionIcon, Avatar, Badge, Button, Flex, Select, Text, Title, Tooltip } from "@mantine/core"
+import { useEffect, useMemo, useState } from "react"
+import { FaCalendarDays, FaUserDoctor } from "react-icons/fa6";
 import { FaEye, FaRegCalendarPlus, FaRegEdit, FaThList, FaTrash } from "react-icons/fa";
+import { GrStatusInfo } from "react-icons/gr";
 import { APPOINTMENT_STATUS } from "@/enums";
 import { useDisclosure } from "@mantine/hooks";
 import { DateInput } from '@mantine/dates';
@@ -18,7 +19,7 @@ import { MRT_ColumnDef } from "mantine-react-table";
 interface ISearchTerm {
   doctor?: number | null;
   date?: Date | null;
-  status?: string;
+  status?: string | null;
 }
 
 const AppointmentPage = () => {
@@ -40,7 +41,7 @@ const AppointmentPage = () => {
       clinicId: currentClinic?.id,
       doctorId: searchTerm.doctor ?? undefined,
       date: searchTerm.date ? dayjs(searchTerm.date).format('YYYY-MM-DD') : undefined,
-      // status: searchTerm.status,
+      status: searchTerm.status || undefined,
     }).then(res => res.data), {
     refetchOnWindowFocus: false,
     enabled: !!currentClinic?.id,
@@ -63,6 +64,10 @@ const AppointmentPage = () => {
       openDetail();
     }
   }
+
+  useEffect(() => {
+    refetch();
+  }, [searchTerm])
 
   const columns = useMemo<MRT_ColumnDef<IAppointment>[]>(
     () => [
@@ -112,16 +117,24 @@ const AppointmentPage = () => {
         id: 'time',
         accessorFn: (dataRow) => <div className="bg-primary-300 text-13 p-1 rounded-md text-white flex flex-col items-center">
           <p>{dataRow.startTime} - {dataRow.endTime}</p>
-          <p>{dayjs(dataRow.date).format('DD/MM/YYYY')}</p>
+          <p>{dayjs(dataRow.date).format('DD MMM YYYY')}</p>
         </div>,
       },
       {
-        header: 'Yêu cầu khám',
+        header: 'Yêu cầu dịch vụ',
         accessorKey: 'clinicServices.serviceName',
       },
       {
         header: 'Trạng thái',
-        accessorKey: 'status',
+        id: 'status',
+        accessorFn: (dataRow) => <Badge
+          color={dataRow.status === APPOINTMENT_STATUS.PENDING ? 'yellow.5' :
+            dataRow.status === APPOINTMENT_STATUS.CONFIRM ? 'green.5' :
+              dataRow.status === APPOINTMENT_STATUS.CHECK_IN ? 'primary.3' : 'red.5'
+          }
+        >
+          {dataRow.status}
+        </Badge>
       },
     ],
     [],
@@ -238,16 +251,6 @@ const AppointmentPage = () => {
               <FaEye />
             </ActionIcon>
           </Tooltip>
-          <Tooltip label='Xóa lịch hẹn'>
-            <ActionIcon
-              variant='outline'
-              color='red'
-              radius='sm'
-              onClick={() => { }}
-            >
-              <FaTrash />
-            </ActionIcon>
-          </Tooltip>
         </Flex>
       )}
       localization={{
@@ -290,13 +293,15 @@ const AppointmentPage = () => {
             <Select
               w={250}
               placeholder="Bác sĩ khám bệnh"
+              leftSection={<FaUserDoctor size={18} />}
+              clearable
+              allowDeselect
               data={staffs?.map(staff => {
                 return {
                   value: staff.id.toString(),
                   label: `${staff.users.firstName} ${staff.users.lastName}`
                 }
               })}
-              searchable
               styles={{
                 input: {
                   height: 40,
@@ -308,9 +313,10 @@ const AppointmentPage = () => {
               w={200}
               placeholder="Ngày hẹn khám"
               valueFormat="DD-MM-YYYY"
-              rightSection={<FaCalendarDays size={18} />}
-              maxDate={new Date()}
+              leftSection={<FaCalendarDays size={18} />}
               onChange={(value) => setSearchTerm({ ...searchTerm, date: value })}
+              allowDeselect
+              clearable
               styles={{
                 input: {
                   height: 40,
@@ -321,8 +327,17 @@ const AppointmentPage = () => {
             <Select
               w={200}
               placeholder="Trạng thái lịch hẹn"
-              data={['Chưa xác nhận', 'Đã xác nhận', 'Đã đến hẹn', 'Hủy hẹn']}
-              searchable
+              data={[
+                APPOINTMENT_STATUS.PENDING,
+                APPOINTMENT_STATUS.CONFIRM,
+                APPOINTMENT_STATUS.CHECK_IN,
+                APPOINTMENT_STATUS.CANCEL,
+
+              ]}
+              allowDeselect
+              clearable
+              leftSection={<GrStatusInfo size={18} />}
+              onChange={(value) => setSearchTerm({ ...searchTerm, status: value })}
               styles={{
                 input: {
                   height: 40,
@@ -355,7 +370,11 @@ const AppointmentPage = () => {
       />
 
       {selectedAppointment &&
-        <ModalAppointmentDetail isOpen={openedDetail} onClose={closeDetail} data={selectedAppointment} />
+        <ModalAppointmentDetail
+          isOpen={openedDetail}
+          onClose={closeDetail}
+          onUpdateSuccess={() => refetch()}
+          data={selectedAppointment} />
       }
     </>
   )
