@@ -249,10 +249,14 @@ const UserProfilePage = () => {
     const updateInfo: IChangeProfileRequest = {
       firstName: data.firstName,
       lastName: data.lastName,
-      gender: Number(data.gender),
-      birthday: data.birthday,
       address: data.address,
       phone: data.phone,
+    }
+    if(data.gender){
+      updateInfo.gender = Number(data.gender);
+    }
+    if(data.birthday){
+      updateInfo.birthday = data.birthday;
     }
     if (imageUrl !== null) {
       updateInfo.avatar = avatarUrl;
@@ -279,8 +283,8 @@ const UserProfilePage = () => {
   const resetForm = () => {
     setValue('firstName', userInfo?.firstName || '');
     setValue('lastName', userInfo?.lastName || '');
-    // setValue('gender', userInfo?.gender);
-    setValue('birthday', dayjs(userInfo?.birthday, 'DD/MM/YYYY').toDate());
+    setValue('gender', userInfo?.gender);
+    setValue('birthday', userInfo?.birthday ? dayjs(userInfo?.birthday, 'DD/MM/YYYY').toDate() : undefined);
     setValue('address', userInfo?.address || '');
     setValue('phone', userInfo?.phone || '');
     setValue('avatar', userInfo?.avatar || '');
@@ -312,7 +316,7 @@ const UserProfilePage = () => {
                       src={imageUrl || userInfo?.avatar}
                     />
                     <div className="absolute opacity-90 cursor-pointer top-[50%] left-[8%] text-white bg-gray-500 px-2 py-1.5 rounded-md mx-auto hidden group-hover:block">
-                      Chỉnh sửa logo
+                      Chỉnh sửa avatar
                     </div>
                   </label>
                   <input
@@ -357,7 +361,9 @@ const UserProfilePage = () => {
                     name="birthday"
                     valueFormat="DD/MM/YYYY"
                     defaultDate={
-                      dayjs(userInfo?.birthday, 'DD/MM/YYYY').toDate()
+                      userInfo?.birthday === null ?
+                      dayjs(userInfo?.birthday, 'DD/MM/YYYY').toDate() 
+                      : undefined
                     }
                     control={changeProfileControl}
                     rightSection={<FaCalendarDay size={18} />}
