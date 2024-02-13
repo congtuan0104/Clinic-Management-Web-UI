@@ -45,6 +45,22 @@ export interface IClinicStaffDetail {
   email?: string;
 }
 
+export interface IUpdateStaffInfoRequest {
+  experience?: number;
+  specialize?: string;
+  userInfo: {
+    id?: string;
+    email?: string;
+    avatar?: string;
+    firstName?: string;
+    lastName?: string;
+    phone?: string;
+    address?: string;
+    gender?: Gender;
+    birthday?: Date;
+  };
+}
+
 export interface ICreateStaffPayload {
   userInfo?: {
     email: string;

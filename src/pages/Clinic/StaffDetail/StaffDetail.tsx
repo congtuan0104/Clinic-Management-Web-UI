@@ -17,16 +17,12 @@ import { clinicApi, staffApi } from '@/services';
 import { notifications } from '@mantine/notifications';
 import { Label } from 'recharts';
 
-interface IUpdateAccount {
-  avatar: string,
-  firstName: string,
-  lastName: string,
-  email: string,
-}
-
-interface IUpdateInfo {
+interface IStaff {
   id_staff?: string,
+  firstName?: string,
+  lastName?: string,
   phoneNumber?: string,
+  email?: string,
   gender?: number,
   address?: string,
   specialize?: string,
@@ -41,6 +37,9 @@ interface IUpdateSchedule {
 
 const infoschema = yup.object().shape({
   id_staff: yup.string(),
+  firstName: yup.string(),
+  lastName: yup.string(),
+  email: yup.string(),
   phoneNumber: yup.string(),
   gender: yup.number(),
   address: yup.string(),
@@ -56,32 +55,36 @@ const scheduleschema = yup.object().shape({
 
 
 const StaffDetail = () => {
-  const { data: staff, isLoading } = useQuery('staff', () => getStaffInfo());
+  const { id: staffId } = useParams();
+  const { data: staff, isLoading } = useQuery(['staff', staffId], () => getStaffInfo());
 
   const daysOfWeek = [
+    { label: 'Chủ Nhật', value: '1' },
     { label: 'Thứ 2', value: '2' },
     { label: 'Thứ 3', value: '3' },
     { label: 'Thứ 4', value: '4' },
     { label: 'Thứ 5', value: '5' },
     { label: 'Thứ 6', value: '6' },
     { label: 'Thứ 7', value: '7' },
-    { label: 'Chủ Nhật', value: 'CN' },
   ];
 
-  const { id: staffId } = useParams();
+  
   const currentClinic = useAppSelector(currentClinicSelector);
   const [selectedTab, setSelectedTab] = useState<'account' | 'info' | 'schedule'>('account');
   const [isUpdateInfo, setIsUpdateInfo] = useState<boolean>(false);
   const [isUpdateSchedule, setIsUpdateSchedule] = useState<boolean>(false);
 
-  const { control: controlInfo, setValue, getValues } = useForm<IUpdateInfo>({
+  const { control: controlInfo, setValue, getValues } = useForm<IStaff>({
     resolver: yupResolver(infoschema),
     defaultValues: useMemo(() => {
       return {
         id_staff: staffId,
-        phoneNumber: staff?.phoneNumber,
+        firstName: staff?.users.firstName,
+        lastName: staff?.users.lastName,
+        phoneNumber: staff?.users.phone,
+        email: staff?.users.email,
         // gender: staff?.gender,
-        address: staff?.address,
+        address: staff?.users.address,
         specialize: staff?.specialize,
         experience: staff?.experience,
       }
@@ -116,14 +119,17 @@ const StaffDetail = () => {
   }
 
 
-  const onInfoSubmit = async (data: IUpdateInfo) => {
+  const onInfoSubmit = async (data: IStaff) => {
     try {
-      const res = await clinicApi.updateStaffInfo(staffId ?? '', {
-        gender: data.gender,
-        phoneNumber: data.phoneNumber,
-        address: data.address,
-        specialize: data.specialize,
-        experience: data.experience,
+      const res = await staffApi.updateStaffInfo(staffId ?? '', {
+        userInfo: {
+          firstName: data.firstName,
+          lastName: data.lastName,
+          gender: data.gender,
+        phone: data.phoneNumber,
+        email: data.email,
+      address:data.address,}
+
       });
 
       if (res.status) {
@@ -282,8 +288,29 @@ const StaffDetail = () => {
                       name='id_staff'
                       defaultValue={staffId}
                       control={controlInfo}
+                      disabled
                     />
                     <Grid>
+                    <Grid.Col span={6}>
+                        <TextInput
+                          label="Họ"
+                          disabled={!isUpdateInfo}
+                          mt="md"
+                          w={'100%'}
+                          name='firstName'
+                          control={controlInfo}
+                        />
+                      </Grid.Col>
+                      <Grid.Col span={6}>
+                      <TextInput
+                          label="Tên"
+                          disabled={!isUpdateInfo}
+                          mt="md"
+                          w={'100%'}
+                          name='lastName'
+                          control={controlInfo}
+                        />
+                      </Grid.Col>
                       <Grid.Col span={6}>
                         <TextInput
                           label="SĐT liên lạc"
@@ -302,7 +329,7 @@ const StaffDetail = () => {
                           w={'100%'}
                           name='gender'
                           control={controlInfo}
-                          defaultValue={staff?.gender?.toString()}
+                          defaultValue={staff?.users.gender?.toString()}
                           data={[
                             { label: 'Nam', value: '1' },
                             { label: 'Nữ', value: '0' },
@@ -339,7 +366,7 @@ const StaffDetail = () => {
                         name='address'
                         w={'100%'}
                         px={8}
-                        defaultValue={staff?.address}
+                        defaultValue={staff?.users.address}
                         control={controlInfo}
                       />
 
@@ -392,16 +419,12 @@ const StaffDetail = () => {
                   <Text py={10}>{day.label}:</Text>
                   <Group style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
                     <TimeInput
-                      placeholder="Input placeholder"
                       disabled={!isUpdateSchedule}
                       name={`schedule[${index}].startTime` as `${number}.startTime`} 
                       control={controlSchedule}
                     />
-
                     <Text>-</Text>
-
                     <TimeInput
-                      placeholder="Input placeholder"
                       disabled={!isUpdateSchedule}
                       name={`schedule[${index}].endTime` as `${number}.endTime`} 
                       control={controlSchedule}
