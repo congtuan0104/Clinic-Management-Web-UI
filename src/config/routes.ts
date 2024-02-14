@@ -28,6 +28,7 @@ import {
   ClinicCategoryPage,
   ClinicSuppliesPage,
   PatientListPage,
+  MakeAppointment,
 } from '@/pages';
 
 export const PATHS = {
@@ -35,6 +36,7 @@ export const PATHS = {
   CLINICS: '/phong-kham',
   CLINIC_DETAIL: '/phong-kham/:id',
   NEWS: '/tin-tuc',
+  MAKE_APPOINTMENT: '/dat-lich-hen',
   LOGIN: '/dang-nhap',
   REGISTER: '/dang-ky',
   PROFILE: '/tai-khoan',
@@ -95,6 +97,14 @@ export const ROUTES = [
     title: 'Chi tiết phòng khám',
     layout: DefaultLayout,
     element: ClinicDetailPage,
+    isProtected: false,
+    children: [],
+  },
+  {
+    path: PATHS.MAKE_APPOINTMENT,
+    title: 'Đặt lịch khám',
+    layout: DefaultLayout,
+    element: MakeAppointment,
     isProtected: false,
     children: [],
   },
