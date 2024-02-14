@@ -164,7 +164,7 @@ const ClinicDetailPage = () => {
                     {doctors && doctors.slice(0, 4).map((doctor) => (
 
                       <Stack justify='center' align='center' gap="xs" pr={35}>
-                        <Box w={100} h={100}>
+                        <Box w={100} h={100} component={Link} to={`${doctor.id}`}>
                           <Image
                             radius="50%"
                             src={doctor.users.avatar}
@@ -174,7 +174,7 @@ const ClinicDetailPage = () => {
                         </Box>
 
                         <Text fw={700}>{doctor.role.name}</Text>
-                        <Text mt={-10}>{doctor.users.firstName} {doctor.users.lastName}</Text>
+                        <Text mt={-10} component={Link} to={`${doctor.id}`}>{doctor.users.firstName} {doctor.users.lastName}</Text>
                         {doctor.specialize ? <Text mt={-10} c={'gray'}>Chuyên khoa {doctor.specialize}</Text> : null}
                       </Stack>
                     ))}

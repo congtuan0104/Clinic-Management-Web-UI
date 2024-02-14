@@ -28,6 +28,7 @@ import {
   ClinicCategoryPage,
   ClinicSuppliesPage,
   PatientListPage,
+  Guest_StaffDetail,
 } from '@/pages';
 import { NewsPage } from '@/pages/Guest/News';
 import { NewsDetailPage } from '@/pages/Guest/NewsDetail';
@@ -36,6 +37,7 @@ export const PATHS = {
   HOME: '/',
   CLINICS: '/phong-kham',
   CLINIC_DETAIL: '/phong-kham/:id',
+  STAFF_DETAIL: '/phong-kham/:id/:id',
   NEWS: '/tin-tuc',
   NEWS_DETAIL: '/tin-tuc/:id',
   LOGIN: '/dang-nhap',
@@ -57,7 +59,7 @@ export const PATHS = {
   ROLE_MANAGEMENT: '/clinic/quan-ly-role',
   CLINIC_INFO_MANAGEMENT: '/clinic/thong-tin-phong-kham',
   CLINIC_STAFF_MANAGEMENT: '/clinic/nhan-vien',
-  STAFF_DETAIL: '/clinic/nhan-vien/:id',
+  CLINIC_STAFF_DETAIL: '/clinic/nhan-vien/:id',
   STAFF_SCHEDULE: '/clinic/lich-lam-viec',
   CLINIC_APPOINTMENT: '/clinic/lich-hen-kham',
   CLINIC_SERVICE: '/clinic/bang-gia-dich-vu',
@@ -114,6 +116,14 @@ export const ROUTES = [
     title: 'Chi tiết phòng khám',
     layout: DefaultLayout,
     element: ClinicDetailPage,
+    isProtected: false,
+    children: [],
+  },
+  {
+    path: PATHS.STAFF_DETAIL,
+    title: 'Chi tiết nhân viên',
+    layout: DefaultLayout,
+    element: Guest_StaffDetail,
     isProtected: false,
     children: [],
   },
@@ -260,7 +270,7 @@ export const ROUTES = [
     children: [],
   },
   {
-    path: PATHS.STAFF_DETAIL,
+    path: PATHS.CLINIC_STAFF_DETAIL,
     title: 'Thông tin nhân viên',
     layout: ClinicLayout,
     element: StaffDetailPage,
