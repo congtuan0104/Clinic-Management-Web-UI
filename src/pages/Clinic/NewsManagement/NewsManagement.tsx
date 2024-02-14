@@ -1,5 +1,5 @@
 import { Text, Center, Stack, Grid, GridCol, Button, Card, Image, Group, Anchor, Box, Divider, Badge, MantineProvider, Input, Pagination, TypographyStylesProvider } from '@mantine/core';
-import { TextInput } from "react-hook-form-mantine";
+import { Select, TextInput } from "react-hook-form-mantine";
 import { firebaseStorage } from '@/config';
 import { useQuery } from 'react-query';
 import { newsApi } from '@/services';
@@ -35,6 +35,7 @@ interface IUpdateData {
     title: string,
     content?: string,
     logo?: string
+    isShow?: any,
 }
 
 const schema = yup.object().shape({
@@ -81,7 +82,6 @@ const NewsManagementPage = () => {
         try {
             const response = await newsApi.getNews({
                 title: searchValue,
-                isShow: true,
                 pageSize: pageSize,
                 pageIndex: activePage - 1,
             });
@@ -97,6 +97,7 @@ const NewsManagementPage = () => {
         const updateInfo: IUpdateData = {
             title: data.title,
             content: data.content,
+            isShow: data.isShow === 'true' ? true : false,
         }
         if (imageUrl !== null) {
             updateInfo.logo = logoUrl;
@@ -140,6 +141,7 @@ const NewsManagementPage = () => {
         setValue('title', selectedNews?.title || '');
         setValue('logo', selectedNews?.logo);
         setValue('content', selectedNews?.content || '');
+        setValue('isShow', selectedNews?.isShow ? 'true' : 'false');
         editor?.commands.setContent(selectedNews?.content || '')
         setImageUpload(null)
     }
@@ -256,8 +258,9 @@ const NewsManagementPage = () => {
                                         )
                                     }
 
+                                    <Stack w={'100%'} maw={385}>
                                     <TextInput
-                                        w={'59%'}
+                                        w={'100%'}
                                         maw={450}
                                         // size='md'
                                         label={<Text fw={700} size='20px'>Tiêu đề</Text>}
@@ -265,6 +268,33 @@ const NewsManagementPage = () => {
                                         name='title'
                                         control={control}
                                     />
+                                    {isUpdate ?(
+                                        <Group>
+                                            <Text fw={700}>Trạng thái: </Text>
+                                        <Select
+                                        maw={150}
+                                        name='isShow'
+                                        control={control}
+                                        defaultValue={selectedNews?.isShow ? 'true' : 'false'}
+                                        data={[
+                                            { value: 'true', label: 'Công khai' },
+                                            { value: 'false', label: 'Tạm ẩn' },
+                                          ]}
+                                        />
+                                        </Group>
+                                    ) : (
+                                        <Group>
+                                            <Text fw={700}>Trạng thái: </Text>
+                                            {selectedNews?.isShow ? 
+                                            (<Text c={'green.7'}>Công khai</Text>)
+                                            :
+                                            (<Text c={'red.7'}>Tạm ẩn</Text>)}
+                                        </Group>
+                                        
+                                    )}
+                                    </Stack>
+
+                                    
                                 </Group>
                                 <Divider pb={10} />
                                 {isUpdate ? (
