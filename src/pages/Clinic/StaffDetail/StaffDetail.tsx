@@ -1,5 +1,5 @@
 import React, { useState, MouseEvent, useMemo, useEffect } from 'react';
-import { Text, Flex, Button, Indicator, Divider, Center, Stack, Box, Title, Grid, Group, SimpleGrid } from '@mantine/core';
+import { Text, Flex, Button, Indicator, Divider, Center, Stack, Box, Title, Grid, Group, SimpleGrid, Avatar } from '@mantine/core';
 import { Form, useForm } from 'react-hook-form';
 import { TextInput, Select, TimeInput } from 'react-hook-form-mantine';
 import { CgProfile } from 'react-icons/cg';
@@ -70,7 +70,7 @@ const StaffDetail = () => {
 
   
   const currentClinic = useAppSelector(currentClinicSelector);
-  const [selectedTab, setSelectedTab] = useState<'account' | 'info' | 'schedule'>('account');
+  const [selectedTab, setSelectedTab] = useState<'info' | 'schedule'>('info');
   const [isUpdateInfo, setIsUpdateInfo] = useState<boolean>(false);
   const [isUpdateSchedule, setIsUpdateSchedule] = useState<boolean>(false);
 
@@ -102,7 +102,7 @@ const StaffDetail = () => {
     }
   }
 
-  const handleTabClick = (tabType: 'account' | 'info' | 'schedule') => {
+  const handleTabClick = (tabType: 'info' | 'schedule') => {
     if (selectedTab === tabType) {
       return;
     }
@@ -166,15 +166,6 @@ const StaffDetail = () => {
 
             <Flex gap={2}>
               <Button
-                onClick={() => handleTabClick('account')}
-                leftSection={<CgProfile size={14} />}
-                variant={selectedTab === 'account' ? 'filled' : 'outline'}
-                color={selectedTab === 'account' ? 'primary.3' : 'gray.5'}
-                className={'flex-1 w-full m-2'}
-              >
-                Thông tin tài khoản
-              </Button>
-              <Button
                 onClick={() => handleTabClick('info')}
                 leftSection={<CgProfile size={14} />}
                 variant={selectedTab === 'info' ? 'filled' : 'outline'}
@@ -197,80 +188,6 @@ const StaffDetail = () => {
           </Stack>
         </Flex>}
 
-        {selectedTab === 'account' && (
-          <Box w='100%' h='100%' px='30px' bg='white' py='20px' style={{ borderRadius: '10px' }}>
-            <Flex justify={"space-between"}>
-              <Title order={5} >THÔNG TIN TÀI KHOẢN</Title>
-              <Text c='#6B6B6B'>ID Phòng khám: {currentClinic?.id}</Text>
-            </Flex>
-            <Divider my="md" />
-
-            <Grid align='center' justify='center'>
-              <Grid.Col>
-                <Box maw={700} mx="auto">
-                  <Form control={controlInfo} onSubmit={e => onInfoSubmit(e.data)} onError={e => console.log(e)}>
-                    <Grid>
-                      <Grid.Col span={6}>
-                        {/* <TextInput
-                          label="Họ"
-                          disabled={!isUpdateInfo}
-                          mt="md"
-                          w={'100%'}
-                          name='firstName'
-                          control={controlInfo}
-                        />
-                      </Grid.Col>
-                      <Grid.Col span={6}>
-                        <TextInput
-                          label="Tên"
-                          disabled={!isUpdateInfo}
-                          mt="md"
-                          w={'100%'}
-                          name='lastName'
-                          control={controlInfo}
-                        /> */}
-                      </Grid.Col>
-                    </Grid>
-
-                    <Grid>
-                      {/* <TextInput
-                        label="Email"
-                        disabled={!isUpdateInfo}
-                        mt="md"
-                        // name='email'
-                        w={'100%'}
-                        px={8}
-                        defaultValue={staff?.address}
-                        // control={control}
-                      /> */}
-
-                    </Grid>
-                    <Divider my="md" mt={40} />
-                    <Group justify="flex-end" mt="lg">
-                      {
-                        isUpdateInfo ? (
-                          <Button type="submit">Lưu thay đổi</Button>
-                        ) : (
-                          <></>
-                        )
-                      }
-                      {isUpdateInfo ?
-                        (
-                          <Button variant="outline" color='gray.6' onClick={handleOnClickEditInfo}>Hủy thay đổi</Button>
-                        ) :
-                        (
-                          <Button onClick={handleOnClickEditInfo}>Chỉnh sửa</Button>
-                        )}
-                    </Group>
-                  </Form>
-                </Box>
-              </Grid.Col>
-
-            </Grid>
-
-          </Box>
-        )}
-
         {selectedTab === 'info' && (
           <Box w='100%' h='100%' px='30px' bg='white' py='20px' style={{ borderRadius: '10px' }}>
             <Flex justify={"space-between"}>
@@ -281,6 +198,15 @@ const StaffDetail = () => {
 
             <Grid align='center' justify='center'>
               <Grid.Col>
+                <Group justify='flex-start' align='flex-start'>              
+              <Avatar
+                  src={staff?.users.avatar}
+                  size={150}
+                  radius={150}
+                  mr={10}
+                  alt="no image here"
+                  color={'primary'}
+                />
                 <Box maw={700} mx="auto">
                   <Form control={controlInfo} onSubmit={e => onInfoSubmit(e.data)} onError={e => console.log(e)}>
                     <TextInput label="ID nhân viên"
@@ -390,6 +316,7 @@ const StaffDetail = () => {
                     </Group>
                   </Form>
                 </Box>
+                </Group>
               </Grid.Col>
 
             </Grid>
