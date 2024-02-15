@@ -1,123 +1,189 @@
-import { useAppSelector } from '@/hooks';
+import { useAppSelector, useAuth } from '@/hooks';
 import { userInfoSelector } from '@/store';
-import { Box, Title, Text, Group, Image, Flex, Stack, Button, Container, Badge, Center, Divider, Grid, TextInput, Paper, GridCol, Anchor } from '@mantine/core';
+import { Box, Title, Text, Group, Image, Flex, Stack, Button, Container, Badge, Center, Divider, Grid, TextInput, Paper, GridCol, Anchor, Select } from '@mantine/core';
+import { DateInput } from '@mantine/dates';
 import { PATHS } from '@/config';
+import * as yup from 'yup';
 import { CiSearch } from "react-icons/ci";
 import { ClinicCard } from '@/components';
-import { clinicApi, clinicServiceApi } from '@/services';
+import { clinicApi, clinicServiceApi, staffApi } from '@/services';
 import { useQuery } from 'react-query';
 import { useEffect, useState } from 'react';
 import { IClinic, IClinicService } from '@/types';
 import ClinicLogoDefault from '@/assets/images/hospital-logo.png';
 import { useDebouncedState } from '@mantine/hooks';
+// import { DateInput, Select } from 'react-hook-form-mantine';
+import dayjs from 'dayjs';
+import { FaCalendarDay } from 'react-icons/fa';
+
+interface IFormData {
+  doctorId: string;
+  clinicId: string;
+  patientId: string;
+  serviceId: string;
+  date: Date;
+  startTime: string;
+  endTime?: string;
+  description?: string;
+}
+
+const schema = yup.object().shape({
+  doctorId: yup.string().required('Bác sĩ không được để trống'),
+  clinicId: yup.string().required('Vui lòng chọn phòng khám'),
+  patientIdL: yup.string(),
+  serviceId: yup.string().required('Vui lòng chọn dịch vụ khám'),
+  date: yup.date().required('Chọn ngày hẹn khám'),
+  startTime: yup.string().required('Chọn thời gian bắt đầu khám'),
+  endTime: yup.string(),
+  description: yup.string(),
+});
+
+
 
 const MakeAppointment = () => {
-    var appointment: Array<any> = [];
-const [value, setValue] = useDebouncedState('', 1000);
-  const [selectedClinic, setSelectedClinic] = useState<IClinic | null>(null);
-  const [selectedService, setSelectedService] = useState<IClinicService | null>(null);
-  const [currentScreen, setCurrentScreen] = useState(1);
-
-  const { data: clinics, refetch } = useQuery('clinics', () => getAllClinics(value));
-  const { data: services } = useQuery(['services', selectedClinic?.id], () => getClinicService(selectedClinic?.id ?? ''));
+  const [selectedClinicId, setSelectedClinicId] = useState<string | null>(null);
+  const { userInfo, linkAccount } = useAuth();
 
 
-  const getAllClinics = async (searchValue?: string) => {
-    try {
-      const response = await clinicApi.getClinics({ name: searchValue });
-      return response.data;
-    } catch (error) {
-      console.log(error);
+  const { data: clinics, refetch, isLoading } = useQuery(
+    ['clinic'],
+    () => clinicApi.getClinics({})
+      .then(res => res.data),
+    {
+      refetchOnWindowFocus: false,
     }
-  }
-
-  const getClinicService = async (clinicId: string) => {
-    try {
-      const response = await clinicServiceApi.getClinicServices(clinicId, false);
-      return response.data;
-    } catch (error) {
-      console.log(error);
+  );
+  
+  const { data: staffs } = useQuery(
+    ['staffs', selectedClinicId],
+    () => staffApi.getStaffs({ clinicId: selectedClinicId ?? undefined })
+      .then(res => res.data),
+    {
+      refetchOnWindowFocus: false,
     }
-  }
-
-  const handleSelectClinic = (clinic: IClinic) => {
-    setSelectedClinic(clinic);
-    appointment.push(selectedClinic?.name);
-    setCurrentScreen(currentScreen + 1);
-    console.log(appointment);
-  };
-
-  const handleSelectService = (service: IClinicService) => {
-    setSelectedService(service);
-    appointment.push(selectedService?.serviceName);
-    setCurrentScreen(currentScreen + 1);
-    console.log(appointment);
-  };
-
-  const handleGoBack = () => {
-    appointment.pop();
-    setCurrentScreen(currentScreen - 1);
-    console.log(appointment);
-  };
-
-  useEffect(() => {
-    const fetchData = async () => {
-      refetch();
-    };
-
-    fetchData();
-  }, [value, refetch]);
+  );
+  
+  const { data: services } = useQuery(
+    ['clinic_service', selectedClinicId],
+    () => clinicServiceApi.getClinicServices(selectedClinicId ?? '', false)
+      .then(res => res.data),
+    {
+      refetchOnWindowFocus: false,
+    }
+  );
 
   return (
     <div className='max-w-screen-xl mx-auto'>
-      <Grid>
-        <GridCol span={4}>
-        <Paper w='100%' withBorder shadow="md" p={30} radius="md">
-          {selectedClinic && (
-            <Box>
-              <Title>Thông tin phòng khám đã chọn:</Title>
-              {appointment.map((appointmentItem, index) => (
-      <Text key={index}>{appointmentItem}</Text>
-    ))}
-            </Box>
-          )}
-          <Button onClick={handleGoBack}>Quay lại</Button>
+      <Grid my={10}>
+        <GridCol span={6}>
+          <Paper w='100%' withBorder shadow="md" radius="md">
+            <Stack gap={'lg'} p={30}>
+              <Text fw={700} size='25px'> Thông tin bệnh nhân</Text>
+              <Divider/>
+            <Group justify='space-between' grow>
+              <TextInput
+                label={<Text fw={700}>Họ</Text>}
+                defaultValue={userInfo?.firstName}
+              />
+              <TextInput
+                label={<Text fw={700}>Tên</Text>}
+                defaultValue={userInfo?.lastName}
+              />
+            </Group>
+            <Group justify='space-between' grow>
+              <DateInput
+                label={<Text fw={700}>Ngày sinh</Text>}
+                name="birthday"
+                valueFormat="DD/MM/YYYY"
+                defaultDate={
+                  userInfo?.birthday === null ?
+                    dayjs(userInfo?.birthday, 'DD/MM/YYYY').toDate()
+                    : undefined
+                }
+                rightSection={<FaCalendarDay size={18} />}
+              />
+              <Select
+                label={<Text fw={700}>Giới tính</Text>}
+                name='gender'
+                defaultValue={userInfo?.gender?.toLocaleString()}
+                data={[
+                  { label: 'Nam', value: '1' },
+                  { label: 'Nữ', value: '0' },
+                ]}
+              />
+            </Group>
+            <TextInput
+              label={<Text fw={700}>Số điện thoại</Text>}
+              defaultValue={userInfo?.phone}
+            />
+            <TextInput
+              label={<Text fw={700}>Địa chỉ</Text>}
+              defaultValue={userInfo?.address}
+            />
+          </Stack>
           </Paper>
         </GridCol>
-        <GridCol span={8}>
-        <Paper w='100%' withBorder shadow="md" p={30} radius="md">
-          {currentScreen === 1 && (
-            <Box>
-              <Title>Danh sách phòng khám</Title>
-              <TextInput
-            //   w={660}
-              size='lg'
-              radius={'md'}
-              leftSection={<CiSearch />}
-              placeholder='Tìm kiếm phòng khám'
-              onChange={(event) => setValue(event.currentTarget.value)}
-            />
-              <Stack>
-                {clinics?.map((clinic) => (
-                    <Anchor key={clinic.id} onClick={() => handleSelectClinic(clinic)}>{clinic.name}</Anchor>
-                ))}
-              </Stack>
-            </Box>
-          )}
-          {currentScreen === 2 && (
-            <Box>
-              <Title>Chọn dịch vụ</Title>
-              <Stack>
-                {services?.map((service) => (
-                    <Anchor key={service.id} onClick={() => handleSelectService(service)}>{service.serviceName}</Anchor>
-                ))}
-              </Stack>
-            </Box>
-          )}
+        <GridCol span={6}>
+          <GridCol span={12}>
+          <Paper w='100%' withBorder shadow="md" p={30} radius="md">
+          <Select
+            label={<Text fw={700}>Phòng khám</Text>}
+            placeholder="Chọn phòng khám khám bệnh"
+            size="md"
+            radius='md'
+            allowDeselect
+            data={clinics?.map((clinic) => ({
+              value: clinic.id.toString(),
+              label: `${clinic.name}`
+            })) || []}
+            searchable
+            w={'100%'}
+            onChange={setSelectedClinicId}
+          />
           </Paper>
+          </GridCol>
+          <GridCol span={12}>
+            {selectedClinicId ? (
+              <Paper w='100%' withBorder shadow="md" p={30} radius="md">
+              <Select
+                label={<Text fw={700}>Bác sĩ</Text>}
+                placeholder="Chọn bác sĩ khám bệnh"
+                size="md"
+                radius='md'
+                allowDeselect
+                data={staffs?.map((staff) => ({
+                  value: staff.id.toString(),
+                  label: `${staff?.users?.firstName} ${staff?.users?.lastName}`
+                })) || []}
+                searchable
+                w={'100%'}
+              />
+              </Paper>
+            ) : null}
+          
+          </GridCol>
+          <GridCol span={12}>
+          {selectedClinicId ? (
+              <Paper w='100%' withBorder shadow="md" p={30} radius="md">
+              <Select
+                label={<Text fw={700}>Dịch vụ</Text>}
+                placeholder="Chọn dịch vụ"
+                size="md"
+                radius='md'
+                allowDeselect
+                data={services?.map((service) => ({
+                  value: service.id.toString(),
+              label: service.serviceName
+                })) || []}
+                searchable
+                w={'100%'}
+              />
+              </Paper>
+            ) : null}
+          </GridCol>
         </GridCol>
       </Grid>
-    </div>
+    </div >
   );
 };
 

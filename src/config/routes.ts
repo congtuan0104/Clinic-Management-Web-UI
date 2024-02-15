@@ -105,7 +105,7 @@ export const ROUTES = [
     title: 'Đặt lịch khám',
     layout: DefaultLayout,
     element: MakeAppointment,
-    isProtected: false,
+    isProtected: true,
     children: [],
   },
   {
