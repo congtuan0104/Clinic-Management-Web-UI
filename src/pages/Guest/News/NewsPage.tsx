@@ -16,8 +16,25 @@ const NewsPage = () => {
 	const firstNewsRef = useRef<INews | null>(null);
 	const [searchValue, setSearchValue] = useDebouncedState('', 500);
 	const [activePage, setPage] = useState(1);
-
+	const [total, setTotal] = useState(0);
 	const pageSize = 4;
+
+	useEffect(() => {
+		const updateTotal = async () => {
+			const result = await getTotal();
+			setTotal(result);
+		};
+		updateTotal();
+	}, []);
+	const getTotal = async () => {
+		try {
+			const response = await newsApi.getNews({});
+			return Math.ceil((response.data?.total ?? 0) / pageSize);
+		} catch (error) {
+			console.log(error);
+			return 0;
+		}
+	};
 
 	const { data: news, isFetching } = useQuery(['news', activePage, searchValue], () =>
 		getNews()
@@ -51,8 +68,7 @@ const NewsPage = () => {
 	const handlePrevPage = () => {
 		setPageIndex((prevIndex) => Math.max(prevIndex - 1, 1));
 	};
-
-
+	
 	return (
 		<div className='max-w-screen-xl mx-auto'>
 			<Stack align='center'>
@@ -106,7 +122,7 @@ const NewsPage = () => {
 						</Stack>
 						{news && news?.length > 0 &&
 							<Group align='center' justify='center' mt={10} bg='white' className='rounded-md py-2'>
-								<Pagination total={news.length - 1} value={activePage} onChange={setPage} mt="sm" />
+								<Pagination total={total} value={activePage} onChange={setPage} mt="sm" />
 							</Group>}
 					</GridCol>
 				</Grid>
