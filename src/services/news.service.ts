@@ -11,4 +11,7 @@ export const newsApi = {
     updateNewsInfo(newsId: string, updateInfo: IUpdateNewsRequest): Promise<IApiResponse<INews>> {
       return axiosClient.put(`/news/${newsId}`, updateInfo);
     },
+    deleteNews(newsId: string): Promise<IApiResponse<any>>{
+      return axiosClient.delete(`/news/${newsId}`);
+    }
 };

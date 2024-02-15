@@ -1,4 +1,4 @@
-import { Text, Center, Stack, Grid, GridCol, Button, Card, Image, Group, Anchor, Box, Divider, Badge, MantineProvider, Input, Pagination, TypographyStylesProvider } from '@mantine/core';
+import { Text, Center, Stack, Grid, GridCol, Button, Card, Image, Group, Anchor, Box, Divider, Badge, MantineProvider, Input, Pagination, TypographyStylesProvider, Modal } from '@mantine/core';
 import { Select, TextInput } from "react-hook-form-mantine";
 import { firebaseStorage } from '@/config';
 import { useQuery } from 'react-query';
@@ -9,7 +9,7 @@ import NewsLogoDefault from '@/assets/images/news-logo.png';
 import { INews } from '@/types';
 import { MdOutlineNavigateNext } from "react-icons/md";
 import { CiSearch } from 'react-icons/ci';
-import { useDebouncedState, usePagination } from '@mantine/hooks';
+import { useDebouncedState, useDisclosure, usePagination } from '@mantine/hooks';
 import { FaRegCalendar } from "react-icons/fa6";
 import dayjs from 'dayjs';
 import { RichTextEditor, Link } from '@mantine/tiptap';
@@ -28,6 +28,7 @@ import { useNavigate } from "react-router-dom";
 import { ref } from "firebase/storage";
 import { v4 } from 'uuid';
 import { getDownloadURL, uploadBytes } from 'firebase/storage';
+import { MdWarning } from "react-icons/md";
 
 type ImageUploadType = File | null;
 
@@ -51,10 +52,21 @@ const NewsManagementPage = () => {
     const { data: news, isFetching, refetch } = useQuery(['news', activePage, searchValue], () =>
         getNews()
     );
-    const [selectedNews, setSelectedNews] = useState<INews | null>(news && news.length > 0 ? news[0] : null);
+    const [selectedNews, setSelectedNews] = useState<INews | null>(null);
 
     const [imageUpload, setImageUpload] = useState<ImageUploadType>(null);
     const [imageUrl, setImageUrl] = useState<string | null>(null);
+
+    const [opened, { open, close }] = useDisclosure(false);
+    const [total, setTotal] = useState(0);
+
+    useEffect(() => {
+        const updateTotal = async () => {
+            const result = await getTotal();
+            setTotal(result);
+        };
+        updateTotal();
+    }, []);
 
 
 
@@ -91,6 +103,16 @@ const NewsManagementPage = () => {
         }
     };
 
+    const getTotal = async () => {
+        try {
+            const response = await newsApi.getNews({});
+            return Math.ceil((response.data?.total ?? 0) / pageSize);
+        } catch (error) {
+            console.log(error);
+            return 0;
+        }
+    };
+   
     const onSubmit = async (data: IUpdateData) => {
         console.log('data', data)
         const logoUrl = await uploadFile();
@@ -119,6 +141,21 @@ const NewsManagementPage = () => {
         setIsUpdate(false);
 
         resetForm();
+    }
+
+    const deleteNews = async (newsId: number) => {
+            const res = await newsApi.deleteNews(String(newsId))
+
+            if (res.status) {
+                notifications.show({
+                    title: 'Thông báo',
+                    message: 'Xóa tin tức thành công',
+                    color: 'green',
+                });
+            }
+            refetch();
+            setSelectedNews(null);
+
     }
 
     const handleSelectedNews = (newsItem: INews) => {
@@ -221,11 +258,12 @@ const NewsManagementPage = () => {
                         </Stack>
                         {news && news?.length > 0 &&
                             <Group align='center' justify='center' bg='white' className='rounded-md py-2'>
-                                <Pagination total={news.length - 1} value={activePage} onChange={setPage} mt="sm" />
+                                <Pagination total={total} value={activePage} onChange={setPage} mt="sm" />
                             </Group>}
                     </GridCol>
                     <Grid.Col span={7}>
-                        <Card withBorder radius="md" w={'100%'} h={'100%'} bg={'white'}>
+                        {selectedNews && selectedNews.id ? (
+                            <Card withBorder radius="md" w={'100%'} h={'100%'} bg={'white'}>
                             <Form control={control} onSubmit={e => onSubmit(e.data)} onError={e => console.log(e)}>
                                 <Group mb={30} align='flex-start'>
                                     {isUpdate ?
@@ -259,42 +297,39 @@ const NewsManagementPage = () => {
                                     }
 
                                     <Stack w={'100%'} maw={385}>
-                                    <TextInput
-                                        w={'100%'}
-                                        maw={450}
-                                        // size='md'
-                                        label={<Text fw={700} size='20px'>Tiêu đề</Text>}
-                                        readOnly={!isUpdate}
-                                        name='title'
-                                        control={control}
-                                    />
-                                    {isUpdate ?(
-                                        <Group>
-                                            <Text fw={700}>Trạng thái: </Text>
-                                        <Select
-                                        maw={150}
-                                        name='isShow'
-                                        control={control}
-                                        defaultValue={selectedNews?.isShow ? 'true' : 'false'}
-                                        data={[
-                                            { value: 'true', label: 'Công khai' },
-                                            { value: 'false', label: 'Tạm ẩn' },
-                                          ]}
+                                        <TextInput
+                                            w={'100%'}
+                                            // size='md'
+                                            label={<Text fw={700} size='20px'>Tiêu đề</Text>}
+                                            readOnly={!isUpdate}
+                                            name='title'
+                                            control={control}
                                         />
-                                        </Group>
-                                    ) : (
-                                        <Group>
-                                            <Text fw={700}>Trạng thái: </Text>
-                                            {selectedNews?.isShow ? 
-                                            (<Text c={'green.7'}>Công khai</Text>)
-                                            :
-                                            (<Text c={'red.7'}>Tạm ẩn</Text>)}
-                                        </Group>
-                                        
-                                    )}
-                                    </Stack>
+                                        {isUpdate ? (
+                                            <Group>
+                                                <Text fw={700}>Trạng thái: </Text>
+                                                <Select
+                                                    maw={150}
+                                                    name='isShow'
+                                                    control={control}
+                                                    defaultValue={selectedNews?.isShow ? 'true' : 'false'}
+                                                    data={[
+                                                        { value: 'true', label: 'Công khai' },
+                                                        { value: 'false', label: 'Tạm ẩn' },
+                                                    ]}
+                                                />
+                                            </Group>
+                                        ) : (
+                                            <Group>
+                                                <Text fw={700}>Trạng thái: </Text>
+                                                {selectedNews?.isShow ?
+                                                    (<Text c={'green.7'}>Công khai</Text>)
+                                                    :
+                                                    (<Text c={'red.7'}>Tạm ẩn</Text>)}
+                                            </Group>
 
-                                    
+                                        )}
+                                    </Stack>
                                 </Group>
                                 <Divider pb={10} />
                                 {isUpdate ? (
@@ -336,7 +371,7 @@ const NewsManagementPage = () => {
                                     </Center>
                                 ) : (
                                     <TypographyStylesProvider>
-                                    <div className="p-5 w-full rounded-md" dangerouslySetInnerHTML={{ __html: selectedNews?.content || '' }}></div>
+                                        <div className="p-5 w-full rounded-md" dangerouslySetInnerHTML={{ __html: selectedNews?.content || '' }}></div>
                                     </TypographyStylesProvider>
                                 )}
 
@@ -347,14 +382,34 @@ const NewsManagementPage = () => {
                                             <Button type="submit" onClick={handleSubmit(onSubmit)}>Lưu thay đổi</Button>
                                             <Button variant="outline" onClick={handleCancelChange} color='gray.6'>Hủy thay đổi</Button>
                                         </>
-                                        : <Button onClick={handleUpdate}>Chỉnh sửa</Button>
+                                        :
+                                        <Group>
+                                            <Button onClick={handleUpdate}>Chỉnh sửa</Button>
+                                            <Button variant="outline" onClick={open} color='red.6'>Xóa</Button>
+                                        </Group>
+
                                     }
                                 </Group>
                             </Form>
+                            <Modal opened={opened} onClose={close} title={<Text fw={700} size='20px'>Xác nhận xóa</Text>} centered>
+                <Text pb={15}>Bạn có muốn xóa '{selectedNews?.title}'</Text>
+                <Group justify='flex-end'>
+                <Button color='red.7' onClick={() => deleteNews(selectedNews.id)}>Xác nhận</Button>
+                <Button variant="outline" onClick={close} color='gray.6'>Hủy</Button>
+                </Group>
+                
+            </Modal>
                         </Card>
+                        ) : (
+                            <Card withBorder radius="md" w={'100%'} h={'100%'} bg={'white'}>
+
+                            </Card>
+                        )}
+                        
                     </Grid.Col>
                 </Grid>
             </Stack>
+
         </div>
     );
 };
