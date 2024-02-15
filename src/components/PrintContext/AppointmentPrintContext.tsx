@@ -4,6 +4,8 @@ import { Checkbox, Flex, Text } from "@mantine/core";
 import dayjs from "dayjs";
 import { forwardRef } from "react";
 import { CurrencyFormatter } from "..";
+import Barcode from 'react-jsbarcode';
+import uuid from 'uuid';
 
 interface IProps {
   data: IAppointment;
@@ -24,9 +26,17 @@ const AppointmentPrintContext = forwardRef<HTMLDivElement, IProps>((props, ref) 
           <p>Email: {data.clinics.email}</p>
         </div>
       </div>
-      <Text ta='center' fz={34} fw={600} my={10}>
+      <Text ta='center' fz={34} fw={600} mt={10}>
         PHIẾU HẸN KHÁM
       </Text>
+      <div className="flex justify-center mb-2">
+        <Barcode
+          options={{
+            height: 80,
+            displayValue: false
+          }}
+          value={(Math.random() + 1).toString(36).substring(3).toUpperCase()} />
+      </div>
       <table className="w-full">
         <tbody>
           <tr>

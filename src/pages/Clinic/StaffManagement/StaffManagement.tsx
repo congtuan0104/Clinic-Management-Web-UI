@@ -89,7 +89,6 @@ const StaffManagementPage = () => {
     () => staffApi.getStaffs({ clinicId: currentClinic?.id }).then(res => res.data),
     {
       enabled: !!currentClinic?.id,
-      refetchOnWindowFocus: false,
     }
   );
 

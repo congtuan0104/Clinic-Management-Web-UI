@@ -169,7 +169,6 @@ const ModalNewPatient = ({
       delete payload.userInfo;
     }
 
-    console.log(payload);
 
     const res = await patientApi.createPatient(payload);
 
@@ -193,7 +192,6 @@ const ModalNewPatient = ({
     handleCheckEmail();
   }, [debounceEmail]);
 
-  console.log('errors', errors.userInfo);
   return <Modal.Root opened={isOpen} onClose={handleClose} centered size={'auto'} scrollAreaComponent={ScrollArea.Autosize}>
     <Modal.Overlay blur={7} />
     <Modal.Content radius='lg'>

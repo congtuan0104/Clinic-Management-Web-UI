@@ -1,4 +1,4 @@
-import { Gender } from "@/enums";
+import { APPOINTMENT_STATUS, Gender, PERMISSION } from "@/enums";
 import { IAppointment, INewAppointmentPayload } from "@/types";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Box, Modal, Text, Button, ScrollArea, Title, ActionIcon, Tooltip } from "@mantine/core";
@@ -17,7 +17,6 @@ import { clinicServiceApi, patientApi, staffApi } from "@/services";
 import { BiPlus } from "react-icons/bi";
 import { IoPrintSharp } from "react-icons/io5";
 import ReactToPrint from "react-to-print";
-import { watch } from "fs";
 import { appointmentApi } from "@/services/appointment.service";
 import { notifications } from "@mantine/notifications";
 import { MdMedicalServices } from "react-icons/md";
@@ -55,14 +54,14 @@ const ModalAddAppointment = ({ isOpen, onClose, date, onSuccess }: IProps) => {
 
   const ref = useRef<HTMLDivElement>(null);
 
-  const { control, reset, setValue, formState: { errors } } = useForm<IFormData>({
+  const { control, reset, setValue, formState: { errors }, watch } = useForm<IFormData>({
     resolver: yupResolver(schema),
     defaultValues: {
       date: date || new Date(),
-      doctorId: '',
-      patientId: '',
-      startTime: '',
-      endTime: '',
+      // doctorId: '',
+      // patientId: '',
+      // startTime: '',
+      // endTime: '',
       description: '',
     },
   });
@@ -78,9 +77,12 @@ const ModalAddAppointment = ({ isOpen, onClose, date, onSuccess }: IProps) => {
   );
 
   const { data: staffs } = useQuery(
-    ['staffs'],
+    ['doctors'],
     () => staffApi.getStaffs({ clinicId: currentClinic?.id })
-      .then(res => res.data),
+      .then(
+        res => res.data?.
+          filter(staff => staff.role.permissions.map(p => p.id).includes(PERMISSION.PERFORM_SERVICE))
+      ),
     {
       enabled: !!currentClinic?.id,
       refetchOnWindowFocus: false,
@@ -130,7 +132,8 @@ const ModalAddAppointment = ({ isOpen, onClose, date, onSuccess }: IProps) => {
             mt={20}
             w={'100%'}
             valueFormat="DD/MM/YYYY"
-            minDate={new Date()}
+            // min date is tomorrow
+            minDate={dayjs().add(1, 'day').toDate()}
             control={control}
             leftSection={<FaCalendarDays size={18} />}
           />
@@ -162,10 +165,11 @@ const ModalAddAppointment = ({ isOpen, onClose, date, onSuccess }: IProps) => {
             name='serviceId'
             size="md"
             radius='md'
+            disabled={!watch('doctorId')}
             allowDeselect
             data={services?.map((service) => ({
               value: service.id.toString(),
-              label: service.serviceName
+              label: service.serviceName,
             })) || []}
             searchable
             leftSection={<MdMedicalServices size={18} />}
@@ -178,6 +182,7 @@ const ModalAddAppointment = ({ isOpen, onClose, date, onSuccess }: IProps) => {
             placeholder="Tìm kiếm tên bệnh nhân"
             required
             name='patientId'
+            pr={0}
             size="md"
             radius='md'
             data={patients?.map((patient) => ({
@@ -187,33 +192,26 @@ const ModalAddAppointment = ({ isOpen, onClose, date, onSuccess }: IProps) => {
             searchable
             w={'100%'}
             allowDeselect
+            rightSectionWidth={128}
             rightSection={
               <Tooltip label='Bệnh nhân mới'>
-                <ActionIcon
-                  variant='subtle'
-                  color='primary.3'
-                  radius={5}
+                <Button
+                  // variant='subtle'
+                  color='gray.6'
                   size='md'
+                  style={{
+                    borderStartStartRadius: 0,
+                    borderEndStartRadius: 0
+                  }}
+                  leftSection={<FaUserPlus size={20} />}
                   onClick={() => setOpenCreateModal(true)}>
-                  <FaUserPlus size={20} />
-                </ActionIcon>
+                  BN mới
+                </Button>
               </Tooltip>
             }
             rightSectionPointerEvents='auto'
             control={control}
           />
-
-          {/* <Button
-            type="button"
-            color="primary.3"
-            size="md"
-            variant="light"
-            onClick={() => setOpenCreateModal(true)}
-            w={250}
-            leftSection={<FaUserPlus />}
-          >
-            Bệnh nhân mới
-          </Button> */}
 
         </div>
 
@@ -267,70 +265,8 @@ const ModalAddAppointment = ({ isOpen, onClose, date, onSuccess }: IProps) => {
     )
   }
 
-  // const renderConfirmStep = () => {
-  //   return (
-  //     <>
-  //       <div className="flex flex-col p-3 border border-solid border-gray-500 rounded-md" ref={ref}>
-  //         <Text fw={700} tt='uppercase'>{currentClinic?.name}</Text>
-  //         <Text>Địa chỉ: {currentClinic?.address}</Text>
-  //         <Text>SĐT liên hệ: {currentClinic?.phone}</Text>
-  //         <Text>Email liên hệ: {currentClinic?.email}</Text>
-  //         <Title tt='uppercase' ta='center' order={2}>Phiếu hẹn</Title>
-  //         <Text>Thông tin bác sĩ: <b>Nguyễn Văn A</b></Text>
-  //         <Text>Ngày hẹn khám: <b>12/12/2022</b></Text>
-  //       </div>
-
-  //       <div className="mt-3 flex justify-between gap-4">
-  //         <ReactToPrint
-  //           bodyClass="print-agreement"
-  //           content={() => ref.current}
-  //           trigger={() => (
-  //             <Button
-  //               type="button"
-  //               color="secondary.3"
-  //               size="md"
-  //               leftSection={<IoPrintSharp />}>
-  //               In phiếu hẹn
-  //             </Button>
-  //           )}
-  //         />
-  //         <div>
-  //           <Button
-  //             type="button"
-  //             color="gray.6"
-  //             onClick={onClose}
-  //             size="md"
-  //           >
-  //             Hủy
-  //           </Button>
-  //           <Button
-  //             type="submit"
-  //             size="md"
-  //             ml={8}
-  //             color="primary"
-  //           >
-  //             Xác nhận
-  //           </Button>
-  //         </div>
-  //       </div>
-  //     </>
-  //   )
-  // }
-
-
-  // const renderForm = () => {
-  //   switch (step) {
-  //     case Step.SelectTime:
-  //       return renderSelectTimeStep();
-  //     case Step.Confirm:
-  //       return renderConfirmStep();
-  //     default:
-  //       return <></>
-  //   }
-  // }
 
   const handleSubmit = async (data: IFormData) => {
-    console.log(data);
     if (!currentClinic?.id) return;
 
     const payload: INewAppointmentPayload = {
@@ -340,8 +276,9 @@ const ModalAddAppointment = ({ isOpen, onClose, date, onSuccess }: IProps) => {
       serviceId: Number(data.serviceId),
       date: dayjs(data.date).format('YYYY-MM-DD'),
       startTime: data.startTime,
-      endTime: data.endTime || data.startTime,
+      endTime: dayjs(data.date).add(15, 'minute').format('HH:mm'),
       description: data.description,
+      status: APPOINTMENT_STATUS.CONFIRM
     }
 
     console.log('payload', payload);

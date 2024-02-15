@@ -54,6 +54,7 @@
     "react-hook-form": "^7.47.0",
     "react-hook-form-mantine": "^3.1.3",
     "react-icons": "^4.11.0",
+    "react-jsbarcode": "^0.4.2",
     "react-map-gl": "^7.1.7",
     "react-query": "^3.39.3",
     "react-redux": "^8.1.3",

@@ -1,4 +1,4 @@
-import { AuthModule, Gender } from "@/enums";
+import { AuthModule, Gender, PERMISSION } from "@/enums";
 import { useAppSelector } from "@/hooks";
 import { authApi, clinicApi, clinicServiceApi, staffApi } from "@/services";
 import { currentClinicSelector } from "@/store";
@@ -114,7 +114,11 @@ const ModalAddStaff = ({
   const [debounceEmail] = useDebouncedValue(email, 500);
   const [isDisabled, setIsDisabled] = useState(false);
 
-
+  // danh sách role được phép thực hiện dịch vụ
+  const doctorRoles = roles?.
+    filter(role => role.rolePermissions.
+      map(p => p.id).
+      includes(PERMISSION.PERFORM_SERVICE)).map(role => role.id);
   /**
    * Kiểm tra nhân viên đã tồn tại chưa
    */
@@ -171,7 +175,6 @@ const ModalAddStaff = ({
     else {
       setIsDisabled(false);
     }
-
   }
 
   useEffect(() => {
@@ -368,44 +371,49 @@ const ModalAddStaff = ({
                   }
                 />
 
-                <TagsInput
-                  label="Chuyên môn"
-                  name="specialize"
-                  mt="sm"
-                  size="md"
-                  radius="md"
-                  clearable
-                  value={specialize}
-                  onChange={(value) => setValue('specialize', value)}
-                />
+                {doctorRoles?.includes(Number(watch('roleId'))) && (
+                  <>
+                    <TagsInput
+                      label="Chuyên môn"
+                      name="specialize"
+                      mt="sm"
+                      size="md"
+                      radius="md"
+                      clearable
+                      value={specialize}
+                      onChange={(value) => setValue('specialize', value)}
+                    />
 
-                <TextInput
-                  label="Số năm kinh nghiệm"
-                  name="experience"
-                  mt="sm"
-                  size="md"
-                  type="number"
-                  radius="md"
-                  control={control}
-                />
+                    <TextInput
+                      label="Số năm kinh nghiệm"
+                      name="experience"
+                      mt="sm"
+                      size="md"
+                      type="number"
+                      radius="md"
+                      control={control}
+                    />
 
-                <MultiSelect
-                  label="Dịch vụ"
-                  name="services"
-                  mt="sm"
-                  size="md"
-                  placeholder="Những dịch vụ mà nhân viên có thể thực hiện"
-                  radius="md"
-                  searchable
-                  clearable
-                  comboboxProps={{ shadow: 'md', transitionProps: { transition: 'pop', duration: 200 } }}
-                  checkIconPosition="right"
-                  data={services?.map((service) => ({
-                    value: service.id.toString(),
-                    label: service.serviceName,
-                  })) || []}
-                  control={control}
-                />
+                    <MultiSelect
+                      label="Dịch vụ"
+                      name="services"
+                      mt="sm"
+                      size="md"
+                      placeholder="Những dịch vụ mà nhân viên có thể thực hiện"
+                      radius="md"
+                      searchable
+                      clearable
+                      comboboxProps={{ shadow: 'md', transitionProps: { transition: 'pop', duration: 200 } }}
+                      checkIconPosition="right"
+                      data={services?.map((service) => ({
+                        value: service.id.toString(),
+                        label: service.serviceName,
+                      })) || []}
+                      control={control}
+                    />
+                  </>
+                )}
+
 
 
                 <Textarea
