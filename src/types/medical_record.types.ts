@@ -1,4 +1,36 @@
+import { MEDICO_PAYMENT_STATUS, MEDICO_RECORD_STATUS } from '@/enums';
 import { IClinic, IClinicStaff, IPatient } from '.';
+
+export interface IMedicalService {
+  id: number;
+  clinicServiceId: number;
+  clinicId: string;
+  medicalRecordId: number;
+  doctorId: number;
+  doctorName: string;
+  serviceName: string;
+  serviceResult?: string;
+  amount: number;
+  returnCode?: string;
+  createdAt: Date;
+  updatedAt: Date;
+  deletedAt?: Date;
+}
+
+export interface IPrescription extends INewPrescription {
+  id: number;
+  medicalRecordId: number;
+}
+
+export interface INewPrescription {
+  medicineName: string;
+  dosage: number;
+  unit: string;
+  duration: string;
+  usingTime: string;
+  doseInterval: string;
+  note: string;
+}
 
 export interface IMedicalRecord {
   id: number;
@@ -8,12 +40,12 @@ export interface IMedicalRecord {
   dateCreated: Date;
   height?: number;
   weight?: number;
-  bloodPressure?: string;
+  bloodPressure?: number;
   temperature?: number;
-  diagnosis?: string;
+  diagnose?: string;
   result?: string;
-  examinationStatus: number;
-  paymentStatus: number;
+  examinationStatus: MEDICO_RECORD_STATUS;
+  paymentStatus: MEDICO_PAYMENT_STATUS;
   note?: string;
   doctor: {
     id: number;
@@ -22,10 +54,13 @@ export interface IMedicalRecord {
     email: string;
     phone: string;
     avatar: string;
+    specialize?: string;
   };
+  clinicRequestServices: any[];
+  medicalRecordServices: IMedicalService[];
+  prescriptionDetail: IPrescription[];
   patient: IPatient;
   clinic: IClinic;
-  prescription: string;
   createdAt: Date;
   updatedAt: Date;
   deletedAt?: Date;
@@ -47,10 +82,25 @@ export interface INewRecordService {
   amount?: number;
 }
 
+export interface IUpdateMedicalRecordPayload {
+  height?: number;
+  weight?: number;
+  bloodPressure?: number;
+  temperature?: number;
+  diagnose?: string;
+  result?: string;
+  examinationStatus?: MEDICO_RECORD_STATUS;
+  paymentStatus?: MEDICO_PAYMENT_STATUS;
+  note?: string;
+  patientId?: number;
+  clinicId?: string;
+  doctorId?: number;
+}
+
 export interface IMedicalRecordQueryParams {
   clinicId?: string;
   doctorId?: number;
   patientId?: number;
-  examinationStatus?: number;
-  paymentStatus?: number;
+  examinationStatus?: MEDICO_RECORD_STATUS;
+  paymentStatus?: MEDICO_PAYMENT_STATUS;
 }

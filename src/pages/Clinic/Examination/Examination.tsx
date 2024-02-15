@@ -11,7 +11,7 @@ import {
   Tooltip,
 } from '@mantine/core';
 import { useAppSelector } from '@/hooks';
-import { currentClinicSelector, staffInfoSelector } from '@/store';
+import { currentClinicSelector, staffInfoSelector, userInfoSelector } from '@/store';
 import { FaRegEdit, FaTrash } from 'react-icons/fa';
 import { authApi, medicalRecordApi } from '@/services';
 import { ClinusTable, ModalNewMedicalRecord } from "@/components";
@@ -23,7 +23,7 @@ import { modals } from '@mantine/modals';
 import { Link } from 'react-router-dom';
 import { PATHS } from '@/config';
 import { MdEmail, MdOutlineStart } from 'react-icons/md';
-import { Gender } from '@/enums';
+import { AuthModule, Gender } from '@/enums';
 import dayjs from 'dayjs';
 import { TiDocumentAdd } from 'react-icons/ti';
 
@@ -91,6 +91,7 @@ const ExaminationPage = () => {
   );
 
   const currentClinic = useAppSelector(currentClinicSelector);
+  const userInfo = useAppSelector(userInfoSelector);
   const staffInfo = useAppSelector(staffInfoSelector);
   const [isOpenCreateModal, setOpenCreateModal] = useState(false);
 
@@ -104,7 +105,7 @@ const ExaminationPage = () => {
     })
       .then(res => res.data),
     {
-      enabled: !!currentClinic?.id,
+      enabled: !!currentClinic?.id && (userInfo?.moduleId === AuthModule.ClinicOwner || !!staffInfo?.id),
       refetchOnWindowFocus: false,
     }
   );
@@ -151,8 +152,8 @@ const ExaminationPage = () => {
               <Tooltip label='Tiến hành khám bệnh'>
                 <ActionIcon
                   variant='outline'
-                  color='blue'
-                  radius='sm'
+                  color='blue.8'
+                  radius='lg'
                   component={Link}
                   to={`${PATHS.CLINIC_EXAMINATION}/${row.id}`}
                 // onClick={() => handleOpenUpdateModal(row.original)} // xử lý khi chọn sửa dịch vụ
