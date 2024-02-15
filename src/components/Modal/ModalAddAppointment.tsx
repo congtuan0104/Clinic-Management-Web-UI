@@ -1,4 +1,4 @@
-import { APPOINTMENT_STATUS, Gender } from "@/enums";
+import { APPOINTMENT_STATUS, Gender, PERMISSION } from "@/enums";
 import { IAppointment, INewAppointmentPayload } from "@/types";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Box, Modal, Text, Button, ScrollArea, Title, ActionIcon, Tooltip } from "@mantine/core";
@@ -17,7 +17,6 @@ import { clinicServiceApi, patientApi, staffApi } from "@/services";
 import { BiPlus } from "react-icons/bi";
 import { IoPrintSharp } from "react-icons/io5";
 import ReactToPrint from "react-to-print";
-import { watch } from "fs";
 import { appointmentApi } from "@/services/appointment.service";
 import { notifications } from "@mantine/notifications";
 import { MdMedicalServices } from "react-icons/md";
@@ -55,14 +54,14 @@ const ModalAddAppointment = ({ isOpen, onClose, date, onSuccess }: IProps) => {
 
   const ref = useRef<HTMLDivElement>(null);
 
-  const { control, reset, setValue, formState: { errors } } = useForm<IFormData>({
+  const { control, reset, setValue, formState: { errors }, watch } = useForm<IFormData>({
     resolver: yupResolver(schema),
     defaultValues: {
       date: date || new Date(),
-      doctorId: '',
-      patientId: '',
-      startTime: '',
-      endTime: '',
+      // doctorId: '',
+      // patientId: '',
+      // startTime: '',
+      // endTime: '',
       description: '',
     },
   });
@@ -78,9 +77,12 @@ const ModalAddAppointment = ({ isOpen, onClose, date, onSuccess }: IProps) => {
   );
 
   const { data: staffs } = useQuery(
-    ['staffs'],
+    ['doctors'],
     () => staffApi.getStaffs({ clinicId: currentClinic?.id })
-      .then(res => res.data),
+      .then(
+        res => res.data?.
+          filter(staff => staff.role.permissions.map(p => p.id).includes(PERMISSION.PERFORM_SERVICE))
+      ),
     {
       enabled: !!currentClinic?.id,
       refetchOnWindowFocus: false,
@@ -163,10 +165,11 @@ const ModalAddAppointment = ({ isOpen, onClose, date, onSuccess }: IProps) => {
             name='serviceId'
             size="md"
             radius='md'
+            disabled={!watch('doctorId')}
             allowDeselect
             data={services?.map((service) => ({
               value: service.id.toString(),
-              label: service.serviceName
+              label: service.serviceName,
             })) || []}
             searchable
             leftSection={<MdMedicalServices size={18} />}
@@ -209,18 +212,6 @@ const ModalAddAppointment = ({ isOpen, onClose, date, onSuccess }: IProps) => {
             rightSectionPointerEvents='auto'
             control={control}
           />
-
-          {/* <Button
-            type="button"
-            color="primary.3"
-            size="md"
-            variant="light"
-            onClick={() => setOpenCreateModal(true)}
-            w={250}
-            leftSection={<FaUserPlus />}
-          >
-            Bệnh nhân mới
-          </Button> */}
 
         </div>
 
@@ -276,7 +267,6 @@ const ModalAddAppointment = ({ isOpen, onClose, date, onSuccess }: IProps) => {
 
 
   const handleSubmit = async (data: IFormData) => {
-    console.log(data);
     if (!currentClinic?.id) return;
 
     const payload: INewAppointmentPayload = {

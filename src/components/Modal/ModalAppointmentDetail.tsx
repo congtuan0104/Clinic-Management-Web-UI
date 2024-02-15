@@ -119,6 +119,29 @@ const ModalAppointmentDetail = ({ isOpen, onClose, onUpdateSuccess, data }: IPro
 
   }
 
+  const handleReceptionAppointment = async () => {
+    const res = await appointmentApi.reception(data.id)
+
+    console.log('res', res)
+
+    if (res.status) {
+      notifications.show({
+        title: 'Thông báo',
+        message: 'Tiếp nhận lịch hẹn thành công',
+        color: 'teal.5'
+      })
+      data.status = APPOINTMENT_STATUS.CHECK_IN;
+      onUpdateSuccess();
+    }
+    else {
+      notifications.show({
+        title: 'Thông báo',
+        message: 'Tiếp nhận lịch hẹn không thành công. Vui lòng thử lại sau',
+        color: 'red.5'
+      })
+    }
+  }
+
   const handleDownloadAppointment = useReactToPrint({
     // onPrintError: (error) => console.log(error),
     content: () => contentRef.current,
@@ -231,7 +254,7 @@ const ModalAppointmentDetail = ({ isOpen, onClose, onUpdateSuccess, data }: IPro
                   size="md"
                   radius='md'
                   color="teal.7"
-                  onClick={handlePrintAppointment}
+                  onClick={handleReceptionAppointment}
                   leftSection={<RiUserReceived2Line size={18} />}>
                   Tiếp nhận
                 </Button>

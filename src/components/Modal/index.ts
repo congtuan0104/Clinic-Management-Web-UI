@@ -13,3 +13,4 @@ export { default as ModalUpdateCategory } from './ModalUpdateCategory';
 export { default as ModalNewPatient } from './ModalNewPatient';
 export { default as ModalNewSupplies } from './ModalNewSupplies';
 export { default as ModalUpdateSupplies } from './ModalUpdateSupplies';
+export { default as ModalNewMedicalRecord } from './ModalNewMedicalRecord';

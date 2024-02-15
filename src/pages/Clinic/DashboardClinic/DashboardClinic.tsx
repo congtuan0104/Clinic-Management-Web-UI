@@ -98,7 +98,9 @@ const DashboardAdmin = () => {
 
           <div className='flex flex-col mt-1'>
             {appointments?.map(appointment => (
-              <div className='flex cursor-pointer hover:opacity-80 my-2 border-0 border-b border-solid border-gray-300 pb-2'
+              <div
+                key={appointment.id}
+                className='flex cursor-pointer hover:opacity-80 my-2 border-0 border-b border-solid border-gray-300 pb-2'
                 onClick={() => setAppointment(appointment)}>
                 <div className='flex flex-col border-solid border-red-500 rounded-md w-14 mr-3'>
                   <div className='bg-red-500 text-white text-12 text-center'>

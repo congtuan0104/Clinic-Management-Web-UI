@@ -1,10 +1,10 @@
 import { ClinicHeader, ClinicSideBar } from '@/components';
 import { PATHS, onMessageListener, realtimeDB, requestForToken } from '@/config';
 import { COOKIE_KEY } from '@/constants';
-import { AuthModule, CLINIC_SUBSCRIPTION_STATUS } from '@/enums';
+import { AuthModule, CLINIC_SUBSCRIPTION_STATUS, PERMISSION } from '@/enums';
 import { useAppDispatch, useAppSelector, useAuth } from '@/hooks';
-import { clinicApi, notificationApi } from '@/services';
-import { focusModeSelector, openSidebarClinicSelector, setCurrentClinic, setListClinics, toggleSidebarClinic } from '@/store';
+import { clinicApi, notificationApi, staffApi } from '@/services';
+import { currentClinicSelector, focusModeSelector, openSidebarClinicSelector, setCurrentClinic, setStaffPermission, setListClinics, toggleSidebarClinic, setStaffInfo } from '@/store';
 import { INotification } from '@/types';
 import { cookies } from '@/utils';
 import { Title, Text, Group } from '@mantine/core';
@@ -31,11 +31,17 @@ const ClinicLayout = ({ children }: { children: JSX.Element }) => {
   const focusMode = useAppSelector(focusModeSelector);
   const isOpenSidebar = useAppSelector(openSidebarClinicSelector);
   const location = useLocation();
+  const currentClinic = useAppSelector(currentClinicSelector);
 
   const { data: clinics, isLoading: isLoadingClinic } = useQuery(
     ['clinics', userInfo?.id],
-    () => clinicApi.getClinics({ ownerId: userInfo?.id }).then(res => res.data),
+    () => clinicApi.getClinics({
+      ownerId: userInfo?.moduleId === AuthModule.ClinicOwner ? userInfo?.id : undefined,
+      suid: userInfo?.moduleId === AuthModule.ClinicStaff ? userInfo?.id : undefined,
+
+    }).then(res => res.data),
     {
+      enabled: !!userInfo?.id,
       refetchOnWindowFocus: false,
     }
   );
@@ -45,12 +51,28 @@ const ClinicLayout = ({ children }: { children: JSX.Element }) => {
       clinic.subscriptions[0].status === CLINIC_SUBSCRIPTION_STATUS.ACTIVE
   );
 
+  const setCurrentStaffInfo = async (clinicId: string, userId: string) => {
+    const res = await staffApi.getStaffs({
+      clinicId,
+      userId,
+    })
+
+    if (res.data && res.data.length > 0) {
+      const staff = res.data[0];
+      const permissions: number[] = staff.role.permissions.map((p) => p.id);
+      dispatch(setStaffInfo(staff))
+      dispatch(setStaffPermission(permissions));
+    }
+  }
+
   useEffect(() => {
-    if (userInfo?.moduleId !== AuthModule.ClinicOwner) {
+    if (userInfo?.moduleId !== AuthModule.ClinicOwner && userInfo?.moduleId !== AuthModule.ClinicStaff) {
       navigate(PATHS.HOME, { replace: true });
     }
 
-    if (!isLoadingClinic && (!listActiveClinics || listActiveClinics.length === 0) && location.pathname !== PATHS.PLAN_MANAGEMENT) {
+    if (!isLoadingClinic
+      && (!listActiveClinics || listActiveClinics.length === 0)
+      && location.pathname !== PATHS.PLAN_MANAGEMENT) {
       navigate(PATHS.PLAN_MANAGEMENT, { replace: true });
     }
   }, [userInfo, navigate, clinics, isLoadingClinic]);
@@ -77,6 +99,10 @@ const ClinicLayout = ({ children }: { children: JSX.Element }) => {
       cookies.set(COOKIE_KEY.CURRENT_CLINIC_ID, curClinic?.id || '');
       dispatch(setListClinics(listActiveClinics || []))
       dispatch(setCurrentClinic(curClinic))
+      if (curClinic && userInfo) {
+        setCurrentStaffInfo(curClinic.id, userInfo.id)
+      }
+
     }
   }, [isLoadingClinic])
 
