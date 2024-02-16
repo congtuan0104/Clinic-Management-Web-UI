@@ -252,15 +252,15 @@ const UserProfilePage = () => {
       address: data.address,
       phone: data.phone,
     }
-    if(data.gender){
+    if (data.gender) {
       updateInfo.gender = Number(data.gender);
     }
-    if(data.birthday){
+    if (data.birthday) {
       updateInfo.birthday = data.birthday;
     }
     if (imageUrl !== null) {
       updateInfo.avatar = avatarUrl;
-  }
+    }
     if (userInfo?.id) {
       const res = await authApi.changeProfile(userInfo?.id, updateInfo)
 
@@ -271,10 +271,10 @@ const UserProfilePage = () => {
           color: 'green',
         });
       }
-      if(res.data){
+      if (res.data) {
         cookies.set(COOKIE_KEY.USER_INFO, res?.data);
         dispatch(setUserInfo(res?.data));
-      } 
+      }
     }
     setIsUpdate(false);
     navigate(0)
@@ -362,8 +362,8 @@ const UserProfilePage = () => {
                     valueFormat="DD/MM/YYYY"
                     defaultDate={
                       userInfo?.birthday === null ?
-                      dayjs(userInfo?.birthday, 'DD/MM/YYYY').toDate() 
-                      : undefined
+                        dayjs(userInfo?.birthday, 'DD/MM/YYYY').toDate()
+                        : undefined
                     }
                     control={changeProfileControl}
                     rightSection={<FaCalendarDay size={18} />}

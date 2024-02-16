@@ -2,6 +2,7 @@ import { Fragment, useEffect } from 'react';
 import { BrowserRouter, Route } from 'react-router-dom';
 import { ROUTES } from '@/config';
 import { CustomRoutes, ProtectedRoute, PublicRoute } from '@/components';
+import { useDocumentTitle } from '@mantine/hooks';
 
 
 const App = () => {
@@ -11,7 +12,7 @@ const App = () => {
         {ROUTES.map((route, index) => {
           const Layout = route.layout || Fragment;
           const Page = route.element;
-          const isProtected = route.isProtected// kiểm tra trang có yêu cầu đăng nhập không        
+          const isProtected = route.isProtected// kiểm tra trang có yêu cầu đăng nhập không   
 
           return (
             <Route

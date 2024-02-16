@@ -1,0 +1,13 @@
+export enum MEDICO_RECORD_STATUS {
+  WAITING = 0,
+  EXAMINATING = 1,
+  PAUSE = 2,
+  DONE = 3,
+  CANCEL = 4,
+}
+
+export enum MEDICO_PAYMENT_STATUS {
+  UNPAID = 0,
+  PAID = 1,
+  PARTIAL_PAID = 2,
+}

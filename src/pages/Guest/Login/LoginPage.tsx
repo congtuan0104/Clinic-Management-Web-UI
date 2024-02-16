@@ -172,6 +172,9 @@ const LoginPage = () => {
             case AuthModule.ClinicOwner:
               navigate(PATHS.CLINIC_DASHBOARD);
               break;
+            case AuthModule.ClinicStaff:
+              navigate(PATHS.CLINIC_DASHBOARD);
+              break;
             default:
               navigate(PATHS.PROFILE);
               break;

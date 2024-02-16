@@ -1,6 +1,6 @@
 import { useAppSelector } from '@/hooks';
 import { userInfoSelector } from '@/store';
-import { Box, Title, Text, Group, Image, Flex, Stack, Button, Center, Divider, Grid, TextInput, Paper, GridCol, Table, Card, Badge } from '@mantine/core';
+import { Box, Title, Text, Group, Image, Flex, Stack, Button, Center, Divider, Grid, TextInput, Paper, GridCol, Table, Card, Badge, TypographyStylesProvider } from '@mantine/core';
 import { useQuery } from 'react-query';
 import { useEffect, useState } from 'react';
 import { IClinic } from '@/types';
@@ -64,8 +64,8 @@ const ClinicDetailPage = () => {
       const response = await newsApi.getNews({
         clinicId: clinicId,
         isShow: true,
-        pageSize: '4',
-        pageIndex: '0',
+        pageSize: 4,
+        pageIndex: 0,
       });
       return response.data?.data;
     } catch (error) {
@@ -151,10 +151,11 @@ const ClinicDetailPage = () => {
               <Paper w="100%" h='100%' withBorder shadow="md" radius="md">
                 <Stack p={20}>
                   <Text fw={700} size='18px'>Giới thiệu</Text>
-                  <div
-                    className="ml-[8px]"
-                    dangerouslySetInnerHTML={{ __html: clinic?.description || '' }}>
-                  </div>
+                  <TypographyStylesProvider>
+                    <div
+                      className="ml-[8px]"
+                      dangerouslySetInnerHTML={{ __html: clinic?.description || '' }} />
+                  </TypographyStylesProvider>
                 </Stack>
               </Paper>
               <Paper w="100%" h='100%' withBorder shadow="md" radius="md">
@@ -164,7 +165,7 @@ const ClinicDetailPage = () => {
                     {doctors && doctors.slice(0, 4).map((doctor) => (
 
                       <Stack justify='center' align='center' gap="xs" pr={35}>
-                        <Box w={100} h={100}>
+                        <Box w={100} h={100} component={Link} to={`${doctor.id}`}>
                           <Image
                             radius="50%"
                             src={doctor.users.avatar}
@@ -175,7 +176,7 @@ const ClinicDetailPage = () => {
 
                         <Text fw={700}>{doctor.role.name}</Text>
                         <Text mt={-10}>{doctor.users.firstName} {doctor.users.lastName}</Text>
-                        {doctor.specialize ? <Text mt={-10} c={'gray'}>Chuyên khoa {doctor.specialize}</Text> : null}
+                        {doctor.specialize ? <Text mt={-10} c={'gray.5'}>{doctor.specialize}</Text> : null}
                       </Stack>
                     ))}
                     <Stack>

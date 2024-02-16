@@ -87,7 +87,6 @@ const ModalInitPassword = ({ email }: { email: string }) => {
               required
               readOnly
               size="md"
-              radius="sm"
               control={control}
               leftSection={<SiMaildotru size={16} />}
             />
@@ -98,7 +97,6 @@ const ModalInitPassword = ({ email }: { email: string }) => {
               required
               mt="md"
               size="md"
-              radius="sm"
               control={control}
               autoFocus
               leftSection={<RiLockPasswordLine size={18} />}
@@ -110,16 +108,15 @@ const ModalInitPassword = ({ email }: { email: string }) => {
               required
               mt="md"
               size="md"
-              radius="sm"
               control={control}
               leftSection={<RiLockPasswordLine size={18} />}
             />
 
             <Flex justify='flex-end' gap={10}>
-              <Button mt="xl" radius="sm" size="md" type="submit">
+              <Button mt="xl" size="md" type="submit">
                 Đổi mật khẩu
               </Button>
-              <Button color="gray.5" mt="xl" radius="sm" size="md" onClick={close}>
+              <Button color="gray.5" mt="xl" size="md" onClick={close}>
                 Để sau
               </Button>
             </Flex>
