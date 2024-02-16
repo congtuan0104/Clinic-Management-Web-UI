@@ -99,7 +99,7 @@ const ModalNewClinicService = ({
 
   return (
     <Modal.Root opened={isOpen} onClose={handleCancel} centered size={'md'}>
-      <Modal.Overlay />
+      <Modal.Overlay blur={7} />
       <Modal.Content radius='lg'>
         <Modal.Header bg='secondary.3'>
           <Modal.Title c='white' fz="lg" fw={600}>Dịch vụ mới</Modal.Title>

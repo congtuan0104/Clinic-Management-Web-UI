@@ -1,6 +1,6 @@
 import { useAppSelector } from '@/hooks';
 import { userInfoSelector } from '@/store';
-import { Box, Title, Text, Group, Image, Flex, Stack, Button, Center, Divider, Grid, TextInput, Paper, GridCol, Table, Card, Badge } from '@mantine/core';
+import { Box, Title, Text, Group, Image, Flex, Stack, Button, Center, Divider, Grid, TextInput, Paper, GridCol, Table, Card, Badge, TypographyStylesProvider } from '@mantine/core';
 import { useQuery } from 'react-query';
 import { useEffect, useState } from 'react';
 import { IClinic } from '@/types';
@@ -151,10 +151,11 @@ const ClinicDetailPage = () => {
               <Paper w="100%" h='100%' withBorder shadow="md" radius="md">
                 <Stack p={20}>
                   <Text fw={700} size='18px'>Giới thiệu</Text>
-                  <div
-                    className="ml-[8px]"
-                    dangerouslySetInnerHTML={{ __html: clinic?.description || '' }}>
-                  </div>
+                  <TypographyStylesProvider>
+                    <div
+                      className="ml-[8px]"
+                      dangerouslySetInnerHTML={{ __html: clinic?.description || '' }} />
+                  </TypographyStylesProvider>
                 </Stack>
               </Paper>
               <Paper w="100%" h='100%' withBorder shadow="md" radius="md">
@@ -174,8 +175,8 @@ const ClinicDetailPage = () => {
                         </Box>
 
                         <Text fw={700}>{doctor.role.name}</Text>
-                        <Text mt={-10} component={Link} to={`${doctor.id}`}>{doctor.users.firstName} {doctor.users.lastName}</Text>
-                        {doctor.specialize ? <Text mt={-10} c={'gray'}>Chuyên khoa {doctor.specialize}</Text> : null}
+                        <Text mt={-10}>{doctor.users.firstName} {doctor.users.lastName}</Text>
+                        {doctor.specialize ? <Text mt={-10} c={'gray.5'}>{doctor.specialize}</Text> : null}
                       </Stack>
                     ))}
                     <Stack>

@@ -1,6 +1,6 @@
 export interface INotification {
   id: string;
   title: string;
-  body: string;
+  content: string;
   sendingTime: Date;
 }

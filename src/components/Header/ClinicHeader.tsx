@@ -17,6 +17,7 @@ import { FaUserCircle } from "react-icons/fa";
 import { BsCardText } from "react-icons/bs";
 import { BiCollapse, BiExpand } from "react-icons/bi";
 import { spotlight } from '@mantine/spotlight';
+import { AuthModule } from '@/enums';
 
 interface IHeaderProps {
   notify: INotification[];
@@ -137,7 +138,7 @@ const ClinicHeader = ({ notify }: IHeaderProps) => {
         <Popover width={300} position="bottom" withArrow shadow="md" arrowSize={11}>
           <Tooltip label='Thông báo'>
             <Popover.Target>
-              <Indicator color='secondary.5' inline label={notify.length} size={16} offset={5}>
+              <Indicator color='secondary.5' inline label={notify.length} size={16} offset={5} disabled={notify.length === 0}>
                 <ActionIcon
                   onClick={() => { }}
                   color='gray.9' variant="subtle" radius="md" size={35} aria-label="Notifications">
@@ -153,9 +154,11 @@ const ClinicHeader = ({ notify }: IHeaderProps) => {
               {notify.reverse().map((item) => (
                 <div key={item.id}
                   className="flex cursor-pointer p-[6px] rounded-md flex-col hover:bg-primary-100">
-                  <p>{item.title}</p>
-                  <p className='text-14 text-gray-800'>{item.body}</p>
-                  <p className='text-gray-500 text-13'>{renderSendingTime(item.sendingTime)}</p>
+                  <div className='border-solid border-0 border-l-[3px] border-primary-300 pl-2'>
+                    <p>{item.title}</p>
+                    <p className='text-14 text-gray-800 text-justify'>{item.content}</p>
+                    <p className='text-gray-500 text-13'>{renderSendingTime(item.sendingTime)}</p>
+                  </div>
                 </div>
               ))}
             </div>
@@ -184,12 +187,14 @@ const ClinicHeader = ({ notify }: IHeaderProps) => {
             >
               Quản lý tài khoản
             </Menu.Item>
-            <Menu.Item
-              onClick={() => navigate(PATHS.PLAN_MANAGEMENT)}
-              leftSection={<BsCardText size={15} />}
-            >
-              Quản lý gói
-            </Menu.Item>
+            {userInfo?.moduleId === AuthModule.ClinicOwner && (
+              <Menu.Item
+                onClick={() => navigate(PATHS.PLAN_MANAGEMENT)}
+                leftSection={<BsCardText size={15} />}
+              >
+                Quản lý gói
+              </Menu.Item>
+            )}
 
             <Menu.Item
               onClick={() => logout()}

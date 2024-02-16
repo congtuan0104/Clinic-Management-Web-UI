@@ -166,7 +166,7 @@ const RoleManagement = () => {
                   <FaRegEdit />
                 </ActionIcon>
               </Tooltip>
-              <Tooltip label={row.original.name === 'Admin' ? 'Role Admin không xóa' : 'Xóa'}>
+              <Tooltip label={row.original.name === 'Admin' ? 'Role Admin không thể xóa' : 'Xóa'}>
                 <ActionIcon
                   variant='outline'
                   color='red'

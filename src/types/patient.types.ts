@@ -9,6 +9,7 @@ export interface IPatient {
   email: string;
   address?: string;
   gender?: Gender;
+  birthday?: Date;
   avatar?: string;
   emailVerified: boolean;
   clinicId: string;
@@ -28,7 +29,7 @@ export interface IPatientQueryParams {
   name?: string;
 }
 
-export interface ICreatePatientPayload {
+export interface ICreatePatientPayload extends IUpdatePatientPayload {
   userInfo?: {
     email: string;
     firstName: string;
@@ -40,6 +41,9 @@ export interface ICreatePatientPayload {
   };
   userId?: string;
   clinicId: string;
+}
+
+export interface IUpdatePatientPayload {
   bloodGroup?: string;
   anamnesis?: string;
   idCard?: string;

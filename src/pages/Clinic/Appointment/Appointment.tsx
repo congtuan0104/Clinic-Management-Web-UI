@@ -1,36 +1,66 @@
 import { Calendar, ClinusTable, ModalAddAppointment, ModalAppointmentDetail } from "@/components"
 import { CalendarEvent, IAppointment } from "@/types";
-import { ActionIcon, Avatar, Button, Flex, Select, Text, Title, Tooltip } from "@mantine/core"
-import { useMemo, useState } from "react"
-import { FaCalendarDays } from "react-icons/fa6";
+import { ActionIcon, Avatar, Badge, Button, Flex, Select, Text, Title, Tooltip } from "@mantine/core"
+import { useEffect, useMemo, useState } from "react"
+import { FaCalendarDays, FaUserDoctor } from "react-icons/fa6";
 import { FaEye, FaRegCalendarPlus, FaRegEdit, FaThList, FaTrash } from "react-icons/fa";
-import { APPOINTMENT_STATUS } from "@/enums";
+import { GrStatusInfo } from "react-icons/gr";
+import { APPOINTMENT_STATUS, PERMISSION } from "@/enums";
 import { useDisclosure } from "@mantine/hooks";
 import { DateInput } from '@mantine/dates';
 import { SlotInfo } from "react-big-calendar";
 import { useQuery } from "react-query";
-import { appointmentApi } from "@/services";
+import { appointmentApi, staffApi } from "@/services";
 import { useAppSelector } from "@/hooks";
 import { currentClinicSelector } from "@/store";
 import dayjs from "dayjs";
 import { MRT_ColumnDef } from "mantine-react-table";
+
+interface ISearchTerm {
+  doctor?: number | null;
+  date?: Date | null;
+  status?: string | null;
+}
 
 const AppointmentPage = () => {
   const [openedAdd, { open: openAdd, close: closeAdd }] = useDisclosure(false);
   const [openedDetail, { open: openDetail, close: closeDetail }] = useDisclosure(false);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
   const [selectedAppointment, setSelectedAppointment] = useState<IAppointment | undefined>();
-  const [mode, setMode] = useState<'list' | 'calendar'>('calendar')
+  const [mode, setMode] = useState<'list' | 'calendar'>('list')
+  const [searchTerm, setSearchTerm] = useState<ISearchTerm>({
+    doctor: undefined,
+    date: new Date(),
+    status: undefined,
+  })
 
   const currentClinic = useAppSelector(currentClinicSelector);
 
   const { data: appointments, isLoading, refetch } = useQuery('appointments',
     () => appointmentApi.getAppointmentList({
       clinicId: currentClinic?.id,
+      doctorId: searchTerm.doctor ?? undefined,
+      date: searchTerm.date ? dayjs(searchTerm.date).format('YYYY-MM-DD') : undefined,
+      status: searchTerm.status || undefined,
     }).then(res => res.data), {
     refetchOnWindowFocus: false,
     enabled: !!currentClinic?.id,
   })
+
+  const { data: staffs } = useQuery(
+    ['doctors'],
+    () => staffApi.getStaffs({ clinicId: currentClinic?.id })
+      .then(
+        res => res.data?.
+          filter(staff => staff.role.permissions.
+            map(p => p.id).
+            includes(PERMISSION.PERFORM_SERVICE))
+      ),
+    {
+      enabled: !!currentClinic?.id,
+      refetchOnWindowFocus: false,
+    }
+  );
 
   const handleSelectAppointment = (event: CalendarEvent<IAppointment>) => {
     const appointment = event.resource;
@@ -39,6 +69,10 @@ const AppointmentPage = () => {
       openDetail();
     }
   }
+
+  useEffect(() => {
+    refetch();
+  }, [searchTerm])
 
   const columns = useMemo<MRT_ColumnDef<IAppointment>[]>(
     () => [
@@ -62,15 +96,7 @@ const AppointmentPage = () => {
         enableSorting: false,
         enableColumnFilter: false,
       },
-      {
-        header: 'Ngày hẹn',
-        id: 'date',
-        accessorFn: (dataRow) => dayjs(dataRow.date).format('DD/MM/YYYY'),
-      },
-      {
-        header: 'Thời gian khám',
-        accessorFn: (dataRow) => `${dataRow.startTime} - ${dataRow.endTime}`,
-      },
+
       {
         header: 'Bác sĩ khám',
         id: 'doctor',
@@ -92,8 +118,28 @@ const AppointmentPage = () => {
         enableColumnFilter: false,
       },
       {
+        header: 'Thời gian hẹn',
+        id: 'time',
+        accessorFn: (dataRow) => <div className="bg-primary-300 text-13 p-1 rounded-md text-white flex flex-col items-center">
+          <p>{dataRow.startTime} - {dataRow.endTime}</p>
+          <p>{dayjs(dataRow.date).format('DD MMM YYYY')}</p>
+        </div>,
+      },
+      {
+        header: 'Yêu cầu dịch vụ',
+        accessorKey: 'clinicServices.serviceName',
+      },
+      {
         header: 'Trạng thái',
-        accessorKey: 'status',
+        id: 'status',
+        accessorFn: (dataRow) => <Badge
+          color={dataRow.status === APPOINTMENT_STATUS.PENDING ? 'yellow.5' :
+            dataRow.status === APPOINTMENT_STATUS.CONFIRM ? 'green.5' :
+              dataRow.status === APPOINTMENT_STATUS.CHECK_IN ? 'primary.3' : 'red.5'
+          }
+        >
+          {dataRow.status}
+        </Badge>
       },
     ],
     [],
@@ -105,7 +151,7 @@ const AppointmentPage = () => {
       const startTime = dayjs(`${appointment.date} ${appointment.startTime}`).toDate();
       const endTime = dayjs(`${appointment.date} ${appointment.endTime}`).toDate();
       return {
-        title: appointment.status,
+        title: `${appointment.clinicServices.serviceName} (Bs. ${appointment.doctor.firstName} ${appointment.doctor.lastName})`,
         start: startTime,
         end: endTime,
         resource: appointment,
@@ -143,13 +189,13 @@ const AppointmentPage = () => {
             const status = event.resource && event.resource.status
             let bgColor;
             switch (status) {
-              case APPOINTMENT_STATUS.BOOK:
+              case APPOINTMENT_STATUS.PENDING:
                 bgColor = '#FFC107'
                 break;
-              case APPOINTMENT_STATUS.CHECK_IN:
+              case APPOINTMENT_STATUS.CONFIRM:
                 bgColor = '#28A745'
                 break;
-              case APPOINTMENT_STATUS.CHECK_OUT:
+              case APPOINTMENT_STATUS.CHECK_IN:
                 bgColor = '#007BFF'
                 break;
               case APPOINTMENT_STATUS.CANCEL:
@@ -210,16 +256,6 @@ const AppointmentPage = () => {
               <FaEye />
             </ActionIcon>
           </Tooltip>
-          <Tooltip label='Xóa lịch hẹn'>
-            <ActionIcon
-              variant='outline'
-              color='red'
-              radius='sm'
-              onClick={() => { }}
-            >
-              <FaTrash />
-            </ActionIcon>
-          </Tooltip>
         </Flex>
       )}
       localization={{
@@ -233,20 +269,9 @@ const AppointmentPage = () => {
       <div className="p-3">
         <div className="mb-3 flex justify-between items-center">
           <div className="flex gap-3 items-center">
-            <Title order={3}>Lịch hẹn khám</Title>
+            <Title order={4}>Lịch hẹn khám</Title>
             {/* {selectedAppointment && <Text>Lịch hẹn được chọn là: {selectedAppointment.id}</Text>} */}
             <Button.Group>
-              <Tooltip label='Xem theo dạng lịch' position="bottom">
-                <Button
-                  variant={mode === 'calendar' ? 'filled' : 'outline'}
-                  h={38}
-                  color="primary.3"
-                  onClick={() => setMode('calendar')}
-                >
-                  <FaCalendarDays size={22} />
-                </Button>
-              </Tooltip>
-
               <Tooltip label='Xem theo dạng danh sách' position="bottom">
                 <Button
                   variant={mode === 'list' ? 'filled' : 'outline'}
@@ -257,26 +282,48 @@ const AppointmentPage = () => {
                   <FaThList size={20} />
                 </Button>
               </Tooltip>
-
+              <Tooltip label='Xem theo dạng lịch' position="bottom">
+                <Button
+                  variant={mode === 'calendar' ? 'filled' : 'outline'}
+                  h={38}
+                  color="primary.3"
+                  onClick={() => setMode('calendar')}
+                >
+                  <FaCalendarDays size={22} />
+                </Button>
+              </Tooltip>
             </Button.Group>
           </div>
           <div className="flex gap-2">
             <Select
               w={250}
               placeholder="Bác sĩ khám bệnh"
-              data={['Tất cả bác sĩ', 'Angular', 'Vue', 'Svelte']}
-              searchable
+              leftSection={<FaUserDoctor size={18} />}
+              clearable
+              allowDeselect
+              data={staffs?.map(staff => {
+                return {
+                  value: staff.id.toString(),
+                  label: `${staff.users.firstName} ${staff.users.lastName}`
+                }
+              })}
               styles={{
                 input: {
                   height: 40,
                 },
               }}
+              value={searchTerm.doctor?.toString()}
+              onChange={(value) => value && setSearchTerm({ ...searchTerm, doctor: Number(value) })}
             />
             <DateInput
               w={200}
               placeholder="Ngày hẹn khám"
               valueFormat="DD-MM-YYYY"
-              rightSection={<FaCalendarDays size={18} />}
+              leftSection={<FaCalendarDays size={18} />}
+              value={searchTerm.date}
+              onChange={(value) => setSearchTerm({ ...searchTerm, date: value })}
+              allowDeselect
+              clearable
               styles={{
                 input: {
                   height: 40,
@@ -287,8 +334,18 @@ const AppointmentPage = () => {
             <Select
               w={200}
               placeholder="Trạng thái lịch hẹn"
-              data={['Chưa xác nhận', 'Đã xác nhận', 'Đã đến hẹn', 'Hủy hẹn']}
-              searchable
+              data={[
+                APPOINTMENT_STATUS.PENDING,
+                APPOINTMENT_STATUS.CONFIRM,
+                APPOINTMENT_STATUS.CHECK_IN,
+                APPOINTMENT_STATUS.CANCEL,
+
+              ]}
+              allowDeselect
+              clearable
+              leftSection={<GrStatusInfo size={18} />}
+              value={searchTerm.status}
+              onChange={(value) => setSearchTerm({ ...searchTerm, status: value })}
               styles={{
                 input: {
                   height: 40,
@@ -321,7 +378,11 @@ const AppointmentPage = () => {
       />
 
       {selectedAppointment &&
-        <ModalAppointmentDetail isOpen={openedDetail} onClose={closeDetail} data={selectedAppointment} />
+        <ModalAppointmentDetail
+          isOpen={openedDetail}
+          onClose={closeDetail}
+          onUpdateSuccess={() => refetch()}
+          data={selectedAppointment} />
       }
     </>
   )
