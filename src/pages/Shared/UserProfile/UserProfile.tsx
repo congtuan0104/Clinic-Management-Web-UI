@@ -207,7 +207,7 @@ const UserProfilePage = () => {
             <Input placeholder="098938696" readOnly />
           </Input.Wrapper>
           <Modal.Root opened={opened} onClose={close} centered>
-            <Modal.Overlay />
+            <Modal.Overlay blur={7} />
             <Modal.Content>
               <Modal.Header>
                 <Modal.Title fz="lg" fw={600}>Đổi mật khẩu</Modal.Title>

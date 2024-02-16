@@ -97,7 +97,7 @@ const DashboardAdmin = () => {
           </div>
 
           <div className='flex flex-col mt-1'>
-            {appointments?.map(appointment => (
+            {appointments?.slice(0, 4)?.map(appointment => (
               <div
                 key={appointment.id}
                 className='flex cursor-pointer hover:opacity-80 my-2 border-0 border-b border-solid border-gray-300 pb-2'

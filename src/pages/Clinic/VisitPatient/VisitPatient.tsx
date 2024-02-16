@@ -37,6 +37,7 @@ import { notifications } from '@mantine/notifications';
 import { modals } from '@mantine/modals';
 import MedicalPrescription from './Prescription';
 import { PATHS } from '@/config';
+import MedicalService from './MedicalService';
 
 interface IFormData {
   height?: number;
@@ -55,7 +56,7 @@ const validateSchema = yup.object().shape({
   weight: yup.number(),
   bloodPressure: yup.number(),
   temperature: yup.number(),
-  diagnose: yup.string().required('Vui lòng nhập chuẩn đoán'),
+  diagnose: yup.string().required('Vui lòng nhập chẩn đoán'),
   result: yup.string().required('Vui lòng nhập kết quả'),
   // note: yup.string(),
 });
@@ -412,61 +413,11 @@ const VisitPatientPage = () => {
         </Paper>
 
         <Paper p='md' radius='md' mt='sm' shadow="xs">
-          <Text fw={600}>Chỉ định dịch vụ</Text>
-          <Table mt='sm' bg='gray.0'
-            styles={{
-              table: { borderRadius: 10 },
-            }}
-          >
-            <Table.Thead bg='secondary.3' c='white' style={{
-              borderRadius: '10px 10px 0 0'
-            }}>
-              <Table.Tr>
-                <Table.Th style={{ borderRadius: '10px 0 0 0' }}>Dịch vụ</Table.Th>
-                <Table.Th>Bác sĩ thực hiện</Table.Th>
-                <Table.Th>Kết quả dịch vụ</Table.Th>
-                <Table.Th w={50} style={{ borderRadius: '0 10px 0 0' }}>
-                  <Tooltip label='Yêu cầu thêm dịch vụ'>
-                    <ActionIcon
-                      color="primary.3"
-                      radius="xl"
-                      variant='white'
-                    // onClick={handleAddService}
-                    // disabled={!patientInfo}
-                    >
-                      <FaPlus size={18} />
-                    </ActionIcon>
-                  </Tooltip>
-                </Table.Th>
-              </Table.Tr>
-            </Table.Thead>
-            <Table.Tbody>
-              {(!services || services.length === 0) && (
-                <Table.Tr>
-                  <Table.Td colSpan={4} className="text-center leading-9">Chưa có dịch vụ nào được chỉ định</Table.Td>
-                </Table.Tr>
-              )}
-              {services?.map((service, index) => (
-                <Table.Tr key={index}>
-                  <Table.Td>{service.serviceName}</Table.Td>
-                  <Table.Td>{service.doctorId}</Table.Td>
-                  <Table.Td>{service.serviceResult}</Table.Td>
-                  <Table.Td>
-                    <Tooltip label='Xem chi tiết'>
-                      <ActionIcon
-                        color="primary.3"
-                        radius="xl"
-                        variant='white'
-                      // onClick={() => handleViewServiceDetail(service)}
-                      >
-                        <BiArrowBack size={18} />
-                      </ActionIcon>
-                    </Tooltip>
-                  </Table.Td>
-                </Table.Tr>
-              ))}
-            </Table.Tbody>
-          </Table>
+          <MedicalService
+            recordId={Number(recordId)}
+            medicalServices={services || []}
+            onUpdateSuccess={() => refetch()}
+          />
         </Paper>
 
         <Paper p='md' radius='md' mt='sm' shadow="xs">
@@ -484,7 +435,7 @@ const VisitPatientPage = () => {
               </Grid.Col>
               <Grid.Col span={4}>
                 <Textarea
-                  label="Chuẩn đoán"
+                  label="Chẩn đoán"
                   name='diagnose'
                   control={control}
                   required

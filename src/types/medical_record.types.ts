@@ -1,5 +1,5 @@
 import { MEDICO_PAYMENT_STATUS, MEDICO_RECORD_STATUS } from '@/enums';
-import { IClinic, IClinicStaff, IPatient } from '.';
+import { IClinic, IClinicStaff, IPatient, IUpdateClinic } from '.';
 
 export interface IMedicalService {
   id: number;
@@ -103,4 +103,53 @@ export interface IMedicalRecordQueryParams {
   patientId?: number;
   examinationStatus?: MEDICO_RECORD_STATUS;
   paymentStatus?: MEDICO_PAYMENT_STATUS;
+}
+
+export interface IMedicalRecordOverview {
+  id: number;
+  patientId: number;
+  doctorId: number;
+  clinicId: string;
+  dateCreated: Date;
+  height?: number;
+  weight?: number;
+  bloodPressure?: number;
+  temperature?: number;
+  diagnose?: string;
+  result?: string;
+  examinationStatus: MEDICO_RECORD_STATUS;
+  paymentStatus: MEDICO_PAYMENT_STATUS;
+  note?: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface IMedicalInvoice {
+  id: number;
+  clinicId: string;
+  patientId: number;
+  medicalRecordId: number;
+  invoiceDate: Date;
+  description: string;
+  status: MEDICO_PAYMENT_STATUS;
+  totalPayment: number;
+  invoiceDetail: IInvoiceDetail[];
+  clinic: IUpdateClinic;
+  patient: IPatient;
+  cashierId?: number;
+  cashier?: {
+    id: string;
+    firstName: string;
+    lastName: string;
+  };
+  medicalRecord: IMedicalRecordOverview;
+}
+
+export interface IInvoiceDetail {
+  id: number;
+  invoiceId: number;
+  content: string;
+  amount: number;
+  createdAt: Date;
+  updatedAt: Date;
 }

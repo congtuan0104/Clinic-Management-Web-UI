@@ -15,3 +15,4 @@ export * from './PatientList';
 export * from './ReceptionPatient';
 export * from './Examination';
 export * from './VisitPatient';
+export * from './PaymentInvoice';

@@ -6,6 +6,7 @@ import { notifications } from "@mantine/notifications";
 import { useEffect, useState } from "react";
 import { FaPlus } from "react-icons/fa6";
 import { GrUpdate } from "react-icons/gr";
+import { IoCloseSharp } from "react-icons/io5";
 import { MdOutlineDelete } from "react-icons/md";
 
 interface IProps {
@@ -18,6 +19,7 @@ const MedicalPrescription = ({ recordId, prescriptions, onUpdateSuccess }: IProp
 
   const [drugs, setDrugs] = useState<INewPrescription[]>(prescriptions);
   const [suggestMedicine, setSuggestMedicine] = useState<string[]>([]);
+  const [isUpdate, setIsUpdate] = useState(false);
 
   const getSuggestMedicine = async (keyword: string) => {
     const res = await medicineApi.suggestMedicine(keyword)
@@ -57,11 +59,13 @@ const MedicalPrescription = ({ recordId, prescriptions, onUpdateSuccess }: IProp
       doseInterval: '',
       note: '',
     }]);
+    setIsUpdate(true);
   }
 
   const handleRemovePrescription = (index: number) => {
     return () => {
       setDrugs(prev => prev.filter((_, i) => i !== index));
+      setIsUpdate(true);
     }
   }
 
@@ -73,7 +77,7 @@ const MedicalPrescription = ({ recordId, prescriptions, onUpdateSuccess }: IProp
     <>
       <Flex justify='space-between' align='center'>
         <Text fw={600}>Đơn thuốc</Text>
-        {(prescriptions.length > 0 || drugs.length > 0) && (
+        {(prescriptions.length > 0 || drugs.length > 0) && isUpdate && (
           <Tooltip label='Cập nhật đơn thuốc'>
             <Button
               color="primary.3"
@@ -96,11 +100,11 @@ const MedicalPrescription = ({ recordId, prescriptions, onUpdateSuccess }: IProp
         }}>
           <Table.Tr>
             <Table.Th style={{ borderRadius: '10px 0 0 0' }}>Tên thuốc</Table.Th>
-            <Table.Th w={120}>Liều dùng</Table.Th>
-            <Table.Th w={120}>Đơn vị</Table.Th>
-            <Table.Th>Số lần</Table.Th>
-            <Table.Th>Uống trong</Table.Th>
-            <Table.Th>Thời điểm</Table.Th>
+            <Table.Th w={100}>Liều dùng</Table.Th>
+            <Table.Th w={100}>Đơn vị</Table.Th>
+            <Table.Th w={180}>Số lần</Table.Th>
+            <Table.Th w={120}>Uống trong</Table.Th>
+            <Table.Th w={150}>Thời điểm</Table.Th>
             <Table.Th w={180}>Cách dùng</Table.Th>
             <Table.Th w={50} style={{ borderRadius: '0 10px 0 0' }}>
               <Tooltip label='Thêm thuốc'>
@@ -140,10 +144,11 @@ const MedicalPrescription = ({ recordId, prescriptions, onUpdateSuccess }: IProp
                       return newDrugs;
                     });
                     getSuggestMedicine(value);
+                    setIsUpdate(true);
                   }}
                 />
               </Table.Td>
-              <Table.Td w={120}>
+              <Table.Td w={100}>
                 <NumberInput
                   value={drug.dosage}
                   min={1}
@@ -153,10 +158,11 @@ const MedicalPrescription = ({ recordId, prescriptions, onUpdateSuccess }: IProp
                       newDrugs[index].dosage = Number(value);
                       return newDrugs;
                     });
+                    setIsUpdate(true);
                   }}
                 />
               </Table.Td>
-              <Table.Td w={120}>
+              <Table.Td w={100}>
                 <Autocomplete
                   data={['Viên', 'Gói', 'Chai', 'Ống', 'Vỉ', 'Hộp', 'Bình']}
                   placeholder='Đơn vị'
@@ -167,6 +173,7 @@ const MedicalPrescription = ({ recordId, prescriptions, onUpdateSuccess }: IProp
                       newDrugs[index].unit = value;
                       return newDrugs;
                     });
+                    setIsUpdate(true);
                   }}
                 />
               </Table.Td>
@@ -181,6 +188,7 @@ const MedicalPrescription = ({ recordId, prescriptions, onUpdateSuccess }: IProp
                       newDrugs[index].doseInterval = value;
                       return newDrugs;
                     });
+                    setIsUpdate(true);
                   }}
                 />
               </Table.Th>
@@ -195,6 +203,7 @@ const MedicalPrescription = ({ recordId, prescriptions, onUpdateSuccess }: IProp
                       newDrugs[index].duration = value;
                       return newDrugs;
                     });
+                    setIsUpdate(true);
                   }}
                 />
               </Table.Th>
@@ -209,6 +218,7 @@ const MedicalPrescription = ({ recordId, prescriptions, onUpdateSuccess }: IProp
                       newDrugs[index].usingTime = value;
                       return newDrugs;
                     });
+                    setIsUpdate(true);
                   }}
                 />
               </Table.Th>
@@ -223,6 +233,7 @@ const MedicalPrescription = ({ recordId, prescriptions, onUpdateSuccess }: IProp
                       newDrugs[index].note = value;
                       return newDrugs;
                     });
+                    setIsUpdate(true);
                   }}
                 />
               </Table.Th>
@@ -230,10 +241,11 @@ const MedicalPrescription = ({ recordId, prescriptions, onUpdateSuccess }: IProp
                 <Tooltip label='Loại bỏ thuốc'>
                   <ActionIcon
                     color="red.5"
+                    variant="white"
                     radius="xl"
                     onClick={handleRemovePrescription(index)}
                   >
-                    <MdOutlineDelete size={18} />
+                    <IoCloseSharp size={18} />
                   </ActionIcon>
                 </Tooltip>
               </Table.Td>

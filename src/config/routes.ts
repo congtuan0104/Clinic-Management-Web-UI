@@ -31,6 +31,7 @@ import {
   ReceptionPatientPage,
   ExaminationPage,
   VisitPatientPage,
+  PaymentInvoicePage,
 } from '@/pages';
 
 export const PATHS = {
@@ -67,7 +68,7 @@ export const PATHS = {
   CLINIC_EXAMINATION: '/clinic/kham-benh',
   CLINIC_VISITS: '/clinic/kham-benh/:id',
   CLINIC_SERVICE_EXECUTION: '/clinic/thuc-hien-dich-vu',
-  EXAMINATION_INVOICE: '/clinic/hoa-don-kham-benh',
+  EXAMINATION_INVOICE: '/clinic/hoa-don',
   CLINIC_REPORT: '/clinic/bao-cao',
   CLINIC_CATEGORY: '/clinic/danh-muc',
   CLINIC_SUPPLIES: '/clinic/vat-tu',
@@ -305,6 +306,14 @@ export const ROUTES = [
     title: 'Ca khám bệnh',
     layout: ClinicLayout,
     element: ExaminationPage,
+    isProtected: true,
+    children: [],
+  },
+  {
+    path: PATHS.EXAMINATION_INVOICE,
+    title: 'Thanh toán hóa đơn',
+    layout: ClinicLayout,
+    element: PaymentInvoicePage,
     isProtected: true,
     children: [],
   },

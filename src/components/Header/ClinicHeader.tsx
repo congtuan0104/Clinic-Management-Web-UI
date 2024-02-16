@@ -156,7 +156,7 @@ const ClinicHeader = ({ notify }: IHeaderProps) => {
                   className="flex cursor-pointer p-[6px] rounded-md flex-col hover:bg-primary-100">
                   <div className='border-solid border-0 border-l-[3px] border-primary-300 pl-2'>
                     <p>{item.title}</p>
-                    <p className='text-14 text-gray-800'>{item.body}</p>
+                    <p className='text-14 text-gray-800 text-justify'>{item.content}</p>
                     <p className='text-gray-500 text-13'>{renderSendingTime(item.sendingTime)}</p>
                   </div>
                 </div>

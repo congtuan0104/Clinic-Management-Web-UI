@@ -1,7 +1,7 @@
 export enum MEDICO_RECORD_STATUS {
   WAITING = 0,
   EXAMINATING = 1,
-  PENDING = 2,
+  PAUSE = 2,
   DONE = 3,
   CANCEL = 4,
 }
