@@ -53,6 +53,16 @@ export interface IChangePasswordRequest {
   isReset?: boolean;
 }
 
+export interface IChangeProfileRequest{
+  firstName?: string;
+  lastName?: string;
+  gender?: Gender;
+  birthday?: Date;
+  address?: string;
+  phone?: string;
+  avatar?: string;
+}
+
 export interface ILoginResponse {
   user: IUserInfo;
   token: string;

@@ -17,6 +17,8 @@ export interface IClinicQueryParams {
   name?: string;
   staffId?: number;
   isActive?: boolean;
+  suid?: string;
+  puid?: string;
 }
 export interface IAddClinicService {
   id: number;

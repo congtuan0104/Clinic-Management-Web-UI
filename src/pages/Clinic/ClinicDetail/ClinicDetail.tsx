@@ -1,4 +1,4 @@
-import { Title, Button, Flex, Text, Box, Center, Stack, Divider, Grid, NumberInput, Group, Image, CopyButton, ActionIcon, Tooltip } from "@mantine/core"
+import { Title, Button, Flex, Text, Box, Center, Stack, Divider, Grid, NumberInput, Group, Image, CopyButton, ActionIcon, Tooltip, Modal, ModalHeader, ModalBody, ModalCloseButton, Anchor, Card, TypographyStylesProvider } from "@mantine/core"
 import { RichTextEditor, Link } from '@mantine/tiptap';
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Form, useForm } from "react-hook-form";
@@ -31,6 +31,8 @@ import { v4 } from "uuid";
 import { useNavigate } from "react-router-dom";
 import ClinusLogo from '@/assets/images/logo-2.png';
 import { FaCopy } from "react-icons/fa6";
+import { useDisclosure } from "@mantine/hooks";
+import { ModalPackagePurchaseHistory } from "@/components";
 import Map, { Marker, NavigationControl, FullscreenControl, AttributionControl } from 'react-map-gl';
 import { IoLocation } from "react-icons/io5";
 
@@ -62,6 +64,8 @@ export default function ClinicDetail() {
   // const [editorContent, setEditorContent] = useState("");
 
   const [isUpdate, setIsUpdate] = useState<boolean>(false);
+
+  const [opened, { open, close }] = useDisclosure(false);
 
   //Xử lý đẩy ảnh lên firebase
   const [imageUpload, setImageUpload] = useState<ImageUploadType>(null);
@@ -113,7 +117,6 @@ export default function ClinicDetail() {
   }
     if (currentClinic?.id) {
       const res = await clinicApi.updateClinicInfo(currentClinic?.id, updateInfo)
-
       if (res.status) {
         notifications.show({
           title: 'Thông báo',
@@ -219,7 +222,7 @@ export default function ClinicDetail() {
             </Stack>
             <Stack justify='right'>
 
-              <Text>Xem lịch sử đăng ký gói</Text>
+              <Anchor underline="hover" onClick={open} c={'white'}>Xem lịch sử đăng ký gói</Anchor>
             </Stack>
           </Flex>}
         <Box px='30px' bg='white' py='20px' style={{ borderRadius: '10px' }}>
@@ -380,7 +383,10 @@ export default function ClinicDetail() {
                       <RichTextEditor.Content style={{ minHeight: '8em' }} />
                     </RichTextEditor>
                   ) : (
-                    <div className="p-2 bg-black-10 w-full rounded-md" dangerouslySetInnerHTML={{ __html: currentClinic?.description || '' }}></div>
+                    <TypographyStylesProvider>
+                      <div className="p-2 bg-black-10 w-full rounded-md"
+                        dangerouslySetInnerHTML={{ __html: currentClinic?.description || '' }} />
+                    </TypographyStylesProvider>
                   )}
 
 
@@ -399,6 +405,8 @@ export default function ClinicDetail() {
           </Grid>
         </Box>
       </Stack>
+
+      <ModalPackagePurchaseHistory isOpen={opened} onClose={close} />
     </Center>
   )
 }

@@ -95,7 +95,7 @@ const ModalPlanDetail = ({ open, onClose, planInfo }: IModalPlanDetailProps) => 
 
   return (
     <Modal.Root opened={open} onClose={handleClose} centered size='lg'>
-      <Modal.Overlay />
+      <Modal.Overlay blur={7} />
       <LoadingOverlay visible={isLoading} zIndex={1000} />
       <Modal.Content>
         <Modal.Header>

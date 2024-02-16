@@ -7,7 +7,7 @@ export const staffApi = {
     return axiosClient.get('/staffs', { params: params });
   },
 
-  getStaff(staffId: string): Promise<IApiResponse<IClinicStaffDetail>> {
+  getStaff(staffId: string): Promise<IApiResponse<IClinicStaff>> {
     return axiosClient.get(`/staffs/${staffId}`);
   },
 
