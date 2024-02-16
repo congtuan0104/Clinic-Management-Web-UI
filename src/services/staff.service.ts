@@ -1,4 +1,4 @@
-import { IApiResponse, IClinicStaffDetail, ICreateStaffPayload, IUpdateStaffInfoRequest } from '@/types';
+import { IApiResponse, IClinicStaffDetail, ICreateStaffPayload, ISchedule, IUpdateStaffInfoRequest } from '@/types';
 import { IClinicStaff, IStaffQueryParams } from '@/types';
 import { axiosClient } from '@/utils';
 
@@ -9,6 +9,10 @@ export const staffApi = {
 
   getStaff(staffId: string): Promise<IApiResponse<IClinicStaff>> {
     return axiosClient.get(`/staffs/${staffId}`);
+  },
+
+  getSchedule(staffId: string): Promise<IApiResponse<ISchedule[]>> {
+    return axiosClient.get(`/staffs/${staffId}/schedule`);
   },
 
   updateStaffInfo(staffId: string, data: IUpdateStaffInfoRequest): Promise<any> {

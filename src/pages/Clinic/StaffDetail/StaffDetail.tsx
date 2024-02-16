@@ -16,6 +16,7 @@ import { useQuery } from 'react-query';
 import { clinicApi, staffApi } from '@/services';
 import { notifications } from '@mantine/notifications';
 import { Label } from 'recharts';
+import { ISchedule } from '@/types';
 
 interface IStaff {
   id_staff?: string,
@@ -29,11 +30,6 @@ interface IStaff {
   experience?: number,
 }
 
-interface IUpdateSchedule {
-  day: number,
-  startTime: string,
-  endTime: string,
-}
 
 const infoschema = yup.object().shape({
   id_staff: yup.string(),
@@ -57,6 +53,14 @@ const scheduleschema = yup.object().shape({
 const StaffDetail = () => {
   const { id: staffId } = useParams();
   const { data: staff, isLoading } = useQuery(['staff', staffId], () => getStaffInfo());
+  const { data: schedules, isLoading: isLoadingClinic } = useQuery(
+    ['schedules', staff?.id],
+    () => staffApi.getSchedule(String(staff?.id)).then(res => res.data)
+  );
+
+  // schedules!.sort((a, b) => a.day - b.day);
+
+  console.log(schedules);
 
   const daysOfWeek = [
     { label: 'Chủ Nhật', value: '1' },
@@ -91,7 +95,7 @@ const StaffDetail = () => {
     }, [staffId]),
   });
 
-  const { control: controlSchedule } = useForm<IUpdateSchedule[]>();
+  const { control: controlSchedule } = useForm<ISchedule[]>();
 
   const getStaffInfo = async () => {
     try {
@@ -153,7 +157,7 @@ const StaffDetail = () => {
     }
   }
 
-  const onScheduleSubmit = async (data: IUpdateSchedule[]) => {
+  const onScheduleSubmit = async (data: ISchedule[]) => {
     console.log(data);
   };
 
@@ -347,12 +351,14 @@ const StaffDetail = () => {
                   <Group style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
                     <TimeInput
                       disabled={!isUpdateSchedule}
+                      defaultValue={schedules ? schedules[index-1].startTime : undefined}
                       name={`schedule[${index}].startTime` as `${number}.startTime`} 
                       control={controlSchedule}
                     />
                     <Text>-</Text>
                     <TimeInput
                       disabled={!isUpdateSchedule}
+                      defaultValue={schedules ? schedules[index-1].endTime : undefined}
                       name={`schedule[${index}].endTime` as `${number}.endTime`} 
                       control={controlSchedule}
                     />
