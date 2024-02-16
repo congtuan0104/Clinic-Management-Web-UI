@@ -58,7 +58,7 @@ const LoginPage = () => {
       // giá trị mặc định của các field
       email: '',
       password: '',
-      isRemember: false,
+      isRemember: true,
     },
   });
 
@@ -86,7 +86,7 @@ const LoginPage = () => {
       if (!userInfoFromProvider) {
         notifications.show({
           message: 'Đăng nhập không thành công',
-          color: 'red',
+          color: 'red.5',
         });
         return;
       }
@@ -112,7 +112,7 @@ const LoginPage = () => {
           case AuthModule.Admin:
             navigate(PATHS.ADMIN_DASHBOARD);
             break;
-          case AuthModule.Clinic:
+          case AuthModule.ClinicOwner:
             navigate(PATHS.CLINIC_DASHBOARD);
             break;
           case AuthModule.Patient:
@@ -125,6 +125,7 @@ const LoginPage = () => {
         return;
       } else {
         // chưa có tài khoản, chọn email để đăng ký tài khoản 
+        console.log('chưa có tài khoản, chọn email để đăng ký tài khoản');
         setEmailFromProvider(userInfoFromProvider.email || userInfoFromProvider.providerData[0].email);
         open(); // mở modal chọn email để đăng ký tài khoản
       }
@@ -151,7 +152,9 @@ const LoginPage = () => {
 
           // lưu vào token và thông tin user vào cookie
           cookies.set(COOKIE_KEY.TOKEN, token);
-          cookies.set(COOKIE_KEY.USER_INFO, userInfo);
+
+          if (data.isRemember)
+            cookies.set(COOKIE_KEY.USER_INFO, userInfo);
 
           // lưu thông tin user vào redux
           dispatch(setUserInfo(userInfo));
@@ -166,7 +169,10 @@ const LoginPage = () => {
             case AuthModule.Admin:
               navigate(PATHS.ADMIN_DASHBOARD);
               break;
-            case AuthModule.Clinic:
+            case AuthModule.ClinicOwner:
+              navigate(PATHS.CLINIC_DASHBOARD);
+              break;
+            case AuthModule.ClinicStaff:
               navigate(PATHS.CLINIC_DASHBOARD);
               break;
             default:
@@ -219,7 +225,7 @@ const LoginPage = () => {
 
   return (
     <Container size={570} my={40} className='min-h-[calc(100vh_-_145px)]'>
-      <Paper withBorder shadow="md" p={30} mt={30} radius="md">
+      <Paper withBorder shadow="md" p={30} mt={30} radius="lg">
         <Title>Đăng nhập</Title>
         <Text c="dimmed" size="sm" mt={5} mb={15}>
           hoặc{' '}
@@ -234,7 +240,7 @@ const LoginPage = () => {
             placeholder="example@gmail.com"
             required
             size="md"
-            radius="sm"
+            radius="md"
             autoFocus
             control={control}
             leftSection={<SiMaildotru size={16} />}
@@ -246,7 +252,7 @@ const LoginPage = () => {
             required
             mt="md"
             size="md"
-            radius="sm"
+            radius="md"
             control={control}
             leftSection={<RiLockPasswordLine size={18} />}
           />
@@ -261,14 +267,14 @@ const LoginPage = () => {
               Quên mật khẩu?
             </Anchor>
           </Group>
-          <Button fullWidth mt="xl" radius="sm" size="md" type="submit">
+          <Button fullWidth mt="xl" radius="md" size='md' type="submit">
             Đăng nhập
           </Button>
 
           <Text mt='md' mb='sm' fw='500' c='gray.7' ta='center'>Hoặc đăng nhập bằng tài khoản</Text>
           <Flex gap='md' justify='space-between'>
             <Button
-              radius='sm'
+              radius='md'
               size='md'
               variant="outline"
               fullWidth
@@ -278,7 +284,7 @@ const LoginPage = () => {
               Google
             </Button>
             <Button
-              radius='sm'
+              radius='md'
               size='md'
               variant="outline"
               fullWidth
@@ -288,7 +294,7 @@ const LoginPage = () => {
               Facebook
             </Button>
             <Button
-              radius='sm'
+              radius='md'
               size='md'
               variant="outline"
               fullWidth

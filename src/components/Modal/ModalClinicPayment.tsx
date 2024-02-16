@@ -61,7 +61,7 @@ const ModalClinicPayment = ({ isOpen, onClose, clinicPayment }: IProps) => {
 
   return (
     <Modal.Root opened={isOpen} onClose={onClose} centered size={'lg'}>
-      <Modal.Overlay />
+      <Modal.Overlay blur={7} />
       <Modal.Content radius='md'>
         <Modal.Header>
           <Modal.Title fz="lg" fw={600}>Thông tin thanh toán</Modal.Title>

@@ -176,7 +176,7 @@ const RegisterPage = () => {
           case AuthModule.Admin:
             navigate(PATHS.ADMIN_DASHBOARD);
             break;
-          case AuthModule.Clinic:
+          case AuthModule.ClinicOwner:
             navigate(PATHS.CLINIC_DASHBOARD);
             break;
           case AuthModule.Patient:
@@ -224,7 +224,7 @@ const RegisterPage = () => {
 
   return (
     <Container size={570} py={30} className='min-h-[calc(100vh_-_145px)]'>
-      <Paper withBorder shadow="md" p={30} radius="md">
+      <Paper withBorder shadow="md" p={30} radius="lg">
         <Title>Đăng ký</Title>
         <Text c="dimmed" size="sm" mt={5} mb={15}>
           Đã có tài khoản?{' '}
@@ -244,7 +244,7 @@ const RegisterPage = () => {
                 placeholder="Nguyễn"
                 required
                 size="md"
-                radius="sm"
+                radius="md"
                 control={control}
               />
             </Grid.Col>
@@ -255,7 +255,7 @@ const RegisterPage = () => {
                 placeholder="Văn A"
                 required
                 size="md"
-                radius="sm"
+                radius="md"
                 control={control}
               />
             </Grid.Col>
@@ -267,7 +267,7 @@ const RegisterPage = () => {
             required
             mt="md"
             size="md"
-            radius="sm"
+            radius="md"
             control={control}
             leftSection={<SiMaildotru size={16} />}
           />
@@ -278,7 +278,7 @@ const RegisterPage = () => {
             required
             mt="md"
             size="md"
-            radius="sm"
+            radius="md"
             control={control}
             leftSection={<RiLockPasswordLine size={18} />}
           />
@@ -289,7 +289,7 @@ const RegisterPage = () => {
             required
             mt="md"
             size="md"
-            radius="sm"
+            radius="md"
             control={control}
             leftSection={<RiLockPasswordLine size={18} />}
           />
@@ -309,10 +309,10 @@ const RegisterPage = () => {
             </button>
             <button
               type='button'
-              onClick={() => setValue('moduleId', AuthModule.Clinic.toString())}
+              onClick={() => setValue('moduleId', AuthModule.ClinicOwner.toString())}
               className={classNames(
                 'cursor-pointer w-full text-center py-2 bg-transparent border-solid border-gray-300 rounded',
-                getValues('moduleId') === AuthModule.Clinic.toString() ? 'bg-primary-400 text-white' : 'hover:bg-primary-100'
+                getValues('moduleId') === AuthModule.ClinicOwner.toString() ? 'bg-primary-400 text-white' : 'hover:bg-primary-100'
               )}>
               Quản lý phòng khám
             </button>
@@ -336,7 +336,7 @@ const RegisterPage = () => {
                 Khám chữa bệnh
               </Chip.Item>
               <Chip.Item
-                value={AuthModule.Clinic.toString()}
+                value={AuthModule.ClinicOwner.toString()}
                 size='md'
                 variant='light'
                 radius='md'
@@ -350,13 +350,13 @@ const RegisterPage = () => {
             </Flex>
             {errors.moduleId && <Text c='red.6' mt={5} fz='15px'>{errors.moduleId.message}</Text>}
           </Chip.Group>
-          <Button fullWidth mt="xl" radius="sm" size="md" type="submit">
+          <Button fullWidth mt="xl" radius="md" size="md" type="submit">
             Đăng ký
           </Button>
           <Text mt='md' mb='sm' fw='500' c='gray.7' ta='center'>Hoặc đăng nhập bằng tài khoản</Text>
           <Flex gap='md' justify='space-between'>
             <Button
-              radius='sm'
+              radius='md'
               size='md'
               variant="outline"
               fullWidth
@@ -366,7 +366,7 @@ const RegisterPage = () => {
               Google
             </Button>
             <Button
-              radius='sm'
+              radius='md'
               size='md'
               variant="outline"
               fullWidth
@@ -376,7 +376,7 @@ const RegisterPage = () => {
               Facebook
             </Button>
             <Button
-              radius='sm'
+              radius='md'
               size='md'
               variant="outline"
               fullWidth
@@ -406,12 +406,13 @@ const RegisterPage = () => {
             mt='md'
             className='flex-1'
             label="Hoặc nhập email của bạn"
+            radius='md'
             placeholder="Nhập tài khoản mà bạn muốn liên kết"
             value={emailChoose}
             name='email-register'
             onChange={(e) => setEmailChoose(e.currentTarget.value)}
           />
-          <Button mt='md' onClick={() => sendEmailVerifyLinkAccount(emailChoose)}>Tiếp tục</Button>
+          <Button mt='md' radius='md' onClick={() => sendEmailVerifyLinkAccount(emailChoose)}>Tiếp tục</Button>
         </Flex>
       </Modal>
     </Container>

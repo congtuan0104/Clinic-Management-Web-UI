@@ -8,11 +8,12 @@ export interface IUserInfo {
   lastName: string;
   phone?: string;
   address?: string;
-  gender: Gender;
+  gender?: Gender;
   birthday?: Date;
   emailVerified: boolean;
   moduleId: AuthModule;
   isInputPassword: boolean;
+  isDisabled: boolean;
 }
 
 export interface ILoginRequest {
@@ -46,7 +47,7 @@ export interface IGoogleLoginRequest {
 }
 
 export interface IChangePasswordRequest {
-  userId?: string;
+  userId: string;
   currentPassword?: string;
   newPassword: string;
   isReset?: boolean;

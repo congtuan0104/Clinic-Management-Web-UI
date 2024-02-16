@@ -23,15 +23,15 @@ export const clinicApi = {
     return axiosClient.get(`/clinics`, { params: params });
   },
 
+  getClinicDetail(clinicId: string): Promise<IApiResponse<IClinic>> {
+    return axiosClient.get(`/clinics/${clinicId}`);
+  },
+
   /**
    * @returns Tạo mới phòng khám kèm gói dịch vụ
    */
   createClinic(data: IAddClinicRequest): Promise<IApiResponse<IClinicWithSubscription>> {
     return axiosClient.post(`/clinics`, data);
-  },
-
-  getClinicStaff(staffId: string): Promise<IApiResponse<IClinicStaffDetail>> {
-    return axiosClient.get(`/staffs/${staffId}`);
   },
 
   updateStaffInfo(staffId: string, data: IClinicStaffDetail): Promise<any> {
@@ -70,9 +70,5 @@ export const clinicApi = {
     updateInfo: IUpdateRequest,
   ): Promise<IApiResponse<IUpdateClinic>> {
     return axiosClient.put(`/clinics/${clinicId}`, updateInfo);
-  },
-
-  getAllClinicService(clinicId: string): Promise<IApiResponse<any>> {
-    return axiosClient.get(`/clinics/${clinicId}/services`);
   },
 };

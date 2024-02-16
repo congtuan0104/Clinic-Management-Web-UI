@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
   Text,
   Flex,
@@ -6,6 +6,10 @@ import {
   Button,
   Input,
   Badge,
+  Stack,
+  Title,
+  Tooltip,
+  ActionIcon,
 } from '@mantine/core';
 import { useAppSelector } from '@/hooks';
 import { currentClinicSelector } from '@/store';
@@ -14,8 +18,10 @@ import { FaRegEdit, FaTrash } from 'react-icons/fa';
 import { clinicApi } from '@/services';
 import { IUserGroupRole } from '@/types';
 import { useDisclosure, useHover } from '@mantine/hooks';
-import { ModalRoleManagement } from "@/components";
+import { ClinusTable, ModalRoleManagement } from "@/components";
 import { modals } from '@mantine/modals';
+import { TiPlus } from 'react-icons/ti';
+import { MRT_ColumnDef } from 'mantine-react-table';
 
 const RoleManagement = () => {
   const currentClinic = useAppSelector(currentClinicSelector);
@@ -24,6 +30,38 @@ const RoleManagement = () => {
   const [isEditMode, setIsEditMode] = useState<boolean>(false);
   const [roles, setRoles] = useState<IUserGroupRole[]>([]);
   const [selectedRole, setSelectedRole] = useState<IUserGroupRole | undefined>(undefined);
+
+  const columns = useMemo<MRT_ColumnDef<IUserGroupRole>[]>(
+    () => [
+      {
+        header: 'Vai trò',
+        id: 'name',
+        enableColumnFilter: false,
+        accessorFn: (dataRow) => <div className='flex flex-col'>
+          <Text size="md" fw={500}>{dataRow.name}</Text>
+          <Text size="sm" c="gray.6">{dataRow.description}</Text>
+        </div>,
+      },
+      {
+        header: 'Quyền',
+        id: 'description',
+        enableSorting: false,
+        enableColumnFilter: false,
+        accessorFn: (dataRow) =>
+          dataRow.rolePermissions.map
+            ((permission, index) => <Badge
+              key={permission.id}
+              color={index % 2 === 0 ? 'primary.3' : 'gray.6'}
+              size='lg'
+              tt='capitalize'
+              className='m-1'
+            >
+              {permission.optionName}
+            </Badge>),
+      },
+    ],
+    [],
+  );
 
 
   const fetchData = async () => {
@@ -73,77 +111,79 @@ const RoleManagement = () => {
   };
 
   return (
-    <Paper shadow="sm" style={{ background: 'rgba(255, 255, 255, 0)' }}>
+    <>
       <Flex direction="column" gap="md" p="md">
         <Flex align="center" justify="space-between">
-          <Input
-            leftSection={<IoSearch size={16} />}
-            placeholder="Tìm kiếm vai trò"
-            value={searchTerm}
-            onChange={(event) => setSearchTerm(event.target.value)}
-            className='flex-1'
-            maw={300}
-          />
+          <Title order={4}>Danh sách vai trò</Title>
           <Button
-            color='secondary'
+            color='secondary.3'
+            leftSection={<TiPlus size={18} />}
             onClick={() => {
               open();
               setIsEditMode(false);
-            }}>+ Thêm vai trò</Button>
+            }}>
+            Thêm vai trò
+          </Button>
         </Flex>
 
-        <table style={{ borderCollapse: 'collapse', width: '100%', backgroundColor: 'white' }}>
-          <thead style={{ background: '#ccc', color: '#222' }}>
-            <tr>
-              <th style={{ border: '1px solid #ddd', padding: '8px', width: '20%' }}>Vai trò</th>
-              <th style={{ border: '1px solid #ddd', padding: '8px' }}>Quyền</th>
-              <th style={{ border: '1px solid #ddd', padding: '8px', width: '10%' }}>Thao tác</th>
-            </tr>
-          </thead>
-          <tbody>
-            {roles.map((role, index) => (
-              <tr key={index}>
-                <td style={{ border: '1px solid #ddd', padding: '8px' }}>{role.name}</td>
-                <td style={{ border: '1px solid #ddd', padding: '8px' }}>
-                  {role.rolePermissions.map(permission =>
-                    <Badge
-                      key={`${role.id}-${permission.id}`}
-                      color="gray.5"
-                      size='lg'
-                      className='m-1'
-                    >
-                      {permission.optionName}
-                    </Badge>
-                  )}
-                </td>
-                <td style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'center' }}>
-                  {role.name !== 'Admin' && (
-                    <>
-                      <FaRegEdit
-                        size={20}
-                        onClick={() => {
-                          open();
-                          setSelectedRole(role);
-                          setIsEditMode(true);
-                        }}
-                        style={{ cursor: 'pointer', marginRight: '6px', color: 'blue' }}
-                        onMouseOver={(e: React.MouseEvent<SVGElement, MouseEvent>) => (e.currentTarget.style.color = 'darkblue')}
-                        onMouseOut={(e: React.MouseEvent<SVGElement, MouseEvent>) => (e.currentTarget.style.color = 'blue')}
-                      />
-                      <FaTrash
-                        size={20}
-                        style={{ cursor: 'pointer', marginLeft: '6px', color: 'red' }}
-                        onMouseOver={(e: React.MouseEvent<SVGElement, MouseEvent>) => (e.currentTarget.style.color = 'darkred')}
-                        onMouseOut={(e: React.MouseEvent<SVGElement, MouseEvent>) => (e.currentTarget.style.color = 'red')}
-                        onClick={() => openDeleteModal(role.id, role.name)}
-                      />
-                    </>
-                  )}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <ClinusTable
+          columns={columns}
+          data={roles || []}
+          enableColumnFilters={false}
+          mantineSearchTextInputProps={
+            {
+              placeholder: 'Tìm kiếm vai trò',
+              styles: { wrapper: { width: '300px' } },
+              radius: 'md',
+            }
+          }
+          getRowId={(row) => row.id.toString()}
+          // state={{
+          //   isLoading: isLoading,
+          // }}
+          enableRowActions
+          displayColumnDefOptions={{
+            'mrt-row-actions': {
+              mantineTableHeadCellProps: {
+                align: 'right',
+              },
+            }
+          }}
+          renderRowActions={({ row }) => (
+            <Flex align='center' justify='flex-end' gap={10}>
+              <Tooltip label={row.original.name === 'Admin' ? 'Role Admin không thể chỉnh sửa' : 'Chỉnh sửa'}>
+                <ActionIcon
+                  variant='outline'
+                  color='blue'
+                  radius='sm'
+                  disabled={row.original.name === 'Admin'}
+                  onClick={() => {
+                    open();
+                    setSelectedRole(row.original);
+                    setIsEditMode(true);
+                  }}
+                >
+                  <FaRegEdit />
+                </ActionIcon>
+              </Tooltip>
+              <Tooltip label={row.original.name === 'Admin' ? 'Role Admin không thể xóa' : 'Xóa'}>
+                <ActionIcon
+                  variant='outline'
+                  color='red'
+                  radius='sm'
+                  disabled={row.original.name === 'Admin'}
+                  onClick={() => openDeleteModal(row.original.id, row.original.name)}
+                >
+                  <FaTrash />
+                </ActionIcon>
+              </Tooltip>
+            </Flex>
+          )}
+          localization={{
+            noRecordsToDisplay: 'Không có vai trò nào trong phòng khám',
+          }}
+        />
+
       </Flex>
       <ModalRoleManagement
         isEditMode={isEditMode}
@@ -152,7 +192,7 @@ const RoleManagement = () => {
         updateRole={updateRole}
         selectedRole={selectedRole}
       />
-    </Paper>
+    </>
   );
 };
 

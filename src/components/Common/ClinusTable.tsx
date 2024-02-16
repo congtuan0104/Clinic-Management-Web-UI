@@ -76,6 +76,12 @@ const ClinusTable = <TData extends MRT_RowData>({
       styles: { wrapper: { width: '300px' } },
       radius: 'md',
     },
+    mantinePaginationProps: {
+      color: 'primary.3',
+    },
+    mantinePaperProps: {
+      radius: 'md',
+    },
     ...rest,
   });
 

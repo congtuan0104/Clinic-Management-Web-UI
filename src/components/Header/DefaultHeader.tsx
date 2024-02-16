@@ -40,10 +40,13 @@ const Header = () => {
   const [scroll] = useWindowScroll();
 
   return (
-    <Box h={(scroll.y > 100 || pathname !== PATHS.HOME) ? 60 : 100} bg='white' className={classNames(
-      " fixed top-0 inset-x-0 z-10 transition-all duration-300 ease-in-out",
-      (scroll.y > 100 || pathname !== PATHS.HOME) ? 'shadow-lg' : 'shadow-none'
-    )}>
+    <Box
+      h={(scroll.y > 100 || pathname !== PATHS.HOME) ? 60 : 100}
+      bg='white'
+      className={classNames(
+        " fixed top-0 inset-x-0 z-10 transition-all duration-300 ease-in-out",
+        (scroll.y > 100 || pathname !== PATHS.HOME) ? 'shadow-lg' : 'shadow-none'
+      )}>
       <header className="h-full max-w-screen-xl mx-auto">
         <Group justify="space-between" h="100%">
           <Box w={userInfo ? undefined : 222}>
@@ -57,10 +60,10 @@ const Header = () => {
               <Link className=" hover:text-teal-500" to={PATHS.HOME}>
                 Trang chủ
               </Link>
-              <Link className=" hover:text-teal-500" to="/tin-tuc">
+              <Link className=" hover:text-teal-500" to={PATHS.NEWS}>
                 Tin tức
               </Link>
-              <Link className=" hover:text-teal-500" to='/phong-kham'>
+              <Link className=" hover:text-teal-500" to={PATHS.CLINICS}>
                 Phòng khám
               </Link>
               <Link className=" hover:text-teal-500" to="/dat-lich-hen">

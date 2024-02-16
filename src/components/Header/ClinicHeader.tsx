@@ -3,11 +3,11 @@ import { Link, useNavigate } from 'react-router-dom';
 import { PATHS } from '@/config';
 import { useAppDispatch, useAppSelector, useAuth } from '@/hooks';
 import { currentClinicSelector, focusModeSelector, listClinicSelector, openSidebarClinicSelector, setCurrentClinic, setUserInfo, toggleSidebarClinic, userInfoSelector } from '@/store';
-import { Text, Group, Button, Image, Divider, Menu, TextInput, Flex, ScrollArea, Indicator, ActionIcon, Badge, Title, Tooltip, Kbd, Select } from '@mantine/core';
+import { Text, Group, Button, Image, Divider, Menu, TextInput, Flex, ScrollArea, Indicator, ActionIcon, Badge, Title, Tooltip, Kbd, Select, Avatar, Popover } from '@mantine/core';
 import { useDisclosure, useFullscreen, useNetwork } from '@mantine/hooks';
 import ClinusLogo from '@/assets/images/logo.png';
-import { IClinic } from '@/types';
-import { cookies } from '@/utils';
+import { IClinic, INotification } from '@/types';
+import { cookies, renderSendingTime } from '@/utils';
 import { COOKIE_KEY } from '@/constants';
 import { IoSearch } from 'react-icons/io5';
 import { MdNotificationsNone, MdOutlineHelpOutline, MdOutlineSchedule } from 'react-icons/md';
@@ -17,9 +17,13 @@ import { FaUserCircle } from "react-icons/fa";
 import { BsCardText } from "react-icons/bs";
 import { BiCollapse, BiExpand } from "react-icons/bi";
 import { spotlight } from '@mantine/spotlight';
+import { AuthModule } from '@/enums';
 
+interface IHeaderProps {
+  notify: INotification[];
+}
 
-const ClinicHeader = () => {
+const ClinicHeader = ({ notify }: IHeaderProps) => {
   const { logout } = useAuth();
   const navigate = useNavigate();
 
@@ -43,7 +47,7 @@ const ClinicHeader = () => {
   }
 
   return (
-    <header className="h-[60px] flex justify-between items-center pl-3 pr-5 bg-white z-10 
+    <header className="h-[60px] flex justify-between items-center pl-3 pr-5 bg-white z-10
     border-solid border-0 border-b border-gray-300 fixed top-0 right-0 left-0">
       <Flex
         className='transition-all duration-300 ease-in-out'
@@ -66,7 +70,7 @@ const ClinicHeader = () => {
 
       {!focusMode && (
         <TextInput
-          placeholder="Tìm kiếm"
+          placeholder="Tìm kiếm Clinus"
           leftSection={<IoSearch size={20} />}
           radius='md'
           readOnly
@@ -131,15 +135,35 @@ const ClinicHeader = () => {
           </ActionIcon>
         </Tooltip>
 
-        <Tooltip label='Thông báo'>
-          <Indicator color='secondary.5' inline label={2} size={16} offset={5}>
-            <ActionIcon
-              onClick={() => { }}
-              color='gray.9' variant="subtle" radius="md" size={35} aria-label="Notifications">
-              <MdNotificationsNone size={25} />
-            </ActionIcon>
-          </Indicator>
-        </Tooltip>
+        <Popover width={300} position="bottom" withArrow shadow="md" arrowSize={11}>
+          <Tooltip label='Thông báo'>
+            <Popover.Target>
+              <Indicator color='secondary.5' inline label={notify.length} size={16} offset={5} disabled={notify.length === 0}>
+                <ActionIcon
+                  onClick={() => { }}
+                  color='gray.9' variant="subtle" radius="md" size={35} aria-label="Notifications">
+                  <MdNotificationsNone size={25} />
+                </ActionIcon>
+              </Indicator>
+            </Popover.Target>
+          </Tooltip>
+
+          <Popover.Dropdown styles={{ dropdown: { padding: 8 } }}>
+            <div className="flex flex-col">
+              {notify.length === 0 ? <p>Bạn không có thông báo nào</p> : <Title c='primary.3' ml={6} order={5}>Thông báo</Title>}
+              {notify.reverse().map((item) => (
+                <div key={item.id}
+                  className="flex cursor-pointer p-[6px] rounded-md flex-col hover:bg-primary-100">
+                  <div className='border-solid border-0 border-l-[3px] border-primary-300 pl-2'>
+                    <p>{item.title}</p>
+                    <p className='text-14 text-gray-800 text-justify'>{item.content}</p>
+                    <p className='text-gray-500 text-13'>{renderSendingTime(item.sendingTime)}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </Popover.Dropdown>
+        </Popover>
 
         <Divider orientation="vertical" ml={5} />
 
@@ -149,7 +173,7 @@ const ClinicHeader = () => {
               onClick={() => { }}
               mx={5}
               color='black.5' variant="subtle" radius="md"
-              leftSection={<FaUserCircle size={25} />}
+              leftSection={userInfo?.avatar ? <Avatar src={userInfo?.avatar} size={26} /> : <FaUserCircle size={20} />}
             >
               {userInfo?.firstName} {userInfo?.lastName}
             </Button>
@@ -163,12 +187,14 @@ const ClinicHeader = () => {
             >
               Quản lý tài khoản
             </Menu.Item>
-            <Menu.Item
-              onClick={() => navigate(PATHS.PLAN_MANAGEMENT)}
-              leftSection={<BsCardText size={15} />}
-            >
-              Quản lý gói và phòng khám
-            </Menu.Item>
+            {userInfo?.moduleId === AuthModule.ClinicOwner && (
+              <Menu.Item
+                onClick={() => navigate(PATHS.PLAN_MANAGEMENT)}
+                leftSection={<BsCardText size={15} />}
+              >
+                Quản lý gói
+              </Menu.Item>
+            )}
 
             <Menu.Item
               onClick={() => logout()}

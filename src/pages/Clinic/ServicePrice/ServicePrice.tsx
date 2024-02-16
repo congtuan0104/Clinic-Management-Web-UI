@@ -4,15 +4,19 @@ import {
   Button,
   ActionIcon,
   Title,
+  Text,
 } from '@mantine/core';
 import { useAppSelector, useAuth } from '@/hooks';
 import { currentClinicSelector } from '@/store';
 import { FaRegEdit, FaTrash } from 'react-icons/fa';
 import { clinicApi, clinicServiceApi } from '@/services';
-import { ClinusTable, CurrencyFormatter, ModalNewClinicService } from "@/components";
+import { ClinusTable, CurrencyFormatter, ModalNewClinicService, ModalUpdateClinicService } from "@/components";
 import { useQuery } from 'react-query';
 import { MRT_ColumnDef } from 'mantine-react-table';
 import { IClinicService } from '@/types';
+import { notifications } from '@mantine/notifications';
+import { modals } from '@mantine/modals';
+import { TiPlus } from 'react-icons/ti';
 
 const ServicePricePage = () => {
   // khai báo thông tin hiển thị của bảng (đọc tài liệu tại https://v2.mantine-react-table.com/)
@@ -39,6 +43,13 @@ const ServicePricePage = () => {
         header: 'Loại dịch vụ',
         accessorKey: 'categoryName',
       },
+      {
+        header: 'Trạng thái',
+        accessorKey: 'isDisabled',
+        Cell: ({ cell }) => (
+          <div>{cell.getValue<boolean>() ? 'Không hoạt động' : 'Đang hoạt động'}</div>
+        ),
+      }
 
     ],
     [],
@@ -46,6 +57,7 @@ const ServicePricePage = () => {
 
   const currentClinic = useAppSelector(currentClinicSelector);
   const [isOpenCreateModal, setOpenCreateModal] = useState(false);
+  const [selectedService, setSelectedService] = useState<IClinicService | undefined>(undefined);
 
 
   // lấy dữ liệu từ api
@@ -58,13 +70,54 @@ const ServicePricePage = () => {
     }
   );
 
+  const handleOpenUpdateModal = (service: IClinicService) => {
+    setSelectedService(service);
+  }
+
+  const handleDeleteService = async (id: string) => {
+    modals.openConfirmModal({
+      title: <Text size='md' fw={700}>Xác nhận</Text>,
+      children: (
+        <Text size="sm" lh={1.6}>
+          Bạn có chắc muốn xóa dịch vụ này không?<br />
+          Thao tác này không thể hoàn tác sau khi xác nhận
+        </Text>
+      ),
+      confirmProps: { color: 'red.5' },
+      onCancel: () => console.log('Cancel'),
+      onConfirm: async () => {
+        const res = await clinicServiceApi.deleteClinicService(id)
+        if (res.status) {
+          notifications.show({
+            title: 'Thành công',
+            message: 'Dịch vụ đã được xóa',
+            color: 'teal.5',
+          })
+          refetch();
+        }
+        else {
+          notifications.show({
+            title: 'Thất bại',
+            message: 'Đã có lỗi xảy ra',
+            color: 'red.5',
+          })
+        }
+      },
+    });
+
+  }
 
   return (
     <>
       <Flex direction="column" gap="md" p="md">
         <Flex align="center" justify="space-between">
           <Title order={4}>Bảng giá dịch vụ</Title>
-          <Button color='primary.3' onClick={() => setOpenCreateModal(true)}>Thêm dịch vụ</Button>
+          <Button
+            color='secondary.3'
+            leftSection={<TiPlus size={18} />}
+            onClick={() => setOpenCreateModal(true)}>
+            Dịch vụ mới
+          </Button>
         </Flex>
 
         <ClinusTable  // component custom từ mantine-react-table
@@ -96,7 +149,7 @@ const ServicePricePage = () => {
                 variant='outline'
                 color='blue'
                 radius='sm'
-                onClick={() => { console.log('ServiceID: ', row.id) }} // xử lý khi chọn sửa dịch vụ
+                onClick={() => handleOpenUpdateModal(row.original)} // xử lý khi chọn sửa dịch vụ
               >
                 <FaRegEdit />
               </ActionIcon>
@@ -104,7 +157,7 @@ const ServicePricePage = () => {
                 variant='outline'
                 color='red'
                 radius='sm'
-                onClick={() => { }} // xử lý khi click button xóa dịch vụ
+                onClick={() => handleDeleteService(row.id)} // xử lý khi click button xóa dịch vụ
               >
                 <FaTrash />
               </ActionIcon>
@@ -118,6 +171,13 @@ const ServicePricePage = () => {
         onClose={() => setOpenCreateModal(false)}
         onSuccess={() => refetch()}
       />
+
+      {selectedService && (<ModalUpdateClinicService
+        isOpen={!!selectedService}
+        onClose={() => setSelectedService(undefined)}
+        service={selectedService}
+        onSuccess={() => refetch()}
+      />)}
     </>
   );
 };

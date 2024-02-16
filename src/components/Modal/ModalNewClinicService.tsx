@@ -1,6 +1,6 @@
-import { Gender } from "@/enums";
+import { CATEGORY_TYPE, Gender } from "@/enums";
 import { useAppSelector } from "@/hooks";
-import { authApi, clinicApi, clinicServiceApi, staffApi } from "@/services";
+import { authApi, categoryApi, clinicApi, clinicServiceApi, staffApi } from "@/services";
 import { currentClinicSelector } from "@/store";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Button, Flex, Grid, Modal, ModalBody, ModalCloseButton, ModalHeader } from "@mantine/core";
@@ -44,13 +44,15 @@ const ModalNewClinicService = ({
 
   const currentClinic = useAppSelector(currentClinicSelector);
 
-  // const { data: roles, isLoading: isLoadingRoles } = useQuery(
-  //   ['categories', currentClinic?.id],
-  //   () => clinicApi.getClinicRoles(currentClinic!.id).then(res => res.data),
-  //   {
-  //     refetchOnWindowFocus: false,
-  //   }
-  // );
+  const { data: cates, isLoading } = useQuery(
+    ['category', currentClinic?.id, CATEGORY_TYPE.SERVICE],
+    () => categoryApi.getCategories(currentClinic!.id, { type: CATEGORY_TYPE.SERVICE })
+      .then(res => res.data),
+    {
+      enabled: !!currentClinic?.id,
+      refetchOnWindowFocus: false,
+    }
+  );
 
   const { control, reset } = useForm<IFormData>({
     resolver: yupResolver(validateSchema),
@@ -81,7 +83,6 @@ const ModalNewClinicService = ({
         title: 'Thêm dịch vụ thành công',
         message: 'Dịch vụ đã được thêm thành công',
         color: 'teal.5',
-        icon: BsPatchCheck,
       });
       reset();
       onSuccess();
@@ -92,19 +93,18 @@ const ModalNewClinicService = ({
         title: 'Thêm dịch vụ thất bại',
         message: 'Đã có lỗi xảy ra khi thêm dịch vụ',
         color: 'red.5',
-        icon: MdErrorOutline,
       });
     }
   }
 
   return (
     <Modal.Root opened={isOpen} onClose={handleCancel} centered size={'md'}>
-      <Modal.Overlay />
+      <Modal.Overlay blur={7} />
       <Modal.Content radius='lg'>
-        <ModalHeader>
-          <Modal.Title fz={16} fw={600}>Thêm dịch vụ mới</Modal.Title>
+        <Modal.Header bg='secondary.3'>
+          <Modal.Title c='white' fz="lg" fw={600}>Dịch vụ mới</Modal.Title>
           <ModalCloseButton />
-        </ModalHeader>
+        </Modal.Header>
         <ModalBody>
           <Form
             control={control}
@@ -114,8 +114,8 @@ const ModalNewClinicService = ({
               label="Tên dịch vụ"
               name="serviceName"
               required
+              mt='md'
               size="md"
-              radius="sm"
               control={control}
             />
 
@@ -124,7 +124,7 @@ const ModalNewClinicService = ({
               name="price"
               required
               size="md"
-              radius="sm"
+              mt='md'
               control={control}
               suffix="₫"
               min={0}
@@ -142,17 +142,15 @@ const ModalNewClinicService = ({
               mt="md"
               size="md"
               searchable
-              radius="sm"
               required
-              // disabled={isLoadingRoles || isDisabled}
+              disabled={isLoading}
               comboboxProps={{ shadow: 'md', transitionProps: { transition: 'pop', duration: 200 } }}
               checkIconPosition="right"
-              data={[]}
-            // data={roles?.map((role) => ({
-            //   value: role.id.toString(),
-            //   label: role.name,
-            // }))
-            // }
+              data={cates?.map((cate) => ({
+                value: cate.id.toString(),
+                label: cate.name,
+              }))
+              }
             />
 
 
@@ -161,7 +159,6 @@ const ModalNewClinicService = ({
               name="description"
               required
               size="md"
-              radius="sm"
               mt='sm'
               autosize
               minRows={3}
@@ -169,11 +166,11 @@ const ModalNewClinicService = ({
             />
 
             <Flex justify='end' gap={10}>
-              <Button mt="lg" radius="sm" size="md" type="submit">
-                Lưu
-              </Button>
-              <Button mt="lg" radius="sm" size="md" variant='outline' color='red.5' onClick={handleCancel}>
+              <Button mt="lg" size="md" color='gray.5' onClick={handleCancel}>
                 Hủy
+              </Button>
+              <Button mt="lg" size="md" type="submit" color="primary.3">
+                Lưu
               </Button>
             </Flex>
           </Form>

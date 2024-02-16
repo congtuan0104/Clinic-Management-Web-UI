@@ -8,6 +8,7 @@ import '@mantine/spotlight/styles.css';
 import '@mantine/carousel/styles.css';
 import 'mantine-react-table/styles.css'; //import MRT styles
 import 'react-big-calendar/lib/css/react-big-calendar.css'; //import BigCalendar styles
+import 'mapbox-gl/dist/mapbox-gl.css';
 import 'dayjs/locale/vi';
 
 import { MantineProvider } from '@mantine/core';
@@ -28,7 +29,9 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
   <ReduxProvider store={store}>
     <QueryClientProvider client={queryClient}>
       <MantineProvider theme={theme} defaultColorScheme="light">
-        <ModalsProvider labels={{ confirm: 'Xác nhận', cancel: 'Hủy' }}>
+        <ModalsProvider
+          labels={{ confirm: 'Xác nhận', cancel: 'Hủy' }}
+          modalProps={{ radius: 'md', }}>
           <DatesProvider settings={{ locale: 'vi' }}>
             <Notifications autoClose={2000} limit={5} />
             <App />

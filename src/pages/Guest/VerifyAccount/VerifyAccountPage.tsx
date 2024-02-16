@@ -3,10 +3,11 @@ import { PATHS } from '@/config';
 import { Image, Button, Center, Flex, Stack, Text } from '@mantine/core';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import ClinusLogo from '@/assets/images/logo-2.png';
-import { BiArrowBack, BiMailSend } from 'react-icons/bi';
+import { BiArrowBack, BiErrorCircle, BiMailSend, BiNotification } from 'react-icons/bi';
 import { IoMdHome } from 'react-icons/io';
 import FaultyRobotImage from '@/assets/images/faulty_robot.png'
 import { authApi } from '@/services';
+import { notifications } from '@mantine/notifications';
 
 
 
@@ -21,7 +22,34 @@ const VerifyAccountPage = () => {
   const handleResendVerifyEmail = async () => {
     if (!email) return;
     const res = await authApi.sendVerifyEmail(email);
-    console.log(res);
+    if (!res.status) {
+      notifications.show({
+        title: 'Lỗi',
+        message: 'Có lỗi xảy ra khi gửi lại email xác thực. Vui lòng thử lại sau',
+        color: 'red.5',
+        icon: <BiErrorCircle size={20} />,
+      });
+      return;
+    }
+    if (res.data)  // user đã xác thực
+    {
+      notifications.show({
+        title: 'Thông báo',
+        message: 'Email của bạn đã được xác thực thành công. Vui lòng đăng nhập để tiếp tục sử dụng',
+        color: 'teal.5',
+        icon: <BiNotification size={20} />,
+      });
+      navigate(PATHS.LOGIN);
+      return;
+    }
+
+    notifications.show({
+      title: 'Thành công',
+      message: 'Email xác thực đã được gửi thành công. Vui lòng kiểm tra email của bạn',
+      color: 'teal.5',
+      icon: <BiNotification size={20} />,
+    });
+
   }
 
   return (

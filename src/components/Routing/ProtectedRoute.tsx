@@ -74,7 +74,7 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
     // }
     return <>
       {children}
-      {/* {!userInfo.isInputPassword && <ModalInitPassword email={userInfo.email} />} */}
+      {!userInfo.isInputPassword && <ModalInitPassword email={userInfo.email} />}
     </>
   }
   return <Navigate to={PATHS.LOGIN} replace />

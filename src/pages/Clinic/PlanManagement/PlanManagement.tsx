@@ -16,6 +16,7 @@ import { PATHS } from '@/config';
 import { cookies } from '@/utils';
 import { COOKIE_KEY } from '@/constants';
 import classNames from 'classnames';
+import Map, { Marker } from 'react-map-gl';
 
 
 const ClinicManagePage = () => {
@@ -95,9 +96,9 @@ const ClinicManagePage = () => {
 
         <Badge
           color={subscription.status === CLINIC_SUBSCRIPTION_STATUS.ACTIVE ? 'primary.4'
-            : subscription.status === CLINIC_SUBSCRIPTION_STATUS.INPAYMENT ? 'teal.6'
+            : subscription.status === CLINIC_SUBSCRIPTION_STATUS.INPAYMENT ? 'yellow.5'
               : subscription.status === CLINIC_SUBSCRIPTION_STATUS.EXPIRED ? 'gray.6'
-                : 'error'}
+                : 'red.5'}
         >
           {renderSubscriptionStatus(subscription.status)}
         </Badge>
@@ -148,6 +149,21 @@ const ClinicManagePage = () => {
         Kích hoạt
       </div>
     )
+
+    if (subscription.status === CLINIC_SUBSCRIPTION_STATUS.INPAYMENT) return (
+      <div
+        className='cursor-pointer text-yellow-600 hover:text-yellow-500'
+        onClick={() => {
+          setClinicNeedPayment({
+            clinic: clinic,
+            subscription: subscription,
+          })
+          setIsOpenPaymentModal(true);
+        }}
+      >
+        Thanh toán lại
+      </div>
+    )
   }
 
   if ((isLoadingPlan || isLoadingClinic) && !isOpenClinicModal && !isOpenPaymentModal) return (
@@ -179,7 +195,7 @@ const ClinicManagePage = () => {
           </Flex>
           <Flex direction='column' gap={15}>
             {clinics.map((clinic) => (
-              <Paper shadow="xs" radius='md' p='lg'>
+              <Paper shadow="xs" radius='md' p='lg' key={clinic.id}>
                 <div className='flex justify-between'>
                   <div>
                     <Text fw='semibold' tt='uppercase'>{clinic.name}</Text>
@@ -201,7 +217,7 @@ const ClinicManagePage = () => {
         </Text>
         <Grid gutter={20} mt={20}>
           {plans && plans.map((plan) => (
-            <Grid.Col span={{ base: 12, md: 6, lg: 4 }}>
+            <Grid.Col span={{ base: 12, md: 6, lg: 4 }} key={plan.id}>
               <PlanCard key={plan.id} plan={plan} actionText='Mua gói' action={handleBuyPlan} />
             </Grid.Col>
           ))}

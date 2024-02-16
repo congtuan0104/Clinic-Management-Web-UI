@@ -7,6 +7,8 @@ export interface IAddClinicRequest {
   address: string;
   logo?: string;
   description?: string;
+  lat?: number;
+  long?: number;
   planId: string;
 }
 
@@ -15,8 +17,9 @@ export interface IClinicQueryParams {
   name?: string;
   staffId?: number;
   isActive?: boolean;
+  suid?: string;
+  puid?: string;
 }
-
 export interface IAddClinicService {
   id: number;
   name: string;
@@ -35,6 +38,8 @@ export interface IClinic {
   email: string;
   ownerId: string;
   address: string;
+  lat?: number;
+  long?: number;
   logo?: string;
   description?: string;
   metadata?: string;
@@ -92,6 +97,10 @@ export interface IUpdateClinic {
   email: string;
   phone: string;
   address: string;
+  logo?: string;
+  description?: string;
+  lat?: number;
+  long?: number;
   isActive: boolean;
   createdAt: Date;
   updatedAt?: Date;
@@ -103,6 +112,8 @@ export interface IUpdateRequest {
   phone: string;
   address: string;
   logo?: string;
+  lat?: number;
+  long?: number;
   description?: string;
 }
 
@@ -125,23 +136,4 @@ export interface IInviteClinicMemberRequest {
   email: string;
   roleId: number;
   clinicId: string;
-}
-
-export interface IClinicStaffDetail {
-  id?: number;
-  memberId?: number;
-  specialize?: string;
-  experience?: number;
-  phoneNumber?: string;
-  address?: string;
-  gender?: number;
-  createdAt?: string;
-  updatedAt?: string;
-  isDisabled?: boolean;
-  disabledAt?: string;
-  userId?: string;
-  clinicId?: string;
-  name?: string;
-  firstName?: string;
-  lastName?: string;
 }
