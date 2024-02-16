@@ -49,9 +49,9 @@ const infoschema = yup.object().shape({
 });
 
 const scheduleschema = yup.object().shape({
-    day: yup.number(),
-    startTime: yup.string(),
-    endTime: yup.string(),
+  day: yup.number(),
+  startTime: yup.string(),
+  endTime: yup.string(),
 });
 
 
@@ -79,9 +79,9 @@ const StaffDetail = () => {
     defaultValues: useMemo(() => {
       return {
         id_staff: staffId,
-        phoneNumber: staff?.phoneNumber,
+        phoneNumber: staff?.users.phone,
         // gender: staff?.gender,
-        address: staff?.address,
+        address: staff?.users.address,
         specialize: staff?.specialize,
         experience: staff?.experience,
       }
@@ -302,7 +302,7 @@ const StaffDetail = () => {
                           w={'100%'}
                           name='gender'
                           control={controlInfo}
-                          defaultValue={staff?.gender?.toString()}
+                          defaultValue={staff?.users.gender?.toString()}
                           data={[
                             { label: 'Nam', value: '1' },
                             { label: 'Nữ', value: '0' },
@@ -339,7 +339,7 @@ const StaffDetail = () => {
                         name='address'
                         w={'100%'}
                         px={8}
-                        defaultValue={staff?.address}
+                        defaultValue={staff?.users.address}
                         control={controlInfo}
                       />
 
@@ -379,55 +379,55 @@ const StaffDetail = () => {
             py="20px"
             style={{ borderRadius: '10px' }}
           >
-          <Form control={controlSchedule} onSubmit={e => onScheduleSubmit(e.data)} onError={e => console.log(e)}>
-            <Group>
-              <Title order={6} size={19}>Lịch làm việc</Title>
-            </Group>
+            <Form control={controlSchedule} onSubmit={e => onScheduleSubmit(e.data)} onError={e => console.log(e)}>
+              <Group>
+                <Title order={6} size={19}>Lịch làm việc</Title>
+              </Group>
 
-            <Divider my="md"></Divider>
+              <Divider my="md"></Divider>
 
-            <SimpleGrid cols={2} spacing="xl">
-              {daysOfWeek.map((day, index) => (
-                <div key={index}>
-                  <Text py={10}>{day.label}:</Text>
-                  <Group style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-                    <TimeInput
-                      placeholder="Input placeholder"
-                      disabled={!isUpdateSchedule}
-                      name={`schedule[${index}].startTime` as `${number}.startTime`} 
-                      control={controlSchedule}
-                    />
+              <SimpleGrid cols={2} spacing="xl">
+                {daysOfWeek.map((day, index) => (
+                  <div key={index}>
+                    <Text py={10}>{day.label}:</Text>
+                    <Group style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+                      <TimeInput
+                        placeholder="Input placeholder"
+                        disabled={!isUpdateSchedule}
+                        name={`schedule[${index}].startTime` as `${number}.startTime`}
+                        control={controlSchedule}
+                      />
 
-                    <Text>-</Text>
+                      <Text>-</Text>
 
-                    <TimeInput
-                      placeholder="Input placeholder"
-                      disabled={!isUpdateSchedule}
-                      name={`schedule[${index}].endTime` as `${number}.endTime`} 
-                      control={controlSchedule}
-                    />
-                  </Group>
-                </div>
-              ))}
-            </SimpleGrid>
-            <Group my={20} justify="flex-end" mt="lg" mr={'23%'}>
-              {isUpdateSchedule ? (
-                <Button type="submit">
-                  Lưu thay đổi
-                </Button>
-              ) : (
-                <></>
-              )}
-              {isUpdateSchedule ? (
-                <Button variant="outline" color='gray.6' onClick={handleOnClickEditSchedule}>
-                  Hủy thay đổi
-                </Button>
-              ) : (
-                <Button onClick={handleOnClickEditSchedule} w={'25%'}>
-                  Chỉnh sửa
-                </Button>
-              )}
-            </Group>
+                      <TimeInput
+                        placeholder="Input placeholder"
+                        disabled={!isUpdateSchedule}
+                        name={`schedule[${index}].endTime` as `${number}.endTime`}
+                        control={controlSchedule}
+                      />
+                    </Group>
+                  </div>
+                ))}
+              </SimpleGrid>
+              <Group my={20} justify="flex-end" mt="lg" mr={'23%'}>
+                {isUpdateSchedule ? (
+                  <Button type="submit">
+                    Lưu thay đổi
+                  </Button>
+                ) : (
+                  <></>
+                )}
+                {isUpdateSchedule ? (
+                  <Button variant="outline" color='gray.6' onClick={handleOnClickEditSchedule}>
+                    Hủy thay đổi
+                  </Button>
+                ) : (
+                  <Button onClick={handleOnClickEditSchedule} w={'25%'}>
+                    Chỉnh sửa
+                  </Button>
+                )}
+              </Group>
             </Form>
           </Box>
         )}
