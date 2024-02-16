@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, useRef } from 'react';
 import {
   Flex,
   Button,
@@ -14,7 +14,7 @@ import { useAppSelector } from '@/hooks';
 import { currentClinicSelector, staffInfoSelector, userInfoSelector } from '@/store';
 import { FaFileExport, FaRegEdit, FaTrash } from 'react-icons/fa';
 import { authApi, medicalRecordApi } from '@/services';
-import { ClinusTable, CurrencyFormatter, ModalMedicalInvoice, ModalNewMedicalRecord } from "@/components";
+import { AppointmentPrintContext, ClinusTable, CurrencyFormatter, InvoicePrintContext, ModalMedicalInvoice, ModalNewMedicalRecord } from "@/components";
 import { useQuery } from 'react-query';
 import { MRT_ColumnDef } from 'mantine-react-table';
 import { IMedicalInvoice, IMedicalRecord } from '@/types';
@@ -25,14 +25,17 @@ import { PATHS } from '@/config';
 import { MdEmail, MdOutlineStart } from 'react-icons/md';
 import { AuthModule, Gender, MEDICO_PAYMENT_STATUS, MEDICO_RECORD_STATUS } from '@/enums';
 import dayjs from 'dayjs';
-import { TiDocumentAdd } from 'react-icons/ti';
-import { BiExport } from 'react-icons/bi';
+import { FaEye } from 'react-icons/fa';
+import { useReactToPrint } from 'react-to-print';
+import { IoPrintSharp } from 'react-icons/io5';
 
 const PaymentInvoicePage = () => {
   const currentClinic = useAppSelector(currentClinicSelector);
   const userInfo = useAppSelector(userInfoSelector);
   const [invoice, setInvoice] = useState<IMedicalInvoice | undefined>(undefined);
   const [isOpen, setIsOpen] = useState<boolean>(false);
+
+  const invoiceRef = useRef<HTMLDivElement>(null);
 
   const columns = useMemo<MRT_ColumnDef<IMedicalRecord>[]>(
     () => [
@@ -124,7 +127,6 @@ const PaymentInvoicePage = () => {
     [],
   );
 
-
   // lấy dữ liệu từ api
   const { data, refetch, isLoading } = useQuery(
     ['medical_records', currentClinic?.id],
@@ -142,12 +144,23 @@ const PaymentInvoicePage = () => {
     filter(record => record.examinationStatus === MEDICO_RECORD_STATUS.DONE).
     sort((a, b) => dayjs(b.updatedAt).unix() - dayjs(a.updatedAt).unix());
 
-  const exportInvoice = async (recordId: number) => {
+  const printInvoice = useReactToPrint({
+    content: () => invoiceRef.current,
+  });
+
+  const exportInvoice = async (recordId: number, openModal: boolean, print: boolean) => {
     const res = await medicalRecordApi.exportInvoice(recordId);
+    setInvoice(res.data);
 
     if (res.status && res.data) {
-      setInvoice(res.data);
-      setIsOpen(true);
+      if (openModal)
+        setIsOpen(true);
+      if (print) {
+        // waiting setInvoice done
+        setTimeout(() => {
+          printInvoice();
+        }, 1000);
+      }
     }
     else {
       notifications.show({
@@ -157,6 +170,7 @@ const PaymentInvoicePage = () => {
       })
     }
   }
+
 
   return (
     <>
@@ -195,15 +209,24 @@ const PaymentInvoicePage = () => {
           }}
           renderRowActions={({ row }) => (
             <Flex align='center' justify='flex-end' gap={10}>
-              <Tooltip label='Xuất hóa đơn'>
+              <Tooltip label='In hóa đơn'>
+                <ActionIcon
+                  color='gray.7'
+                  radius='md'
+                  variant='outline'
+                  onClick={() => exportInvoice(row.original.id, false, true)}
+                >
+                  <IoPrintSharp />
+                </ActionIcon>
+              </Tooltip>
+              <Tooltip label='Xem hóa đơn'>
                 <ActionIcon
                   color='primary.3'
                   radius='md'
-                  size='lg'
                   variant='outline'
-                  onClick={() => exportInvoice(row.original.id)}
+                  onClick={() => exportInvoice(row.original.id, true, false)}
                 >
-                  <FaFileExport size={20} />
+                  <FaEye />
                 </ActionIcon>
               </Tooltip>
               {/* <ActionIcon
@@ -227,7 +250,14 @@ const PaymentInvoicePage = () => {
         }}
         invoice={invoice}
         onPaymentSuccess={() => { }}
+        printInvoice={printInvoice}
       />
+
+      {invoice && (
+        <div className='hidden'>
+          <InvoicePrintContext ref={invoiceRef} invoice={invoice} />
+        </div>
+      )}
     </>
   );
 };

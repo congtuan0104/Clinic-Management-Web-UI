@@ -5,7 +5,7 @@ import { Sparkline } from '@mantine/charts';
 import { PATHS } from '@/config';
 import { Link, useNavigate } from 'react-router-dom';
 import { useQuery } from 'react-query';
-import { appointmentApi } from '@/services';
+import { appointmentApi, staffApi } from '@/services';
 import dayjs from 'dayjs';
 import { ModalAppointmentDetail } from '@/components';
 import { useState } from 'react';
@@ -18,13 +18,21 @@ const DashboardAdmin = () => {
   const currentClinic = useAppSelector(currentClinicSelector);
   const navigate = useNavigate();
 
-  const { data: appointments, isLoading, refetch } = useQuery(['appointments', dayjs().format('YYYY-MM-DD')],
+  const { data: appointments, refetch } = useQuery(['appointments', dayjs().format('YYYY-MM-DD')],
     () => appointmentApi.getAppointmentList({
       clinicId: currentClinic?.id,
       date: dayjs().format('YYYY-MM-DD'),
     }).then(res => res.data), {
     enabled: !!currentClinic?.id,
   })
+
+  const { data: staffs } = useQuery(
+    ['staffs'],
+    () => staffApi.getStaffs({ clinicId: currentClinic?.id }).then(res => res.data),
+    {
+      enabled: !!currentClinic?.id,
+    }
+  );
 
   const [appointment, setAppointment] = useState<IAppointment | undefined>(undefined);
 
@@ -49,7 +57,7 @@ const DashboardAdmin = () => {
           </ThemeIcon>
           <div className='flex flex-col'>
             <Text c='gray.7'>Số nhân viên</Text>
-            <Text c='primary.3' fz={40} fw={700}>10</Text>
+            <Text c='primary.3' fz={40} fw={700}>{staffs?.length || 0}</Text>
           </div>
         </div>
         <div className='h-full bg-white rounded-xl p-6 flex gap-4'>

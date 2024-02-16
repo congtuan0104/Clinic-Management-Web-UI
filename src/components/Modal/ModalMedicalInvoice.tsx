@@ -9,6 +9,8 @@ import { medicalRecordApi } from "@/services";
 import { useAppSelector } from "@/hooks";
 import { staffInfoSelector } from "@/store";
 import { notifications } from "@mantine/notifications";
+import { IoPrintSharp } from "react-icons/io5";
+import { FaCheck } from "react-icons/fa";
 
 
 interface IProps {
@@ -16,6 +18,7 @@ interface IProps {
   onClose: () => void;
   invoice?: IMedicalInvoice;
   onPaymentSuccess: () => void;
+  printInvoice: any;
 }
 
 const ModalMedicalInvoice = ({
@@ -23,6 +26,7 @@ const ModalMedicalInvoice = ({
   onClose,
   invoice,
   onPaymentSuccess,
+  printInvoice
 }: IProps) => {
 
   const staffInfo = useAppSelector(staffInfoSelector);
@@ -126,12 +130,12 @@ const ModalMedicalInvoice = ({
         </Table>
 
         {/* // chi tiết dịch vụ */}
-        <Table mt={10} mx={10}>
+        <Table mt={20} mx={10}>
           <Table.Thead bg='gray.3'>
             <Table.Tr>
               <Table.Th>STT</Table.Th>
               <Table.Th>Nội dung khoản thu</Table.Th>
-              <Table.Th>Phí dịch vụ</Table.Th>
+              <Table.Th>Số tiền</Table.Th>
             </Table.Tr>
           </Table.Thead>
           <Table.Tbody>
@@ -148,12 +152,18 @@ const ModalMedicalInvoice = ({
         </Table>
 
         <Flex justify='flex-end' mt='lg' gap={10}>
-          <Button
+          {/* <Button
             onClick={onClose}
             color='gray.6'
             size="md"
           >
             Đóng
+          </Button> */}
+          <Button
+            size="md"
+            leftSection={<IoPrintSharp size={18} />}
+            onClick={printInvoice}>
+            In hóa đơn
           </Button>
           {
             invoice?.status === MEDICO_PAYMENT_STATUS.UNPAID &&
@@ -161,6 +171,7 @@ const ModalMedicalInvoice = ({
               onClick={handleConfirmPayment}
               color='teal.7'
               size="md"
+              leftSection={<FaCheck size={18} />}
             >
               Xác nhận thanh toán
             </Button>

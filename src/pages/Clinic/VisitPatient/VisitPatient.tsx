@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   Flex,
   Button,
@@ -38,6 +38,9 @@ import { modals } from '@mantine/modals';
 import MedicalPrescription from './Prescription';
 import { PATHS } from '@/config';
 import MedicalService from './MedicalService';
+import { MedicalRecordPrintContext } from '@/components';
+import { useReactToPrint } from 'react-to-print';
+import { IoPrintSharp } from 'react-icons/io5';
 
 interface IFormData {
   height?: number;
@@ -70,6 +73,8 @@ const VisitPatientPage = () => {
   const currentClinic = useAppSelector(currentClinicSelector);
   const staffInfo = useAppSelector(staffInfoSelector);
 
+  const recordRef = useRef<HTMLDivElement>(null);
+
   const { data: record, isLoading, refetch } = useQuery(
     'medicalRecord',
     () => medicalRecordApi
@@ -81,6 +86,8 @@ const VisitPatientPage = () => {
     });
 
   const { patient, doctor, medicalRecordServices: services, prescriptionDetail } = record || {};
+
+  const isComplete = record?.examinationStatus === MEDICO_RECORD_STATUS.DONE;
 
   const { control, reset, setValue } = useForm<IFormData>({
     resolver: yupResolver(validateSchema),
@@ -181,6 +188,10 @@ const VisitPatientPage = () => {
     }
   }
 
+  const printRecord = useReactToPrint({
+    content: () => recordRef.current,
+  });
+
   useEffect(() => {
     setValue('height', record?.height);
     setValue('weight', record?.weight);
@@ -192,282 +203,307 @@ const VisitPatientPage = () => {
   }, [record]);
 
   return (
-    <Form
-      control={control}
-      onSubmit={(e) => handleSaveRecord(e.data)}
-      onError={(e) => console.log(e)}>
-      <Flex direction="column" gap="md" p="md">
-        <Flex align="center" justify="space-between">
-          <Flex gap={8}>
-            <ActionIcon
-              color="black.8"
-              radius="xl"
-              mt={2}
-              variant='subtle'
-              onClick={() => navigate(PATHS.CLINIC_EXAMINATION)}
-            >
-              <BiArrowBack size={24} />
-            </ActionIcon>
-            <Title order={3}>Khám bệnh</Title>
-          </Flex>
-          {record?.examinationStatus === MEDICO_RECORD_STATUS.WAITING && (
-            <Flex gap={10}>
-              <Button color='secondary.3' leftSection={<BiSave size={18} />} type='submit'>
-                Lưu hồ sơ
-              </Button>
-              {record?.result && record?.result !== '' && (
-                <Button
-                  color='teal.7'
-                  leftSection={<MdOutlineDownloadDone size={18} />}
-                  type='button'
-                  onClick={confirmCompleteExam}
-                >
-                  Hoàn thành
-                </Button>
-              )}
+    <>
+      <Form
+        control={control}
+        onSubmit={(e) => handleSaveRecord(e.data)}
+        onError={(e) => console.log(e)}>
+        <Flex direction="column" gap="md" p="md">
+          <Flex align="center" justify="space-between">
+            <Flex gap={8}>
+              <ActionIcon
+                color="black.8"
+                radius="xl"
+                mt={2}
+                variant='subtle'
+                onClick={() => navigate(PATHS.CLINIC_EXAMINATION)}
+              >
+                <BiArrowBack size={24} />
+              </ActionIcon>
+              <Title order={3}>Khám bệnh</Title>
             </Flex>
-          )}
-        </Flex>
+            {record?.examinationStatus === MEDICO_RECORD_STATUS.WAITING && (
+              <Flex gap={10}>
+                <Button color='secondary.3' leftSection={<BiSave size={18} />} type='submit'>
+                  Lưu hồ sơ
+                </Button>
+                {record?.result && record?.result !== '' && (
+                  <Button
+                    color='teal.7'
+                    leftSection={<MdOutlineDownloadDone size={18} />}
+                    type='button'
+                    onClick={confirmCompleteExam}
+                  >
+                    Hoàn thành
+                  </Button>
+                )}
+              </Flex>
+            )}
+            {record?.examinationStatus === MEDICO_RECORD_STATUS.DONE && (
+              <Button
+                color='primary.3'
+                leftSection={<IoPrintSharp size={18} />}
+                type='button'
+                onClick={printRecord}
+              >
+                In hồ sơ
+              </Button>
+            )}
 
-        <Paper p='md' radius='md' shadow="xs">
-          <Text fw={600}>Thông tin bệnh nhân</Text>
-          <Flex gap={30} mt='md' align='center'>
-            <Image
-              src={record?.patient?.avatar}
-              h={220}
-              w={220}
-              radius='50%'
-              alt={record?.patient?.lastName}
-              fallbackSrc='/assets/images/patient-placeholder.png'
+          </Flex>
+
+          <Paper p='md' radius='md' shadow="xs">
+            <Text fw={600}>Thông tin bệnh nhân</Text>
+            <Flex gap={30} mt='md' align='center'>
+              <Image
+                src={record?.patient?.avatar}
+                h={220}
+                w={220}
+                radius='50%'
+                alt={record?.patient?.lastName}
+                fallbackSrc='/assets/images/patient-placeholder.png'
+              />
+              <Grid>
+                <Grid.Col span={5}>
+                  <MantineTextInput
+                    label="Tên bệnh nhân"
+                    value={`${record?.patient?.firstName} ${record?.patient?.lastName}`}
+                    readOnly
+                    variant='filled'
+                    size='md'
+                  />
+                </Grid.Col>
+                <Grid.Col span={3.5}>
+                  <MantineTextInput
+                    label="Giới tính"
+                    value={record?.patient.gender === Gender.Male ? 'Nam'
+                      : record?.patient.gender === Gender.Female ? 'Nữ' : 'Chưa có thông tin'}
+                    readOnly
+                    variant='filled'
+                    size='md'
+                  />
+                </Grid.Col>
+                <Grid.Col span={3.5}>
+                  <MantineTextInput
+                    label="Tuổi"
+                    value={patient?.birthday
+                      ? dayjs().diff(patient?.birthday, 'year')
+                      : 'Chưa có thông tin'}
+                    readOnly
+                    variant='filled'
+                    size='md'
+                  />
+                </Grid.Col>
+
+                <Grid.Col span={5}>
+                  <MantineTextInput
+                    label="Địa chỉ"
+                    value={patient?.address || 'Chưa có thông tin'}
+                    readOnly
+                    variant='filled'
+                    size='md'
+                  />
+                </Grid.Col>
+                <Grid.Col span={3.5}>
+                  <MantineTextInput
+                    label="Email"
+                    value={patient?.email}
+                    readOnly
+                    variant='filled'
+                    size='md'
+                  />
+                </Grid.Col>
+                <Grid.Col span={3.5}>
+                  <MantineTextInput
+                    label="Số điện thoại"
+                    value={patient?.phone || 'Chưa có thông tin'}
+                    readOnly
+                    variant='filled'
+                    size='md'
+                  />
+                </Grid.Col>
+
+                <Grid.Col span={5}>
+                  <MantineTextInput
+                    label="Tiền sử bệnh"
+                    value={patient?.anamnesis || 'Chưa có thông tin'}
+                    readOnly
+                    variant='filled'
+                    size='md'
+                  />
+                </Grid.Col>
+                <Grid.Col span={3.5}>
+                  <MantineTextInput
+                    label="Số thẻ BHYT"
+                    value={patient?.healthInsuranceCode || 'Chưa có thông tin'}
+                    readOnly
+                    variant='filled'
+                    size='md'
+                  />
+                </Grid.Col>
+                <Grid.Col span={3.5}>
+                  <MantineTextInput
+                    label="Nhóm máu"
+                    value={patient?.bloodGroup}
+                    readOnly
+                    variant='filled'
+                    size='md'
+                  />
+                </Grid.Col>
+              </Grid>
+            </Flex>
+
+          </Paper>
+
+          <Paper p='md' radius='md' mt='sm' shadow="xs">
+            <Flex align='flex-end' gap={20}>
+              <Text fw={600} w={200}>Thông tin khám bệnh</Text>
+              <Grid w='100%'>
+                <Grid.Col span={4}>
+                  <MantineTextInput
+                    label="Ngày khám"
+                    value={dayjs(record?.dateCreated).format('DD/MM/YYYY')}
+                    readOnly
+                    variant='filled'
+                    size='md'
+                  />
+                </Grid.Col>
+                <Grid.Col span={4}>
+                  <MantineTextInput
+                    label="Bác sĩ thực hiện khám"
+                    value={doctor?.firstName + ' ' + doctor?.lastName}
+                    readOnly
+                    variant='filled'
+                    size='md'
+                  />
+                </Grid.Col>
+                <Grid.Col span={4}>
+                  <MantineTextInput
+                    label="Chuyên khoa"
+                    value={doctor?.specialize || 'Không có thông tin'}
+                    readOnly
+                    variant='filled'
+                    size='md'
+                  />
+                </Grid.Col>
+              </Grid>
+            </Flex>
+          </Paper>
+
+          <Paper p='md' radius='md' mt='sm' shadow="xs">
+            <Flex align='flex-end' gap={20}>
+              <Text fw={600} w={120}>Thông tin sinh hiệu</Text>
+
+              <Grid>
+                <Grid.Col span={3}>
+                  <NumberInput
+                    label="Chiều cao (cm)"
+                    name='height'
+                    control={control}
+                    leftSection={<GiBodyHeight size={18} />}
+                    size='md'
+                    readOnly={isComplete}
+                  />
+                </Grid.Col>
+                <Grid.Col span={3}>
+                  <NumberInput
+                    label="Cân nặng (kg)"
+                    name='weight'
+                    leftSection={<GiWeight size={18} />}
+                    control={control}
+                    size='md'
+                    readOnly={isComplete}
+                  />
+                </Grid.Col>
+                <Grid.Col span={3}>
+                  <NumberInput
+                    label="Huyết áp (mmHg)"
+                    name='bloodPressure'
+                    leftSection={<MdBloodtype size={18} />}
+                    control={control}
+                    readOnly={isComplete}
+                    size='md'
+                  />
+                </Grid.Col>
+                <Grid.Col span={3}>
+                  <NumberInput
+                    label="Nhiệt độ (°C)"
+                    name='temperature'
+                    control={control}
+                    leftSection={<FaTemperatureLow size={18} />}
+                    size='md'
+                    readOnly={isComplete}
+                  />
+                </Grid.Col>
+              </Grid>
+            </Flex>
+          </Paper>
+
+          <Paper p='md' radius='md' mt='sm' shadow="xs">
+            <MedicalService
+              recordId={Number(recordId)}
+              medicalServices={services || []}
+              onUpdateSuccess={() => refetch()}
             />
-            <Grid>
-              <Grid.Col span={5}>
-                <MantineTextInput
-                  label="Tên bệnh nhân"
-                  value={`${record?.patient?.firstName} ${record?.patient?.lastName}`}
-                  readOnly
-                  variant='filled'
-                  size='md'
-                />
-              </Grid.Col>
-              <Grid.Col span={3.5}>
-                <MantineTextInput
-                  label="Giới tính"
-                  value={record?.patient.gender === Gender.Male ? 'Nam'
-                    : record?.patient.gender === Gender.Female ? 'Nữ' : 'Chưa có thông tin'}
-                  readOnly
-                  variant='filled'
-                  size='md'
-                />
-              </Grid.Col>
-              <Grid.Col span={3.5}>
-                <MantineTextInput
-                  label="Tuổi"
-                  value={patient?.birthday
-                    ? dayjs().diff(patient?.birthday, 'year')
-                    : 'Chưa có thông tin'}
-                  readOnly
-                  variant='filled'
-                  size='md'
-                />
-              </Grid.Col>
+          </Paper>
 
-              <Grid.Col span={5}>
-                <MantineTextInput
-                  label="Địa chỉ"
-                  value={patient?.address || 'Chưa có thông tin'}
-                  readOnly
-                  variant='filled'
-                  size='md'
-                />
-              </Grid.Col>
-              <Grid.Col span={3.5}>
-                <MantineTextInput
-                  label="Email"
-                  value={patient?.email}
-                  readOnly
-                  variant='filled'
-                  size='md'
-                />
-              </Grid.Col>
-              <Grid.Col span={3.5}>
-                <MantineTextInput
-                  label="Số điện thoại"
-                  value={patient?.phone || 'Chưa có thông tin'}
-                  readOnly
-                  variant='filled'
-                  size='md'
-                />
-              </Grid.Col>
+          <Paper p='md' radius='md' mt='sm' shadow="xs">
+            <Flex align='center'>
+              <Text fw={600}>Kết quả khám bệnh</Text>
+              <Grid w={'100%'}>
+                <Grid.Col span={4}>
+                  <MantineTextarea
+                    label="Lý do khám"
+                    name='note'
+                    readOnly
+                    value={record?.note}
+                    size='md'
+                  />
+                </Grid.Col>
+                <Grid.Col span={4}>
+                  <Textarea
+                    label="Chẩn đoán"
+                    name='diagnose'
+                    control={control}
+                    required
+                    size='md'
+                    readOnly={isComplete}
+                  />
+                </Grid.Col>
+                <Grid.Col span={4}>
+                  <Textarea
+                    label="Kết luận"
+                    name='result'
+                    control={control}
+                    required
+                    size='md'
+                    readOnly={isComplete}
+                  />
+                </Grid.Col>
 
-              <Grid.Col span={5}>
-                <MantineTextInput
-                  label="Tiền sử bệnh"
-                  value={patient?.anamnesis || 'Chưa có thông tin'}
-                  readOnly
-                  variant='filled'
-                  size='md'
-                />
-              </Grid.Col>
-              <Grid.Col span={3.5}>
-                <MantineTextInput
-                  label="Số thẻ BHYT"
-                  value={patient?.healthInsuranceCode || 'Chưa có thông tin'}
-                  readOnly
-                  variant='filled'
-                  size='md'
-                />
-              </Grid.Col>
-              <Grid.Col span={3.5}>
-                <MantineTextInput
-                  label="Nhóm máu"
-                  value={patient?.bloodGroup}
-                  readOnly
-                  variant='filled'
-                  size='md'
-                />
-              </Grid.Col>
-            </Grid>
-          </Flex>
+              </Grid>
+            </Flex>
+          </Paper>
 
-        </Paper>
+          <Paper p='md' radius='md' mt='sm' shadow="xs">
+            <MedicalPrescription
+              recordId={Number(recordId)}
+              prescriptions={prescriptionDetail || []}
+              onUpdateSuccess={() => refetch()}
+            />
+          </Paper>
+        </Flex>
+      </Form>
 
-        <Paper p='md' radius='md' mt='sm' shadow="xs">
-          <Flex align='flex-end' gap={20}>
-            <Text fw={600} w={200}>Thông tin khám bệnh</Text>
-            <Grid w='100%'>
-              <Grid.Col span={4}>
-                <MantineTextInput
-                  label="Ngày khám"
-                  value={dayjs(record?.dateCreated).format('DD/MM/YYYY')}
-                  readOnly
-                  variant='filled'
-                  size='md'
-                />
-              </Grid.Col>
-              <Grid.Col span={4}>
-                <MantineTextInput
-                  label="Bác sĩ thực hiện khám"
-                  value={doctor?.firstName + ' ' + doctor?.lastName}
-                  readOnly
-                  variant='filled'
-                  size='md'
-                />
-              </Grid.Col>
-              <Grid.Col span={4}>
-                <MantineTextInput
-                  label="Chuyên khoa"
-                  value={doctor?.specialize || 'Không có thông tin'}
-                  readOnly
-                  variant='filled'
-                  size='md'
-                />
-              </Grid.Col>
-            </Grid>
-          </Flex>
-        </Paper>
-
-        <Paper p='md' radius='md' mt='sm' shadow="xs">
-          <Flex align='flex-end' gap={20}>
-            <Text fw={600} w={120}>Thông tin sinh hiệu</Text>
-
-            <Grid>
-              <Grid.Col span={3}>
-                <NumberInput
-                  label="Chiều cao (cm)"
-                  name='height'
-                  control={control}
-                  leftSection={<GiBodyHeight size={18} />}
-                  size='md'
-                />
-              </Grid.Col>
-              <Grid.Col span={3}>
-                <NumberInput
-                  label="Cân nặng (kg)"
-                  name='weight'
-                  leftSection={<GiWeight size={18} />}
-                  control={control}
-                  size='md'
-                />
-              </Grid.Col>
-              <Grid.Col span={3}>
-                <NumberInput
-                  label="Huyết áp (mmHg)"
-                  name='bloodPressure'
-                  leftSection={<MdBloodtype size={18} />}
-                  control={control}
-                  size='md'
-                />
-              </Grid.Col>
-              <Grid.Col span={3}>
-                <NumberInput
-                  label="Nhiệt độ (°C)"
-                  name='temperature'
-                  control={control}
-                  leftSection={<FaTemperatureLow size={18} />}
-                  size='md'
-                />
-              </Grid.Col>
-            </Grid>
-          </Flex>
-        </Paper>
-
-        <Paper p='md' radius='md' mt='sm' shadow="xs">
-          <MedicalService
-            recordId={Number(recordId)}
-            medicalServices={services || []}
-            onUpdateSuccess={() => refetch()}
+      {record && (
+        <div className='hidden'>
+          <MedicalRecordPrintContext
+            ref={recordRef}
+            record={record}
           />
-        </Paper>
-
-        <Paper p='md' radius='md' mt='sm' shadow="xs">
-          <Flex align='center'>
-            <Text fw={600}>Kết quả khám bệnh</Text>
-            <Grid w={'100%'}>
-              <Grid.Col span={4}>
-                <MantineTextarea
-                  label="Lý do khám"
-                  name='note'
-                  readOnly
-                  value={record?.note}
-                  size='md'
-                />
-              </Grid.Col>
-              <Grid.Col span={4}>
-                <Textarea
-                  label="Chẩn đoán"
-                  name='diagnose'
-                  control={control}
-                  required
-                  size='md'
-                />
-              </Grid.Col>
-              <Grid.Col span={4}>
-                <Textarea
-                  label="Kết luận"
-                  name='result'
-                  control={control}
-                  required
-                  size='md'
-                />
-              </Grid.Col>
-
-            </Grid>
-          </Flex>
-        </Paper>
-
-        <Paper p='md' radius='md' mt='sm' shadow="xs">
-          <MedicalPrescription
-            recordId={Number(recordId)}
-            prescriptions={prescriptionDetail || []}
-            onUpdateSuccess={() => refetch()}
-          />
-        </Paper>
-
-
-
-      </Flex>
-    </Form>
+        </div>
+      )}
+    </>
   );
 };
 

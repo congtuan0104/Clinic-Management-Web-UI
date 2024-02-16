@@ -12,7 +12,7 @@ import {
 } from '@mantine/core';
 import { useAppSelector } from '@/hooks';
 import { currentClinicSelector, staffInfoSelector, userInfoSelector } from '@/store';
-import { FaRegEdit, FaTrash } from 'react-icons/fa';
+import { FaEye, FaRegEdit, FaTrash } from 'react-icons/fa';
 import { authApi, medicalRecordApi } from '@/services';
 import { ClinusTable, ModalNewMedicalRecord } from "@/components";
 import { useQuery } from 'react-query';
@@ -152,7 +152,11 @@ const ExaminationPage = () => {
           }}
           renderRowActions={({ row }) => (
             <Flex align='center' justify='flex-end' gap={10}>
-              <Tooltip label='Tiến hành khám bệnh'>
+              <Tooltip label={
+                row.original.examinationStatus === MEDICO_RECORD_STATUS.DONE
+                  ? 'Xem hồ sơ khám bệnh'
+                  : 'Tiến hành khám bệnh'
+              }>
                 <ActionIcon
                   variant='outline'
                   color='blue.8'
@@ -161,7 +165,11 @@ const ExaminationPage = () => {
                   to={`${PATHS.CLINIC_EXAMINATION}/${row.id}`}
                 // onClick={() => handleOpenUpdateModal(row.original)} // xử lý khi chọn sửa dịch vụ
                 >
-                  <MdOutlineStart />
+                  {
+                    row.original.examinationStatus === MEDICO_RECORD_STATUS.DONE
+                      ? <FaEye /> : <MdOutlineStart />
+                  }
+
                 </ActionIcon>
               </Tooltip>
               {/* <ActionIcon

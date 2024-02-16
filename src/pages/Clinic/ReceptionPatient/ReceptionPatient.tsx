@@ -22,8 +22,8 @@ import { notifications } from '@mantine/notifications';
 import { modals } from '@mantine/modals';
 import { Link } from 'react-router-dom';
 import { PATHS } from '@/config';
-import { MdEmail } from 'react-icons/md';
-import { Gender } from '@/enums';
+import { MdEmail, MdOutlineAttachMoney, MdOutlineMoneyOff } from 'react-icons/md';
+import { Gender, MEDICO_RECORD_STATUS } from '@/enums';
 import dayjs from 'dayjs';
 import { TiDocumentAdd } from 'react-icons/ti';
 
@@ -78,12 +78,19 @@ const ReceptionPatientPage = () => {
         enableSorting: false,
         accessorFn: (dataRow) => <div className='flex flex-col gap-2'>
           {
-            dataRow.examinationStatus === 0 ? <Badge color='gray.5'>Chờ khám</Badge> :
-              dataRow.examinationStatus === 1 ? <Badge color='yello.5'>Đang khám</Badge> :
-                dataRow.examinationStatus === 2 ? <Badge color='tea.7'>Đã khám xong</Badge> : <></>
+            (dataRow.examinationStatus === MEDICO_RECORD_STATUS.WAITING) ?
+              <Badge color='gray.5'>Chờ khám</Badge>
+              : (dataRow.examinationStatus === MEDICO_RECORD_STATUS.EXAMINATING) ?
+                <Badge color='blue'>Đang khám</Badge>
+                : (dataRow.examinationStatus === MEDICO_RECORD_STATUS.DONE) ?
+                  <Badge color='green'>Đã khám</Badge>
+                  : (dataRow.examinationStatus === MEDICO_RECORD_STATUS.PAUSE) ?
+                    <Badge color='yellow'>Tạm dừng</Badge>
+                    : (dataRow.examinationStatus === MEDICO_RECORD_STATUS.CANCEL) ?
+                      <Badge color='red.5'>Hủy khám</Badge> : <></>
           }
-          {dataRow.paymentStatus === 0 ? <Badge color='gray.5'>Chưa thanh toán</Badge> :
-            dataRow.paymentStatus === 1 ? <Badge color='green.5'>Đã thanh toán</Badge> : <></>
+          {dataRow.paymentStatus === 0 ? <Badge leftSection={<MdOutlineMoneyOff />} color='gray.5'>Chưa thanh toán</Badge> :
+            dataRow.paymentStatus === 1 ? <Badge leftSection={<MdOutlineAttachMoney />} color='green'>Đã thanh toán</Badge> : <></>
           }
         </div>
 

@@ -92,7 +92,7 @@ const ModalCreateGroupChat = ({ isOpen, onClose, onSuccess }: IProps) => {
           <MultiSelect
             label="Thêm thành viên vào nhóm chat"
             data={staffs ? staffs.map((staff) => ({
-              value: staff.id.toString(),
+              value: staff.users.id.toString(),
               label: staff.users.firstName + ' ' + staff.users.lastName,
             })) : []}
             searchable

@@ -6,7 +6,7 @@ interface IProps {
   record: IMedicalRecord;
 }
 
-const MedicalRecordPrintContext = forwardRef<HTMLDivElement, IProps>((props, ref) => {
+const PrescriptionPrintContext = forwardRef<HTMLDivElement, IProps>((props, ref) => {
   const { record } = props;
 
   return <div ref={ref} className="border border-dash border-gray-400 rounded-md py-10 px-16">
@@ -22,7 +22,7 @@ const MedicalRecordPrintContext = forwardRef<HTMLDivElement, IProps>((props, ref
       </div>
     </div>
     <Text ta='center' fz={34} fw={600} mt={10}>
-      HỒ SƠ BỆNH ÁN
+      ĐƠN THUỐC
     </Text>
     <Text ta='center' >
       <b>Số hồ sơ: </b>{record?.id}
@@ -32,4 +32,4 @@ const MedicalRecordPrintContext = forwardRef<HTMLDivElement, IProps>((props, ref
   </div>
 })
 
-export default MedicalRecordPrintContext;
+export default PrescriptionPrintContext;
