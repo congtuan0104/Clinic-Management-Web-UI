@@ -198,7 +198,7 @@ const ClinicManagePage = () => {
               <Paper shadow="xs" radius='md' p='lg' key={clinic.id}>
                 <div className='flex justify-between'>
                   <div>
-                    <Text fw='semibold' tt='uppercase'>{clinic.name}</Text>
+                    <Text fw={600} c='primary.3' tt='uppercase'>{clinic.name}</Text>
                     <Text>{clinic.address}</Text>
                     {renderAction(clinic)}
 

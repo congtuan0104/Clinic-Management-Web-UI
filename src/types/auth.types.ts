@@ -53,7 +53,7 @@ export interface IChangePasswordRequest {
   isReset?: boolean;
 }
 
-export interface IChangeProfileRequest{
+export interface IChangeProfileRequest {
   firstName?: string;
   lastName?: string;
   gender?: Gender;

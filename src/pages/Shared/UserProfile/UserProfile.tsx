@@ -1,4 +1,8 @@
-import { Paper, Text, Group, Avatar, Input, Divider, Button, Flex, Modal, Center, Stack, InputWrapper } from '@mantine/core';
+import {
+  Paper, Text, Group, Avatar, Input, Divider,
+  Button, Flex, Modal, Center, Stack,
+  TextInput as MantineTextInput
+} from '@mantine/core';
 import { PasswordInput, TextInput, DateInput, Select } from 'react-hook-form-mantine';
 import { useDisclosure } from '@mantine/hooks';
 import { cookies } from '@/utils';
@@ -379,11 +383,12 @@ const UserProfilePage = () => {
                     ]}
                   />
                 </Group>
-                <InputWrapper
+                <MantineTextInput
                   label={<Text fw={700}>Email</Text>}
-                >
-                  <Input placeholder={userInfo?.email} readOnly />
-                </InputWrapper>
+                  name='email'
+                  value={userInfo?.email}
+                  readOnly
+                />
                 <TextInput
                   label={<Text fw={700}>Số điện thoại</Text>}
                   name='phone'
