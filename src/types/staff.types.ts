@@ -86,9 +86,9 @@ export interface ICreateStaffPayload {
 }
 
 export interface ISchedule {
-  id: number;
+  id?: number;
   day: number;
-  staffId: number;
-  startTime: string;
-  endTime: string;
+  staffId?: number;
+  startTime?: string;
+  endTime?: string;
 }

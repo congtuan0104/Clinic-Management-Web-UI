@@ -15,6 +15,10 @@ export const staffApi = {
     return axiosClient.get(`/staffs/${staffId}/schedule`);
   },
 
+  updateSchedule(staffId: string, data: ISchedule[]): Promise<IApiResponse<ISchedule[]>> {
+    return axiosClient.put(`/staffs/${staffId}/schedule`, data);
+  },
+
   updateStaffInfo(staffId: string, data: IUpdateStaffInfoRequest): Promise<any> {
     return axiosClient.put(`/staffs/${staffId}`, data);
   },

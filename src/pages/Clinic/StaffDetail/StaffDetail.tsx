@@ -1,7 +1,8 @@
 import React, { useState, MouseEvent, useMemo, useEffect } from 'react';
 import { Text, Flex, Button, Indicator, Divider, Center, Stack, Box, Title, Grid, Group, SimpleGrid, Avatar } from '@mantine/core';
 import { Form, useForm } from 'react-hook-form';
-import { TextInput, Select, TimeInput } from 'react-hook-form-mantine';
+import { TimeInput } from '@mantine/dates';
+import { TextInput, Select} from 'react-hook-form-mantine';
 import { CgProfile } from 'react-icons/cg';
 import { FaRegCalendar } from 'react-icons/fa';
 import { FaRegClock } from "react-icons/fa6";
@@ -17,6 +18,7 @@ import { clinicApi, staffApi } from '@/services';
 import { notifications } from '@mantine/notifications';
 import { Label } from 'recharts';
 import { ISchedule } from '@/types';
+import dayjs from 'dayjs';
 
 interface IStaff {
   id_staff?: string,
@@ -44,9 +46,9 @@ const infoschema = yup.object().shape({
 });
 
 const scheduleschema = yup.object().shape({
-    day: yup.number(),
-    startTime: yup.string(),
-    endTime: yup.string(),
+  day: yup.number(),
+  startTime: yup.string(),
+  endTime: yup.string(),
 });
 
 
@@ -58,9 +60,35 @@ const StaffDetail = () => {
     () => staffApi.getSchedule(String(staff?.id)).then(res => res.data)
   );
 
+  const [newschedules, setNewSchedules] = useState<Array<ISchedule>>(() => {
+    const newschedules: Array<ISchedule> = [];
+    for (let i = 0; i < 7; i++) {
+      newschedules.push({
+        day: i + 1,
+        startTime: '',
+        endTime: '',
+      });
+    }
+
+
+    return newschedules;
+  });
+  // console.log(schedules)
+  // console.log(tempschedules)
+
+  useEffect(() => {
+    if (schedules) {
+      schedules.map((day, index) => {
+        newschedules[day.day - 1] = day
+      })
+    }
+  }, [schedules]);
+
+
   // schedules!.sort((a, b) => a.day - b.day);
 
-  console.log(schedules);
+  // console.log(schedules);
+
 
   const daysOfWeek = [
     { label: 'Chủ Nhật', value: '1' },
@@ -72,7 +100,23 @@ const StaffDetail = () => {
     { label: 'Thứ 7', value: '7' },
   ];
 
-  
+  // function printDaysOfWeek() {
+  //   daysOfWeek.map((day, index) => {
+  //     if (schedules && schedules[index - 1]) {
+  //       console.log(schedules[index - 1].startTime);
+  //       console.log('-');
+  //       console.log(schedules[index - 1].endTime);
+  //     } else {
+  //       console.log('Schedule data not available for', day.label);
+  //     }
+  //   });
+  // }
+
+  // // Call the function to print the daysOfWeek
+  // printDaysOfWeek();
+
+
+
   const currentClinic = useAppSelector(currentClinicSelector);
   const [selectedTab, setSelectedTab] = useState<'info' | 'schedule'>('info');
   const [isUpdateInfo, setIsUpdateInfo] = useState<boolean>(false);
@@ -130,35 +174,63 @@ const StaffDetail = () => {
           firstName: data.firstName,
           lastName: data.lastName,
           gender: data.gender,
-        phone: data.phoneNumber,
-        email: data.email,
-      address:data.address,}
+          phone: data.phoneNumber,
+          email: data.email,
+          address: data.address,
+        }
 
       });
 
       if (res.status) {
         // Password change successful
         notifications.show({
-          message: 'Đổi thông tin thành công',
+          message: 'Đổi thông tin nhân viên thành công',
           color: 'green',
         })
         setIsUpdateInfo(false);
       } else {
         notifications.show({
-          message: res.message || 'Đổi thông tin không thành công',
+          message: res.message || 'Đổi thông tin nhân viên không thành công',
           color: 'red',
         });
       }
     } catch (error) {
       notifications.show({
-        message: 'Đổi thông tin không thành công',
+        message: 'Đổi thông tin nhân viên không thành công',
         color: 'red',
       });
     }
   }
 
-  const onScheduleSubmit = async (data: ISchedule[]) => {
-    console.log(data);
+  const onScheduleSubmit = async () => {
+    // const Schedule = newschedules.filter(obj => obj.startTime && obj.endTime).map(obj => ({
+    //   day: obj.day,
+    //   startTime: obj.startTime,
+    //   endTime: obj.endTime,
+    // }));
+    // try {
+    //   const res = await staffApi.updateSchedule(staffId ?? '', Schedule);
+
+    //   if (res.status) {
+    //     // Password change successful
+    //     notifications.show({
+    //       message: 'Đổi thông tin lịch làm việc thành công',
+    //       color: 'green',
+    //     })
+    //     setIsUpdateSchedule(false);
+    //   } else {
+    //     notifications.show({
+    //       message: res.message || 'Đổi thông tin lịch làm việc không thành công',
+    //       color: 'red',
+    //     });
+    //   }
+    // } catch (error) {
+    //   notifications.show({
+    //     message: 'Đổi thông tin lịch làm việc không thành công',
+    //     color: 'red',
+    //   });
+    // }
+    console.log(newschedules);
   };
 
   return (
@@ -202,124 +274,124 @@ const StaffDetail = () => {
 
             <Grid align='center' justify='center'>
               <Grid.Col>
-                <Group justify='flex-start' align='flex-start'>              
-              <Avatar
-                  src={staff?.users.avatar}
-                  size={150}
-                  radius={150}
-                  mr={10}
-                  alt="no image here"
-                  color={'primary'}
-                />
-                <Box maw={700} mx="auto">
-                  <Form control={controlInfo} onSubmit={e => onInfoSubmit(e.data)} onError={e => console.log(e)}>
-                    <TextInput label="ID nhân viên"
-                      // disabled
-                      name='id_staff'
-                      defaultValue={staffId}
-                      control={controlInfo}
-                      disabled
-                    />
-                    <Grid>
-                    <Grid.Col span={6}>
-                        <TextInput
-                          label="Họ"
-                          disabled={!isUpdateInfo}
-                          mt="md"
-                          w={'100%'}
-                          name='firstName'
-                          control={controlInfo}
-                        />
-                      </Grid.Col>
-                      <Grid.Col span={6}>
-                      <TextInput
-                          label="Tên"
-                          disabled={!isUpdateInfo}
-                          mt="md"
-                          w={'100%'}
-                          name='lastName'
-                          control={controlInfo}
-                        />
-                      </Grid.Col>
-                      <Grid.Col span={6}>
-                        <TextInput
-                          label="SĐT liên lạc"
-                          disabled={!isUpdateInfo}
-                          mt="md"
-                          w={'100%'}
-                          name='phoneNumber'
-                          control={controlInfo}
-                        />
-                      </Grid.Col>
-                      <Grid.Col span={6}>
-                        <Select
-                          label="Giới tính"
-                          disabled={!isUpdateInfo}
-                          mt="md"
-                          w={'100%'}
-                          name='gender'
-                          control={controlInfo}
-                          defaultValue={staff?.users.gender?.toString()}
-                          data={[
-                            { label: 'Nam', value: '1' },
-                            { label: 'Nữ', value: '0' },
-                          ]}
-                        />
-                      </Grid.Col>
-                      <Grid.Col span={9}>
-                        <TextInput
-                          label="Chuyên khoa"
-                          disabled={!isUpdateInfo}
-                          mt="md"
-                          w={'100%'}
-                          name='specialize'
-                          control={controlInfo}
-                        />
-                      </Grid.Col>
-                      <Grid.Col span={3}>
-                        <TextInput
-                          label="Năm kinh nghiệm"
-                          disabled={!isUpdateInfo}
-                          mt="md"
-                          w={'100%'}
-                          name='experience'
-                          control={controlInfo}
-                        />
-                      </Grid.Col>
-                    </Grid>
-
-                    <Grid>
-                      <TextInput
-                        label="Địa chỉ"
-                        disabled={!isUpdateInfo}
-                        mt="md"
-                        name='address'
-                        w={'100%'}
-                        px={8}
-                        defaultValue={staff?.users.address}
+                <Group justify='flex-start' align='flex-start'>
+                  <Avatar
+                    src={staff?.users.avatar}
+                    size={150}
+                    radius={150}
+                    mr={10}
+                    alt="no image here"
+                    color={'primary'}
+                  />
+                  <Box maw={700} mx="auto">
+                    <Form control={controlInfo} onSubmit={e => onInfoSubmit(e.data)} onError={e => console.log(e)}>
+                      <TextInput label="ID nhân viên"
+                        // disabled
+                        name='id_staff'
+                        defaultValue={staffId}
                         control={controlInfo}
+                        disabled
                       />
+                      <Grid>
+                        <Grid.Col span={6}>
+                          <TextInput
+                            label="Họ"
+                            disabled={!isUpdateInfo}
+                            mt="md"
+                            w={'100%'}
+                            name='firstName'
+                            control={controlInfo}
+                          />
+                        </Grid.Col>
+                        <Grid.Col span={6}>
+                          <TextInput
+                            label="Tên"
+                            disabled={!isUpdateInfo}
+                            mt="md"
+                            w={'100%'}
+                            name='lastName'
+                            control={controlInfo}
+                          />
+                        </Grid.Col>
+                        <Grid.Col span={6}>
+                          <TextInput
+                            label="SĐT liên lạc"
+                            disabled={!isUpdateInfo}
+                            mt="md"
+                            w={'100%'}
+                            name='phoneNumber'
+                            control={controlInfo}
+                          />
+                        </Grid.Col>
+                        <Grid.Col span={6}>
+                          <Select
+                            label="Giới tính"
+                            disabled={!isUpdateInfo}
+                            mt="md"
+                            w={'100%'}
+                            name='gender'
+                            control={controlInfo}
+                            defaultValue={staff?.users.gender?.toString()}
+                            data={[
+                              { label: 'Nam', value: '1' },
+                              { label: 'Nữ', value: '0' },
+                            ]}
+                          />
+                        </Grid.Col>
+                        <Grid.Col span={9}>
+                          <TextInput
+                            label="Chuyên khoa"
+                            disabled={!isUpdateInfo}
+                            mt="md"
+                            w={'100%'}
+                            name='specialize'
+                            control={controlInfo}
+                          />
+                        </Grid.Col>
+                        <Grid.Col span={3}>
+                          <TextInput
+                            label="Năm kinh nghiệm"
+                            disabled={!isUpdateInfo}
+                            mt="md"
+                            w={'100%'}
+                            name='experience'
+                            control={controlInfo}
+                          />
+                        </Grid.Col>
+                      </Grid>
 
-                    </Grid>
-                    <Divider my="md" mt={40} />
-                    <Group justify="flex-end" mt="lg">
-                      {
-                        isUpdateInfo ? (
-                          <Button type="submit">Lưu thay đổi</Button>
-                        ) : (
-                          <></>
-                        )
-                      }
-                      {isUpdateInfo ?
-                        (
-                          <Button variant="outline" color='gray.6' onClick={handleOnClickEditInfo}>Hủy thay đổi</Button>
-                        ) :
-                        (
-                          <Button onClick={handleOnClickEditInfo}>Chỉnh sửa</Button>
-                        )}
-                    </Group>
-                  </Form>
-                </Box>
+                      <Grid>
+                        <TextInput
+                          label="Địa chỉ"
+                          disabled={!isUpdateInfo}
+                          mt="md"
+                          name='address'
+                          w={'100%'}
+                          px={8}
+                          defaultValue={staff?.users.address}
+                          control={controlInfo}
+                        />
+
+                      </Grid>
+                      <Divider my="md" mt={40} />
+                      <Group justify="flex-end" mt="lg">
+                        {
+                          isUpdateInfo ? (
+                            <Button type="submit">Lưu thay đổi</Button>
+                          ) : (
+                            <></>
+                          )
+                        }
+                        {isUpdateInfo ?
+                          (
+                            <Button variant="outline" color='gray.6' onClick={handleOnClickEditInfo}>Hủy thay đổi</Button>
+                          ) :
+                          (
+                            <Button onClick={handleOnClickEditInfo}>Chỉnh sửa</Button>
+                          )}
+                      </Group>
+                    </Form>
+                  </Box>
                 </Group>
               </Grid.Col>
 
@@ -337,7 +409,6 @@ const StaffDetail = () => {
             py="20px"
             style={{ borderRadius: '10px' }}
           >
-          <Form control={controlSchedule} onSubmit={e => onScheduleSubmit(e.data)} onError={e => console.log(e)}>
             <Group>
               <Title order={6} size={19}>Lịch làm việc</Title>
             </Group>
@@ -351,16 +422,28 @@ const StaffDetail = () => {
                   <Group style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
                     <TimeInput
                       disabled={!isUpdateSchedule}
-                      defaultValue={schedules ? schedules[index-1].startTime : undefined}
-                      name={`schedule[${index}].startTime` as `${number}.startTime`} 
-                      control={controlSchedule}
+                      value={newschedules && newschedules[index] ? newschedules[index].startTime : ''}
+                      name={`schedule[${index}].startTime` as `${number}.startTime`}
+                      onChange={(value) => setNewSchedules(prev => {
+                        const newSchedule = [...prev];
+                        newSchedule[index].startTime = String(value);
+                        return newSchedule;
+                      })
+                      }
                     />
                     <Text>-</Text>
                     <TimeInput
                       disabled={!isUpdateSchedule}
-                      defaultValue={schedules ? schedules[index-1].endTime : undefined}
-                      name={`schedule[${index}].endTime` as `${number}.endTime`} 
-                      control={controlSchedule}
+                      value={newschedules && newschedules[index] ? newschedules[index].endTime : ''}
+                      name={`schedule[${index}].endTime` as `${number}.endTime`}
+                      onChange={(event) => {setNewSchedules(prev => {
+                        const value = event.target.value;
+                        const newSchedule = [...prev];
+                        newSchedule[index].endTime = value;
+                        return newSchedule;
+                      })
+                    console.log(event.target.value)}
+                      }
                     />
                   </Group>
                 </div>
@@ -368,7 +451,7 @@ const StaffDetail = () => {
             </SimpleGrid>
             <Group my={20} justify="flex-end" mt="lg" mr={'23%'}>
               {isUpdateSchedule ? (
-                <Button type="submit">
+                <Button onClick={() => onScheduleSubmit()}>
                   Lưu thay đổi
                 </Button>
               ) : (
@@ -384,7 +467,6 @@ const StaffDetail = () => {
                 </Button>
               )}
             </Group>
-            </Form>
           </Box>
         )}
       </Stack>
