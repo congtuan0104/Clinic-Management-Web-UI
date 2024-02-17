@@ -69,12 +69,9 @@ const StaffDetail = () => {
         endTime: '',
       });
     }
-
-
     return newschedules;
   });
-  // console.log(schedules)
-  // console.log(tempschedules)
+
 
   useEffect(() => {
     if (schedules) {
@@ -83,12 +80,6 @@ const StaffDetail = () => {
       })
     }
   }, [schedules]);
-
-
-  // schedules!.sort((a, b) => a.day - b.day);
-
-  // console.log(schedules);
-
 
   const daysOfWeek = [
     { label: 'Chủ Nhật', value: '1' },
@@ -99,22 +90,6 @@ const StaffDetail = () => {
     { label: 'Thứ 6', value: '6' },
     { label: 'Thứ 7', value: '7' },
   ];
-
-  // function printDaysOfWeek() {
-  //   daysOfWeek.map((day, index) => {
-  //     if (schedules && schedules[index - 1]) {
-  //       console.log(schedules[index - 1].startTime);
-  //       console.log('-');
-  //       console.log(schedules[index - 1].endTime);
-  //     } else {
-  //       console.log('Schedule data not available for', day.label);
-  //     }
-  //   });
-  // }
-
-  // // Call the function to print the daysOfWeek
-  // printDaysOfWeek();
-
 
 
   const currentClinic = useAppSelector(currentClinicSelector);
@@ -203,34 +178,33 @@ const StaffDetail = () => {
   }
 
   const onScheduleSubmit = async () => {
-    // const Schedule = newschedules.filter(obj => obj.startTime && obj.endTime).map(obj => ({
-    //   day: obj.day,
-    //   startTime: obj.startTime,
-    //   endTime: obj.endTime,
-    // }));
-    // try {
-    //   const res = await staffApi.updateSchedule(staffId ?? '', Schedule);
+    const Schedule = newschedules.filter(obj => obj.startTime && obj.endTime).map(obj => ({
+      day: obj.day,
+      startTime: obj.startTime,
+      endTime: obj.endTime,
+    }));
+    try {
+      const res = await staffApi.updateSchedule(staffId ?? '', Schedule);
 
-    //   if (res.status) {
-    //     // Password change successful
-    //     notifications.show({
-    //       message: 'Đổi thông tin lịch làm việc thành công',
-    //       color: 'green',
-    //     })
-    //     setIsUpdateSchedule(false);
-    //   } else {
-    //     notifications.show({
-    //       message: res.message || 'Đổi thông tin lịch làm việc không thành công',
-    //       color: 'red',
-    //     });
-    //   }
-    // } catch (error) {
-    //   notifications.show({
-    //     message: 'Đổi thông tin lịch làm việc không thành công',
-    //     color: 'red',
-    //   });
-    // }
-    console.log(newschedules);
+      if (res.status) {
+        // Password change successful
+        notifications.show({
+          message: 'Đổi thông tin lịch làm việc thành công',
+          color: 'green',
+        })
+        setIsUpdateSchedule(false);
+      } else {
+        notifications.show({
+          message: res.message || 'Đổi thông tin lịch làm việc không thành công',
+          color: 'red',
+        });
+      }
+    } catch (error) {
+      notifications.show({
+        message: 'Đổi thông tin lịch làm việc không thành công',
+        color: 'red',
+      });
+    }
   };
 
   return (
@@ -424,9 +398,10 @@ const StaffDetail = () => {
                       disabled={!isUpdateSchedule}
                       value={newschedules && newschedules[index] ? newschedules[index].startTime : ''}
                       name={`schedule[${index}].startTime` as `${number}.startTime`}
-                      onChange={(value) => setNewSchedules(prev => {
+                      onChange={(event) => setNewSchedules(prev => {
+                        const value = event.target.value;
                         const newSchedule = [...prev];
-                        newSchedule[index].startTime = String(value);
+                        newSchedule[index].startTime = value;
                         return newSchedule;
                       })
                       }
@@ -442,7 +417,7 @@ const StaffDetail = () => {
                         newSchedule[index].endTime = value;
                         return newSchedule;
                       })
-                    console.log(event.target.value)}
+                      }
                       }
                     />
                   </Group>
