@@ -235,7 +235,7 @@ const NewsManagementPage = () => {
                 news.map((newsItem) => (
                   <Stack className='rounded-md p-3 border border-solid border-primary-100 bg-white' key={newsItem.id}>
                     <Group align='flex-start'>
-                      <Box w={150} h={100}>
+                      <Box w={150} h={100} onClick={() => handleSelectedNews(newsItem)}>
                         <Image src={newsItem.logo} fallbackSrc={NewsLogoDefault} height={100} radius={'md'} />
                       </Box>
                       <Stack gap={5}>
