@@ -79,9 +79,9 @@ const StaffDetail = () => {
     defaultValues: useMemo(() => {
       return {
         id_staff: staffId,
-        phoneNumber: staff?.phoneNumber,
+        phoneNumber: staff?.users.phone,
         // gender: staff?.gender,
-        address: staff?.address,
+        address: staff?.users.address,
         specialize: staff?.specialize,
         experience: staff?.experience,
       }
@@ -302,7 +302,7 @@ const StaffDetail = () => {
                           w={'100%'}
                           name='gender'
                           control={controlInfo}
-                          defaultValue={staff?.gender?.toString()}
+                          defaultValue={staff?.users.gender?.toString()}
                           data={[
                             { label: 'Nam', value: '1' },
                             { label: 'Nữ', value: '0' },
@@ -339,7 +339,7 @@ const StaffDetail = () => {
                         name='address'
                         w={'100%'}
                         px={8}
-                        defaultValue={staff?.address}
+                        defaultValue={staff?.users.address}
                         control={controlInfo}
                       />
 
