@@ -17,6 +17,13 @@ export interface INews {
   createdAt?: string;
   updatedAt?: string;
 }
+export interface ICreateNewsRequest {
+  title?: string;
+  content?: string;
+  logo?: string;
+  clinicId: string;
+  isShow: boolean;
+}
 
 export interface IUpdateNewsRequest {
   title: string;

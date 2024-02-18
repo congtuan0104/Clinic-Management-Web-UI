@@ -29,6 +29,8 @@ import { ref } from "firebase/storage";
 import { v4 } from 'uuid';
 import { getDownloadURL, uploadBytes } from 'firebase/storage';
 import { MdWarning } from "react-icons/md";
+import { useAppSelector } from '@/hooks';
+import { currentClinicSelector } from '@/store';
 
 type ImageUploadType = File | null;
 
@@ -46,10 +48,11 @@ const schema = yup.object().shape({
 
 const NewsManagementPage = () => {
   const pageSize = 5;
+  const currentClinic = useAppSelector(currentClinicSelector);
   const [isUpdate, setIsUpdate] = useState<boolean>(false);
   const [activePage, setPage] = useState(1);
   const [searchValue, setSearchValue] = useDebouncedState('', 500);
-  const { data: news, isFetching, refetch } = useQuery(['news', activePage, searchValue], () =>
+  const { data: news, isFetching, refetch } = useQuery(['news', activePage, searchValue, currentClinic], () =>
     getNews()
   );
   const [selectedNews, setSelectedNews] = useState<INews | null>(null);
@@ -90,9 +93,26 @@ const NewsManagementPage = () => {
     resetForm()
   }, [selectedNews]);
 
+  const createNews = async () => {
+    try {
+      const response = await newsApi.createNews({
+        title: 'Tin tức mới',
+        content: 'Bài viết chưa có nội dung',
+        clinicId: currentClinic?.id ?? '',
+        isShow: false,
+      });
+      refetch();
+      setSelectedNews(response.data ?? null);
+      return response.data;
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const getNews = async () => {
     try {
       const response = await newsApi.getNews({
+        clinicId: currentClinic?.id,
         title: searchValue,
         pageSize: pageSize,
         pageIndex: activePage - 1,
@@ -155,7 +175,7 @@ const NewsManagementPage = () => {
     }
     refetch();
     setSelectedNews(null);
-
+    
   }
 
   const handleSelectedNews = (newsItem: INews) => {
@@ -224,7 +244,7 @@ const NewsManagementPage = () => {
             w={300}
             onChange={(event) => setSearchValue(event.currentTarget.value)}
           />
-          <Button color='secondary.3'>Thêm tin mới</Button>
+          <Button color='secondary.3' onClick={() => {createNews(); setSelectedNews}}>Thêm tin mới</Button>
         </Flex>
       </Group>
       <Stack>
