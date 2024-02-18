@@ -1,4 +1,4 @@
-import { Title, Button, Flex, Text, Box, Center, Stack, Divider, Grid, NumberInput, Group, Image, CopyButton, ActionIcon, Tooltip } from "@mantine/core"
+import { Title, Button, Flex, Text, Box, Center, Stack, Divider, Grid, NumberInput, Group, Image, CopyButton, ActionIcon, Tooltip, TypographyStylesProvider } from "@mantine/core"
 import { RichTextEditor, Link } from '@mantine/tiptap';
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Form, useForm } from "react-hook-form";
@@ -378,7 +378,10 @@ export default function ClinicDetail() {
                       <RichTextEditor.Content style={{ minHeight: '8em' }} />
                     </RichTextEditor>
                   ) : (
-                    <div className="p-2 bg-black-10 w-full rounded-md" dangerouslySetInnerHTML={{ __html: currentClinic?.description || '' }}></div>
+                    <TypographyStylesProvider>
+                      <div className="p-2 bg-black-10 w-full rounded-md"
+                        dangerouslySetInnerHTML={{ __html: currentClinic?.description || '' }} />
+                    </TypographyStylesProvider>
                   )}
 
 
