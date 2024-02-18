@@ -23,7 +23,17 @@ export interface IClinicStaff {
     id: number;
     name: string;
     description: string;
-    permissions: IRolePermission[];
+    rolePermissions: [{
+      permission: {
+        id: number;
+        optionName: string;
+        description?: string;
+        isServiceOption?: boolean;
+        isActive?: boolean;
+        createdAt?: string;
+        updatedAt?: string;
+      }
+    }]
   };
   isAcceptInvite: boolean;
   isDisabled: boolean;
@@ -53,6 +63,7 @@ export interface IClinicStaffDetail {
 export interface IUpdateStaffInfoRequest {
   experience?: number;
   specialize?: string;
+  description?: string;
   userInfo: {
     id?: string;
     email?: string;

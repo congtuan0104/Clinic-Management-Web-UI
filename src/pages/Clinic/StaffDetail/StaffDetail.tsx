@@ -1,8 +1,8 @@
 import React, { useState, MouseEvent, useMemo, useEffect } from 'react';
-import { Text, Flex, Button, Indicator, Divider, Center, Stack, Box, Title, Grid, Group, SimpleGrid, Avatar } from '@mantine/core';
+import { Text, Flex, Button, Indicator, Divider, Center, Stack, Box, Title, Grid, Group, SimpleGrid, Avatar, Badge } from '@mantine/core';
 import { Form, useForm } from 'react-hook-form';
 import { TimeInput } from '@mantine/dates';
-import { TextInput, Select} from 'react-hook-form-mantine';
+import { TextInput, Select, DateInput } from 'react-hook-form-mantine';
 import { CgProfile } from 'react-icons/cg';
 import { FaRegCalendar } from 'react-icons/fa';
 import { FaRegClock } from "react-icons/fa6";
@@ -17,19 +17,23 @@ import { useQuery } from 'react-query';
 import { clinicApi, staffApi } from '@/services';
 import { notifications } from '@mantine/notifications';
 import { Label } from 'recharts';
-import { ISchedule } from '@/types';
+import { ISchedule, IClinicStaff } from '@/types';
 import dayjs from 'dayjs';
+import { FaCalendarDay } from 'react-icons/fa';
 
 interface IStaff {
   id_staff?: string,
   firstName?: string,
   lastName?: string,
   phoneNumber?: string,
+  roleName?: string,
   email?: string,
   gender?: number,
+  birthday?: Date,
   address?: string,
   specialize?: string,
   experience?: number,
+  description?: string,
 }
 
 
@@ -38,11 +42,14 @@ const infoschema = yup.object().shape({
   firstName: yup.string(),
   lastName: yup.string(),
   email: yup.string(),
+  roleName: yup.string(),
   phoneNumber: yup.string(),
+  birthday: yup.date(),
   gender: yup.number(),
   address: yup.string(),
   specialize: yup.string(),
   experience: yup.number(),
+  description: yup.string(),
 });
 
 const scheduleschema = yup.object().shape({
@@ -105,11 +112,13 @@ const StaffDetail = () => {
         firstName: staff?.users.firstName,
         lastName: staff?.users.lastName,
         phoneNumber: staff?.users.phone,
+        roleName: staff?.role.name,
         email: staff?.users.email,
         // gender: staff?.gender,
         address: staff?.users.address,
         specialize: staff?.specialize,
         experience: staff?.experience,
+        description: staff?.description,
       }
     }, [staffId]),
   });
@@ -144,7 +153,10 @@ const StaffDetail = () => {
 
   const onInfoSubmit = async (data: IStaff) => {
     try {
-      const res = await staffApi.updateStaffInfo(staffId ?? '', {
+      const updateInfo: any = {
+        specialize: data.specialize,
+        experience: data.experience,
+        description: data.description,
         userInfo: {
           firstName: data.firstName,
           lastName: data.lastName,
@@ -153,8 +165,13 @@ const StaffDetail = () => {
           email: data.email,
           address: data.address,
         }
+      }
 
-      });
+      if (data.birthday) {
+        updateInfo.userInfo.birthday = data.birthday;
+      }
+
+      const res = await staffApi.updateStaffInfo(staffId ?? '', updateInfo);
 
       if (res.status) {
         // Password change successful
@@ -259,10 +276,9 @@ const StaffDetail = () => {
                   />
                   <Box maw={700} mx="auto">
                     <Form control={controlInfo} onSubmit={e => onInfoSubmit(e.data)} onError={e => console.log(e)}>
-                      <TextInput label="ID nhân viên"
-                        // disabled
-                        name='id_staff'
-                        defaultValue={staffId}
+                      <TextInput label="Email"
+                        name='email'
+                        defaultValue={staff?.users.email}
                         control={controlInfo}
                         disabled
                       />
@@ -287,6 +303,21 @@ const StaffDetail = () => {
                             control={controlInfo}
                           />
                         </Grid.Col>
+                        {/* <Grid.Col span={12}>
+                          <DateInput
+                            label='Ngày sinh'
+                            disabled={!isUpdateInfo}
+                            name="birthday"
+                            valueFormat="YYYY-MM-DD"
+                            defaultDate={                       
+                              staff?.users.birthday === null ?
+                                dayjs(staff?.users.birthday, 'YYYY-MM-DD').toDate()
+                                : undefined
+                            }
+                            control={controlInfo}
+                            rightSection={<FaCalendarDay size={18} />}
+                          />
+                        </Grid.Col> */}
                         <Grid.Col span={6}>
                           <TextInput
                             label="SĐT liên lạc"
@@ -296,6 +327,7 @@ const StaffDetail = () => {
                             name='phoneNumber'
                             control={controlInfo}
                           />
+
                         </Grid.Col>
                         <Grid.Col span={6}>
                           <Select
@@ -312,6 +344,28 @@ const StaffDetail = () => {
                             ]}
                           />
                         </Grid.Col>
+
+                        <TextInput
+                          label="Địa chỉ"
+                          disabled={!isUpdateInfo}
+                          mt="md"
+                          name='address'
+                          w={'100%'}
+                          px={8}
+                          defaultValue={staff?.users.address}
+                          control={controlInfo}
+                        />
+                      </Grid>
+                      <Divider mt={30} mb={10} />
+                      <Grid>
+                        <Grid.Col span={12}>
+                          <TextInput label="Vai trò"
+                            name='roleName'
+                            control={controlInfo}
+                            disabled
+                          />
+                        </Grid.Col>
+
                         <Grid.Col span={9}>
                           <TextInput
                             label="Chuyên khoa"
@@ -333,21 +387,32 @@ const StaffDetail = () => {
                           />
                         </Grid.Col>
                       </Grid>
+                      <Text pt={30} size='14px'>Các quyền</Text>
+                      {staff && staff.role && staff.role.rolePermissions ? (
+                        staff.role.rolePermissions.map((permission, index) => (
+                          <Badge
+                            key={permission.permission.id}
+                            color={index % 2 === 0 ? 'primary.3' : 'gray.6'}
+                            size='lg'
+                            tt='capitalize'
+                            mt={10}
+                            mr={10}
+                          >
+                            {permission.permission.optionName}
+                          </Badge>
+                        ))
+                      ) : <Text>Error</Text>}
 
-                      <Grid>
-                        <TextInput
-                          label="Địa chỉ"
-                          disabled={!isUpdateInfo}
-                          mt="md"
-                          name='address'
-                          w={'100%'}
-                          px={8}
-                          defaultValue={staff?.users.address}
-                          control={controlInfo}
-                        />
 
-                      </Grid>
                       <Divider my="md" mt={40} />
+                      <TextInput
+                        label="Mô tả"
+                        disabled={!isUpdateInfo}
+                        mt="md"
+                        w={'100%'}
+                        name='description'
+                        control={controlInfo}
+                      />
                       <Group justify="flex-end" mt="lg">
                         {
                           isUpdateInfo ? (
@@ -411,12 +476,13 @@ const StaffDetail = () => {
                       disabled={!isUpdateSchedule}
                       value={newschedules && newschedules[index] ? newschedules[index].endTime : ''}
                       name={`schedule[${index}].endTime` as `${number}.endTime`}
-                      onChange={(event) => {setNewSchedules(prev => {
-                        const value = event.target.value;
-                        const newSchedule = [...prev];
-                        newSchedule[index].endTime = value;
-                        return newSchedule;
-                      })
+                      onChange={(event) => {
+                        setNewSchedules(prev => {
+                          const value = event.target.value;
+                          const newSchedule = [...prev];
+                          newSchedule[index].endTime = value;
+                          return newSchedule;
+                        })
                       }
                       }
                     />
