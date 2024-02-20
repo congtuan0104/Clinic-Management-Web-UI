@@ -46,16 +46,6 @@ const MakeAppointment = () => {
   const [selectedDate, setSelectedDate] = useState<Date>();
   const [selectedTime, setSelectedTime] = useState<string>();
   const [description, setDescription] = useState<string>();
-  console.log(selectedTime);
-  console.log(description);
-  // const handleSelect = (date: Date) => {
-  //   const isSelected = selectedDate.some((s) => dayjs(date).isSame(s, 'date'));
-  //   if (isSelected) {
-  //     setSelectedDate((current) => current.filter((d) => !dayjs(d).isSame(date, 'date')));
-  //   } else if (selectedDate.length < 1) {
-  //     setSelectedDate((current) => [...current, date]);
-  //   }
-  // };
   const { userInfo, linkAccount } = useAuth();
 
 
@@ -94,6 +84,8 @@ const MakeAppointment = () => {
       refetchOnWindowFocus: false,
     }
   );
+
+  console.log(dayjs(selectedDate).toISOString().slice(0,10))
 
   const makeAppointment = async () => {
     const time = selectedTime?.split(' - ');
@@ -266,8 +258,8 @@ const MakeAppointment = () => {
             <Center>
               <Calendar
                 getDayProps={(date) => ({
-                  selected: dayjs(selectedDate).isSame(date),
-                  onClick: () => setSelectedDate(date),
+                  selected: dayjs(selectedDate).isSame(dayjs(date).subtract(-1,'day'), 'day'),
+                  onClick: () => setSelectedDate(dayjs(date).add(1, 'day').toDate()),
                 })}
               />
             </Center>
@@ -283,7 +275,7 @@ const MakeAppointment = () => {
               <Chip.Group multiple={false} value={selectedTime} onChange={setSelectedTime}>
               {freeTimes && freeTimes.length > 0 ? (
                 <>
-                  {freeTimes.map((time, index) => (
+                  {freeTimes.map((time) => (
                     <Chip value={`${time.startTime} - ${time.endTime}`}>{time.startTime} - {time.endTime}</Chip>
                   ))}
                 </>
