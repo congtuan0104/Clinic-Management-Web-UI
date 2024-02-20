@@ -23,17 +23,18 @@ export interface IClinicStaff {
     id: number;
     name: string;
     description: string;
-    rolePermissions: [{
-      permission: {
-        id: number;
-        optionName: string;
-        description?: string;
-        isServiceOption?: boolean;
-        isActive?: boolean;
-        createdAt?: string;
-        updatedAt?: string;
-      }
-    }]
+    permissions: IRolePermission[];
+    // rolePermissions: [{
+    //   permission: {
+    //     id: number;
+    //     optionName: string;
+    //     description?: string;
+    //     isServiceOption?: boolean;
+    //     isActive?: boolean;
+    //     createdAt?: string;
+    //     updatedAt?: string;
+    //   }
+    // }]
   };
   isAcceptInvite: boolean;
   isDisabled: boolean;

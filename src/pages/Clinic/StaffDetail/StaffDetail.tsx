@@ -82,7 +82,7 @@ const StaffDetail = () => {
 
   useEffect(() => {
     if (schedules) {
-      schedules.map((day, index) => {
+      schedules.map((day) => {
         newschedules[day.day - 1] = day
       })
     }
@@ -388,17 +388,17 @@ const StaffDetail = () => {
                         </Grid.Col>
                       </Grid>
                       <Text pt={30} size='14px'>Các quyền</Text>
-                      {staff && staff.role && staff.role.rolePermissions ? (
-                        staff.role.rolePermissions.map((permission, index) => (
+                      {staff && staff.role && staff.role.permissions ? (
+                        staff.role.permissions.map((permission, index) => (
                           <Badge
-                            key={permission.permission.id}
+                            key={permission.id}
                             color={index % 2 === 0 ? 'primary.3' : 'gray.6'}
                             size='lg'
                             tt='capitalize'
                             mt={10}
                             mr={10}
                           >
-                            {permission.permission.optionName}
+                            {permission.optionName}
                           </Badge>
                         ))
                       ) : <Text>Error</Text>}
