@@ -63,3 +63,12 @@ export interface ICreateStaffPayload {
   description?: string;
   services?: number[];
 }
+
+export interface ISchedule {
+  id?: number;
+  day: number;
+  staffId?: number;
+  startTime?: string;
+  endTime?: string;
+  isDisabled?: boolean;
+}

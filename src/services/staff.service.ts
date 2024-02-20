@@ -1,4 +1,4 @@
-import { IApiResponse, IClinicStaffDetail, ICreateStaffPayload } from '@/types';
+import { IApiResponse, IClinicStaffDetail, ICreateStaffPayload, ISchedule } from '@/types';
 import { IClinicStaff, IStaffQueryParams } from '@/types';
 import { axiosClient } from '@/utils';
 
@@ -18,4 +18,8 @@ export const staffApi = {
   deleteStaff(staffId: string): Promise<any> {
     return axiosClient.delete(`/staffs/${staffId}`);
   },
+
+  getFreeAppoinment(staffId: string, data: string): Promise<IApiResponse<ISchedule[]>>{
+    return axiosClient.get(`/staffs/${staffId}/free-appointments`, {params: {date: data}});
+  }
 };
