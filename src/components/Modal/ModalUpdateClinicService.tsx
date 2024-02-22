@@ -138,7 +138,6 @@ const ModalUpdateClinicService = ({
               name="serviceName"
               required
               size="md"
-              radius="sm"
               control={control}
             />
 
@@ -147,7 +146,6 @@ const ModalUpdateClinicService = ({
               name="price"
               required
               size="md"
-              radius="sm"
               mt="md"
               control={control}
               suffix="₫"
@@ -165,7 +163,6 @@ const ModalUpdateClinicService = ({
               placeholder={'Chọn loại dịch vụ (không bắt buộc)'}
               mt="md"
               size="md"
-              radius="sm"
               disabled={isLoading}
               comboboxProps={{ shadow: 'md', transitionProps: { transition: 'pop', duration: 200 } }}
               checkIconPosition="right"
@@ -180,7 +177,6 @@ const ModalUpdateClinicService = ({
               label="Mô tả dịch vụ"
               name="description"
               size="md"
-              radius="sm"
               mt='sm'
               autosize
               minRows={3}
@@ -199,11 +195,11 @@ const ModalUpdateClinicService = ({
             />
 
             <Flex justify='end' gap={10}>
-              <Button mt="lg" radius="sm" size="md" type="submit" color="primary.3">
-                Lưu thay đổi
-              </Button>
-              <Button mt="lg" radius="sm" size="md" variant='outline' color='red.5' onClick={handleCancel}>
+              <Button mt="lg" size="md" color='gray.6' onClick={handleCancel}>
                 Hủy
+              </Button>
+              <Button mt="lg" size="md" type="submit" color="primary.3">
+                Lưu thay đổi
               </Button>
             </Flex>
           </Form>

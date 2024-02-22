@@ -1,24 +1,27 @@
 import { useAppSelector } from '@/hooks';
 import { currentClinicSelector, userInfoSelector } from '@/store';
-import { Flex, Title, Text, ActionIcon, Tooltip, Badge, ThemeIcon } from '@mantine/core';
-import { Sparkline } from '@mantine/charts';
+import { Flex, Title, Text, ActionIcon, Tooltip, Badge, ThemeIcon, Paper } from '@mantine/core';
+import { BarChart, Sparkline } from '@mantine/charts';
 import { PATHS } from '@/config';
 import { Link, useNavigate } from 'react-router-dom';
 import { useQuery } from 'react-query';
-import { appointmentApi, staffApi } from '@/services';
+import { appointmentApi, staffApi, statisticApi } from '@/services';
 import dayjs from 'dayjs';
-import { ModalAppointmentDetail } from '@/components';
+import { CurrencyFormatter, ModalAppointmentDetail } from '@/components';
 import { useState } from 'react';
 import { IAppointment } from '@/types';
 import { FaArrowRight, FaBedPulse, FaCalendarDays, FaHospitalUser, FaUserDoctor } from 'react-icons/fa6';
 import { APPOINTMENT_STATUS } from '@/enums';
+import { FaRegQuestionCircle } from 'react-icons/fa';
+import { GrMoney } from 'react-icons/gr';
 
 const DashboardAdmin = () => {
   const userInfo = useAppSelector(userInfoSelector);
   const currentClinic = useAppSelector(currentClinicSelector);
   const navigate = useNavigate();
 
-  const { data: appointments, refetch } = useQuery(['appointments', dayjs().format('YYYY-MM-DD')],
+  const { data: appointments, refetch } = useQuery(
+    ['appointments', currentClinic?.id, dayjs().format('YYYY-MM-DD')],
     () => appointmentApi.getAppointmentList({
       clinicId: currentClinic?.id,
       date: dayjs().format('YYYY-MM-DD'),
@@ -27,12 +30,43 @@ const DashboardAdmin = () => {
   })
 
   const { data: staffs } = useQuery(
-    ['staffs'],
+    ['staffs', currentClinic?.id],
     () => staffApi.getStaffs({ clinicId: currentClinic?.id }).then(res => res.data),
     {
       enabled: !!currentClinic?.id,
     }
   );
+
+  const { data: statistic } = useQuery(
+    ['statistic', currentClinic?.id],
+    () => statisticApi.getStatistic({
+      clinicId: currentClinic!.id,
+      date: dayjs().format('YYYY-MM-DD'),
+      // days: '10',
+    })
+      .then(res => res.data),
+    {
+      enabled: !!currentClinic?.id,
+    }
+  );
+
+  const { data } = useQuery(
+    ['statistics', currentClinic?.id],
+    () => statisticApi.getStatisticByDate({
+      clinicId: currentClinic!.id,
+      startDate: dayjs().subtract(7, 'day').format('YYYY-MM-DD'),
+      endDate: dayjs().format('YYYY-MM-DD'),
+    })
+      .then(res => res.data),
+    {
+      enabled: !!currentClinic?.id,
+    }
+  );
+
+  const statistics = data?.map((item) => ({
+    date: dayjs(item.date).format('DD MMM'),
+    revenue: item.revenue,
+  }));
 
   const [appointment, setAppointment] = useState<IAppointment | undefined>(undefined);
 
@@ -41,32 +75,46 @@ const DashboardAdmin = () => {
       <Title mb={15} order={3}>Tổng quan</Title>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 h-[130px]">
-        <div className='h-full bg-white rounded-xl p-6 flex gap-4'>
+        <div className='h-full bg-white rounded-xl p-6 pr-3 flex gap-4'>
           <ThemeIcon color='red.5' variant='light' size={80} radius='md'>
             <FaHospitalUser size={55} />
           </ThemeIcon>
           <div className='flex flex-col'>
-            <Text c='gray.7'>Bệnh nhân mới</Text>
-            <Text c='primary.3' fz={40} fw={700}>0</Text>
+            <Tooltip label='Số bệnh nhân mới đăng ký trong ngày hôm nay'>
+              <div className='flex items-center text-gray-700 gap-1'>
+                Bệnh nhân mới <FaRegQuestionCircle />
+              </div>
+            </Tooltip>
+            <Text c='red.5' fz={40} fw={700}>{statistic?.totalPatients || 0}</Text>
           </div>
 
         </div>
-        <div className='h-full bg-white rounded-xl p-6 flex gap-4'>
+        <div className='h-full bg-white rounded-xl p-6 pr-3 flex gap-4'>
           <ThemeIcon color='teal.5' variant='light' size={80} radius='md'>
             <FaUserDoctor size={55} />
           </ThemeIcon>
           <div className='flex flex-col'>
-            <Text c='gray.7'>Số nhân viên</Text>
-            <Text c='primary.3' fz={40} fw={700}>{staffs?.length || 0}</Text>
+            <Tooltip label='Số nhân viên làm việc trong phòng khám này'>
+              <div className='flex items-center text-gray-700 gap-1'>
+                Nhân viên <FaRegQuestionCircle />
+              </div>
+            </Tooltip>
+            <Text c='teal.5' fz={40} fw={700}>{staffs?.length || 0}</Text>
           </div>
         </div>
-        <div className='h-full bg-white rounded-xl p-6 flex gap-4'>
+        <div className='h-full bg-white rounded-xl p-6 pr-3 flex gap-4'>
           <ThemeIcon color='yellow.5' variant='light' size={80} radius='md'>
-            <FaBedPulse size={55} />
+            <GrMoney size={55} />
           </ThemeIcon>
           <div className='flex flex-col'>
-            <Text c='gray.7'>Số ca khám bệnh</Text>
-            <Text c='primary.3' fz={40} fw={700}>105</Text>
+            <Tooltip label='Doanh thu nhận được trong ngày'>
+              <div className='flex items-center text-gray-700 gap-1'>
+                Doanh thu <FaRegQuestionCircle />
+              </div>
+            </Tooltip>
+            <Text c='yellow.5' fz={40} fw={700}>
+              <CurrencyFormatter value={statistic?.totalRevenue || 0} />
+            </Text>
           </div>
         </div>
         <div className='h-full bg-white rounded-xl p-6 flex gap-4'>
@@ -74,8 +122,12 @@ const DashboardAdmin = () => {
             <FaCalendarDays size={55} />
           </ThemeIcon>
           <div className='flex flex-col'>
-            <Text c='gray.7'>Số lịch hẹn</Text>
-            <Text c='primary.3' fz={40} fw={700}>{appointments?.length || 0}</Text>
+            <Tooltip label='Số lịch hẹn khám trong ngày hôm nay'>
+              <div className='flex items-center text-gray-700 gap-1'>
+                Lịch hẹn <FaRegQuestionCircle />
+              </div>
+            </Tooltip>
+            <Text c='blue.5' fz={40} fw={700}>{appointments?.length || 0}</Text>
           </div>
         </div>
 
@@ -83,15 +135,33 @@ const DashboardAdmin = () => {
 
       <div className="grid grid-cols-3 gap-4 mt-4">
         <div className="col-span-2 bg-white p-2 rounded-lg">
-          Doanh thu tháng 01/2024
-          <Sparkline
+          Doanh thu tháng 7 ngày vừa qua
+          <BarChart
             w={'100%'}
             h={400}
-            data={[10, 20, 40, 20, 40, 10, 50]}
-            curveType="bump"
-            color="blue"
-            fillOpacity={0.45}
-            strokeWidth={1.7}
+            mt={10}
+            dataKey="date"
+            data={statistics || []}
+            tooltipAnimationDuration={200}
+            tooltipProps={{
+              content: ({ payload }) => {
+                console.log(payload);
+                if (!payload?.length) return null;
+                return (
+                  <div className="p-2 bg-white rounded-lg shadow-md">
+                    <div className="text-gray-600">
+                      Ngày {payload[0]?.payload?.date}
+                    </div>
+                    <div className="text-primary-300">
+                      Doanh thu: <CurrencyFormatter value={payload[0]?.payload?.revenue} />
+                    </div>
+                  </div>
+                )
+              }
+            }}
+            series={[
+              { name: 'revenue', color: 'primary.3' },
+            ]}
           />
         </div>
         <div className="col-span-1 py-2 px-3 rounded-lg bg-white">

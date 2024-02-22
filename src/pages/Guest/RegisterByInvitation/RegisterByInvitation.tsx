@@ -151,7 +151,6 @@ const RegisterByInvitation = () => {
                 placeholder="Nguyễn"
                 required
                 size="md"
-                radius="sm"
                 control={control}
               />
             </Grid.Col>
@@ -162,7 +161,6 @@ const RegisterByInvitation = () => {
                 placeholder="Văn A"
                 required
                 size="md"
-                radius="sm"
                 control={control}
               />
             </Grid.Col>
@@ -174,7 +172,6 @@ const RegisterByInvitation = () => {
             readOnly
             mt="md"
             size="md"
-            radius="sm"
             control={control}
             leftSection={<SiMaildotru size={16} />}
           />
@@ -185,7 +182,6 @@ const RegisterByInvitation = () => {
             required
             mt="md"
             size="md"
-            radius="sm"
             control={control}
             leftSection={<RiLockPasswordLine size={18} />}
           />
@@ -196,11 +192,10 @@ const RegisterByInvitation = () => {
             required
             mt="md"
             size="md"
-            radius="sm"
             control={control}
             leftSection={<RiLockPasswordLine size={18} />}
           />
-          <Button fullWidth mt="xl" radius="sm" size="md" type="submit">
+          <Button fullWidth mt="xl" size="md" type="submit">
             Đăng ký
           </Button>
         </Form>

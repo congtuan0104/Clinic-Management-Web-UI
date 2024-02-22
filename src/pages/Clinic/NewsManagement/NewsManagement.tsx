@@ -1,4 +1,4 @@
-import { Text, Center, Stack, Grid, GridCol, Flex, Button, Card, Image, Group, Anchor, Box, Divider, Badge, MantineProvider, Input, Pagination, TypographyStylesProvider, Modal } from '@mantine/core';
+import { Text, Center, Stack, Grid, GridCol, Flex, Button, Card, Image, Group, Anchor, Box, Divider, Badge, MantineProvider, Input, Pagination, TypographyStylesProvider, Modal, ThemeIcon } from '@mantine/core';
 import { Select, Switch, TextInput } from "react-hook-form-mantine";
 import { firebaseStorage } from '@/config';
 import { useQuery } from 'react-query';
@@ -28,7 +28,9 @@ import { useNavigate } from "react-router-dom";
 import { ref } from "firebase/storage";
 import { v4 } from 'uuid';
 import { getDownloadURL, uploadBytes } from 'firebase/storage';
-import { MdWarning } from "react-icons/md";
+import { useAppSelector } from '@/hooks';
+import { currentClinicSelector } from '@/store';
+import { TbNewsOff } from 'react-icons/tb';
 
 type ImageUploadType = File | null;
 
@@ -46,11 +48,16 @@ const schema = yup.object().shape({
 
 const NewsManagementPage = () => {
   const pageSize = 5;
+  const currentClinic = useAppSelector(currentClinicSelector)
   const [isUpdate, setIsUpdate] = useState<boolean>(false);
   const [activePage, setPage] = useState(1);
   const [searchValue, setSearchValue] = useDebouncedState('', 500);
-  const { data: news, isFetching, refetch } = useQuery(['news', activePage, searchValue], () =>
-    getNews()
+  const { data: news, isFetching, refetch } = useQuery(
+    ['news', activePage, searchValue, currentClinic?.id],
+    () => getNews(),
+    {
+      enabled: !!currentClinic?.id,
+    }
   );
   const [selectedNews, setSelectedNews] = useState<INews | null>(null);
 
@@ -60,15 +67,13 @@ const NewsManagementPage = () => {
   const [opened, { open, close }] = useDisclosure(false);
   const [total, setTotal] = useState(0);
 
-  useEffect(() => {
-    const updateTotal = async () => {
-      const result = await getTotal();
-      setTotal(result);
-    };
-    updateTotal();
-  }, []);
-
-
+  // useEffect(() => {
+  //   const updateTotal = async () => {
+  //     const result = await getTotal();
+  //     setTotal(result);
+  //   };
+  //   updateTotal();
+  // }, []);
 
   useEffect(() => {
     setImageUrl(imageUpload ? URL.createObjectURL(imageUpload) : null);
@@ -96,22 +101,21 @@ const NewsManagementPage = () => {
         title: searchValue,
         pageSize: pageSize,
         pageIndex: activePage - 1,
+        clinicId: currentClinic?.id,
       });
+      const total = Math.ceil((response.data?.total ?? 0) / pageSize);
+      setTotal(total);
       return response.data?.data;
     } catch (error) {
       console.log(error);
     }
   };
 
-  const getTotal = async () => {
-    try {
-      const response = await newsApi.getNews({});
-      return Math.ceil((response.data?.total ?? 0) / pageSize);
-    } catch (error) {
-      console.log(error);
-      return 0;
-    }
-  };
+  useEffect(() => {
+    setSelectedNews(null)
+  }, [currentClinic?.id])
+
+
 
   const onSubmit = async (data: IUpdateData) => {
     console.log('data', data)
@@ -230,10 +234,10 @@ const NewsManagementPage = () => {
       <Stack>
         <Grid pb={30} grow gutter="xl">
           <GridCol span={5}>
-            <Stack>
+            <Stack className='min-h-[calc(100vh_-_200px)]'>
               {news &&
                 news.map((newsItem) => (
-                  <Stack className='rounded-md p-3 border border-solid border-primary-100 bg-white' key={newsItem.id}>
+                  <Stack className='rounded-xl p-3 border border-solid border-primary-100 bg-white' key={newsItem.id}>
                     <Group align='flex-start'>
                       <Box w={150} h={100}>
                         <Image src={newsItem.logo} fallbackSrc={NewsLogoDefault} height={100} radius={'md'} />
@@ -257,14 +261,21 @@ const NewsManagementPage = () => {
                   </Stack>
                 ))}
             </Stack>
-            {news && news?.length > 0 &&
-              <Group align='center' justify='center' bg='white' className='rounded-md py-2'>
-                <Pagination total={total} value={activePage} onChange={setPage} mt="sm" />
-              </Group>}
+            <Group align='center' justify='center' className='rounded-md py-2 '>
+              {news && news?.length > 0
+                ? <Pagination total={total} value={activePage} onChange={setPage} mt="sm" />
+                : <div className='flex flex-col items-center min-h-[calc(100vh_-_150px)] bg-white w-full justify-center'>
+                  <ThemeIcon color='gray.5' size={110} variant='white'>
+                    <TbNewsOff size={100} />
+                  </ThemeIcon>
+                  <Text c='gray.5'>Phòng khám này chưa có tin tức</Text>
+                </div>
+              }
+            </Group>
           </GridCol>
           <Grid.Col span={7}>
             {selectedNews && selectedNews.id ? (
-              <Card withBorder radius="md" w={'100%'} h={'100%'} bg={'white'}>
+              <Card withBorder radius="lg" w={'100%'} h={'100%'} bg={'white'}>
                 <Form control={control} onSubmit={e => onSubmit(e.data)} onError={e => console.log(e)}>
                   <div className='flex justify-between gap-8'>
                     <div className='flex flex-col flex-1'>
@@ -404,8 +415,10 @@ const NewsManagementPage = () => {
                 </Modal>
               </Card>
             ) : (
-              <Card withBorder radius="md" w={'100%'} h={'100%'} bg={'white'}>
-
+              <Card withBorder radius="lg" w={'100%'} h={'100%'} bg={'white'}>
+                <Center className='flex-1'>
+                  <Text c='gray.5'>Chọn tin tức để xem và chỉnh sửa nội dung</Text>
+                </Center>
               </Card>
             )}
 

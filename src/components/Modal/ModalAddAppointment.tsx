@@ -276,14 +276,13 @@ const ModalAddAppointment = ({ isOpen, onClose, date, onSuccess }: IProps) => {
       serviceId: Number(data.serviceId),
       date: dayjs(data.date).format('YYYY-MM-DD'),
       startTime: data.startTime,
-      endTime: dayjs(data.date).add(15, 'minute').format('HH:mm'),
+      endTime: dayjs(data.startTime).add(15, 'minute').format('HH:mm'),
       description: data.description,
       status: APPOINTMENT_STATUS.CONFIRM
     }
 
     console.log('payload', payload);
     const res = await appointmentApi.createAppointment(payload);
-
     if (res.status) {
       notifications.show({
         title: 'Thành công',

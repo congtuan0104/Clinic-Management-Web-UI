@@ -111,7 +111,6 @@ const ModalPlanDetail = ({ open, onClose, planInfo }: IModalPlanDetailProps) => 
               variant={editMode ? 'default' : 'filled'}
               required
               size="md"
-              radius="sm"
               control={control}
               readOnly={!editMode}
             />
@@ -122,7 +121,6 @@ const ModalPlanDetail = ({ open, onClose, planInfo }: IModalPlanDetailProps) => 
               required
               size="md"
               mt='sm'
-              radius="sm"
               control={control}
               suffix="₫"
               min={0}
@@ -138,7 +136,6 @@ const ModalPlanDetail = ({ open, onClose, planInfo }: IModalPlanDetailProps) => 
               size="md"
               variant={editMode ? 'default' : 'filled'}
               mt='sm'
-              radius="sm"
               control={control}
               min={1}
               readOnly={!editMode}
@@ -149,7 +146,6 @@ const ModalPlanDetail = ({ open, onClose, planInfo }: IModalPlanDetailProps) => 
               required
               size="md"
               variant={editMode ? 'default' : 'filled'}
-              radius="sm"
               mt='sm'
               control={control}
               readOnly={!editMode}
@@ -181,10 +177,10 @@ const ModalPlanDetail = ({ open, onClose, planInfo }: IModalPlanDetailProps) => 
             <Flex justify='flex-end'>
               {editMode ? (
                 <>
-                  <Button mt="xl" radius="sm" size="md" type="submit">
+                  <Button mt="xl" size="md" type="submit">
                     Lưu
                   </Button>
-                  <Button mt="xl" ml="sm" radius="sm" size="md" variant='outline' color='red.5'
+                  <Button mt="xl" ml="sm" size="md" variant='outline' color='red.5'
                     onClick={(e) => {
                       e.preventDefault();
                       setEditMode(false);
@@ -192,7 +188,7 @@ const ModalPlanDetail = ({ open, onClose, planInfo }: IModalPlanDetailProps) => 
                     Hủy
                   </Button></>
               ) : (
-                <Button mt="xl" radius="sm" size="md" onClick={(e) => {
+                <Button mt="xl" size="md" onClick={(e) => {
                   e.preventDefault();
                   setEditMode(true);
                 }}>

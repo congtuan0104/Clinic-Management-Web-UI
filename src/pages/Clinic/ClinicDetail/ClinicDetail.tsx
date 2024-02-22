@@ -114,7 +114,7 @@ export default function ClinicDetail() {
     }
     if (imageUrl !== null) {
       updateInfo.logo = logoUrl;
-  }
+    }
     if (currentClinic?.id) {
       const res = await clinicApi.updateClinicInfo(currentClinic?.id, updateInfo)
       if (res.status) {
@@ -207,8 +207,8 @@ export default function ClinicDetail() {
   if (!currentClinic) return null;
 
   return (
-    <Center>
-      <Stack pb={20}>
+    <Center w={'100%'} px={100}>
+      <Stack pb={20} w={'100%'}>
         {subscription &&
           <Flex px='30px' py={25} align="center" justify={'space-between'} bg='primary.9' style={{ borderRadius: '10px' }} mt='30px' c='white'>
             <Stack>

@@ -485,7 +485,6 @@ const UserProfilePage = () => {
                 required
                 mt="md"
                 size="md"
-                radius="sm"
                 control={changePasswordControl}
                 leftSection={<RiLockPasswordLine size={18} />}
               />
@@ -496,7 +495,6 @@ const UserProfilePage = () => {
                 required
                 mt="md"
                 size="md"
-                radius="sm"
                 control={changePasswordControl}
                 leftSection={<RiLockPasswordLine size={18} />}
               />
@@ -507,15 +505,14 @@ const UserProfilePage = () => {
                 required
                 mt="md"
                 size="md"
-                radius="sm"
                 control={changePasswordControl}
                 leftSection={<RiLockPasswordLine size={18} />}
               />
               <div style={{ display: 'flex', justifyContent: 'flex-end', }}>
-                <Button mt="xl" radius="sm" size="md" type="submit">
+                <Button mt="xl" size="md" type="submit">
                   Xác nhận
                 </Button>
-                <Button mt="xl" ml="sm" radius="sm" size="md" variant='outline' color='red.5'
+                <Button mt="xl" ml="sm" size="md" variant='outline' color='red.5'
                   onClick={() => {
                     close();
                     reset();
@@ -538,7 +535,7 @@ const UserProfilePage = () => {
             Mật khẩu
           </Text>
 
-          <Button mt={30} radius="sm" variant='subtle' onClick={open}>
+          <Button mt={30} variant='subtle' onClick={open}>
             Đổi mật khẩu
           </Button>
 

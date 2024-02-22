@@ -1,7 +1,7 @@
 import { clinicApi, planApi } from "@/services";
 import { IClinicWithSubscription, IServicePlan } from "@/types";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { Button, Flex, Text, Modal, Select as MantineSelect, ComboboxItem } from "@mantine/core";
+import { Button, Flex, Text, Modal, Select as MantineSelect, ComboboxItem, ScrollArea } from "@mantine/core";
 import { Form, useForm } from "react-hook-form";
 import { NativeSelect, Select, TextInput } from "react-hook-form-mantine";
 import { useQuery } from "react-query";
@@ -31,7 +31,7 @@ interface IAddClinicFormData {
   address: string;
   lat?: number;
   long?: number;
-  planId: number;
+  planId: string;
 }
 
 const schema = yup.object().shape({
@@ -42,7 +42,7 @@ const schema = yup.object().shape({
     .typeError("Số điện thoại không đúng định dạng")
     .length(10),
   address: yup.string().required('Thông tin địa chỉ phòng khám là bắt buộc'),
-  planId: yup.number().required('Bạn chưa chọn gói dịch vụ'),
+  planId: yup.string().required('Bạn chưa chọn gói dịch vụ'),
   lat: yup.number(),
   long: yup.number(),
 });
@@ -62,7 +62,7 @@ const ModalCreateNewClinic = ({ isOpen, onClose, onSuccess, selectedPlanId }: IP
         email: '',
         phone: '',
         address: '',
-        planId: selectedPlanId,
+        planId: selectedPlanId?.toString(),
         lat: 10.7758439,
         long: 106.7017555,
       }
@@ -134,9 +134,12 @@ const ModalCreateNewClinic = ({ isOpen, onClose, onSuccess, selectedPlanId }: IP
   }
 
   return (
-    <Modal size='auto' opened={isOpen} onClose={onClose} title="Tạo phòng khám mới" centered>
+    <Modal size='auto' opened={isOpen} radius='lg'
+      onClose={onClose} title={<Text fw={600} ml={20}>Tạo phòng khám mới</Text>}
+      centered scrollAreaComponent={ScrollArea.Autosize}>
       <Form
         control={control}
+        className="px-5"
         onSubmit={e => handleAddClinic(e.data)}
         onError={e => console.log(e)}>
         <TextInput
@@ -144,7 +147,7 @@ const ModalCreateNewClinic = ({ isOpen, onClose, onSuccess, selectedPlanId }: IP
           name="clinicName"
           required
           size="md"
-          radius="sm"
+
           control={control}
         />
         <Flex justify="space-between" gap={20}>
@@ -154,7 +157,6 @@ const ModalCreateNewClinic = ({ isOpen, onClose, onSuccess, selectedPlanId }: IP
             required
             mt="md"
             size="md"
-            radius="sm"
             className="flex-1"
             control={control}
           />
@@ -164,7 +166,6 @@ const ModalCreateNewClinic = ({ isOpen, onClose, onSuccess, selectedPlanId }: IP
             required
             mt="md"
             size="md"
-            radius="sm"
             className="flex-1"
             width='100%'
             control={control}
@@ -177,7 +178,6 @@ const ModalCreateNewClinic = ({ isOpen, onClose, onSuccess, selectedPlanId }: IP
           required
           my="md"
           size="md"
-          radius="sm"
           searchable
           clearable
           searchValue={searchAddress}
@@ -224,7 +224,7 @@ const ModalCreateNewClinic = ({ isOpen, onClose, onSuccess, selectedPlanId }: IP
             zoom: 15,
           }}
           scrollZoom={true}
-          style={{ width: 600, height: 400 }}
+          style={{ width: 600, height: 400, borderRadius: 10 }}
           mapStyle="mapbox://styles/mapbox/streets-v12"
           onMove={(e) => {
             setValue('lat', e.viewState.latitude);
@@ -248,7 +248,6 @@ const ModalCreateNewClinic = ({ isOpen, onClose, onSuccess, selectedPlanId }: IP
           withAsterisk
           mt="md"
           size="md"
-          radius="sm"
           required
           disabled={isLoadingPlan}
           comboboxProps={{ shadow: 'md', transitionProps: { transition: 'pop', duration: 200 } }}
@@ -261,10 +260,10 @@ const ModalCreateNewClinic = ({ isOpen, onClose, onSuccess, selectedPlanId }: IP
         />
 
         <Flex justify='end' mt='xl' gap={8}>
-          <Button variant="default" radius="sm" size="md" onClick={onClose}>
+          <Button variant="default" size="md" onClick={onClose}>
             Đóng
           </Button>
-          <Button radius="sm" size="md" type="submit">
+          <Button size="md" type="submit">
             Đăng ký
           </Button>
         </Flex>

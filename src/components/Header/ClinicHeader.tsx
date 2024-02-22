@@ -150,13 +150,13 @@ const ClinicHeader = ({ notify }: IHeaderProps) => {
 
           <Popover.Dropdown styles={{ dropdown: { padding: 8 } }}>
             <div className="flex flex-col">
-              {notify.length === 0 ? <p>Bạn không có thông báo nào</p> : <Title c='primary.3' ml={6} order={5}>Thông báo</Title>}
+              {notify.length === 0 ? <p>Bạn không có thông báo nào</p> : <></>}
               {notify.reverse().map((item) => (
                 <div key={item.id}
-                  className="flex cursor-pointer p-[6px] rounded-md flex-col hover:bg-primary-100">
+                  className="flex cursor-pointer p-[6px] rounded-md flex-col group hover:bg-gray-200">
                   <div className='border-solid border-0 border-l-[3px] border-primary-300 pl-2'>
-                    <p>{item.title}</p>
-                    <p className='text-14 text-gray-800 text-justify'>{item.content}</p>
+                    {/* <p className='font-semibold group-hover:text-primary-500'>{item.title}</p> */}
+                    <p className='text-14 text-gray-700 group-hover:text-black-90 text-justify mt-1'>{item.content}</p>
                     <p className='text-gray-500 text-13'>{renderSendingTime(item.sendingTime)}</p>
                   </div>
                 </div>
@@ -172,6 +172,7 @@ const ClinicHeader = ({ notify }: IHeaderProps) => {
             <Button
               onClick={() => { }}
               mx={5}
+              h={40}
               color='black.5' variant="subtle" radius="md"
               leftSection={userInfo?.avatar ? <Avatar src={userInfo?.avatar} size={26} /> : <FaUserCircle size={20} />}
             >
