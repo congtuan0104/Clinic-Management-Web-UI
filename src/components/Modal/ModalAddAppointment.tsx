@@ -106,6 +106,11 @@ const ModalAddAppointment = ({ isOpen, onClose, date, onSuccess }: IProps) => {
   //   }
   // }, [isOpen]);
 
+  const selectedService = useMemo(() => {
+    const serviceId = watch('serviceId');
+    return services?.find(service => service.id === Number(serviceId));
+  }, [watch('serviceId')]);
+
   useEffect(() => {
     if (date) {
       const startTime = dayjs(date).format('HH:mm');
@@ -117,6 +122,12 @@ const ModalAddAppointment = ({ isOpen, onClose, date, onSuccess }: IProps) => {
       setValue('endTime', endTime);
     }
   }, [date]);
+
+  useEffect(() => {
+    if (!selectedService || !selectedService.staffIds.includes(Number(watch('doctorId')))) {
+      setValue('doctorId', '');
+    }
+  }, [selectedService]);
 
   const renderForm = () => {
     return (
@@ -139,33 +150,13 @@ const ModalAddAppointment = ({ isOpen, onClose, date, onSuccess }: IProps) => {
           />
 
           <Select
-            label="Bác sĩ"
-            placeholder="Chọn bác sĩ khám bệnh"
-            required
-            name='doctorId'
-            size="md"
-            radius='md'
-            allowDeselect
-            data={staffs?.map((staff) => ({
-              value: staff.id.toString(),
-              label: `${staff.users.firstName} ${staff.users.lastName}`
-            })) || []}
-            searchable
-            leftSection={<FaUserDoctor size={18} />}
-            w={'100%'}
-            control={control}
-          />
-        </div>
-
-        <div className="flex justify-between gap-4 items-end mt-3">
-          <Select
             label="Dịch vụ"
             placeholder="Chọn dịch vụ khám bệnh"
             required
             name='serviceId'
             size="md"
             radius='md'
-            disabled={!watch('doctorId')}
+            // disabled={!watch('doctorId')}
             allowDeselect
             data={services?.map((service) => ({
               value: service.id.toString(),
@@ -177,6 +168,28 @@ const ModalAddAppointment = ({ isOpen, onClose, date, onSuccess }: IProps) => {
             control={control}
           />
 
+
+        </div>
+
+        <div className="flex justify-between gap-4 items-end mt-3">
+          <Select
+            label="Bác sĩ"
+            placeholder="Chọn bác sĩ khám bệnh"
+            required
+            name='doctorId'
+            size="md"
+            radius='md'
+            allowDeselect
+            data={staffs?.map((staff) => ({
+              value: staff.id.toString(),
+              label: `${staff.users.firstName} ${staff.users.lastName}`,
+              disabled: selectedService && !selectedService.staffIds.includes(staff.id)
+            })) || []}
+            searchable
+            leftSection={<FaUserDoctor size={18} />}
+            w={'100%'}
+            control={control}
+          />
           <Select
             label="Người đặt lịch hẹn"
             placeholder="Tìm kiếm tên bệnh nhân"
@@ -281,7 +294,6 @@ const ModalAddAppointment = ({ isOpen, onClose, date, onSuccess }: IProps) => {
       status: APPOINTMENT_STATUS.CONFIRM
     }
 
-    console.log('payload', payload);
     const res = await appointmentApi.createAppointment(payload);
     if (res.status) {
       notifications.show({

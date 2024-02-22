@@ -1,8 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
 import { ref, onValue, set, push, child, update } from "firebase/database";
-import { useAuth } from "@/hooks";
+import { useAuth, useMessage } from "@/hooks";
 import { v4 as uuidv4 } from 'uuid';
-import { Tooltip, Image, ThemeIcon, Progress, Box, Text } from "@mantine/core";
+import { Tooltip, Image, ThemeIcon, Progress, Box, Text, ActionIcon } from "@mantine/core";
 import dayjs from "dayjs";
 import {
   getDownloadURL,
@@ -29,9 +29,10 @@ import { MdOutlineAttachFile } from "react-icons/md";
 import { firebaseStorage, realtimeDB } from "@/config";
 import { Avatar, Button, Flex, Input } from "@mantine/core";
 import classNames from "classnames";
-import { MessageType } from "@/enums";
-import { Fancybox } from "@/components";
+import { GroupChatType, MessageType } from "@/enums";
+import { Fancybox, ModalChatInfo } from "@/components";
 import { notifications } from "@mantine/notifications";
+import { useDisclosure } from "@mantine/hooks";
 
 interface ConversationProps {
   groupChat: IGroupChat;
@@ -41,6 +42,11 @@ export default function Conversation({ groupChat }: ConversationProps) {
   const [messages, setMessages] = useState<IGroupChatMessage[]>([]);
   const { userInfo } = useAuth();
   const [uploadProgress, setUploadProgress] = useState<number | undefined>(undefined);
+  const { groupChatName, logoSrc } = useMessage();
+  const [opened, { open, close }] = useDisclosure(false);
+
+  const groupName = groupChatName(groupChat);
+  const logo = logoSrc(groupChat);
 
   const [inputMessage, setInputMessage] = useState<string>("");
   // const [fileUpload, setFileUpload] = useState<File | null>(null);
@@ -214,21 +220,42 @@ export default function Conversation({ groupChat }: ConversationProps) {
     <>
       <div className="flex justify-between border-0 px-2 pb-2 border-b border-solid border-gray-300">
         <div className="flex items-center">
-          <Avatar color="primary.5" radius="xl" >
-            {groupChat.groupName.slice(0, 1)}
+          <Avatar color="primary.5" radius="xl" src={logo}>
+            {groupName.slice(0, 1)}
           </Avatar>
 
-          <p className="text-black-90 ml-2">{groupChat.groupName}</p>
+          <p className="text-black-90 ml-2">{groupName}</p>
         </div>
 
         <Flex gap={15} align='center'>
-          <FaPhone color="dodgerblue" size="20px" />
-          <Button
-            color="rgba(255, 255, 255, 1)"
-            onClick={createVideoCall}>
-            <FaVideo color="dodgerblue" size="20px" />
-          </Button>
-          <FaInfoCircle color="dodgerblue" size="20px" />
+          <Tooltip label='Gọi điện thoại'>
+            <ActionIcon
+              color="rgba(255, 255, 255, 1)"
+              radius='xl'
+              size='lg'
+              onClick={createVideoCall}>
+              <FaPhone color="dodgerblue" size="20px" />
+            </ActionIcon>
+          </Tooltip>
+          <Tooltip label='Gọi video'>
+            <ActionIcon
+              color="rgba(255, 255, 255, 1)"
+              radius='xl'
+              size='lg'
+              onClick={createVideoCall}>
+              <FaVideo color="dodgerblue" size="20px" />
+            </ActionIcon>
+          </Tooltip>
+          <Tooltip label='Thành viên nhóm chat'>
+            <ActionIcon
+              radius='xl'
+              size='lg'
+              color="rgba(255, 255, 255, 1)"
+              onClick={open}
+            >
+              <FaInfoCircle color="dodgerblue" size="20px" />
+            </ActionIcon>
+          </Tooltip>
         </Flex>
       </div>
 
@@ -244,7 +271,10 @@ export default function Conversation({ groupChat }: ConversationProps) {
                   message.senderId === userInfo?.id ? "flex-row-reverse" : ""
                 )}
               >
-                <Avatar mx={8} color={message.senderId === userInfo?.id ? 'primary.5' : 'teal.7'} radius="xl" >
+                <Avatar mx={8}
+                  src={groupChat.groupChatMember?.find(member => member.userId === message.senderId)?.avatar}
+                  color={message.senderId === userInfo?.id ? 'primary.5' : 'teal.7'}
+                  radius="xl" >
                   {message.senderName.slice(0, 1)}
                 </Avatar>
 
@@ -269,7 +299,9 @@ export default function Conversation({ groupChat }: ConversationProps) {
             <div>
               <FaComments size={50} className="text-gray-400" />
             </div>
-            <p className="text-gray-400 text-15 font-bold">Bắt đầu cuộc hội thoại với {groupChat.groupName}</p>
+            <p className="text-gray-400 text-15 font-bold">
+              Bắt đầu cuộc hội thoại với {groupChat.type === GroupChatType.GROUP && 'các thành viên trong'} {groupName}
+            </p>
           </div>
         )}
 
@@ -279,7 +311,8 @@ export default function Conversation({ groupChat }: ConversationProps) {
               <Text fs='italic' c='gray.6' size="sm">Đang upload file {uploadProgress}%</Text>
               <Progress value={uploadProgress} color='primary' size="lg" striped animated />
             </div>
-            <Avatar mx={8} color='primary.5' radius="xl" >
+            <Avatar mx={8} color='primary.5' radius="xl"
+              src={groupChat.groupChatMember?.find(member => member.userId == userInfo?.id)?.avatar}>
               {userInfo?.firstName.slice(0, 1)}
             </Avatar>
           </div>
@@ -329,8 +362,7 @@ export default function Conversation({ groupChat }: ConversationProps) {
           <FaPaperPlane />
         </Button>
       </div>
+      <ModalChatInfo data={groupChat} isOpen={opened} onClose={close} />
     </>
-
-
   );
 }

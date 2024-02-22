@@ -12,14 +12,26 @@ import { Button, Text, Modal, TextInput, Select, MultiSelect, Avatar, ModalRoot,
 import { useDocumentTitle, useDisclosure } from "@mantine/hooks";
 import { chatApi } from "@/services";
 import { ModalCreateGroupChat } from "@/components";
+import { useSearchParams } from "react-router-dom";
 
 export default function ChatScreen() {
   const { userInfo } = useAuth();
   useDocumentTitle("Clinus - Nhắn tin");
+  const [searchParams, setSearchParams] = useSearchParams();
+  const groupId = searchParams.get("group");
 
   const [groupChats, setGroupChats] = useState<IGroupChat[]>([]);
   const [selectedGroup, setSelectedGroup] = useState<IGroupChat | undefined>(undefined);
   const [opened, { open, close }] = useDisclosure(false);
+
+  useEffect(() => {
+    if (groupId) {
+      const group = groupChats.find((group) => group.id == groupId);
+      if (group) {
+        setSelectedGroup(group);
+      }
+    }
+  }, [groupChats]);
 
 
   const fetchGroupChatsByUser = async () => {
@@ -42,6 +54,7 @@ export default function ChatScreen() {
 
   const changeGroup = (group: IGroupChat) => {
     setSelectedGroup(group);
+    setSearchParams({ group: group.id });
   };
 
 
