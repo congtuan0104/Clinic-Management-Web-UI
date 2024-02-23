@@ -132,6 +132,7 @@ export default function Conversation({ groupChat }: ConversationProps) {
           setUploadProgress(percent);
         },
         (error) => {
+          console.error(error)
           notifications.show({
             message: 'Upload file thất bại',
             color: 'red',
