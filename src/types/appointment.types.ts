@@ -61,7 +61,8 @@ export interface INewAppointmentPayload {
   clinicId: string;
   doctorId: number;
   serviceId: number;
-  patientId: number;
+  patientId?: number;
+  userId?: string;
   date: string;
   startTime: string;
   endTime: string;
