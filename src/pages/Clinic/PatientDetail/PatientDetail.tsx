@@ -331,7 +331,7 @@ const PatientDetail = () => {
                                 </Table.Tr>
                             </Table.Thead>
                             <Table.Tbody>
-                                {medicalRecord && medicalRecord.map((item, index) => (
+                                {medicalRecord && medicalRecord.map((item) => (
                                     <Table.Tr key={item.id}>
                                         <Table.Td>{item.doctor.firstName} {item.doctor.lastName}</Table.Td>
                                         <Table.Td>{item.medicalRecordServices.map((service) => (
