@@ -116,7 +116,7 @@ const PatientDetail = () => {
         },
     });
 
-    const onSubmit = async (data: IFormData) => {
+    const onSubmit = async (data: IUpdatePatientPayload) => {
         const updateInfo: IUpdatePatientPayload = {
             bloodGroup: data.bloodGroup,
             anamnesis: data.anamnesis,
@@ -153,10 +153,7 @@ const PatientDetail = () => {
 
     return (
         <>
-            <Form
-                control={control}
-                onSubmit={(e) => onSubmit(e.data)}
-                onError={(e) => console.log(e)}>
+            
                 <Flex direction="column" gap="md" p="md">
                     <Flex align="center" justify="space-between">
                         <Flex gap={8}>
@@ -256,6 +253,9 @@ const PatientDetail = () => {
                             </Grid>
                         </Flex>
                         <Divider my={20}/>
+                        <Form
+                control={control}
+                onSubmit={(e) => onSubmit(e.data)}>
                         <Grid>
                             <Grid.Col span={3}>
                                 <TextInput
@@ -307,14 +307,14 @@ const PatientDetail = () => {
                                 :
                                 (
                                     <>
-                                        <Button type='submit'>Lưu thay đổi</Button>
+                                        <Button type="submit">Lưu thay đổi</Button>
                                         <Button variant="outline" onClick={() => setIsUpdate(!isUpdate)} color='gray.6'>Hủy thay đổi</Button>
                                     </>
                                 )}
                         </Group>
+                        </Form>
                     </Paper>
                 </Flex>
-            </Form>
             <Flex direction="column" gap="md" px="md">
 
                 <Paper p='md' radius='md' shadow="xs">
