@@ -17,3 +17,4 @@ export * from './Examination';
 export * from './VisitPatient';
 export * from './PaymentInvoice';
 export * from './PatientDetail';
+export * from './ClinicReport';

@@ -16,3 +16,4 @@ export { default as ModalNewSupplies } from './ModalNewSupplies';
 export { default as ModalUpdateSupplies } from './ModalUpdateSupplies';
 export { default as ModalNewMedicalRecord } from './ModalNewMedicalRecord';
 export { default as ModalMedicalInvoice } from './ModalMedicalInvoice';
+export { default as ModalChatInfo } from './ModalChatInfo';

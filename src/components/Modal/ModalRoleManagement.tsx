@@ -78,10 +78,8 @@ const ModalRoleManagement = ({ isEditMode, isOpen, onClose, updateRole, selected
 
       if (isEditMode) {
         const response = await clinicApi.updateUserGroupRole(requestData, currentClinic?.id, selectedRole?.id);
-        console.log('API Response (Update):', response);
       } else {
         const response = await clinicApi.createClinicRole(requestData, currentClinic.id);
-        console.log('API Response (Add):', response);
       }
 
       updateRole();

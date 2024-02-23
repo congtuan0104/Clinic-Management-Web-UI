@@ -36,7 +36,8 @@ const AppointmentPage = () => {
 
   const currentClinic = useAppSelector(currentClinicSelector);
 
-  const { data: appointments, isLoading, refetch } = useQuery('appointments',
+  const { data: appointments, isLoading, refetch } = useQuery(
+    ['appointments', currentClinic?.id, dayjs().format('YYYY-MM-DD')],
     () => appointmentApi.getAppointmentList({
       clinicId: currentClinic?.id,
       doctorId: searchTerm.doctor ?? undefined,

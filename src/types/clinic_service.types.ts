@@ -13,6 +13,7 @@ export interface IClinicService {
   updatedAt: Date;
   isDisabled: boolean;
   disabledAt?: string;
+  staffIds: number[];
 }
 
 export interface IPostClinicServiceParams {

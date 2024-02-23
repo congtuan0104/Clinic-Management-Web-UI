@@ -28,6 +28,7 @@ import dayjs from 'dayjs';
 import { FaEye } from 'react-icons/fa';
 import { useReactToPrint } from 'react-to-print';
 import { IoPrintSharp } from 'react-icons/io5';
+import { CiCircleCheck, CiNoWaitingSign } from 'react-icons/ci';
 
 const PaymentInvoicePage = () => {
   const currentClinic = useAppSelector(currentClinicSelector);
@@ -97,9 +98,10 @@ const PaymentInvoicePage = () => {
         Cell: ({ cell }) =>
           cell.getValue() === MEDICO_PAYMENT_STATUS.UNPAID.toString()
             ? <Badge
-              color='red'
+              color='gray.5'
               radius='md'
               variant='filled'
+              leftSection={<CiNoWaitingSign size={15} />}
             >
               Chưa thanh toán
             </Badge>
@@ -107,6 +109,8 @@ const PaymentInvoicePage = () => {
               color='green'
               radius='md'
               variant='filled'
+              size='md'
+              leftSection={<CiCircleCheck size={15} />}
             >
               Đã thanh toán
             </Badge>,

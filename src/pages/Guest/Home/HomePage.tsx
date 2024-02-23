@@ -13,6 +13,8 @@ import { useNavigate } from 'react-router-dom';
 import { planApi } from '@/services';
 import { BiChevronLeftCircle, BiChevronRightCircle } from 'react-icons/bi';
 import { useScrollIntoView } from '@mantine/hooks';
+import { AuthModule } from '@/enums';
+import { PatientOverviewPage } from '@/pages';
 
 
 
@@ -36,6 +38,12 @@ const HomePage = () => {
 
   const handleBuyPlan = () => {
     navigate(`${PATHS.LOGIN}?callback=${PATHS.PLAN_MANAGEMENT}`)
+  }
+
+  if (userInfo && userInfo.moduleId === AuthModule.Patient) {
+    return (
+      <PatientOverviewPage />
+    )
   }
 
   return (

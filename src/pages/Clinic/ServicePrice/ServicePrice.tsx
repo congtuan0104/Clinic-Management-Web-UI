@@ -5,6 +5,7 @@ import {
   ActionIcon,
   Title,
   Text,
+  Badge,
 } from '@mantine/core';
 import { useAppSelector, useAuth } from '@/hooks';
 import { currentClinicSelector } from '@/store';
@@ -47,7 +48,24 @@ const ServicePricePage = () => {
         header: 'Trạng thái',
         accessorKey: 'isDisabled',
         Cell: ({ cell }) => (
-          <div>{cell.getValue<boolean>() ? 'Không hoạt động' : 'Đang hoạt động'}</div>
+          <div>{cell.getValue<boolean>()
+            ? <Badge
+              color='gray.5'
+              radius='md'
+              variant='filled'
+              size='md'
+            >
+              Không hoạt động
+            </Badge>
+            : <Badge
+              color='green'
+              radius='md'
+              variant='filled'
+              size='md'
+            >
+              Đang hoạt động
+            </Badge>
+          }</div>
         ),
       }
 
@@ -125,6 +143,10 @@ const ServicePricePage = () => {
           data={services ?? []}      // dữ liệu được đổ vào bảng
           enableRowActions  // cho phép hiển thị các button xóa, sửa trên mỗi dòng
           enableColumnFilters={false}
+          localization={{
+            noRecordsToDisplay: 'Chưa có dịch vụ nào được tạo',
+            noResultsFound: 'Không tìm thấy dịch vụ phù hợp'
+          }}
           // state={{
           //   isLoading: isLoading,
           // }}

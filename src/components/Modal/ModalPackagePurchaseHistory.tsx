@@ -11,7 +11,6 @@ interface IProps {
 
 const ModalPackagePurchaseHistory = ({ isOpen, onClose }: IProps) => {
   const currentClinic = useAppSelector(currentClinicSelector);
-  console.log(currentClinic?.subscriptions)
   const getStatusTextColor = (status: number) => {
     switch (status) {
       case 1: //Inpayment
@@ -67,12 +66,12 @@ const ModalPackagePurchaseHistory = ({ isOpen, onClose }: IProps) => {
                 <Text>Ngày mua: <b>{dayjs(history.createdAt).format('DD/MM/YYYY')}</b></Text>
                 <Text>Thời hạn đến: <b>{dayjs(history.expiredAt).format('DD/MM/YYYY')}</b></Text>
                 <Group>
-                <Text>Trạng thái:</Text>
-                <Text c={getStatusTextColor(history.status)} fw={700}>
-                  {getStatusText(history.status)}
-                </Text>
+                  <Text>Trạng thái:</Text>
+                  <Text c={getStatusTextColor(history.status)} fw={700}>
+                    {getStatusText(history.status)}
+                  </Text>
                 </Group>
-                
+
                 {/* <Divider/>
         
         <Text fz="sm" mt="md" >

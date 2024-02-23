@@ -1,6 +1,6 @@
 import { planApi } from '@/services';
 import { IClinicWithSubscription } from '@/types';
-import { Paper, Text, Group, Avatar, Input, Divider, Button, Flex, Modal, Radio, RadioGroup, Image, Box, ChipGroup, Chip } from '@mantine/core';
+import { Paper, Text, Group, Avatar, Input, Divider, Button, Flex, Modal, Radio, RadioGroup, Image, Box, ChipGroup, Chip, Tooltip } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { useEffect, useState } from 'react';
 import { useQuery } from 'react-query';
@@ -62,7 +62,7 @@ const ModalClinicPayment = ({ isOpen, onClose, clinicPayment }: IProps) => {
   return (
     <Modal.Root opened={isOpen} onClose={onClose} centered size={'lg'}>
       <Modal.Overlay blur={7} />
-      <Modal.Content radius='md'>
+      <Modal.Content radius='lg'>
         <Modal.Header>
           <Modal.Title fz="lg" fw={600}>Thông tin thanh toán</Modal.Title>
           <Modal.CloseButton />
@@ -129,9 +129,14 @@ const ModalClinicPayment = ({ isOpen, onClose, clinicPayment }: IProps) => {
 
 
           <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '20px' }}>
-            <Button mt="xl" radius="sm" size="md" onClick={handlePayment}>
-              Tiến hành thanh toán
-            </Button>
+            <Tooltip
+              label='Vui lòng chọn hình thức thanh toán trước khi tiến hành thanh toán'
+              disabled={!!selectedPaymentMethod}
+            >
+              <Button mt="xl" size="md" onClick={handlePayment} disabled={!selectedPaymentMethod}>
+                Tiến hành thanh toán
+              </Button>
+            </Tooltip>
           </div>
         </Modal.Body>
       </Modal.Content>

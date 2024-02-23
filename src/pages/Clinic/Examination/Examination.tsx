@@ -25,7 +25,7 @@ import { PATHS } from '@/config';
 import { MdEmail, MdOutlineStart } from 'react-icons/md';
 import { AuthModule, Gender, MEDICO_RECORD_STATUS } from '@/enums';
 import dayjs from 'dayjs';
-import { TiDocumentAdd } from 'react-icons/ti';
+import { SlActionRedo } from "react-icons/sl";
 
 const ExaminationPage = () => {
 
@@ -104,7 +104,7 @@ const ExaminationPage = () => {
     ['medical_records', currentClinic?.id],
     () => medicalRecordApi.getMedicalRecords({
       clinicId: currentClinic?.id,
-      doctorId: staffInfo ? staffInfo.id : undefined,
+      doctorId: userInfo?.moduleId === AuthModule.ClinicStaff && staffInfo ? staffInfo.id : undefined,
     })
       .then(res => res.data),
     {
@@ -167,7 +167,7 @@ const ExaminationPage = () => {
                 >
                   {
                     row.original.examinationStatus === MEDICO_RECORD_STATUS.DONE
-                      ? <FaEye /> : <MdOutlineStart />
+                      ? <FaEye /> : <SlActionRedo />
                   }
 
                 </ActionIcon>

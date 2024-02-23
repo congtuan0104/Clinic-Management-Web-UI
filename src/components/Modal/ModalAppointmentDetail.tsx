@@ -9,12 +9,14 @@ import { useRef } from "react";
 import { useReactToPrint } from "react-to-print";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
-import { APPOINTMENT_STATUS } from "@/enums";
+import { APPOINTMENT_STATUS, AuthModule } from "@/enums";
 import { TbCalendarCancel } from "react-icons/tb";
 import { appointmentApi } from "@/services";
 import { notifications } from "@mantine/notifications";
 import { GiConfirmed } from "react-icons/gi";
 import { RiUserReceived2Line } from "react-icons/ri";
+import { useAppSelector } from "@/hooks";
+import { userInfoSelector } from "@/store";
 
 interface IProps {
   isOpen: boolean;
@@ -45,6 +47,8 @@ export const get_PDF_in_base64 = async (htmldoc: HTMLHtmlElement) => {
 
 const ModalAppointmentDetail = ({ isOpen, onClose, onUpdateSuccess, data }: IProps) => {
   const contentRef = useRef<HTMLDivElement>(null);
+  const userInfo = useAppSelector(userInfoSelector);
+  const isPatient = userInfo?.moduleId === AuthModule.Patient
 
   const handlePrintAppointment = useReactToPrint({
     content: () => contentRef.current,
@@ -122,8 +126,6 @@ const ModalAppointmentDetail = ({ isOpen, onClose, onUpdateSuccess, data }: IPro
   const handleReceptionAppointment = async () => {
     const res = await appointmentApi.reception(data.id)
 
-    console.log('res', res)
-
     if (res.status) {
       notifications.show({
         title: 'Thông báo',
@@ -173,16 +175,31 @@ const ModalAppointmentDetail = ({ isOpen, onClose, onUpdateSuccess, data }: IPro
           </Modal.Header>
           <Modal.Body pt={10} miw={400}>
 
-            <Flex mt={8}>
-              <Text>
-                Người đặt lịch hẹn:
-              </Text>
-              <Tooltip label='Xem hồ sơ bệnh nhân'>
-                <Anchor ml={4} href={`${PATHS.CLINIC_PATIENT_MANAGEMENT}/${data.patientId}`}>
-                  {data.patient.firstName} {data.patient.lastName}
-                </Anchor>
-              </Tooltip>
-            </Flex>
+            {!isPatient && (
+              <Flex mt={8}>
+                <Text>
+                  Người đặt lịch hẹn:
+                </Text>
+                <Tooltip label='Xem hồ sơ bệnh nhân'>
+                  <Anchor ml={4} href={`${PATHS.CLINIC_PATIENT_MANAGEMENT}/${data.patientId}`}>
+                    {data.patient.firstName} {data.patient.lastName}
+                  </Anchor>
+                </Tooltip>
+              </Flex>
+            )}
+
+            {isPatient && (
+              <Flex mt={8}>
+                <Text>
+                  Nơi khám:
+                </Text>
+                <Tooltip label='Xem thông tin phòng khám'>
+                  <Anchor ml={4} href={`${PATHS.CLINICS}/${data.clinicId}`}>
+                    {data.clinics.name}
+                  </Anchor>
+                </Tooltip>
+              </Flex>
+            )}
 
             <Flex mt={8}>
               <Text>
@@ -224,55 +241,71 @@ const ModalAppointmentDetail = ({ isOpen, onClose, onUpdateSuccess, data }: IPro
                 flex={1}
               /> */}
             </Flex>
-            <Flex mt={12} gap={10} justify='flex-end'>
-              {data.status === APPOINTMENT_STATUS.PENDING && (
-                <Button
-                  size="md"
-                  radius='md'
-                  color="teal.7"
-                  onClick={handleConfirmAppointment}
-                  leftSection={<GiConfirmed size={18} />}>
-                  Xác nhận
-                </Button>
 
-              )}
-
-
-              {data.status !== APPOINTMENT_STATUS.CANCEL && (
-                <Button
-                  size="md"
-                  radius='md'
-                  color="primary.3"
-                  onClick={handlePrintAppointment}
-                  leftSection={<IoPrintSharp size={18} />}>
-                  In phiếu
-                </Button>
-              )}
-
-              {data.status === APPOINTMENT_STATUS.CONFIRM && (
-                <Button
-                  size="md"
-                  radius='md'
-                  color="teal.7"
-                  onClick={handleReceptionAppointment}
-                  leftSection={<RiUserReceived2Line size={18} />}>
-                  Tiếp nhận
-                </Button>
-              )}
-
-              {data.status !== APPOINTMENT_STATUS.CANCEL &&
-                data.status !== APPOINTMENT_STATUS.CHECK_IN && (
+            {
+              isPatient ? (
+                <Flex mt={12} gap={10} justify='flex-end'>
                   <Button
                     size="md"
                     radius='md'
-                    color="red.5"
-                    onClick={handleCancelAppointment}
-                    leftSection={<TbCalendarCancel size={18} />}>
-                    Hủy hẹn
+                    color="gray.6"
+                    onClick={onClose}>
+                    Đóng
                   </Button>
-                )}
+                </Flex>
+              ) : (
+                <Flex mt={12} gap={10} justify='flex-end'>
+                  {data.status === APPOINTMENT_STATUS.PENDING && (
+                    <Button
+                      size="md"
+                      radius='md'
+                      color="teal.7"
+                      onClick={handleConfirmAppointment}
+                      leftSection={<GiConfirmed size={18} />}>
+                      Xác nhận
+                    </Button>
 
-            </Flex>
+                  )}
+
+
+                  {data.status !== APPOINTMENT_STATUS.CANCEL && (
+                    <Button
+                      size="md"
+                      radius='md'
+                      color="primary.3"
+                      onClick={handlePrintAppointment}
+                      leftSection={<IoPrintSharp size={18} />}>
+                      In phiếu
+                    </Button>
+                  )}
+
+                  {data.status === APPOINTMENT_STATUS.CONFIRM && (
+                    <Button
+                      size="md"
+                      radius='md'
+                      color="teal.7"
+                      onClick={handleReceptionAppointment}
+                      leftSection={<RiUserReceived2Line size={18} />}>
+                      Tiếp nhận
+                    </Button>
+                  )}
+
+                  {data.status !== APPOINTMENT_STATUS.CANCEL &&
+                    data.status !== APPOINTMENT_STATUS.CHECK_IN && (
+                      <Button
+                        size="md"
+                        radius='md'
+                        color="red.5"
+                        onClick={handleCancelAppointment}
+                        leftSection={<TbCalendarCancel size={18} />}>
+                        Hủy hẹn
+                      </Button>
+                    )}
+
+                </Flex>
+              )
+            }
+
           </Modal.Body>
         </Modal.Content>
       </Modal.Root>
