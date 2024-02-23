@@ -33,6 +33,7 @@ import {
   ExaminationPage,
   VisitPatientPage,
   PaymentInvoicePage,
+  ClinicReportPage,
 } from '@/pages';
 import { NewsManagementPage } from '@/pages/Clinic/NewsManagement';
 import { NewsPage } from '@/pages/Guest/News';
@@ -360,6 +361,14 @@ export const ROUTES = [
     title: 'Quản lý tin tức',
     layout: ClinicLayout,
     element: NewsManagementPage,
+    isProtected: true,
+    children: [],
+  },
+  {
+    path: PATHS.CLINIC_REPORT,
+    title: 'Thống kê, báo cáo',
+    layout: ClinicLayout,
+    element: ClinicReportPage,
     isProtected: true,
     children: [],
   },

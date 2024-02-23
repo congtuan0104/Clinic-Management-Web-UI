@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-// import { NumberData, ReadingConfig, Reader } from 'read-vietnamese-number';
+import { DateInputProps } from '@mantine/dates';
 
 export const renderSendingTime = (sendingTime: Date) => {
   const diff = dayjs(dayjs()).diff(sendingTime, 'second');
@@ -54,4 +54,8 @@ export const numberToWords = (number: number) => {
   }
 
   return result.trim();
+};
+
+export const dateParser: DateInputProps['dateParser'] = input => {
+  return dayjs(input, 'DD/MM/YYYY').toDate();
 };

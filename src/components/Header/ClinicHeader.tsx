@@ -99,6 +99,7 @@ const ClinicHeader = ({ notify }: IHeaderProps) => {
           radius='md'
           size='sm'
           placeholder='Chọn phòng khám'
+          checkIconPosition="right"
           value={currentClinic?.id}
           styles={{
             input: {

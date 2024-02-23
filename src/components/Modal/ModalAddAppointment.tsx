@@ -20,6 +20,7 @@ import ReactToPrint from "react-to-print";
 import { appointmentApi } from "@/services/appointment.service";
 import { notifications } from "@mantine/notifications";
 import { MdMedicalServices } from "react-icons/md";
+import { dateParser } from "@/utils";
 
 interface IProps {
   isOpen: boolean;
@@ -143,7 +144,7 @@ const ModalAddAppointment = ({ isOpen, onClose, date, onSuccess }: IProps) => {
             mt={20}
             w={'100%'}
             valueFormat="DD/MM/YYYY"
-            // min date is tomorrow
+            dateParser={dateParser}
             minDate={dayjs().add(1, 'day').toDate()}
             control={control}
             leftSection={<FaCalendarDays size={18} />}

@@ -24,7 +24,6 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 
   if (token) {
     const decodeToken = jwtDecode(token);
-    console.log(decodeToken);
 
     const exp = decodeToken.exp ? decodeToken.exp * 1000 : 0;
     const expDate = new Date(exp);

@@ -136,7 +136,6 @@ export default function Conversation({ groupChat }: ConversationProps) {
             message: 'Upload file thất bại',
             color: 'red',
           })
-          console.log(error);
         },
         async () => {
           const url = await getDownloadURL(uploadTask.snapshot.ref);
@@ -147,7 +146,6 @@ export default function Conversation({ groupChat }: ConversationProps) {
 
     }
     catch (error) {
-      console.log(error);
     }
   };
 

@@ -65,7 +65,6 @@ const ModalCreateGroupChat = ({ isOpen, onClose, onSuccess }: IProps) => {
         });
       }
     } catch (error) {
-      console.log(error);
     }
   };
 
