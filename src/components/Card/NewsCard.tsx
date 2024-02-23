@@ -27,7 +27,7 @@ const NewsCard = ({ news }: INewsCardProps) => {
 					<Image src={news.logo} fallbackSrc={NewsLogoDefault} height={100} radius={'md'} />
 				</Box>
 				<Stack gap={5}>
-					<Anchor fz="md" fw={700} maw={380} c={'teal.3'} component={Link} to={`${PATHS.NEWS}/${news.id}`}>
+					<Anchor fz="md" fw={700} maw={380} c={'black'} component={Link} to={`${PATHS.NEWS}/${news.id}`}>
 						{news.title}
 					</Anchor>
 
