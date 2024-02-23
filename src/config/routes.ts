@@ -33,6 +33,7 @@ import {
   ExaminationPage,
   VisitPatientPage,
   PaymentInvoicePage,
+  PatientDetail,
 } from '@/pages';
 import { NewsManagementPage } from '@/pages/Clinic/NewsManagement';
 import { NewsPage } from '@/pages/Guest/News';
@@ -70,6 +71,7 @@ export const PATHS = {
   CLINIC_SERVICE: '/clinic/bang-gia-dich-vu',
   CLINIC_NEWS: '/clinic/quan-ly-tin-tuc',
   CLINIC_PATIENT_MANAGEMENT: '/clinic/benh-nhan',
+  CLINIC_PATIENT_DETAIL:'/clinic/benh-nhan/:id',
   CLINIC_RECEPTION: '/clinic/tiep-nhan-benh-nhan',
   CLINIC_EXAMINATION: '/clinic/kham-benh',
   CLINIC_VISITS: '/clinic/kham-benh/:id',
@@ -320,6 +322,14 @@ export const ROUTES = [
     title: 'Danh sách bệnh nhân',
     layout: ClinicLayout,
     element: PatientListPage,
+    isProtected: true,
+    children: [],
+  },
+  {
+    path: PATHS.CLINIC_PATIENT_DETAIL,
+    title: 'Chi tiết bệnh nhân',
+    layout: ClinicLayout,
+    element: PatientDetail,
     isProtected: true,
     children: [],
   },
