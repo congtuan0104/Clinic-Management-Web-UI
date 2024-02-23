@@ -103,6 +103,7 @@ export interface IMedicalRecordQueryParams {
   patientId?: number;
   examinationStatus?: MEDICO_RECORD_STATUS;
   paymentStatus?: MEDICO_PAYMENT_STATUS;
+  puid?: string;
 }
 
 export interface IMedicalRecordOverview {

@@ -34,6 +34,7 @@ import {
   VisitPatientPage,
   PaymentInvoicePage,
   ClinicReportPage,
+  MedicalProfilePage,
 } from '@/pages';
 import { NewsManagementPage } from '@/pages/Clinic/NewsManagement';
 import { NewsPage } from '@/pages/Guest/News';
@@ -58,8 +59,9 @@ export const PATHS = {
   ADMIN_DASHBOARD: '/admin/dashboard',
   ADMIN_PRICING_PLAN: '/admin/bang-gia',
   CLINIC_CHAT: '/clinic/messages',
+  PATIENT_CHAT: '/messages',
   CLINIC_DASHBOARD: '/clinic/tong-quan',
-  VIDEO_CALL: '/clinic/video-call',
+  VIDEO_CALL: '/video-call',
   PLAN_MANAGEMENT: '/clinic/quan-ly-goi',
   PAYMENT_RESULT: '/thanh-toan/thong-tin-thanh-toan',
   ROLE_MANAGEMENT: '/clinic/quan-ly-role',
@@ -79,6 +81,8 @@ export const PATHS = {
   CLINIC_REPORT: '/clinic/bao-cao',
   CLINIC_CATEGORY: '/clinic/danh-muc',
   CLINIC_SUPPLIES: '/clinic/vat-tu',
+  MEDICAL_RECORDS: '/ho-so-kham-benh',
+  MEDICAL_RECORD: '/ho-so-kham-benh/:id',
 };
 
 export const DEEPLINK = {
@@ -233,6 +237,7 @@ export const ROUTES = [
   {
     path: PATHS.VIDEO_CALL,
     title: 'Video Call',
+    layout: NoLayout,
     element: VideoCall,
     isProtected: true,
     children: [],
@@ -369,6 +374,22 @@ export const ROUTES = [
     title: 'Thống kê, báo cáo',
     layout: ClinicLayout,
     element: ClinicReportPage,
+    isProtected: true,
+    children: [],
+  },
+  {
+    path: PATHS.PATIENT_CHAT,
+    title: 'Nhắn tin',
+    layout: DefaultLayout,
+    element: Message,
+    isProtected: true,
+    children: [],
+  },
+  {
+    path: PATHS.MEDICAL_RECORD,
+    title: 'Hồ sơ khám bệnh',
+    layout: DefaultLayout,
+    element: MedicalProfilePage,
     isProtected: true,
     children: [],
   },

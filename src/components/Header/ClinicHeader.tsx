@@ -150,19 +150,21 @@ const ClinicHeader = ({ notify }: IHeaderProps) => {
           </Tooltip>
 
           <Popover.Dropdown styles={{ dropdown: { padding: 8 } }}>
-            <div className="flex flex-col">
-              {notify.length === 0 ? <p>Bạn không có thông báo nào</p> : <></>}
-              {notify.reverse().map((item) => (
-                <div key={item.id}
-                  className="flex cursor-pointer p-[6px] rounded-md flex-col group hover:bg-gray-200">
-                  <div className='border-solid border-0 border-l-[3px] border-primary-300 pl-2'>
-                    {/* <p className='font-semibold group-hover:text-primary-500'>{item.title}</p> */}
-                    <p className='text-14 text-gray-700 group-hover:text-black-90 text-justify mt-1'>{item.content}</p>
-                    <p className='text-gray-500 text-13'>{renderSendingTime(item.sendingTime)}</p>
+            <ScrollArea mah={500}>
+              <div className="flex flex-col">
+                {notify.length === 0 ? <p>Bạn không có thông báo nào</p> : <></>}
+                {notify.reverse().map((item) => (
+                  <div key={item.id}
+                    className="flex cursor-pointer p-[6px] rounded-md flex-col group hover:bg-gray-200">
+                    <div className='border-solid border-0 border-l-[3px] border-primary-300 pl-2'>
+                      {/* <p className='font-semibold group-hover:text-primary-500'>{item.title}</p> */}
+                      <p className='text-14 text-gray-700 group-hover:text-black-90 text-justify mt-1'>{item.content}</p>
+                      <p className='text-gray-500 text-13'>{renderSendingTime(item.sendingTime)}</p>
+                    </div>
                   </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            </ScrollArea>
           </Popover.Dropdown>
         </Popover>
 

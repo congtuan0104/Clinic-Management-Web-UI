@@ -51,10 +51,10 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 
   if (isLogin && token) {
     requestForToken()
-      .then((token) => {
+      .then((deviceToken) => {
         if (userInfo?.id)
-          notificationApi.registerDeviceToken(userInfo?.id, token);
-        cookies.set(COOKIE_KEY.DEVICE_TOKEN, token);
+          notificationApi.registerDeviceToken(userInfo?.id, deviceToken);
+        cookies.set(COOKIE_KEY.DEVICE_TOKEN, deviceToken);
       })
       .catch((err) => console.log(err));
 

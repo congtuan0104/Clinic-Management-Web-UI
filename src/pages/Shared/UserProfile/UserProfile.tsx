@@ -19,7 +19,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { useAppDispatch, useAuth } from '@/hooks';
 import { firebaseStorage } from '@/config';
 import { FirebaseAuthProvider } from '@/config';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { IChangeProfileRequest, IUserInfo } from '@/types';
 import { FaCalendarDay } from 'react-icons/fa';
 import { BsCake } from "react-icons/bs";
@@ -68,7 +68,9 @@ const changeProfileSchema = yup.object().shape({
 
 
 const UserProfilePage = () => {
-  const [isUpdate, setIsUpdate] = useState<boolean>(false);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const editMode = searchParams.get('editMode') === 'true';
+  const [isUpdate, setIsUpdate] = useState<boolean>(editMode);
   const [opened, { open, close }] = useDisclosure(false);
 
   //Xử lý đẩy ảnh lên firebase
@@ -92,7 +94,7 @@ const UserProfilePage = () => {
   const [isFacebookLink, setisFacebookLink] = useState(false)
   const [isMicrosoftLink, setisMicrosoftLink] = useState(false)
 
-  const { control: changePasswordControl, reset } = useForm<ChangePasswordFormData>({
+  const { control: changePasswordControl } = useForm<ChangePasswordFormData>({
     resolver: yupResolver(changePasswordSchema),
     defaultValues: {
       currentPassword: '',
@@ -101,7 +103,7 @@ const UserProfilePage = () => {
     },
   });
 
-  const { control: changeProfileControl, setValue, getValues, watch, handleSubmit } = useForm<IChangeProfileRequest>({
+  const { control: changeProfileControl, setValue, reset, watch, handleSubmit } = useForm<IChangeProfileRequest>({
     resolver: yupResolver(changeProfileSchema),
     defaultValues: useMemo(() => {
       return {
@@ -230,11 +232,14 @@ const UserProfilePage = () => {
 
   const handleCancelChange = () => {
     setIsUpdate(false);
+    setSearchParams({ editMode: 'false' });
+    reset();
     // resetForm();
   }
 
   const handleUpdate = () => {
     setIsUpdate(true);
+    setSearchParams({ editMode: 'true' });
   }
 
   const uploadFile = async () => {
@@ -281,6 +286,7 @@ const UserProfilePage = () => {
       }
     }
     setIsUpdate(false);
+    setSearchParams({ editMode: 'false' });
     navigate(0)
   }
 
