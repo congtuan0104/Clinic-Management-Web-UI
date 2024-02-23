@@ -2,6 +2,9 @@ import { useEffect, useState } from "react";
 import { IGroupChat } from "@/types"
 import { Avatar, Box, Flex, Input, Text } from "@mantine/core";
 import classNames from "classnames";
+import { useAppSelector, useMessage } from "@/hooks";
+import { userInfoSelector } from "@/store";
+import { GroupChatType } from "@/enums";
 
 interface ChatHeadsProps {
   groups: IGroupChat[];  // danh sách các nhóm chat mà user hiện tại tham gia
@@ -12,6 +15,7 @@ interface ChatHeadsProps {
 export default function GroupChatList({ groups, changeGroup, selectedGroup }: ChatHeadsProps) {
   const [searchGroup, setSearchGroup] = useState<string>("");
   const [searchGroupResult, setSearchGroupResult] = useState<IGroupChat[]>(groups);
+  const { groupChatName, logoSrc } = useMessage();
 
   useEffect(() => {
     setSearchGroupResult(groups);
@@ -67,11 +71,11 @@ export default function GroupChatList({ groups, changeGroup, selectedGroup }: Ch
 
             )}
           >
-            <Avatar color="secondary.5" radius="xl" >
-              {group.groupName.slice(0, 1)}
+            <Avatar color="secondary.5" radius="xl" src={logoSrc(group)}>
+              {groupChatName(group).slice(0, 1)}
             </Avatar>
 
-            <Text ml={8} size='md'>{group.groupName}</Text>
+            <Text ml={8} size='md'>{groupChatName(group)}</Text>
           </Flex>
 
         ))}

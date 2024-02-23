@@ -22,4 +22,8 @@ export const appointmentApi = {
   ): Promise<IApiResponse<any>> => {
     return axiosClient.put(`/appointments/${appointmentId}`, payload);
   },
+
+  reception: (appointmentId: number): Promise<IApiResponse<any>> => {
+    return axiosClient.post(`/medical-records`, { appointmentId });
+  },
 };

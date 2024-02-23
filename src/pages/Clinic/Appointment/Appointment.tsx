@@ -5,7 +5,7 @@ import { useEffect, useMemo, useState } from "react"
 import { FaCalendarDays, FaUserDoctor } from "react-icons/fa6";
 import { FaEye, FaRegCalendarPlus, FaRegEdit, FaThList, FaTrash } from "react-icons/fa";
 import { GrStatusInfo } from "react-icons/gr";
-import { APPOINTMENT_STATUS } from "@/enums";
+import { APPOINTMENT_STATUS, PERMISSION } from "@/enums";
 import { useDisclosure } from "@mantine/hooks";
 import { DateInput } from '@mantine/dates';
 import { SlotInfo } from "react-big-calendar";
@@ -30,13 +30,14 @@ const AppointmentPage = () => {
   const [mode, setMode] = useState<'list' | 'calendar'>('list')
   const [searchTerm, setSearchTerm] = useState<ISearchTerm>({
     doctor: undefined,
-    date: undefined,
+    date: new Date(),
     status: undefined,
   })
 
   const currentClinic = useAppSelector(currentClinicSelector);
 
-  const { data: appointments, isLoading, refetch } = useQuery('appointments',
+  const { data: appointments, isLoading, refetch } = useQuery(
+    ['appointments', currentClinic?.id, dayjs().format('YYYY-MM-DD')],
     () => appointmentApi.getAppointmentList({
       clinicId: currentClinic?.id,
       doctorId: searchTerm.doctor ?? undefined,
@@ -48,9 +49,14 @@ const AppointmentPage = () => {
   })
 
   const { data: staffs } = useQuery(
-    ['staffs'],
+    ['doctors'],
     () => staffApi.getStaffs({ clinicId: currentClinic?.id })
-      .then(res => res.data),
+      .then(
+        res => res.data?.
+          filter(staff => staff.role.permissions.
+            map(p => p.id).
+            includes(PERMISSION.PERFORM_SERVICE))
+      ),
     {
       enabled: !!currentClinic?.id,
       refetchOnWindowFocus: false,
@@ -264,7 +270,7 @@ const AppointmentPage = () => {
       <div className="p-3">
         <div className="mb-3 flex justify-between items-center">
           <div className="flex gap-3 items-center">
-            <Title order={3}>Lịch hẹn khám</Title>
+            <Title order={4}>Lịch hẹn khám</Title>
             {/* {selectedAppointment && <Text>Lịch hẹn được chọn là: {selectedAppointment.id}</Text>} */}
             <Button.Group>
               <Tooltip label='Xem theo dạng danh sách' position="bottom">
@@ -307,6 +313,7 @@ const AppointmentPage = () => {
                   height: 40,
                 },
               }}
+              value={searchTerm.doctor?.toString()}
               onChange={(value) => value && setSearchTerm({ ...searchTerm, doctor: Number(value) })}
             />
             <DateInput
@@ -314,6 +321,7 @@ const AppointmentPage = () => {
               placeholder="Ngày hẹn khám"
               valueFormat="DD-MM-YYYY"
               leftSection={<FaCalendarDays size={18} />}
+              value={searchTerm.date}
               onChange={(value) => setSearchTerm({ ...searchTerm, date: value })}
               allowDeselect
               clearable
@@ -337,6 +345,7 @@ const AppointmentPage = () => {
               allowDeselect
               clearable
               leftSection={<GrStatusInfo size={18} />}
+              value={searchTerm.status}
               onChange={(value) => setSearchTerm({ ...searchTerm, status: value })}
               styles={{
                 input: {

@@ -9,3 +9,4 @@ export * from './ResetPassword';
 export * from './Clinics';
 export * from './ClinicDetail';
 export * from './MakeAppointment';
+export * from './StaffDetail';

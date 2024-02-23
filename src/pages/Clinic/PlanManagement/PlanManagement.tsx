@@ -96,9 +96,9 @@ const ClinicManagePage = () => {
 
         <Badge
           color={subscription.status === CLINIC_SUBSCRIPTION_STATUS.ACTIVE ? 'primary.4'
-            : subscription.status === CLINIC_SUBSCRIPTION_STATUS.INPAYMENT ? 'teal.6'
+            : subscription.status === CLINIC_SUBSCRIPTION_STATUS.INPAYMENT ? 'yellow.5'
               : subscription.status === CLINIC_SUBSCRIPTION_STATUS.EXPIRED ? 'gray.6'
-                : 'error'}
+                : 'red.5'}
         >
           {renderSubscriptionStatus(subscription.status)}
         </Badge>
@@ -149,6 +149,21 @@ const ClinicManagePage = () => {
         Kích hoạt
       </div>
     )
+
+    if (subscription.status === CLINIC_SUBSCRIPTION_STATUS.INPAYMENT) return (
+      <div
+        className='cursor-pointer text-yellow-600 hover:text-yellow-500'
+        onClick={() => {
+          setClinicNeedPayment({
+            clinic: clinic,
+            subscription: subscription,
+          })
+          setIsOpenPaymentModal(true);
+        }}
+      >
+        Thanh toán lại
+      </div>
+    )
   }
 
   if ((isLoadingPlan || isLoadingClinic) && !isOpenClinicModal && !isOpenPaymentModal) return (
@@ -183,7 +198,7 @@ const ClinicManagePage = () => {
               <Paper shadow="xs" radius='md' p='lg' key={clinic.id}>
                 <div className='flex justify-between'>
                   <div>
-                    <Text fw='semibold' tt='uppercase'>{clinic.name}</Text>
+                    <Text fw={600} c='primary.3' tt='uppercase'>{clinic.name}</Text>
                     <Text>{clinic.address}</Text>
                     {renderAction(clinic)}
 

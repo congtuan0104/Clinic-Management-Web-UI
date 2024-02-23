@@ -1,5 +1,5 @@
 import { Gender } from '@/enums';
-import { IUserGroupRole, IUserInfo } from '.';
+import { IRolePermission, IUserGroupRole, IUserInfo } from '.';
 
 export interface IStaffQueryParams {
   userId?: string;
@@ -19,7 +19,12 @@ export interface IClinicStaff {
   description?: string;
   specialize?: string;
   users: IUserInfo;
-  role: IUserGroupRole;
+  role: {
+    id: number;
+    name: string;
+    description: string;
+    permissions: IRolePermission[];
+  };
   isAcceptInvite: boolean;
   isDisabled: boolean;
 }

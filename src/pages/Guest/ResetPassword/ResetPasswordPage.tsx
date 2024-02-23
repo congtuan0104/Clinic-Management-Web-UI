@@ -107,7 +107,6 @@ const ResetPasswordPage = () => {
             readOnly
             size="md"
             mt="md"
-            radius="sm"
             control={control}
             leftSection={<SiMaildotru size={16} />}
           />
@@ -118,7 +117,6 @@ const ResetPasswordPage = () => {
             required
             mt="md"
             size="md"
-            radius="sm"
             control={control}
             autoFocus
             leftSection={<RiLockPasswordLine size={18} />}
@@ -130,12 +128,11 @@ const ResetPasswordPage = () => {
             required
             mt="md"
             size="md"
-            radius="sm"
             control={control}
             leftSection={<RiLockPasswordLine size={18} />}
           />
 
-          <Button fullWidth mt="xl" radius="sm" size="md" type="submit">
+          <Button fullWidth mt="xl" size="md" type="submit">
             Đặt lại mật khẩu
           </Button>
 

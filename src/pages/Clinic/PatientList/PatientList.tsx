@@ -11,18 +11,21 @@ import {
   Tooltip,
 } from '@mantine/core';
 import { useAppSelector } from '@/hooks';
-import { currentClinicSelector } from '@/store';
+import { currentClinicSelector, staffInfoSelector, userInfoSelector } from '@/store';
 import { FaRegEdit, FaTrash } from 'react-icons/fa';
-import { authApi, patientApi } from '@/services';
+import { authApi, chatApi, patientApi } from '@/services';
 import { ClinusTable, ModalNewPatient } from "@/components";
 import { useQuery } from 'react-query';
 import { MRT_ColumnDef } from 'mantine-react-table';
 import { IPatient } from '@/types';
 import { notifications } from '@mantine/notifications';
 import { modals } from '@mantine/modals';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { PATHS } from '@/config';
 import { MdEmail } from 'react-icons/md';
+import { Gender, GroupChatType } from '@/enums';
+import dayjs from 'dayjs';
+import { IoMdChatboxes } from 'react-icons/io';
 
 const PatientListPage = () => {
   // khai báo thông tin hiển thị của bảng (đọc tài liệu tại https://v2.mantine-react-table.com/)
@@ -47,6 +50,19 @@ const PatientListPage = () => {
           </div>,
       },
       {
+        header: 'Giới tính',
+        id: 'gender',
+        accessorFn: (dataRow) => dataRow.gender === Gender.Male ? 'Nam'
+          : dataRow.gender === Gender.Female ? 'Nữ' : 'Không rõ',
+      },
+      // {
+      //   header: 'Tuổi',
+      //   id: 'gender',
+      //   accessorFn: (dataRow) => dataRow.birthday ?
+      //     dayjs().diff(dataRow.birthday, 'year') < 1 ? 'Dưới 1 tuổi' : dayjs().diff(dataRow.birthday, 'year') + ' tuổi'
+      //     : 'Không rõ',
+      // },
+      {
         header: 'Số điện thoại',
         accessorKey: 'phone',
       },
@@ -68,8 +84,10 @@ const PatientListPage = () => {
   );
 
   const currentClinic = useAppSelector(currentClinicSelector);
+  const userInfo = useAppSelector(userInfoSelector);
+  const staffInfo = useAppSelector(staffInfoSelector);
   const [isOpenCreateModal, setOpenCreateModal] = useState(false);
-
+  const navigate = useNavigate();
 
   // lấy dữ liệu từ api
   const { data: patients, refetch, isLoading } = useQuery(
@@ -133,6 +151,29 @@ const PatientListPage = () => {
     }
   }
 
+  const handleChatWithPatient = async (puid: string, patientName: string) => {
+    const res = await chatApi.addGroupChat({
+      groupName: `${userInfo?.firstName} ${userInfo?.lastName}` + ' - ' + patientName,
+      userList: [puid],
+      type: GroupChatType.PERSONAL,
+      maxMember: 2,
+    });
+
+    if (res.status && res.data) {
+      const groupChat = res.data;
+      navigate(`${PATHS.CLINIC_CHAT}?group=${groupChat.id}`);
+    }
+    else {
+      notifications.show({
+        title: 'Thất bại',
+        message: 'Đã có lỗi xảy ra',
+        color: 'red.5',
+      })
+    }
+  }
+
+
+
   return (
     <>
       <Flex direction="column" gap="md" p="md">
@@ -167,11 +208,22 @@ const PatientListPage = () => {
           }}
           renderRowActions={({ row }) => (
             <Flex align='center' justify='flex-end' gap={10}>
-              {(!row.original.emailVerified) && (
+              {(row.original.emailVerified) ? (
+                <Tooltip label='Nhắn tin với bệnh nhân'>
+                  <ActionIcon
+                    variant='outline'
+                    color='teal.8'
+                    radius='sm'
+                    onClick={() => handleChatWithPatient(row.original.userId, row.original.firstName + ' ' + row.original.lastName)}
+                  >
+                    <IoMdChatboxes />
+                  </ActionIcon>
+                </Tooltip>
+              ) : (
                 <Tooltip label='Gửi lại mail xác thực'>
                   <ActionIcon
                     variant='outline'
-                    color='gray.8'
+                    color='gray.6'
                     radius='sm'
                     onClick={() => handleResendEmail(row.original.email)}
                   >

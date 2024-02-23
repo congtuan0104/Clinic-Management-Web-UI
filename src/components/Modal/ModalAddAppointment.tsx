@@ -1,4 +1,4 @@
-import { APPOINTMENT_STATUS, Gender } from "@/enums";
+import { APPOINTMENT_STATUS, Gender, PERMISSION } from "@/enums";
 import { IAppointment, INewAppointmentPayload } from "@/types";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Box, Modal, Text, Button, ScrollArea, Title, ActionIcon, Tooltip } from "@mantine/core";
@@ -17,10 +17,10 @@ import { clinicServiceApi, patientApi, staffApi } from "@/services";
 import { BiPlus } from "react-icons/bi";
 import { IoPrintSharp } from "react-icons/io5";
 import ReactToPrint from "react-to-print";
-import { watch } from "fs";
 import { appointmentApi } from "@/services/appointment.service";
 import { notifications } from "@mantine/notifications";
 import { MdMedicalServices } from "react-icons/md";
+import { dateParser } from "@/utils";
 
 interface IProps {
   isOpen: boolean;
@@ -55,14 +55,14 @@ const ModalAddAppointment = ({ isOpen, onClose, date, onSuccess }: IProps) => {
 
   const ref = useRef<HTMLDivElement>(null);
 
-  const { control, reset, setValue, formState: { errors } } = useForm<IFormData>({
+  const { control, reset, setValue, formState: { errors }, watch } = useForm<IFormData>({
     resolver: yupResolver(schema),
     defaultValues: {
       date: date || new Date(),
-      doctorId: '',
-      patientId: '',
-      startTime: '',
-      endTime: '',
+      // doctorId: '',
+      // patientId: '',
+      // startTime: '',
+      // endTime: '',
       description: '',
     },
   });
@@ -78,9 +78,12 @@ const ModalAddAppointment = ({ isOpen, onClose, date, onSuccess }: IProps) => {
   );
 
   const { data: staffs } = useQuery(
-    ['staffs'],
+    ['doctors'],
     () => staffApi.getStaffs({ clinicId: currentClinic?.id })
-      .then(res => res.data),
+      .then(
+        res => res.data?.
+          filter(staff => staff.role.permissions.map(p => p.id).includes(PERMISSION.PERFORM_SERVICE))
+      ),
     {
       enabled: !!currentClinic?.id,
       refetchOnWindowFocus: false,
@@ -104,6 +107,11 @@ const ModalAddAppointment = ({ isOpen, onClose, date, onSuccess }: IProps) => {
   //   }
   // }, [isOpen]);
 
+  const selectedService = useMemo(() => {
+    const serviceId = watch('serviceId');
+    return services?.find(service => service.id === Number(serviceId));
+  }, [watch('serviceId')]);
+
   useEffect(() => {
     if (date) {
       const startTime = dayjs(date).format('HH:mm');
@@ -115,6 +123,12 @@ const ModalAddAppointment = ({ isOpen, onClose, date, onSuccess }: IProps) => {
       setValue('endTime', endTime);
     }
   }, [date]);
+
+  useEffect(() => {
+    if (!selectedService || !selectedService.staffIds.includes(Number(watch('doctorId')))) {
+      setValue('doctorId', '');
+    }
+  }, [selectedService]);
 
   const renderForm = () => {
     return (
@@ -130,12 +144,35 @@ const ModalAddAppointment = ({ isOpen, onClose, date, onSuccess }: IProps) => {
             mt={20}
             w={'100%'}
             valueFormat="DD/MM/YYYY"
-            // min date is tomorrow
+            dateParser={dateParser}
             minDate={dayjs().add(1, 'day').toDate()}
             control={control}
             leftSection={<FaCalendarDays size={18} />}
           />
 
+          <Select
+            label="Dịch vụ"
+            placeholder="Chọn dịch vụ khám bệnh"
+            required
+            name='serviceId'
+            size="md"
+            radius='md'
+            // disabled={!watch('doctorId')}
+            allowDeselect
+            data={services?.map((service) => ({
+              value: service.id.toString(),
+              label: service.serviceName,
+            })) || []}
+            searchable
+            leftSection={<MdMedicalServices size={18} />}
+            w={'100%'}
+            control={control}
+          />
+
+
+        </div>
+
+        <div className="flex justify-between gap-4 items-end mt-3">
           <Select
             label="Bác sĩ"
             placeholder="Chọn bác sĩ khám bệnh"
@@ -146,34 +183,14 @@ const ModalAddAppointment = ({ isOpen, onClose, date, onSuccess }: IProps) => {
             allowDeselect
             data={staffs?.map((staff) => ({
               value: staff.id.toString(),
-              label: `${staff.users.firstName} ${staff.users.lastName}`
+              label: `${staff.users.firstName} ${staff.users.lastName}`,
+              disabled: selectedService && !selectedService.staffIds.includes(staff.id)
             })) || []}
             searchable
             leftSection={<FaUserDoctor size={18} />}
             w={'100%'}
             control={control}
           />
-        </div>
-
-        <div className="flex justify-between gap-4 items-end mt-3">
-          <Select
-            label="Dịch vụ"
-            placeholder="Chọn dịch vụ khám bệnh"
-            required
-            name='serviceId'
-            size="md"
-            radius='md'
-            allowDeselect
-            data={services?.map((service) => ({
-              value: service.id.toString(),
-              label: service.serviceName
-            })) || []}
-            searchable
-            leftSection={<MdMedicalServices size={18} />}
-            w={'100%'}
-            control={control}
-          />
-
           <Select
             label="Người đặt lịch hẹn"
             placeholder="Tìm kiếm tên bệnh nhân"
@@ -209,18 +226,6 @@ const ModalAddAppointment = ({ isOpen, onClose, date, onSuccess }: IProps) => {
             rightSectionPointerEvents='auto'
             control={control}
           />
-
-          {/* <Button
-            type="button"
-            color="primary.3"
-            size="md"
-            variant="light"
-            onClick={() => setOpenCreateModal(true)}
-            w={250}
-            leftSection={<FaUserPlus />}
-          >
-            Bệnh nhân mới
-          </Button> */}
 
         </div>
 
@@ -276,7 +281,6 @@ const ModalAddAppointment = ({ isOpen, onClose, date, onSuccess }: IProps) => {
 
 
   const handleSubmit = async (data: IFormData) => {
-    console.log(data);
     if (!currentClinic?.id) return;
 
     const payload: INewAppointmentPayload = {
@@ -286,14 +290,12 @@ const ModalAddAppointment = ({ isOpen, onClose, date, onSuccess }: IProps) => {
       serviceId: Number(data.serviceId),
       date: dayjs(data.date).format('YYYY-MM-DD'),
       startTime: data.startTime,
-      endTime: dayjs(data.date).add(15, 'minute').format('HH:mm'),
+      endTime: dayjs(data.startTime).add(15, 'minute').format('HH:mm'),
       description: data.description,
       status: APPOINTMENT_STATUS.CONFIRM
     }
 
-    console.log('payload', payload);
     const res = await appointmentApi.createAppointment(payload);
-
     if (res.status) {
       notifications.show({
         title: 'Thành công',

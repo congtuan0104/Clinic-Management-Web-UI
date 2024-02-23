@@ -64,8 +64,8 @@ const ClinicDetailPage = () => {
       const response = await newsApi.getNews({
         clinicId: clinicId,
         isShow: true,
-        pageSize: '4',
-        pageIndex: '0',
+        pageSize: 4,
+        pageIndex: 0,
       });
       return response.data?.data;
     } catch (error) {
@@ -165,7 +165,7 @@ const ClinicDetailPage = () => {
                     {doctors && doctors.slice(0, 4).map((doctor) => (
 
                       <Stack justify='center' align='center' gap="xs" pr={35}>
-                        <Box w={100} h={100}>
+                        <Box w={100} h={100} component={Link} to={`${doctor.id}`}>
                           <Image
                             radius="50%"
                             src={doctor.users.avatar}

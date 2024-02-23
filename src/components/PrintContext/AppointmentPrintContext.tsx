@@ -17,7 +17,7 @@ const AppointmentPrintContext = forwardRef<HTMLDivElement, IProps>((props, ref) 
     <div ref={ref} className="border border-dash border-gray-400 rounded-md py-10 px-16">
       <div className="flex items-center">
         {data.clinics.logo && (
-          <img src={data.clinics.logo} alt="logo" className="w-[100px] h-[100px] mr-5" />
+          <img src={data.clinics.logo} alt="logo" className="w-[120px] h-[120px] mr-5" />
         )}
         <div className="flex flex-col flex-1">
           <p className="uppercase font-semibold">{data.clinics.name}</p>
