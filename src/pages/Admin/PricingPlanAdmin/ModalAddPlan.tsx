@@ -92,7 +92,7 @@ const ModalAddPlan = ({ open, onClose }: IModalAddPlanProps) => {
 
   return (
     <Modal.Root opened={open} onClose={handleClose} centered size='lg'>
-      <Modal.Overlay />
+      <Modal.Overlay blur={7} />
       <LoadingOverlay visible={isLoading} zIndex={1000} />
       <Modal.Content>
         <Modal.Header>
@@ -107,7 +107,6 @@ const ModalAddPlan = ({ open, onClose }: IModalAddPlanProps) => {
               name="planName"
               required
               size="md"
-              radius="sm"
               control={control}
             />
             <NumberInput
@@ -116,7 +115,6 @@ const ModalAddPlan = ({ open, onClose }: IModalAddPlanProps) => {
               required
               size="md"
               mt='sm'
-              radius="sm"
               control={control}
               suffix="₫"
               min={1000}
@@ -130,7 +128,6 @@ const ModalAddPlan = ({ open, onClose }: IModalAddPlanProps) => {
               required
               size="md"
               mt='sm'
-              radius="sm"
               control={control}
               min={1}
             />
@@ -139,7 +136,6 @@ const ModalAddPlan = ({ open, onClose }: IModalAddPlanProps) => {
               name="description"
               required
               size="md"
-              radius="sm"
               mt='sm'
               control={control}
             />
@@ -186,10 +182,10 @@ const ModalAddPlan = ({ open, onClose }: IModalAddPlanProps) => {
                 />
               ))} */}
             <Flex justify='flex-end'>
-              <Button mt="xl" radius="sm" size="md" type="submit">
+              <Button mt="xl" size="md" type="submit">
                 Xác nhận
               </Button>
-              <Button mt="xl" ml="sm" radius="sm" size="md" variant='outline' color='red.5'
+              <Button mt="xl" ml="sm" size="md" variant='outline' color='red.5'
                 onClick={handleClose}>
                 Hủy
               </Button>

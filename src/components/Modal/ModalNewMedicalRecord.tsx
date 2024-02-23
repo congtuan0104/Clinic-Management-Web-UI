@@ -3,7 +3,7 @@ import { useAppSelector } from "@/hooks";
 import { authApi, clinicServiceApi, medicalRecordApi, patientApi, staffApi } from "@/services";
 import { currentClinicSelector } from "@/store";
 import { ICreatePatientPayload, INewMedicalRecordPayload, INewRecordService, IPatient } from "@/types";
-import { phoneRegExp } from "@/utils";
+import { dateParser, phoneRegExp } from "@/utils";
 import { yupResolver } from "@hookform/resolvers/yup";
 import {
   Button, Flex, Grid, Modal, ModalBody, ModalCloseButton,
@@ -402,8 +402,8 @@ const ModalNewMedicalRecord = ({
                   required
                   disabled={!patientInfo}
                   valueFormat="DD/MM/YYYY"
+                  dateParser={dateParser}
                   minDate={new Date()}
-                  dateParser={(date) => dayjs(date, 'DD/MM/YYYY').toDate()}
                   leftSection={<FaCalendarAlt />}
                   control={control}
                   size="md"

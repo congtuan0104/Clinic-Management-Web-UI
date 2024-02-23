@@ -112,7 +112,7 @@ const ModalNewSupplies = ({
 
   return (
     <Modal.Root opened={isOpen} onClose={handleCancel} centered size={'auto'} scrollAreaComponent={ScrollArea.Autosize}>
-      <Modal.Overlay />
+      <Modal.Overlay blur={7} />
       <Modal.Content radius='lg'>
         <Modal.Header bg='secondary.3'>
           <Modal.Title c='white' fz="lg" fw={600}>Thiết bị, vật tư mới</Modal.Title>

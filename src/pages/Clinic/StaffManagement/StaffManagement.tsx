@@ -13,7 +13,7 @@ import {
   Tooltip,
 } from '@mantine/core';
 import { useAppSelector, useAuth } from '@/hooks';
-import { currentClinicSelector } from '@/store';
+import { currentClinicSelector, userInfoSelector } from '@/store';
 import { IoSearch } from 'react-icons/io5';
 import { FaRegEdit, FaTrash } from 'react-icons/fa';
 import { staffApi } from '@/services';
@@ -26,6 +26,7 @@ import { IClinicStaff } from '@/types';
 import { PATHS } from '@/config';
 import { Gender } from '@/enums';
 import { MdEmail } from 'react-icons/md';
+import { FaUserPlus } from 'react-icons/fa6';
 
 
 const StaffManagementPage = () => {
@@ -80,24 +81,32 @@ const StaffManagementPage = () => {
     [],
   );
   const currentClinic = useAppSelector(currentClinicSelector);
+  const userInfo = useAppSelector(userInfoSelector);
   const [opened, { open, close }] = useDisclosure(false);
 
   // const navigate = useNavigate();
 
-  const { data: staffs, refetch } = useQuery(
-    ['staffs'],
+  const { data, refetch } = useQuery(
+    ['staffs', currentClinic?.id],
     () => staffApi.getStaffs({ clinicId: currentClinic?.id }).then(res => res.data),
     {
       enabled: !!currentClinic?.id,
     }
   );
 
+  const staffs = data?.filter(staff => staff.users.id !== userInfo?.id)
+
   return (
     <>
       <Flex direction="column" gap="md" p="md">
         <Flex align="center" justify="space-between">
           <Title order={4}>Danh sách nhân viên</Title>
-          <Button color='secondary.3' onClick={open}>Nhân viên mới</Button>
+          <Button
+            color='secondary.3'
+            leftSection={<FaUserPlus />}
+            onClick={open}>
+            Nhân viên mới
+          </Button>
         </Flex>
 
         <ClinusTable

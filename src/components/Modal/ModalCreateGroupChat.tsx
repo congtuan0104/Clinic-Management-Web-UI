@@ -26,11 +26,10 @@ const ModalCreateGroupChat = ({ isOpen, onClose, onSuccess }: IProps) => {
   const currentClinic = useAppSelector(currentClinicSelector);
 
   const { data: staffs, isLoading } = useQuery(
-    ['staffs'],
+    ['staffs', currentClinic?.id],
     () => staffApi.getStaffs({ clinicId: currentClinic?.id }).then(res => res.data),
     {
       enabled: !!currentClinic?.id,
-      refetchOnWindowFocus: false,
     }
   );
 
@@ -66,7 +65,6 @@ const ModalCreateGroupChat = ({ isOpen, onClose, onSuccess }: IProps) => {
         });
       }
     } catch (error) {
-      console.log(error);
     }
   };
 
@@ -85,21 +83,19 @@ const ModalCreateGroupChat = ({ isOpen, onClose, onSuccess }: IProps) => {
             required
             size="md"
             mt='md'
-            radius="sm"
             control={control}
           />
 
           <MultiSelect
             label="Thêm thành viên vào nhóm chat"
             data={staffs ? staffs.map((staff) => ({
-              value: staff.id.toString(),
+              value: staff.users.id.toString(),
               label: staff.users.firstName + ' ' + staff.users.lastName,
             })) : []}
             searchable
             mt={10}
             name="memberIds"
             size="md"
-            radius="sm"
             hidePickedOptions
             onChange={(values: string[]) => setValue('memberIds', values)}
             control={control}
@@ -107,14 +103,14 @@ const ModalCreateGroupChat = ({ isOpen, onClose, onSuccess }: IProps) => {
           />
 
           <div className="flex justify-end gap-2">
-            <Button mt="lg" ml="sm" radius="sm" size="md" color='gray.5'
+            <Button mt="lg" ml="sm" size="md" color='gray.5'
               onClick={() => {
                 onClose();
                 reset();
               }}>
               Hủy
             </Button>
-            <Button mt="lg" radius="sm" size="md" type="submit" onClick={handleSubmit(onSubmitAddGroupChat)}>
+            <Button mt="lg" size="md" type="submit" onClick={handleSubmit(onSubmitAddGroupChat)}>
               Xác nhận
             </Button>
 

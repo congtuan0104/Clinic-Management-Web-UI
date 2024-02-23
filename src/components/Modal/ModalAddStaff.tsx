@@ -3,7 +3,7 @@ import { useAppSelector } from "@/hooks";
 import { authApi, clinicApi, clinicServiceApi, staffApi } from "@/services";
 import { currentClinicSelector } from "@/store";
 import { ICreateStaffPayload } from "@/types";
-import { phoneRegExp } from "@/utils";
+import { dateParser, phoneRegExp } from "@/utils";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Button, Flex, Grid, Modal, ModalBody, ModalCloseButton, ModalHeader, ScrollArea, TagsInput } from "@mantine/core";
 import { useDebouncedValue } from "@mantine/hooks";
@@ -206,7 +206,6 @@ const ModalAddStaff = ({
       delete payload.userInfo;
     }
 
-    console.log(payload);
 
     const res = await staffApi.createStaff(payload);
 
@@ -316,6 +315,7 @@ const ModalAddStaff = ({
                       size="md"
                       disabled={isDisabled}
                       valueFormat="DD/MM/YYYY"
+                      dateParser={dateParser}
                       maxDate={dayjs().toDate()}
                       radius="md"
                       control={control}

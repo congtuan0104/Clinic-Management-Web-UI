@@ -11,8 +11,8 @@ import {
   Tooltip,
 } from '@mantine/core';
 import { useAppSelector } from '@/hooks';
-import { currentClinicSelector, staffInfoSelector } from '@/store';
-import { FaRegEdit, FaTrash } from 'react-icons/fa';
+import { currentClinicSelector, staffInfoSelector, userInfoSelector } from '@/store';
+import { FaEye, FaRegEdit, FaTrash } from 'react-icons/fa';
 import { authApi, medicalRecordApi } from '@/services';
 import { ClinusTable, ModalNewMedicalRecord } from "@/components";
 import { useQuery } from 'react-query';
@@ -23,9 +23,9 @@ import { modals } from '@mantine/modals';
 import { Link } from 'react-router-dom';
 import { PATHS } from '@/config';
 import { MdEmail, MdOutlineStart } from 'react-icons/md';
-import { Gender } from '@/enums';
+import { AuthModule, Gender, MEDICO_RECORD_STATUS } from '@/enums';
 import dayjs from 'dayjs';
-import { TiDocumentAdd } from 'react-icons/ti';
+import { SlActionRedo } from "react-icons/sl";
 
 const ExaminationPage = () => {
 
@@ -75,14 +75,17 @@ const ExaminationPage = () => {
         header: 'Trạng thái khám',
         id: 'examinationStatus',
         accessorFn: (dataRow) => {
-          if (dataRow.examinationStatus === 0) {
-            return <Badge color='red'>Chờ khám</Badge>;
-          } else if (dataRow.examinationStatus === 1) {
+          if (dataRow.examinationStatus === MEDICO_RECORD_STATUS.WAITING) {
+            return <Badge color='gray.5'>Chờ khám</Badge>;
+          } else if (dataRow.examinationStatus === MEDICO_RECORD_STATUS.EXAMINATING) {
             return <Badge color='blue'>Đang khám</Badge>;
-          } else if (dataRow.examinationStatus === 2) {
+          } else if (dataRow.examinationStatus === MEDICO_RECORD_STATUS.DONE) {
             return <Badge color='green'>Đã khám</Badge>;
+          } else if (dataRow.examinationStatus === MEDICO_RECORD_STATUS.PAUSE) {
+            return <Badge color='yellow'>Tạm dừng</Badge>;
+          } else if (dataRow.examinationStatus === MEDICO_RECORD_STATUS.CANCEL) {
+            return <Badge color='red.5'>Hủy khám</Badge>;
           }
-
         }
       },
 
@@ -91,6 +94,7 @@ const ExaminationPage = () => {
   );
 
   const currentClinic = useAppSelector(currentClinicSelector);
+  const userInfo = useAppSelector(userInfoSelector);
   const staffInfo = useAppSelector(staffInfoSelector);
   const [isOpenCreateModal, setOpenCreateModal] = useState(false);
 
@@ -100,11 +104,11 @@ const ExaminationPage = () => {
     ['medical_records', currentClinic?.id],
     () => medicalRecordApi.getMedicalRecords({
       clinicId: currentClinic?.id,
-      doctorId: staffInfo ? staffInfo.id : undefined,
+      doctorId: userInfo?.moduleId === AuthModule.ClinicStaff && staffInfo ? staffInfo.id : undefined,
     })
       .then(res => res.data),
     {
-      enabled: !!currentClinic?.id,
+      enabled: !!currentClinic?.id && (userInfo?.moduleId === AuthModule.ClinicOwner || !!staffInfo?.id),
       refetchOnWindowFocus: false,
     }
   );
@@ -148,16 +152,24 @@ const ExaminationPage = () => {
           }}
           renderRowActions={({ row }) => (
             <Flex align='center' justify='flex-end' gap={10}>
-              <Tooltip label='Tiến hành khám bệnh'>
+              <Tooltip label={
+                row.original.examinationStatus === MEDICO_RECORD_STATUS.DONE
+                  ? 'Xem hồ sơ khám bệnh'
+                  : 'Tiến hành khám bệnh'
+              }>
                 <ActionIcon
                   variant='outline'
-                  color='blue'
-                  radius='sm'
+                  color='blue.8'
+                  radius='lg'
                   component={Link}
                   to={`${PATHS.CLINIC_EXAMINATION}/${row.id}`}
                 // onClick={() => handleOpenUpdateModal(row.original)} // xử lý khi chọn sửa dịch vụ
                 >
-                  <MdOutlineStart />
+                  {
+                    row.original.examinationStatus === MEDICO_RECORD_STATUS.DONE
+                      ? <FaEye /> : <SlActionRedo />
+                  }
+
                 </ActionIcon>
               </Tooltip>
               {/* <ActionIcon

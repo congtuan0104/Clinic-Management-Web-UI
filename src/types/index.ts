@@ -12,3 +12,4 @@ export * from './category.types';
 export * from './supplies.types';
 export * from './patient.types';
 export * from './medical_record.types';
+export * from './statistic.type';

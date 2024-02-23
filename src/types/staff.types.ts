@@ -103,4 +103,5 @@ export interface ISchedule {
   staffId?: number;
   startTime?: string;
   endTime?: string;
+  isDisabled?: boolean;
 }

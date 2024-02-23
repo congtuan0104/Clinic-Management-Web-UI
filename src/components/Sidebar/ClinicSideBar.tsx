@@ -105,7 +105,6 @@ export function ClinicSideBar() {
   const { userInfo } = useAuth();
   const isOpenSidebar = useAppSelector(openSidebarClinicSelector);
   const permissions = useAppSelector(staffPermissionSelector);
-  console.log('permissions', permissions)
 
   const menuItems = createMenuItem(permissions);
 

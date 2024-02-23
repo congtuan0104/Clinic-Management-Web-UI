@@ -12,3 +12,4 @@ export * from './supplies.service';
 export * from './patient.service';
 export * from './appointment.service';
 export * from './medical_record.service';
+export * from './statistic.service';

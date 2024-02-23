@@ -21,8 +21,9 @@ export interface IGroupChatMember {
   isAdmin: boolean;
   joinAt: Date;
   email: string;
-  firstname: string;
-  lastname: string;
+  firstName: string;
+  lastName: string;
+  avatar?: string;
 }
 
 /**
