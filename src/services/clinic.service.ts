@@ -11,6 +11,7 @@ import {
   IClinicMember,
   IClinicStaffDetail,
   IClinicQueryParams,
+  IClinicStaff,
 } from '@/types';
 import { axiosClient } from '@/utils';
 
@@ -34,9 +35,6 @@ export const clinicApi = {
     return axiosClient.post(`/clinics`, data);
   },
 
-  updateStaffInfo(staffId: string, data: IClinicStaffDetail): Promise<any> {
-    return axiosClient.put(`/staffs/${staffId}`, data);
-  },
 
   getClinicRoles(clinicId: string): Promise<IApiResponse<IUserGroupRole[]>> {
     return axiosClient.get(`/clinics/${clinicId}/user-group-role`);
