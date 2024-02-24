@@ -131,7 +131,6 @@ export const ROUTES = [
     title: 'Chi tiết phòng khám',
     layout: DefaultLayout,
     element: ClinicDetailPage,
-    isProtected: false,
     children: [],
   },
   {
@@ -147,7 +146,6 @@ export const ROUTES = [
     title: 'Chi tiết nhân viên',
     layout: DefaultLayout,
     element: Guest_StaffDetail,
-    isProtected: false,
     children: [],
   },
   {
