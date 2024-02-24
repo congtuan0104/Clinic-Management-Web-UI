@@ -37,6 +37,7 @@ import {
   PatientDetail,
   ClinicReportPage,
   MedicalProfilePage,
+  PatientOverviewPage,
 } from '@/pages';
 import { NewsManagementPage } from '@/pages/Clinic/NewsManagement';
 import { NewsPage } from '@/pages/Guest/News';
@@ -87,6 +88,7 @@ export const PATHS = {
   CLINIC_SUPPLIES: '/clinic/vat-tu',
   MEDICAL_RECORDS: '/ho-so-kham-benh',
   MEDICAL_RECORD: '/ho-so-kham-benh/:id',
+  PATIENT_OVERVIEW: '/patient/tong-quan',
 };
 
 export const DEEPLINK = {
@@ -107,7 +109,6 @@ export const ROUTES = [
     title: 'Tin tức',
     layout: DefaultLayout,
     element: NewsPage,
-    isProtected: false,
     children: [],
   },
   {
@@ -123,7 +124,6 @@ export const ROUTES = [
     title: 'Phòng khám',
     layout: DefaultLayout,
     element: ClinicsPage,
-    isProtected: false,
     children: [],
   },
   {
@@ -410,6 +410,14 @@ export const ROUTES = [
     title: 'Hồ sơ khám bệnh',
     layout: DefaultLayout,
     element: MedicalProfilePage,
+    isProtected: true,
+    children: [],
+  },
+  {
+    path: PATHS.PATIENT_OVERVIEW,
+    title: 'Tổng quan bệnh nhân',
+    layout: DefaultLayout,
+    element: PatientOverviewPage,
     isProtected: true,
     children: [],
   },

@@ -72,14 +72,14 @@ const Header = ({ userInfo }: IProps) => {
       <header className="h-full max-w-screen-xl mx-auto">
         <Group justify="space-between" h="100%">
           <Box w={userInfo ? undefined : 222}>
-            <Link to={PATHS.HOME}>
+            <Link to={PATHS.PATIENT_OVERVIEW}>
               <Image src={ClinusLogo} alt='logo' h={51} w={150} fit='contain' />
             </Link>
           </Box>
 
           <Group h="100%" gap={35} visibleFrom="sm">
-            <Link className=" hover:text-teal-500" to={PATHS.HOME}>
-              Trang chủ
+            <Link className=" hover:text-teal-500" to={PATHS.PATIENT_OVERVIEW}>
+              Tổng quan
             </Link>
             <Link className=" hover:text-teal-500" to={PATHS.NEWS}>
               Tin tức

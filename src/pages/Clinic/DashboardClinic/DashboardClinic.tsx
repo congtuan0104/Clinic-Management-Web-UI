@@ -15,6 +15,7 @@ import { APPOINTMENT_STATUS } from '@/enums';
 import { FaRegQuestionCircle } from 'react-icons/fa';
 import { GrMoney } from 'react-icons/gr';
 import { IoCalendarClearOutline } from 'react-icons/io5';
+import classNames from 'classnames';
 
 const DashboardAdmin = () => {
   const userInfo = useAppSelector(userInfoSelector);
@@ -183,7 +184,10 @@ const DashboardAdmin = () => {
             </Tooltip>
           </div>
 
-          <div className='flex flex-col mt-1 h-full justify-center'>
+          <div className={classNames(
+            'flex flex-col mt-1 h-full',
+            appointments?.length === 0 && 'justify-center'
+          )}>
             {appointments?.length === 0 && (
               <div className='flex flex-col items-center'>
                 <ThemeIcon color='gray.6' size={100} radius='xl' variant='white'>

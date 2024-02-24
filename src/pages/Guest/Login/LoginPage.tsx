@@ -282,7 +282,7 @@ const LoginPage = () => {
             placeholder="example@gmail.com"
             required
             size="md"
-            radius="sm"
+            radius="md"
             autoFocus
             control={loginControl}
           />
@@ -348,7 +348,13 @@ const LoginPage = () => {
         </Form>
       </Paper >
 
-      <Modal.Root opened={openedModalResetPassword} onClose={closeResetPassword} centered>
+      <Modal.Root
+        opened={openedModalResetPassword}
+        onClose={() => {
+          closeResetPassword();
+          reset();
+        }}
+        centered>
         <Modal.Overlay blur={7} />
         <Modal.Content radius='lg'>
           <Modal.Header>
@@ -376,7 +382,7 @@ const LoginPage = () => {
                 </Button>
                 <Button mt="xl" ml="sm" radius="md" size="md" variant='outline' color='red.5'
                   onClick={() => {
-                    close();
+                    closeResetPassword();
                     reset();
                   }}>
                   Hủy
