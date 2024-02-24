@@ -1,0 +1,16 @@
+.control {
+  font-weight: 500;
+  display: block;
+  width: 100%;
+  padding: var(--mantine-spacing-xs) var(--mantine-spacing-md);
+  font-size: var(--mantine-font-size-sm);
+
+  @mixin hover {
+    background-color: var(--mantine-color-gray-1);
+  }
+}
+
+
+.chevron {
+  transition: transform 200ms ease;
+}

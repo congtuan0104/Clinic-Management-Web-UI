@@ -1,8 +1,9 @@
-import { Paper, Text, Divider, Group, Button } from '@mantine/core';
+import { Paper, Text, Divider, Group, Button, Flex, Box, NumberFormatter, ThemeIcon } from '@mantine/core';
 import { FaCheck } from 'react-icons/fa';
 
 import classes from './style.module.css';
 import { IServicePlan } from '@/types';
+import { CurrencyFormatter } from '@/components';
 
 /**
  * @param {IServicePlan} plan - Thông tin gói dịch vụ
@@ -12,30 +13,46 @@ import { IServicePlan } from '@/types';
 interface IPlanCardProps {
   plan: IServicePlan;
   actionText?: string;
-  action: () => void;
+  action: (plan: IServicePlan) => void;
 }
 
 const PlanCard = ({ plan, actionText, action }: IPlanCardProps) => {
   return (
-    <Paper w="100%" withBorder shadow="md" p={30} radius="md" >
-      <Text ta="center" c={'primary'} fw={700} fz="lg">{plan.planName}</Text>
-      <Divider pb={10} color='primary'></Divider>
+    <Paper w="100%" h='100%' withBorder shadow="md" radius="md" display='flex' style={{ flexDirection: 'column', borderRadius: '17px' }} /* className='rounded-2xl' */>
+      <Box w='100%' bg={{ base: 'primary' }} style={{ borderRadius: '17px' }}/* className='rounded-2xl' */>
+        <Text ta="center" tt='uppercase' c={'white'} fw={700} fz="lg" style={{ marginTop: '30px', marginBottom: '20px' }}>{plan.planName}</Text>
+        <Text mx='auto' w='288px' h='55px' ta="center" c='primary' size='lg' bg='white' style={{
+          borderRadius: '10px',
+          alignContent: 'center',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          marginBottom: '24px'
+        }}>
+          <CurrencyFormatter value={plan.currentPrice} />
+          /{plan.duration} ngày
+        </Text>
+        <Text lineClamp={2} ta='center' c='white'>{plan.description}</Text>
+      </Box>
 
-      <Text ta="center" size='lg'>{plan.currentPrice}/{plan.duration} ngày</Text>
 
       {/* <Group>
         <FaCheck size="1rem" color="var(--mantine-color-primary-3)" stroke={1.5} />
         <Text>{plan} người dùng</Text>
       </Group> */}
 
-      {plan.planOptions.map((option) => (
-        <Group>
-          <FaCheck size="1rem" stroke={1.5} color="var(--mantine-color-primary-3)" />
-          <Text>{option.optionId}</Text>
-        </Group>
-      ))}
+      <Box mx='26px' style={{ flex: 1 }} mt='27.8px'>
+        {plan.planOptions.map((option) => (
+          <Flex key={option.id} mt={10}>
+            <ThemeIcon variant='white' color="primary" >
+              <FaCheck size="1rem" stroke={1.5} />
+            </ThemeIcon>
+            <Text mt={1} ml={5} component='span'>{option.optionName}</Text>
+          </Flex>
+        ))}
+      </Box>
 
-      <Button mt="xl" radius="sm" size="md" type="submit" w='60%' mx='auto' onClick={action}>
+      <Button w='183px' h='50px' mt="xl" mb='24px' radius="25" size="md" type="submit" fullWidth mx='auto' onClick={() => action(plan)} color='primary'>
         {actionText}
       </Button>
     </Paper>

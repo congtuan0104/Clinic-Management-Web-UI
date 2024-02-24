@@ -17,6 +17,7 @@ import {
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { Link } from 'react-router-dom';
+import LogoImage from '@/assets/images/logo.png';
 
 // header cho các trang dành cho khách hàng chưa đăng nhập
 const AdminHeader = () => {
@@ -30,16 +31,24 @@ const AdminHeader = () => {
       <header className="h-full max-w-screen-xxl mx-auto">
         <Group justify="space-between" h="100%">
           <Box w={userInfo ? undefined : 222}>
-            <Link to={PATHS.HOME}>
-              <Image src='/src/assets/images/logo.png' alt='logo' h={50} fit='contain' />
+            <Link to={PATHS.ADMIN_DASHBOARD}>
+              <Image src={LogoImage} alt='logo' h={51} w={150} fit='contain' />
             </Link>
           </Box>
 
-          <Text>Admin Layout</Text>
+          <Group h="100%" gap={35} visibleFrom="sm">
+            <Link className="hover:text-[#6964ff]" to={PATHS.ADMIN_DASHBOARD}>
+              Dashboard
+            </Link>
+            <Link className="hover:text-[#6964ff]" to={PATHS.ADMIN_PRICING_PLAN}>
+              Quản lý gói
+            </Link>
+
+          </Group>
 
           <Group visibleFrom="sm">
             {userInfo ? (
-              <Button variant="light" color="red" onClick={logout}>
+              <Button variant="light" color="red.7" onClick={logout}>
                 Đăng xuất
               </Button>
             ) : (

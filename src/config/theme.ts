@@ -1,4 +1,5 @@
-import { Button, createTheme, MantineColorsTuple, Anchor } from '@mantine/core';
+import { Button, createTheme, MantineColorsTuple, Checkbox, Select } from '@mantine/core';
+import { DateInput } from '@mantine/dates';
 
 const primary: MantineColorsTuple = [
   '#f5f5fc',
@@ -52,11 +53,36 @@ export const theme = createTheme({
   primaryColor: 'primary',
   primaryShade: 3,
   fontFamily: 'Montserrat, sans-serif',
-  defaultRadius: 'sm',
+  defaultRadius: 'md',
+  cursorType: 'pointer',
   components: {
     Button: Button.extend({
       styles: {
         label: { fontWeight: 500 },
+      },
+    }),
+
+    Select: Select.extend({
+      styles: {
+        input: {
+          cursor: 'pointer',
+        },
+      },
+    }),
+
+    DateInput: DateInput.extend({
+      styles: {
+        input: {
+          cursor: 'pointer',
+        },
+      },
+    }),
+
+    Checkbox: Checkbox.extend({
+      styles: {
+        label: {
+          cursor: 'pointer',
+        },
       },
     }),
   },

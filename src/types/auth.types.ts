@@ -1,9 +1,19 @@
+import { AuthModule, Gender } from '@/enums';
+
 export interface IUserInfo {
   id: string;
   email: string;
-  password: string;
+  avatar?: string;
+  firstName: string;
+  lastName: string;
+  phone?: string;
+  address?: string;
+  gender?: Gender;
+  birthday?: Date;
   emailVerified: boolean;
-  role: string;
+  moduleId: AuthModule;
+  isInputPassword: boolean;
+  isDisabled: boolean;
 }
 
 export interface ILoginRequest {
@@ -16,7 +26,8 @@ export interface IRegisterRequest {
   lastName: string;
   email: string;
   password: string;
-  role: string;
+  moduleId: AuthModule;
+  emailVerified?: boolean;
 }
 
 export interface ILinkAccountRequest {
@@ -36,8 +47,20 @@ export interface IGoogleLoginRequest {
 }
 
 export interface IChangePasswordRequest {
-  currentPassword: string;
+  userId: string;
+  currentPassword?: string;
   newPassword: string;
+  isReset?: boolean;
+}
+
+export interface IChangeProfileRequest {
+  firstName?: string;
+  lastName?: string;
+  gender?: Gender;
+  birthday?: Date;
+  address?: string;
+  phone?: string;
+  avatar?: string;
 }
 
 export interface IForgotPasswordRequest {
@@ -54,5 +77,3 @@ export interface IRegisterResponse {
   user: IUserInfo;
   token: string;
 }
-
-

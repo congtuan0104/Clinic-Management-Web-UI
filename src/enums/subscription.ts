@@ -1,0 +1,7 @@
+export const enum CLINIC_SUBSCRIPTION_STATUS {
+  INPAYMENT = 1,
+  EXPIRED = 2,
+  ACTIVE = 3,
+  NOT_ACTIVE = 4,
+  PENDING = 5,
+}

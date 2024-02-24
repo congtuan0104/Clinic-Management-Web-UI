@@ -1,3 +1,4 @@
+import { IUserInfo } from '@/types';
 import {
   IApiResponse,
   IGoogleLoginRequest,
@@ -8,6 +9,8 @@ import {
   ILinkAccountRequest,
   IChangePasswordRequest,
   IForgotPasswordRequest,
+  IInviteClinicMemberRequest,
+  IChangeProfileRequest,
 } from '@/types';
 import { axiosClient } from '@/utils';
 
@@ -27,13 +30,6 @@ export const authApi = {
   },
 
   /**
-   * API xác thực tài khoản từ email
-   */
-  confirmEmail(email: string): Promise<IApiResponse<any>> {
-    return axiosClient.post('/auth/confirm', { email, role: 'user' });
-  },
-
-  /**
    * API lấy danh sách tất cả tài khoản bên thứ 3 của một user
    */
   getAccountByUser(userId: string): Promise<any> {
@@ -43,7 +39,7 @@ export const authApi = {
   /**
    * API lấy thông tin user dựa trên accountId (uid của tài khoản bên thứ 3)
    */
-  getUserByAccountId(accountId: string, provider: string): Promise<any> {
+  getUserByAccountId(accountId: string, provider: string): Promise<IApiResponse<ILoginResponse>> {
     return axiosClient.get(`/auth/account?key=${accountId}&provider=${provider}`);
   },
 
@@ -79,13 +75,37 @@ export const authApi = {
    * API đổi mật khẩu
    */
   changePassword(data: IChangePasswordRequest): Promise<any> {
-    return axiosClient.post('/auth/change-password', data);
+    return axiosClient.post(`/auth/${data.userId}/change-password`, data);
   },
 
   /**
-   * API đquên mật khẩu
+   * API gửi mail yêu cầu reset password
    */
-  forgotPassword(data: IForgotPasswordRequest): Promise<any> {
-    return axiosClient.post('/auth/reset-password', data);
-  }
+  forgotPassword(email: string): Promise<any> {
+    return axiosClient.post('/auth/reset-password', { email });
+  },
+
+  initPassword(email: string, password: string): Promise<IApiResponse<IUserInfo>> {
+    return axiosClient.put('/auth/add-new-password', { email, password });
+  },
+
+  inviteClinicMember(data: IInviteClinicMemberRequest): Promise<any> {
+    return axiosClient.post('/auth/invite', data);
+  },
+
+  acceptInviteAccount(token: string): Promise<any> {
+    return axiosClient.get(`/auth/verify-account?token=${token}`);
+  },
+
+  sendVerifyEmail(email: string): Promise<IApiResponse<IUserInfo | undefined | null>> {
+    return axiosClient.post('/auth/resend-verify-email', { params: { email } });
+  },
+
+  findUserByEmail(email: string, emailVerified?: string): Promise<IApiResponse<IUserInfo>> {
+    return axiosClient.get('/auth/find-user-by-email', { params: { email, emailVerified } });
+  },
+
+  changeProfile(userId: string, data: IChangeProfileRequest): Promise<any> {
+    return axiosClient.put(`/auth/user/${userId}`, data);
+  },
 };
