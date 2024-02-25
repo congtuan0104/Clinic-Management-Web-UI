@@ -43,14 +43,14 @@ import { useReactToPrint } from 'react-to-print';
 import { IoPrintSharp } from 'react-icons/io5';
 
 interface IFormData {
-    firstName?: string;
-    lastName?: string;
-    phone?: string;
-    email?: string;
-    address?: string;
+    // firstName?: string;
+    // lastName?: string;
+    // phone?: string;
+    // email?: string;
+    // address?: string;
     // gender?: Gender;
     // birthday?: Date;
-    avatar?: string;
+    // avatar?: string;
     bloodGroup?: string;
     anamnesis?: string;
     idCard?: string;
@@ -58,12 +58,12 @@ interface IFormData {
 }
 
 const validateSchema = yup.object().shape({
-    firstName: yup.string(),
-    lastName: yup.string(),
-    phone: yup.string(),
-    email: yup.string(),
-    address: yup.string(),
-    avatar: yup.string(),
+    // firstName: yup.string(),
+    // lastName: yup.string(),
+    // phone: yup.string(),
+    // email: yup.string(),
+    // address: yup.string(),
+    // avatar: yup.string(),
     bloodGroup: yup.string(),
     anamnesis: yup.string(),
     idCard: yup.string(),
@@ -103,12 +103,12 @@ const PatientDetail = () => {
     const { control, reset, setValue } = useForm<IFormData>({
         resolver: yupResolver(validateSchema),
         defaultValues: {
-            firstName: patient?.firstName ?? '',
-            lastName: patient?.lastName ?? '',
-            phone: patient?.phone ?? '',
-            email: patient?.email ?? '',
-            address: patient?.address ?? '',
-            avatar: patient?.avatar ?? '',
+            // firstName: patient?.firstName ?? '',
+            // lastName: patient?.lastName ?? '',
+            // phone: patient?.phone ?? '',
+            // email: patient?.email ?? '',
+            // address: patient?.address ?? '',
+            // avatar: patient?.avatar ?? '',
             bloodGroup: patient?.bloodGroup ?? '',
             anamnesis: patient?.anamnesis ?? '',
             idCard: patient?.idCard ?? '',
@@ -138,22 +138,23 @@ const PatientDetail = () => {
 
 
     useEffect(() => {
-        setValue('firstName', patient?.firstName);
-        setValue('lastName', patient?.lastName);
-        setValue('phone', patient?.phone);
-        setValue('email', patient?.email);
-        setValue('address', patient?.address);
-        setValue('avatar', patient?.avatar);
+        // setValue('firstName', patient?.firstName);
+        // setValue('lastName', patient?.lastName);
+        // setValue('phone', patient?.phone);
+        // setValue('email', patient?.email);
+        // setValue('address', patient?.address);
+        // setValue('avatar', patient?.avatar);
         setValue('idCard', patient?.idCard);
         setValue('bloodGroup', patient?.bloodGroup);
         setValue('anamnesis', patient?.anamnesis);
         setValue('healthInsuranceCode', patient?.healthInsuranceCode);
-        // setValue('note', record?.note);
-    }, [patient]);
+    }, [patient, isUpdate]);
 
     return (
         <>
-            
+            <Form
+                control={control}
+                onSubmit={(e) => onSubmit(e.data)}>
                 <Flex direction="column" gap="md" p="md">
                     <Flex align="center" justify="space-between">
                         <Flex gap={8}>
@@ -252,10 +253,7 @@ const PatientDetail = () => {
                                 </Grid.Col>
                             </Grid>
                         </Flex>
-                        <Divider my={20}/>
-                        <Form
-                control={control}
-                onSubmit={(e) => onSubmit(e.data)}>
+                        <Divider my={20} />
                         <Grid>
                             <Grid.Col span={3}>
                                 <TextInput
@@ -312,45 +310,46 @@ const PatientDetail = () => {
                                     </>
                                 )}
                         </Group>
-                        </Form>
+
                     </Paper>
                 </Flex>
-            <Flex direction="column" gap="md" px="md">
+                <Flex direction="column" gap="md" px="md">
 
-                <Paper p='md' radius='md' shadow="xs">
-                    <Text fw={600}>Hồ sơ bệnh án</Text>
-                    <Flex gap={30} mt='md' align='center'>
-                        <Table striped withTableBorder withColumnBorders>
-                            <Table.Thead>
-                                <Table.Tr>
-                                    <Table.Th>Bác sĩ</Table.Th>
-                                    <Table.Th>Dịch vụ</Table.Th>
-                                    <Table.Th>Giá dịch vụ</Table.Th>
-                                    <Table.Th>Thuốc</Table.Th>
-                                    <Table.Th>Ngày tạo</Table.Th>
-                                </Table.Tr>
-                            </Table.Thead>
-                            <Table.Tbody>
-                                {medicalRecord && medicalRecord.map((item) => (
-                                    <Table.Tr key={item.id}>
-                                        <Table.Td>{item.doctor.firstName} {item.doctor.lastName}</Table.Td>
-                                        <Table.Td>{item.medicalRecordServices.map((service) => (
-                                            <Text>{service.serviceName}</Text>
-                                        ))}</Table.Td>
-                                        <Table.Td>{item.medicalRecordServices.map((service) => (
-                                            <Text><CurrencyFormatter value={service.amount} /></Text>
-                                        ))}</Table.Td>
-                                        <Table.Td>{item.prescriptionDetail.map((medicine) => (
-                                            <Text>{`${medicine.medicineName} : ${medicine.dosage} ${medicine.unit} (${medicine.duration} - ${medicine.usingTime} - ${medicine.doseInterval})`}</Text>
-                                        ))}</Table.Td>
-                                        <Table.Td>{dayjs(item.dateCreated).format('DD/MM/YYYY')}</Table.Td>
+                    <Paper p='md' radius='md' shadow="xs">
+                        <Text fw={600}>Hồ sơ bệnh án</Text>
+                        <Flex gap={30} mt='md' align='center'>
+                            <Table striped withTableBorder withColumnBorders>
+                                <Table.Thead>
+                                    <Table.Tr>
+                                        <Table.Th>Bác sĩ</Table.Th>
+                                        <Table.Th>Dịch vụ</Table.Th>
+                                        <Table.Th>Giá dịch vụ</Table.Th>
+                                        <Table.Th>Thuốc</Table.Th>
+                                        <Table.Th>Ngày tạo</Table.Th>
                                     </Table.Tr>
-                                ))}
-                            </Table.Tbody>
-                        </Table>
-                    </Flex>
-                </Paper>
-            </Flex>
+                                </Table.Thead>
+                                <Table.Tbody>
+                                    {medicalRecord && medicalRecord.map((item) => (
+                                        <Table.Tr key={item.id}>
+                                            <Table.Td>{item.doctor.firstName} {item.doctor.lastName}</Table.Td>
+                                            <Table.Td>{item.medicalRecordServices.map((service) => (
+                                                <Text>{service.serviceName}</Text>
+                                            ))}</Table.Td>
+                                            <Table.Td>{item.medicalRecordServices.map((service) => (
+                                                <Text><CurrencyFormatter value={service.amount} /></Text>
+                                            ))}</Table.Td>
+                                            <Table.Td>{item.prescriptionDetail.map((medicine) => (
+                                                <Text>{`${medicine.medicineName} : ${medicine.dosage} ${medicine.unit} (${medicine.duration} - ${medicine.usingTime} - ${medicine.doseInterval})`}</Text>
+                                            ))}</Table.Td>
+                                            <Table.Td>{dayjs(item.dateCreated).format('DD/MM/YYYY')}</Table.Td>
+                                        </Table.Tr>
+                                    ))}
+                                </Table.Tbody>
+                            </Table>
+                        </Flex>
+                    </Paper>
+                </Flex>
+            </Form>
         </>
     );
 };
