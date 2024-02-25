@@ -33,7 +33,8 @@ const MedicalRecordPrintContext = forwardRef<HTMLDivElement, IProps>((props, ref
     <Grid py={10}>
       <GridCol span={6}>
           <Group>
-          <Text>Họ tên: {`${record.patient.firstName} ${record.patient.lastName}`}</Text>
+          <Text>Họ tên:</Text>
+          <Text fw={700}>{`${record.patient.firstName} ${record.patient.lastName}`}</Text>
           </Group>
       </GridCol>
       <GridCol span={6} >
@@ -64,7 +65,13 @@ const MedicalRecordPrintContext = forwardRef<HTMLDivElement, IProps>((props, ref
       <Text>Email: {record.patient.email ? record.patient.email : 'Chưa có thông tin'}</Text>
       </GridCol> 
       <GridCol span={12}>
-    <Table withTableBorder withColumnBorders>
+      <Group justify="space-between">
+        <Text>Chiều cao: {record.height} cm</Text>
+        <Text>Cân nặng: {record.weight} kg</Text>
+        <Text>Huyết áp: {record.bloodPressure} mmHg</Text>
+        <Text>Nhiệt độ: {record.temperature} °C</Text>
+      </Group>
+    {/* <Table withTableBorder withColumnBorders>
       <Table.Thead>
         <Table.Tr>
           <Table.Th>Chiều cao (cm)</Table.Th>
@@ -81,7 +88,7 @@ const MedicalRecordPrintContext = forwardRef<HTMLDivElement, IProps>((props, ref
       <Table.Td>{record.temperature}</Table.Td>
     </Table.Tr>
       </Table.Tbody>
-    </Table>
+    </Table> */}
     </GridCol>
     <GridCol span={12}>
       <Group>
@@ -106,10 +113,20 @@ const MedicalRecordPrintContext = forwardRef<HTMLDivElement, IProps>((props, ref
       </Group>
     </GridCol>
     <GridCol span={12}>
-      <Text fw={700}>Toa thuốc: </Text>
-      {record.prescriptionDetail.map((medicine) => (
-        <Text>{medicine.medicineName} : {medicine.dosage} {medicine.unit} ({medicine.duration} - {medicine.doseInterval} - {medicine.usingTime}) </Text>
-      ))}
+    <Text fw={700}>Toa thuốc: </Text>
+<Table withTableBorder withColumnBorders>
+      <Table.Tbody>
+        {record.prescriptionDetail.map((medicine, index) => (
+          <Table.Tr>
+      <Table.Td>
+        <Text>{index + 1}. {medicine.medicineName}</Text>
+        <Text fs={'italic'}>{medicine.duration} - {medicine.doseInterval} - {medicine.usingTime}</Text>
+      </Table.Td>
+      <Table.Td>{medicine.dosage} {medicine.unit}</Table.Td>
+    </Table.Tr>
+        ))}  
+      </Table.Tbody>
+    </Table>
     </GridCol>
     <GridCol span={12}>
       <Stack align="flex-end">
