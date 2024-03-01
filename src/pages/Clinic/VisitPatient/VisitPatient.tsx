@@ -15,6 +15,7 @@ import {
   Textarea as MantineTextarea,
   Select as MantineSelect,
   Table,
+  Group,
 } from '@mantine/core';
 import { useAppSelector } from '@/hooks';
 import { currentClinicSelector, staffInfoSelector } from '@/store';
@@ -30,7 +31,7 @@ import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { NumberInput, TextInput, Textarea } from 'react-hook-form-mantine';
 import { BiArrowBack, BiSave } from 'react-icons/bi';
-import { GiBodyHeight, GiWeight } from 'react-icons/gi';
+import { GiBodyHeight, GiMedicines, GiWeight } from 'react-icons/gi';
 import { MdBloodtype, MdOutlineDownloadDone } from 'react-icons/md';
 import { FaPlus, FaTemperatureLow } from 'react-icons/fa6';
 import { notifications } from '@mantine/notifications';
@@ -38,9 +39,10 @@ import { modals } from '@mantine/modals';
 import MedicalPrescription from './Prescription';
 import { PATHS } from '@/config';
 import MedicalService from './MedicalService';
-import { MedicalRecordPrintContext } from '@/components';
+import { MedicalRecordPrintContext, ModalUsingSupplies } from '@/components';
 import { useReactToPrint } from 'react-to-print';
 import { IoPrintSharp } from 'react-icons/io5';
+import { useDisclosure } from '@mantine/hooks';
 
 interface IFormData {
   height?: number;
@@ -74,6 +76,7 @@ const VisitPatientPage = () => {
   const staffInfo = useAppSelector(staffInfoSelector);
 
   const recordRef = useRef<HTMLDivElement>(null);
+  const [opened, { open, close }] = useDisclosure(false);
 
   const { data: record, isLoading, refetch } = useQuery(
     'medicalRecord',
@@ -240,7 +243,16 @@ const VisitPatientPage = () => {
               </Flex>
             )}
             {record?.examinationStatus === MEDICO_RECORD_STATUS.DONE && (
-              <Button
+              <Group>
+                <Button
+                color='primary.3'
+                leftSection={<GiMedicines size={18} />}
+                type='button'
+                onClick={open}
+              >
+                Sử dụng vật tư
+              </Button>
+                <Button
                 color='primary.3'
                 leftSection={<IoPrintSharp size={18} />}
                 type='button'
@@ -248,6 +260,7 @@ const VisitPatientPage = () => {
               >
                 In hồ sơ
               </Button>
+              </Group>       
             )}
 
           </Flex>
@@ -494,6 +507,16 @@ const VisitPatientPage = () => {
           </Paper>
         </Flex>
       </Form>
+
+      <ModalUsingSupplies
+      isOpen={opened}
+      medicalRecordId={String(recordId)}
+      supplies={record?.usingMedicalSupplies ?? []}
+      onClose={close}
+        onSuccess={() => {
+          refetch();
+        }}
+      />
 
       {record && (
         <div className='bg-white w-[830px]'>
