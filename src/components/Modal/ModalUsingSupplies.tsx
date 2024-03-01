@@ -33,7 +33,7 @@ interface IModalProps {
     const currentClinic = useAppSelector(currentClinicSelector)
     const [drugs, setDrugs] = useState<INewUsingSupplies[]>(supplies);
     const [suggestMedicine, setSuggestMedicine] = useState<string[]>([]);
-    const { data: clinicSupplies, isLoading } = useQuery(['clinicSupplies', currentClinic?.id], () => getListMedicalSupplies());
+    const { data: clinicSupplies, isLoading} = useQuery(['clinicSupplies', currentClinic?.id], () => getListMedicalSupplies());
     const [comboboxData, setComboboxData] = useState<SelectBox[] | undefined>([]);
 
     const getListMedicalSupplies = async () => {
@@ -44,8 +44,8 @@ interface IModalProps {
       const handleAddPrescription = () => {
         setDrugs(prev => [...prev, {
             quantity: 0,
-            medical_record_id: 0,
-            medical_supplies_id: 0,
+            medicalSupplyId: Number(medicalRecordId),
+            medicalRecordId: 0,
         }]);
       }
 
@@ -64,7 +64,8 @@ interface IModalProps {
           }));
           setComboboxData(convertedData);
         }
-      }, [supplies, currentClinic]);
+      }, [supplies, clinicSupplies, currentClinic]);
+      console.log(supplies)
 
       const onSubmit = async () => {
         try{
@@ -74,7 +75,7 @@ interface IModalProps {
 
           drugs.map((item, index) => {
             updateInfo.supplies[index] = {
-              medicalSupplyId: item.medical_supplies_id,
+              medicalSupplyId: item.medicalRecordId,
               quantity: item.quantity,
             };
           });
@@ -85,6 +86,8 @@ interface IModalProps {
               message: 'Khai báo thông tin sử dụng vật tư thành công',
               color: 'green',
             })
+            onSuccess();
+            onClose();
           } else {
             notifications.show({
               message: res.message || 'Khai báo thông tin sử dụng vật tư không thành công',
@@ -99,10 +102,11 @@ interface IModalProps {
       }
     }
       
-    
-  
     return (
-      <Modal.Root opened={isOpen} onClose={onClose} centered size={'md'}>
+      <Modal.Root opened={isOpen} onClose={() => {
+        onClose()
+        setDrugs(supplies)
+      }} centered size={'md'}>
         <Modal.Overlay blur={7} />
         <Modal.Content radius='lg'>
           <Modal.Header  >
@@ -149,16 +153,14 @@ interface IModalProps {
             <Table.Tr key={index}>
               <Table.Td>
                 <Select
-                searchable
+                  searchable
                   data={comboboxData}
                   placeholder='Tên thuốc'
-                  // onBlur={() => setSuggestMedicine([])}
-                  // value={comboboxData && comboboxData.find(item => item.value === String(drug.medical_supplies_id))?.label}
-                  // defaultValue={String(drug.medical_supplies_id)}
+                  defaultValue={String(drug.medicalSupplyId)}
                   onChange={(value) => {
                     setDrugs(prev => {
                       const newDrugs = [...prev];
-                      newDrugs[index].medical_supplies_id = Number(value);
+                      newDrugs[index].medicalRecordId = Number(value);
                       return newDrugs;
                     });
                   }}
@@ -168,7 +170,7 @@ interface IModalProps {
                 <NumberInput
                   value={drug.quantity}
                   min={1}
-                  max={clinicSupplies?.find(item => item.id === drug.medical_supplies_id)?.stock}
+                  max={clinicSupplies?.find(item => item.id === drug.medicalRecordId)?.stock}
                   onChange={(value) => {
                     setDrugs(prev => {
                       const newDrugs = [...prev];
@@ -199,7 +201,12 @@ interface IModalProps {
         <Button type="button" onClick={onSubmit}>
           Khai báo
         </Button>
-        <Button type="button" variant="light" color="gray.8" onClick={onClose}>Hủy</Button>
+        <Button type="button" variant="light" color="gray.8" onClick={() => {
+          onClose()
+          setDrugs(supplies)
+        }}>
+          Hủy
+          </Button>
       </Group>
           </ModalBody>
         </Modal.Content>

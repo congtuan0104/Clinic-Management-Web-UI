@@ -162,8 +162,8 @@ export interface IUsingSupplies extends INewUsingSupplies {
 
 export interface INewUsingSupplies {
   quantity: number;
-  medical_record_id: number;
-  medical_supplies_id: number;
+  medicalSupplyId: number;
+  medicalRecordId: number;
 }
 
 export interface IDeclareUsingSuppliesPayload {
