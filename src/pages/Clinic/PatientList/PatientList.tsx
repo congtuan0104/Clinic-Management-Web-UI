@@ -26,6 +26,7 @@ import { MdEmail } from 'react-icons/md';
 import { Gender, GroupChatType } from '@/enums';
 import dayjs from 'dayjs';
 import { IoMdChatboxes } from 'react-icons/io';
+import { FaEye } from 'react-icons/fa6';
 
 const PatientListPage = () => {
   // khai báo thông tin hiển thị của bảng (đọc tài liệu tại https://v2.mantine-react-table.com/)
@@ -240,7 +241,7 @@ const PatientListPage = () => {
                   to={`${PATHS.CLINIC_PATIENT_MANAGEMENT}/${row.id}`}
                 // onClick={() => handleOpenUpdateModal(row.original)} // xử lý khi chọn sửa dịch vụ
                 >
-                  <FaRegEdit />
+                  <FaEye />
                 </ActionIcon>
               </Tooltip>
               {/* <ActionIcon

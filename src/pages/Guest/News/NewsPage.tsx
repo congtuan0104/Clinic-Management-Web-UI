@@ -72,7 +72,7 @@ const NewsPage = () => {
 	return (
 		<div className='max-w-screen-xl mx-auto'>
 			<Stack align='center'>
-				<Text fw={700} size='30px' m={20} c={'teal.3'}>Tin tức - Thông báo</Text>
+				<Text fw={700} size='30px' m={20}>Tin tức - Thông báo</Text>
 				<Text size='15px'>Tổng hợp tin tức, thông báo từ tất cả các phòng khám cùng những thông tin y tế bổ ích</Text>
 				<TextInput
 					w={660}
@@ -96,7 +96,7 @@ const NewsPage = () => {
 								</Card.Section>
 								<Card.Section m={5}>
 									<Center>
-										<Text mt={10} size='25px' fw={700} c={'primary'}>
+										<Text mt={10} size='25px' fw={700}>
 											{firstNewsRef.current?.title}
 										</Text>
 									</Center>

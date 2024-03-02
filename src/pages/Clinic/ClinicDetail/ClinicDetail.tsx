@@ -212,7 +212,7 @@ export default function ClinicDetail() {
         {subscription &&
           <Flex px='30px' py={25} align="center" justify={'space-between'} bg='primary.9' style={{ borderRadius: '10px' }} mt='30px' c='white'>
             <Stack>
-              <Title order={5}>BẠN ĐANG SỬ SỬ DỤNG GÓI {subscription?.plans?.planName}</Title>
+              <Title order={5} tt='uppercase' c='yellow.5'>BẠN ĐANG SỬ SỬ DỤNG {subscription?.plans?.planName}</Title>
               <Flex>
                 Thời gian sử dụng đến &nbsp; <b>{dayjs(subscription?.expiredAt).format('DD/MM/YYYY')}</b>
               </Flex>
