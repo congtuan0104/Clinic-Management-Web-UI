@@ -1,4 +1,4 @@
-import { Anchor, Paper, Title, Text, Container, Group, Button, Flex, Divider, ActionIcon, Image, Box, Modal, TextInput as MantineTextInput } from '@mantine/core';
+import { Anchor, Paper, Title, Text, Container, Group, Button, Flex, Divider, ActionIcon, Image, Box, Modal, TextInput as MantineTextInput, LoadingOverlay } from '@mantine/core';
 import { TextInput, PasswordInput, Checkbox } from 'react-hook-form-mantine';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm, Form } from 'react-hook-form';
@@ -59,6 +59,7 @@ const LoginPage = () => {
   const [providerLogin, setProviderLogin] = useState<string>('');
   const [userIdFromProvider, setUserIdFromProvider] = useState<string>('');
   const [openedModalResetPassword, { open: openResetPassword, close: closeResetPassword }] = useDisclosure(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   // tích hợp react-hook-form với antd form
   const { control: loginControl } = useForm<ILoginFormData>({
@@ -158,6 +159,7 @@ const LoginPage = () => {
     // gọi api đăng nhập
     // nếu thành công, lưu access token vào cookie và thông tin user vào redux -> chuyển hướng về trang chủ
     // nếu thất bại, hiển thị thông báo lỗi
+    setIsLoading(true);
     authApi
       .login({ email: data.email, password: data.password })
       .then(res => {
@@ -203,6 +205,7 @@ const LoginPage = () => {
             color: 'red',
           });
         }
+        setIsLoading(false);
       })
       .catch(error => {
         if (error.response.data.message === 'Email chưa được xác thực') {
@@ -211,9 +214,10 @@ const LoginPage = () => {
         else {
           notifications.show({
             message: error.response.data.message,
-            color: 'red',
+            color: 'red.5',
           });
         }
+        setIsLoading(false);
       });
   };
 
@@ -268,6 +272,7 @@ const LoginPage = () => {
   return (
     <Container size={570} my={40} className='min-h-[calc(100vh_-_145px)]'>
       <Paper withBorder shadow="md" p={30} mt={30} radius="lg">
+        <LoadingOverlay visible={isLoading} loaderProps={{ color: 'primary.4', size: 'xl' }} />
         <Title>Đăng nhập</Title>
         <Text c="dimmed" size="sm" mt={5} mb={15}>
           hoặc{' '}

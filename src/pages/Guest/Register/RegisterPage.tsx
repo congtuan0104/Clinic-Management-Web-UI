@@ -1,5 +1,5 @@
 import { yupResolver } from '@hookform/resolvers/yup';
-import { Anchor, Button, Container, Flex, Grid, Image, Modal, Paper, Text, Title, TextInput as MantineTextInput } from '@mantine/core';
+import { Anchor, Button, Container, Flex, Grid, Image, Modal, Paper, Text, Title, TextInput as MantineTextInput, LoadingOverlay } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import { Form, useForm } from 'react-hook-form';
 import { Chip, PasswordInput, TextInput } from 'react-hook-form-mantine';
@@ -59,6 +59,8 @@ const RegisterPage = () => {
   const [emailFromProvider, setEmailFromProvider] = useState<string | null>(''); // email được chọn để đăng ký tài khoản
   const [openedModalChooseEmail, { open, close }] = useDisclosure(false);
 
+  const [isLoading, setIsLoading] = useState(false);
+
   // tích hợp react-hook-form với mantine form
   const { control, getValues, setValue, register, formState: { errors } } = useForm<IRegisterFormData>({
     resolver: yupResolver(schema), // gắn điều kiện xác định input hợp lệ vào form
@@ -75,6 +77,7 @@ const RegisterPage = () => {
 
   const handleRegister = async (data: IRegisterFormData) => {
     try {
+      setIsLoading(true);
       const registerData = {
         firstName: data.firstName,
         lastName: data.lastName,
@@ -116,6 +119,7 @@ const RegisterPage = () => {
           color: 'red.5',
         });
       }
+      setIsLoading(false);
     }
     catch (error: any) {
       notifications.show({
@@ -123,6 +127,7 @@ const RegisterPage = () => {
         message: error.response.data.message || 'Đăng ký tài khoản không thành công!',
         color: 'red.5',
       });
+      setIsLoading(false);
     }
   };
 
@@ -225,6 +230,7 @@ const RegisterPage = () => {
   return (
     <Container size={570} py={30} className='min-h-[calc(100vh_-_145px)]'>
       <Paper withBorder shadow="md" p={30} radius="lg">
+        <LoadingOverlay visible={isLoading} loaderProps={{ color: 'primary.4', size: 'xl' }} />
         <Title>Đăng ký</Title>
         <Text c="dimmed" size="sm" mt={5} mb={15}>
           Đã có tài khoản?{' '}
