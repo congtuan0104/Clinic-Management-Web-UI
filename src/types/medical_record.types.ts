@@ -59,6 +59,7 @@ export interface IMedicalRecord {
   clinicRequestServices: any[];
   medicalRecordServices: IMedicalService[];
   prescriptionDetail: IPrescription[];
+  usingMedicalSupplies: IUsingSupplies[];
   patient: IPatient;
   clinic: IClinic;
   createdAt: Date;
@@ -153,4 +154,21 @@ export interface IInvoiceDetail {
   amount: number;
   createdAt: Date;
   updatedAt: Date;
+}
+
+export interface IUsingSupplies extends INewUsingSupplies {
+  id: number;
+}
+
+export interface INewUsingSupplies {
+  quantity: number;
+  medicalSupplyId: number;
+  medicalRecordId: number;
+}
+
+export interface IDeclareUsingSuppliesPayload {
+  supplies: {
+    medicalSupplyId: number;
+    quantity: number;
+  }[]
 }

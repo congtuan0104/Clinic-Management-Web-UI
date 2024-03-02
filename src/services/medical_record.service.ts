@@ -1,6 +1,7 @@
 import { MEDICO_PAYMENT_STATUS } from '@/enums';
 import {
   IApiResponse,
+  IDeclareUsingSuppliesPayload,
   IMedicalInvoice,
   IMedicalRecord,
   IMedicalRecordQueryParams,
@@ -52,5 +53,9 @@ export const medicalRecordApi = {
     cashierId?: number,
   ): Promise<IApiResponse<any>> => {
     return axiosClient.put(`/medical-records/export-invoice/${invoiceId}`, { status, cashierId });
+  },
+
+  declareUsingSupplies: (medicalRecordId: string, data: IDeclareUsingSuppliesPayload): Promise<IApiResponse<any>> => {
+    return axiosClient.post(`/medical-records/${medicalRecordId}/using-supplies`, data);
   },
 };
