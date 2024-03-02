@@ -87,24 +87,20 @@ const Header = ({ userInfo }: IProps) => {
             <Link className=" hover:text-teal-500" to={PATHS.CLINICS}>
               Phòng khám
             </Link>
-            <Link className=" hover:text-teal-500" to="/dat-lich-hen">
+            <Link className=" hover:text-teal-500" to={PATHS.MAKE_APPOINTMENT}>
               Đặt lịch khám
             </Link>
             <Link className=" hover:text-teal-500" to={PATHS.PATIENT_CHAT}>
               Tin nhắn
             </Link>
-          </Group>
 
-          <div className='flex gap-2'>
             <Popover width={300} position="bottom" withArrow shadow="md" arrowSize={11}>
               <Tooltip label='Thông báo'>
                 <Popover.Target>
-                  <Indicator color='secondary.5' inline label={notify.length} size={16} offset={5} disabled={notify.length === 0}>
-                    <ActionIcon
-                      onClick={() => { }}
-                      color='gray.9' variant="subtle" radius="md" size={35} aria-label="Notifications">
-                      <MdNotificationsNone size={25} />
-                    </ActionIcon>
+                  <Indicator color='secondary.5' inline label={notify.length} size={16} offset={-2} disabled={notify.length === 0}>
+                    <div className=" hover:text-teal-500 cursor-pointer" >
+                      Thông báo
+                    </div>
                   </Indicator>
                 </Popover.Target>
               </Tooltip>
@@ -127,7 +123,9 @@ const Header = ({ userInfo }: IProps) => {
                 </ScrollArea>
               </Popover.Dropdown>
             </Popover>
+          </Group>
 
+          <div className='flex gap-2'>
 
             <Menu shadow="md" width={200} position="bottom-end">
               <Menu.Target>
@@ -135,7 +133,9 @@ const Header = ({ userInfo }: IProps) => {
                   onClick={() => { }}
                   mx={5}
                   h={40}
-                  color='black.5' variant="subtle" radius="md"
+                  color='primary.3'
+                  variant='outline'
+                  radius="xl"
                   leftSection={userInfo?.avatar ? <Avatar src={userInfo?.avatar} size={26} /> : <FaUserCircle size={20} />}
                 >
                   {userInfo?.firstName} {userInfo?.lastName}
