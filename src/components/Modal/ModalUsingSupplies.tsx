@@ -1,4 +1,4 @@
-import { ActionIcon, Button, Divider, Modal, Group, ModalBody, ModalCloseButton, ModalHeader, NumberInput, Table, Text, Tooltip, Select } from "@mantine/core";
+import { ActionIcon, Button, Divider, Modal, Group, ModalBody, ModalCloseButton, ModalHeader, NumberInput, Table, Text, Tooltip, Select, LoadingOverlay } from "@mantine/core";
 import { IDeclareUsingSuppliesPayload, INewUsingSupplies, IPrescription, IUsingSupplies } from "@/types";
 import { useEffect, useState } from "react";
 import { medicineApi } from "@/services/medicine.service";
@@ -33,7 +33,7 @@ const ModalUsingSupplies = ({
   const currentClinic = useAppSelector(currentClinicSelector)
   const [drugs, setDrugs] = useState<INewUsingSupplies[]>(supplies);
   const { data: clinicSupplies, isLoading } = useQuery(['clinicSupplies', currentClinic?.id], () => getListMedicalSupplies());
-  const [comboboxData, setComboboxData] = useState<SelectBox[] | undefined>([]);
+  // const [comboboxData, setComboboxData] = useState<SelectBox[] | undefined>([]);
 
   const getListMedicalSupplies = async () => {
     const res = await suppliesApi.getSupplies({ isDisabled: false, clinicId: currentClinic?.id })
@@ -42,7 +42,7 @@ const ModalUsingSupplies = ({
 
   const handleAddPrescription = () => {
     setDrugs(prev => [...prev, {
-      quantity: 0,
+      quantity: 1,
       medicalSupplyId: Number(medicalRecordId),
       medicalRecordId: 0,
     }]);
@@ -54,17 +54,17 @@ const ModalUsingSupplies = ({
     }
   }
 
-  useEffect(() => {
-    setDrugs(supplies);
-    if (clinicSupplies) {
-      const convertedData = clinicSupplies.map(supply => ({
-        value: supply.id.toString(),
-        label: supply.medicineName,
-      }));
-      setComboboxData(convertedData);
-    }
-  }, [supplies, clinicSupplies, currentClinic]);
-  console.log(supplies)
+  // useEffect(() => {
+  //   setDrugs(supplies);
+  //   if (clinicSupplies) {
+  //     const convertedData = clinicSupplies.map(supply => ({
+  //       value: supply.id.toString(),
+  //       label: supply.medicineName,
+  //     }));
+  //     setComboboxData(convertedData);
+  //   }
+  // }, [supplies, clinicSupplies, currentClinic]);
+  // console.log(supplies)
 
   const onSubmit = async () => {
     try {
@@ -82,21 +82,21 @@ const ModalUsingSupplies = ({
 
       if (res.status) {
         notifications.show({
-          message: 'Khai báo thông tin sử dụng vật tư thành công',
-          color: 'green',
+          message: 'Khai báo thành công',
+          color: 'green.5',
         })
         onSuccess();
         onClose();
       } else {
         notifications.show({
-          message: res.message || 'Khai báo thông tin sử dụng vật tư không thành công',
-          color: 'red',
+          message: res.message || 'Có lỗi xảy ra.Vui lòng thử lại sau.',
+          color: 'red.5',
         });
       }
     } catch (error) {
       notifications.show({
-        message: 'Khai báo thông tin sử dụng vật tư không thành công',
-        color: 'red',
+        message: 'Có lỗi xảy ra.Vui lòng thử lại sau.',
+        color: 'red.5',
       });
     }
   }
@@ -105,107 +105,132 @@ const ModalUsingSupplies = ({
     <Modal.Root opened={isOpen} onClose={() => {
       onClose()
       setDrugs(supplies)
-    }} centered size={'md'}>
+    }} centered size={'lg'}>
       <Modal.Overlay blur={7} />
       <Modal.Content radius='lg'>
         <Modal.Header bg='secondary.3' >
-          <Modal.Title c='white' w={'100%'} style={{
-            borderRadius: '10px 10px 0 0',
-          }}>
-            <Group justify="space-between">
-              <Text style={{ borderRadius: '10px 0 0 0' }} fw={700} pl={10}>Tên vật tư</Text>
-              <Text pl={160} fw={700}>Số lượng</Text>
-              <Text w={45} style={{ borderRadius: '0 10px 0 0' }}>
-                <Tooltip label='Thêm thuốc'>
-                  <ActionIcon
-                    variant="white"
-                    color="primary.3"
-                    radius="xl"
-                    onClick={handleAddPrescription}
-                  // disabled={!patientInfo}
-                  >
-                    <FaPlus size={18} />
-                  </ActionIcon>
-                </Tooltip>
-              </Text>
-            </Group>
+          <Modal.Title c='white' fw={600}>
+            Khai báo sử dụng vật tư khám bệnh
           </Modal.Title>
+          <ModalCloseButton />
         </Modal.Header>
-        <ModalBody bg={'gray.0'} pt={10}>
+        <ModalBody pt={10}>
+          <LoadingOverlay visible={isLoading} loaderProps={{ size: 'xl' }} />
 
-          <Table
-            styles={{
-              table: { borderRadius: 10 },
-            }}
-          >
-            <Table.Tbody>
-              {drugs.length === 0 && (
-                <Table.Tr>
-                  <Table.Td colSpan={7} className="text-center leading-9">
-                    Chưa có vật tư nào được khai báo
-                  </Table.Td>
-                </Table.Tr>
-              )}
-              {drugs.map((drug, index) => (
-                <Table.Tr key={index}>
-                  <Table.Td>
-                    <Select
-                      searchable
-                      data={comboboxData}
-                      placeholder='Tên thuốc'
-                      defaultValue={String(drug.medicalSupplyId)}
-                      onChange={(value) => {
-                        setDrugs(prev => {
-                          const newDrugs = [...prev];
-                          newDrugs[index].medicalRecordId = Number(value);
-                          return newDrugs;
-                        });
-                      }}
-                    />
-                  </Table.Td>
-                  <Table.Td w={100}>
-                    <NumberInput
-                      value={drug.quantity}
-                      min={1}
-                      max={clinicSupplies?.find(item => item.id === drug.medicalRecordId)?.stock}
-                      onChange={(value) => {
-                        setDrugs(prev => {
-                          const newDrugs = [...prev];
-                          newDrugs[index].quantity = Number(value);
-                          return newDrugs;
-                        });
-                      }}
-                    />
-                  </Table.Td>
-                  <Table.Td>
-                    <Tooltip label='Loại bỏ thuốc'>
-                      <ActionIcon
-                        color="red.5"
-                        variant="white"
-                        radius="xl"
-                        onClick={handleRemovePrescription(index)}
-                      >
-                        <IoCloseSharp size={18} />
-                      </ActionIcon>
-                    </Tooltip>
-                  </Table.Td>
-                </Table.Tr>
+          {
+            !isLoading && clinicSupplies && (
+              <>
+                <Table
+                  styles={{
+                    table: { borderRadius: 10 },
+                  }}
+                >
+                  <Table.Thead>
+                    <Table.Tr>
+                      <Table.Th>
+                        <Text>Tên vật tư</Text>
+                      </Table.Th>
+                      {/* <Table.Th ta='center'>
+                        <Text>Đơn vị tính</Text>
+                      </Table.Th> */}
+                      <Table.Th>
+                        <Text>Số lượng</Text>
+                      </Table.Th>
+                      <Table.Th w={30}>
+                        <Tooltip label='Khai báo thêm vật tư được sử dụng'>
+                          <ActionIcon
+                            variant="white"
+                            color="primary.3"
+                            radius="xl"
+                            onClick={handleAddPrescription}
+                          // disabled={!patientInfo}
+                          >
+                            <FaPlus size={18} />
+                          </ActionIcon>
+                        </Tooltip>
+                      </Table.Th>
+                    </Table.Tr>
+                  </Table.Thead>
+                  <Table.Tbody>
+                    {drugs.length === 0 && (
+                      <Table.Tr>
+                        <Table.Td colSpan={7} className="text-center leading-9">
+                          Chưa có vật tư nào được khai báo
+                        </Table.Td>
+                      </Table.Tr>
+                    )}
+                    {drugs.map((drug, index) => (
+                      <Table.Tr key={index}>
+                        <Table.Td>
+                          <Select
+                            searchable
+                            data={clinicSupplies?.map((supply) => ({
+                              value: supply.id.toString(),
+                              label: supply.medicineName,
+                              disabled: supply.stock === 0 || drugs.some(
+                                item => item.medicalRecordId === supply.id && item.medicalRecordId !== drug.medicalRecordId)
+                            })) || []}
+                            variant="unstyled"
+                            placeholder='Chon vật tư'
+                            defaultValue={String(drug.medicalSupplyId)}
+                            onChange={(value) => {
+                              setDrugs(prev => {
+                                const newDrugs = [...prev];
+                                newDrugs[index].medicalRecordId = Number(value);
+                                return newDrugs;
+                              });
+                            }}
+                          />
+                        </Table.Td>
+                        {/* <Table.Td ta='center'>
+                          <Text>{clinicSupplies?.find(item => item.id === drug.medicalRecordId)?.unit}</Text>
+                        </Table.Td> */}
+                        <Table.Td w={100}>
+                          <NumberInput
+                            value={drug.quantity}
+                            min={1}
+                            max={clinicSupplies?.find(item => item.id === drug.medicalRecordId)?.stock}
+                            onChange={(value) => {
+                              setDrugs(prev => {
+                                const newDrugs = [...prev];
+                                newDrugs[index].quantity = Number(value);
+                                return newDrugs;
+                              });
+                            }}
+                          />
+                        </Table.Td>
+                        <Table.Td>
+                          <Tooltip label='Loại bỏ'>
+                            <ActionIcon
+                              color="red.5"
+                              variant="white"
+                              radius="xl"
+                              onClick={handleRemovePrescription(index)}
+                            >
+                              <IoCloseSharp size={18} />
+                            </ActionIcon>
+                          </Tooltip>
+                        </Table.Td>
+                      </Table.Tr>
 
-              ))}
-            </Table.Tbody>
-          </Table>
-          {drugs.length > 0 ? (<Divider />) : null}
-          <Group justify="flex-end" align="flex-end" pt={10}>
-            <Button type="button" onClick={onSubmit}>
-              Khai báo
-            </Button>
-            <Button type="button" variant="light" color="gray.8" onClick={() => {
-              onClose()
-              setDrugs(supplies)
-            }}>
-              Hủy
-            </Button>
-          </Group>
+                    ))}
+                  </Table.Tbody>
+                </Table>
+                {drugs.length > 0 ? (<Divider />) : null}
+                <Group justify="flex-end" align="flex-end" pt={10}>
+                  <Button type="button" size="md" color="gray.6" onClick={() => {
+                    onClose()
+                    setDrugs(supplies)
+                  }}>
+                    Hủy
+                  </Button>
+                  <Button type="button" size="md" onClick={onSubmit}>
+                    Lưu
+                  </Button>
+                </Group>
+              </>
+            )
+          }
         </ModalBody>
       </Modal.Content>
     </Modal.Root>
