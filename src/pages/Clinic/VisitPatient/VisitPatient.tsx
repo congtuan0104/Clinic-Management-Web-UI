@@ -496,7 +496,7 @@ const VisitPatientPage = () => {
       </Form>
 
       {record && (
-        <div className='bg-white w-[830px]'>
+        <div className='bg-white w-[830px] hidden'>
           <MedicalRecordPrintContext
             ref={recordRef}
             record={record}

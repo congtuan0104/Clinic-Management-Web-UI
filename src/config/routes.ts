@@ -34,8 +34,10 @@ import {
   ExaminationPage,
   VisitPatientPage,
   PaymentInvoicePage,
+  PatientDetail,
   ClinicReportPage,
   MedicalProfilePage,
+  PatientOverviewPage,
 } from '@/pages';
 import { NewsManagementPage } from '@/pages/Clinic/NewsManagement';
 import { NewsPage } from '@/pages/Guest/News';
@@ -75,6 +77,7 @@ export const PATHS = {
   CLINIC_SERVICE: '/clinic/bang-gia-dich-vu',
   CLINIC_NEWS: '/clinic/quan-ly-tin-tuc',
   CLINIC_PATIENT_MANAGEMENT: '/clinic/benh-nhan',
+  CLINIC_PATIENT_DETAIL: '/clinic/benh-nhan/:id',
   CLINIC_RECEPTION: '/clinic/tiep-nhan-benh-nhan',
   CLINIC_EXAMINATION: '/clinic/kham-benh',
   CLINIC_VISITS: '/clinic/kham-benh/:id',
@@ -85,6 +88,7 @@ export const PATHS = {
   CLINIC_SUPPLIES: '/clinic/vat-tu',
   MEDICAL_RECORDS: '/ho-so-kham-benh',
   MEDICAL_RECORD: '/ho-so-kham-benh/:id',
+  PATIENT_OVERVIEW: '/patient/tong-quan',
 };
 
 export const DEEPLINK = {
@@ -105,7 +109,6 @@ export const ROUTES = [
     title: 'Tin tức',
     layout: DefaultLayout,
     element: NewsPage,
-    isProtected: false,
     children: [],
   },
   {
@@ -121,7 +124,6 @@ export const ROUTES = [
     title: 'Phòng khám',
     layout: DefaultLayout,
     element: ClinicsPage,
-    isProtected: false,
     children: [],
   },
   {
@@ -129,7 +131,6 @@ export const ROUTES = [
     title: 'Chi tiết phòng khám',
     layout: DefaultLayout,
     element: ClinicDetailPage,
-    isProtected: false,
     children: [],
   },
   {
@@ -145,7 +146,6 @@ export const ROUTES = [
     title: 'Chi tiết nhân viên',
     layout: DefaultLayout,
     element: Guest_StaffDetail,
-    isProtected: false,
     children: [],
   },
   {
@@ -340,6 +340,14 @@ export const ROUTES = [
     children: [],
   },
   {
+    path: PATHS.CLINIC_PATIENT_DETAIL,
+    title: 'Chi tiết bệnh nhân',
+    layout: ClinicLayout,
+    element: PatientDetail,
+    isProtected: true,
+    children: [],
+  },
+  {
     path: PATHS.CLINIC_RECEPTION,
     title: 'Tiếp nhận bệnh nhân',
     layout: ClinicLayout,
@@ -400,6 +408,14 @@ export const ROUTES = [
     title: 'Hồ sơ khám bệnh',
     layout: DefaultLayout,
     element: MedicalProfilePage,
+    isProtected: true,
+    children: [],
+  },
+  {
+    path: PATHS.PATIENT_OVERVIEW,
+    title: 'Tổng quan bệnh nhân',
+    layout: DefaultLayout,
+    element: PatientOverviewPage,
     isProtected: true,
     children: [],
   },

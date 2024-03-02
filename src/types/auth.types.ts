@@ -63,6 +63,11 @@ export interface IChangeProfileRequest {
   avatar?: string;
 }
 
+export interface IForgotPasswordRequest {
+  email: string;
+}
+
+
 export interface ILoginResponse {
   user: IUserInfo;
   token: string;

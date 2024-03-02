@@ -8,6 +8,7 @@ import {
   IRegisterResponse,
   ILinkAccountRequest,
   IChangePasswordRequest,
+  IForgotPasswordRequest,
   IInviteClinicMemberRequest,
   IChangeProfileRequest,
 } from '@/types';

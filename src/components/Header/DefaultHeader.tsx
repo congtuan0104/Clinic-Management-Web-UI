@@ -23,9 +23,10 @@ import {
 } from '@mantine/core';
 
 import { useDisclosure, useWindowScroll } from '@mantine/hooks';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import ClinusLogo from '@/assets/images/logo.png'
 import classNames from 'classnames';
+import { notifications } from '@mantine/notifications';
 
 
 // header cho các trang dành cho khách hàng chưa đăng nhập
@@ -33,6 +34,7 @@ const Header = () => {
   const userInfo = useAppSelector(userInfoSelector);
   const [drawerOpened, { toggle: toggleDrawer, close: closeDrawer }] = useDisclosure(false);
   // pathname url hiện tại react router dom
+  const navigate = useNavigate();
 
   const { logout } = useAuth();
   const { pathname } = useLocation()
@@ -66,9 +68,16 @@ const Header = () => {
               <Link className=" hover:text-teal-500" to={PATHS.CLINICS}>
                 Phòng khám
               </Link>
-              <Link className=" hover:text-teal-500" to="/dat-lich-hen">
+              <div className=" hover:text-teal-500 cursor-pointer" onClick={() => {
+                navigate(PATHS.LOGIN);
+                notifications.show({
+                  title: 'Thông báo',
+                  message: 'Vui lòng đăng nhập để sử dụng chức năng này',
+                  color: 'secondary.5'
+                })
+              }}>
                 Đặt lịch khám
-              </Link>
+              </div>
             </Group>
           )}
 

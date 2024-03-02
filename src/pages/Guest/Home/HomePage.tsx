@@ -40,11 +40,11 @@ const HomePage = () => {
     navigate(`${PATHS.LOGIN}?callback=${PATHS.PLAN_MANAGEMENT}`)
   }
 
-  if (userInfo && userInfo.moduleId === AuthModule.Patient) {
-    return (
-      <PatientOverviewPage />
-    )
-  }
+  // if (userInfo && userInfo.moduleId === AuthModule.Patient) {
+  //   return (
+  //     <PatientOverviewPage />
+  //   )
+  // }
 
   return (
     <Stack gap={'xl'} pb={40} w={'100%'} bg='white'>
