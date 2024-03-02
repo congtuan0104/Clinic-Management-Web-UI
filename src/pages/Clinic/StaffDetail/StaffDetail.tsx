@@ -1,13 +1,10 @@
 import React, { useState, MouseEvent, useMemo, useEffect } from 'react';
-import { Text, Flex, Button, Indicator, Divider, Center, Stack, Box, Title, Grid, Group, SimpleGrid, Avatar, Badge } from '@mantine/core';
+import { Text, Flex, Button, Indicator, Divider, Center, Stack, Box, Title, Grid, Group, SimpleGrid, Avatar, Badge, TypographyStylesProvider } from '@mantine/core';
 import { Form, useForm } from 'react-hook-form';
 import { TimeInput } from '@mantine/dates';
 import { TextInput, Select, DateInput } from 'react-hook-form-mantine';
 import { CgProfile } from 'react-icons/cg';
 import { FaRegCalendar } from 'react-icons/fa';
-import { FaRegClock } from "react-icons/fa6";
-import { Calendar } from '@mantine/dates';
-import { CgMail } from "react-icons/cg";
 import { useParams } from 'react-router-dom';
 import { useAppSelector } from '@/hooks';
 import { currentClinicSelector } from '@/store';
@@ -16,10 +13,15 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { useQuery } from 'react-query';
 import { clinicApi, staffApi } from '@/services';
 import { notifications } from '@mantine/notifications';
-import { Label } from 'recharts';
 import { ISchedule, IClinicStaff } from '@/types';
-import dayjs from 'dayjs';
-import { FaCalendarDay } from 'react-icons/fa';
+import { RichTextEditor, Link } from '@mantine/tiptap';
+import Highlight from '@tiptap/extension-highlight';
+import StarterKit from '@tiptap/starter-kit';
+import Underline from '@tiptap/extension-underline';
+import TextAlign from '@tiptap/extension-text-align';
+import Superscript from '@tiptap/extension-superscript';
+import SubScript from '@tiptap/extension-subscript';
+import { useEditor } from '@tiptap/react';
 
 interface IStaff {
   id_staff?: string,
@@ -61,7 +63,7 @@ const scheduleschema = yup.object().shape({
 
 const StaffDetail = () => {
   const { id: staffId } = useParams();
-  const { data: staff, isLoading } = useQuery(['staff', staffId], () => getStaffInfo());
+  const { data: staff, refetch} = useQuery(['staff', staffId], () => getStaffInfo());
   const { data: schedules, isLoading: isLoadingClinic } = useQuery(
     ['schedules', staff?.id],
     () => staffApi.getSchedule(String(staff?.id)).then(res => res.data)
@@ -79,15 +81,6 @@ const StaffDetail = () => {
     return newschedules;
   });
 
-
-  useEffect(() => {
-    if (schedules) {
-      schedules.map((day) => {
-        newschedules[day.day - 1] = day
-      })
-    }
-  }, [schedules]);
-
   const daysOfWeek = [
     { label: 'Chủ Nhật', value: '1' },
     { label: 'Thứ 2', value: '2' },
@@ -104,7 +97,7 @@ const StaffDetail = () => {
   const [isUpdateInfo, setIsUpdateInfo] = useState<boolean>(false);
   const [isUpdateSchedule, setIsUpdateSchedule] = useState<boolean>(false);
 
-  const { control: controlInfo, setValue, getValues } = useForm<IStaff>({
+  const { control: controlInfo, setValue, getValues, watch } = useForm<IStaff>({
     resolver: yupResolver(infoschema),
     defaultValues: useMemo(() => {
       return {
@@ -114,7 +107,7 @@ const StaffDetail = () => {
         phoneNumber: staff?.users.phone,
         roleName: staff?.role.name,
         email: staff?.users.email,
-        // gender: staff?.gender,
+        // gender: staff?.users.gender,
         address: staff?.users.address,
         specialize: staff?.specialize,
         experience: staff?.experience,
@@ -123,7 +116,6 @@ const StaffDetail = () => {
     }, [staffId]),
   });
 
-  const { control: controlSchedule } = useForm<ISchedule[]>();
 
   const getStaffInfo = async () => {
     try {
@@ -179,6 +171,8 @@ const StaffDetail = () => {
           message: 'Đổi thông tin nhân viên thành công',
           color: 'green',
         })
+        refetch()
+        resetFormInfo()
         setIsUpdateInfo(false);
       } else {
         notifications.show({
@@ -223,6 +217,53 @@ const StaffDetail = () => {
       });
     }
   };
+
+  const resetFormInfo = () => {
+    setValue('id_staff', staffId);
+    setValue('firstName', staff?.users.firstName);
+    setValue('lastName', staff?.users.lastName);
+    setValue('phoneNumber', staff?.users.phone);
+    setValue('roleName', staff?.role.name);
+    setValue('email', staff?.users.email);
+    // setValue('gender', staff?.users.gender);
+    setValue('address', staff?.users.address);
+    setValue('specialize', staff?.specialize);
+    setValue('experience', staff?.experience);
+    setValue('description', staff?.description || '');
+    editor?.commands.setContent(staff?.description || '')
+  }
+
+  useEffect(() => {
+    resetFormInfo()
+  }, [staff, staffId])
+
+
+  useEffect(() => {
+    if (schedules) {
+      schedules.map((day) => {
+        newschedules[day.day - 1] = day
+      })
+    }
+  }, [schedules]);
+
+  const editor = useEditor({
+    extensions: [
+      StarterKit,
+      Underline,
+      Link,
+      Superscript,
+      SubScript,
+      Highlight,
+      TextAlign.configure({ types: ['heading', 'paragraph'] }),
+    ],
+    content: watch('description'),
+    onUpdate({ editor }) {
+      setValue('description', editor.getHTML());
+      // setEditorContent(editor.getHTML());
+    },
+    editable: true,
+
+  });
 
   return (
     <Center>
@@ -280,13 +321,13 @@ const StaffDetail = () => {
                         name='email'
                         defaultValue={staff?.users.email}
                         control={controlInfo}
-                        disabled
+                        readOnly
                       />
                       <Grid>
                         <Grid.Col span={6}>
                           <TextInput
                             label="Họ"
-                            disabled={!isUpdateInfo}
+                            readOnly={!isUpdateInfo}
                             mt="md"
                             w={'100%'}
                             name='firstName'
@@ -296,7 +337,7 @@ const StaffDetail = () => {
                         <Grid.Col span={6}>
                           <TextInput
                             label="Tên"
-                            disabled={!isUpdateInfo}
+                            readOnly={!isUpdateInfo}
                             mt="md"
                             w={'100%'}
                             name='lastName'
@@ -321,7 +362,7 @@ const StaffDetail = () => {
                         <Grid.Col span={6}>
                           <TextInput
                             label="SĐT liên lạc"
-                            disabled={!isUpdateInfo}
+                            readOnly={!isUpdateInfo}
                             mt="md"
                             w={'100%'}
                             name='phoneNumber'
@@ -332,7 +373,7 @@ const StaffDetail = () => {
                         <Grid.Col span={6}>
                           <Select
                             label="Giới tính"
-                            disabled={!isUpdateInfo}
+                            readOnly={!isUpdateInfo}
                             mt="md"
                             w={'100%'}
                             name='gender'
@@ -347,7 +388,7 @@ const StaffDetail = () => {
 
                         <TextInput
                           label="Địa chỉ"
-                          disabled={!isUpdateInfo}
+                          readOnly={!isUpdateInfo}
                           mt="md"
                           name='address'
                           w={'100%'}
@@ -362,14 +403,14 @@ const StaffDetail = () => {
                           <TextInput label="Vai trò"
                             name='roleName'
                             control={controlInfo}
-                            disabled
+                            readOnly
                           />
                         </Grid.Col>
 
                         <Grid.Col span={9}>
                           <TextInput
                             label="Chuyên khoa"
-                            disabled={!isUpdateInfo}
+                            readOnly={!isUpdateInfo}
                             mt="md"
                             w={'100%'}
                             name='specialize'
@@ -379,7 +420,7 @@ const StaffDetail = () => {
                         <Grid.Col span={3}>
                           <TextInput
                             label="Năm kinh nghiệm"
-                            disabled={!isUpdateInfo}
+                            readOnly={!isUpdateInfo}
                             mt="md"
                             w={'100%'}
                             name='experience'
@@ -405,14 +446,47 @@ const StaffDetail = () => {
 
 
                       <Divider my="md" mt={40} />
-                      <TextInput
-                        label="Mô tả"
-                        disabled={!isUpdateInfo}
-                        mt="md"
-                        w={'100%'}
-                        name='description'
-                        control={controlInfo}
-                      />
+                      <Text fw={700} pb={10}>Mô tả</Text>
+                      {isUpdateInfo ? (
+                      <RichTextEditor editor={editor} w='100%' maw={650} style={{ transform: "translateX(11px)" }}>
+                        <RichTextEditor.Toolbar sticky stickyOffset={60}>
+                          <RichTextEditor.ControlsGroup>
+                            <RichTextEditor.Bold />
+                            <RichTextEditor.Italic />
+                            <RichTextEditor.Underline />
+                            <RichTextEditor.Strikethrough />
+                            <RichTextEditor.ClearFormatting />
+                            <RichTextEditor.Highlight />
+                            <RichTextEditor.Code />
+                          </RichTextEditor.ControlsGroup>
+                          <RichTextEditor.ControlsGroup>
+                            <RichTextEditor.H1 />
+                            <RichTextEditor.H2 />
+                            <RichTextEditor.H3 />
+                            <RichTextEditor.H4 />
+                          </RichTextEditor.ControlsGroup>
+                          <RichTextEditor.ControlsGroup>
+                            <RichTextEditor.Blockquote />
+                            <RichTextEditor.Hr />
+                            <RichTextEditor.BulletList />
+                            <RichTextEditor.OrderedList />
+                            <RichTextEditor.Subscript />
+                            <RichTextEditor.Superscript />
+                          </RichTextEditor.ControlsGroup>
+                          <RichTextEditor.ControlsGroup>
+                            <RichTextEditor.AlignLeft />
+                            <RichTextEditor.AlignCenter />
+                            <RichTextEditor.AlignJustify />
+                            <RichTextEditor.AlignRight />
+                          </RichTextEditor.ControlsGroup>
+                        </RichTextEditor.Toolbar>
+                        <RichTextEditor.Content style={{ minHeight: '8em' }} />
+                      </RichTextEditor>
+                  ) : (
+                    <TypographyStylesProvider>
+                      <div className="w-full rounded-md" dangerouslySetInnerHTML={{ __html: staff?.description || '' }}></div>
+                    </TypographyStylesProvider>
+                  )}
                       <Group justify="flex-end" mt="lg">
                         {
                           isUpdateInfo ? (
@@ -460,7 +534,7 @@ const StaffDetail = () => {
                   <Text py={10}>{day.label}:</Text>
                   <Group style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
                     <TimeInput
-                      disabled={!isUpdateSchedule}
+                      readOnly={!isUpdateSchedule}
                       value={newschedules && newschedules[index] ? newschedules[index].startTime : ''}
                       name={`schedule[${index}].startTime` as `${number}.startTime`}
                       onChange={(event) => setNewSchedules(prev => {
@@ -473,7 +547,7 @@ const StaffDetail = () => {
                     />
                     <Text>-</Text>
                     <TimeInput
-                      disabled={!isUpdateSchedule}
+                      readOnly={!isUpdateSchedule}
                       value={newschedules && newschedules[index] ? newschedules[index].endTime : ''}
                       name={`schedule[${index}].endTime` as `${number}.endTime`}
                       onChange={(event) => {
