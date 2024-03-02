@@ -136,19 +136,21 @@ const ModalUsingSupplies = ({
                       <Table.Th>
                         <Text>Số lượng</Text>
                       </Table.Th>
-                      <Table.Th w={30}>
-                        <Tooltip label='Khai báo thêm vật tư được sử dụng'>
-                          <ActionIcon
-                            variant="white"
-                            color="primary.3"
-                            radius="xl"
-                            onClick={handleAddPrescription}
-                          // disabled={!patientInfo}
-                          >
-                            <FaPlus size={18} />
-                          </ActionIcon>
-                        </Tooltip>
-                      </Table.Th>
+                      {supplies.length === 0 ? (
+                        <Table.Th w={30}>
+                          <Tooltip label='Khai báo thêm vật tư được sử dụng'>
+                            <ActionIcon
+                              variant="white"
+                              color="primary.3"
+                              radius="xl"
+                              onClick={handleAddPrescription}
+                            // disabled={!patientInfo}
+                            >
+                              <FaPlus size={18} />
+                            </ActionIcon>
+                          </Tooltip>
+                        </Table.Th>
+                      ) : null}
                     </Table.Tr>
                   </Table.Thead>
                   <Table.Tbody>
@@ -173,6 +175,7 @@ const ModalUsingSupplies = ({
                             variant="unstyled"
                             placeholder='Chon vật tư'
                             defaultValue={String(drug.medicalSupplyId)}
+                            readOnly={supplies.length !== 0}
                             onChange={(value) => {
                               setDrugs(prev => {
                                 const newDrugs = [...prev];
@@ -190,6 +193,7 @@ const ModalUsingSupplies = ({
                             value={drug.quantity}
                             min={1}
                             max={clinicSupplies?.find(item => item.id === drug.medicalRecordId)?.stock}
+                            readOnly={supplies.length !== 0}
                             onChange={(value) => {
                               setDrugs(prev => {
                                 const newDrugs = [...prev];
@@ -199,35 +203,39 @@ const ModalUsingSupplies = ({
                             }}
                           />
                         </Table.Td>
-                        <Table.Td>
-                          <Tooltip label='Loại bỏ'>
-                            <ActionIcon
-                              color="red.5"
-                              variant="white"
-                              radius="xl"
-                              onClick={handleRemovePrescription(index)}
-                            >
-                              <IoCloseSharp size={18} />
-                            </ActionIcon>
-                          </Tooltip>
-                        </Table.Td>
+                        {supplies.length === 0 ? (
+                          <Table.Td>
+                            <Tooltip label='Loại bỏ'>
+                              <ActionIcon
+                                color="red.5"
+                                variant="white"
+                                radius="xl"
+                                onClick={handleRemovePrescription(index)}
+                              >
+                                <IoCloseSharp size={18} />
+                              </ActionIcon>
+                            </Tooltip>
+                          </Table.Td>
+                        ) : null}
                       </Table.Tr>
-
                     ))}
                   </Table.Tbody>
                 </Table>
                 {drugs.length > 0 ? (<Divider />) : null}
-                <Group justify="flex-end" align="flex-end" pt={10}>
-                  <Button type="button" size="md" color="gray.6" onClick={() => {
-                    onClose()
-                    setDrugs(supplies)
-                  }}>
-                    Hủy
-                  </Button>
-                  <Button type="button" size="md" onClick={onSubmit}>
-                    Lưu
-                  </Button>
-                </Group>
+                {supplies.length === 0 ?
+                  (
+                    <Group justify="flex-end" align="flex-end" pt={10}>
+                      <Button type="button" size="md" color="gray.6" onClick={() => {
+                        onClose()
+                        setDrugs(supplies)
+                      }}>
+                        Hủy
+                      </Button>
+                      <Button type="button" size="md" onClick={onSubmit}>
+                        Lưu
+                      </Button>
+                    </Group>
+                  ) : null}
               </>
             )
           }

@@ -79,7 +79,7 @@ const VisitPatientPage = () => {
   const [opened, { open, close }] = useDisclosure(false);
 
   const { data: record, isLoading, refetch } = useQuery(
-    'medicalRecord',
+    ['medicalRecord', recordId],
     () => medicalRecordApi
       .getMedicalRecordDetail(Number(recordId))
       .then((res) => res.data),
