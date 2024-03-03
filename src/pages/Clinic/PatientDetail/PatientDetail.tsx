@@ -25,7 +25,7 @@ import { IMedicalRecord, IUpdateMedicalRecordPayload, IUpdatePatientPayload } fr
 
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { medicalRecordApi, patientApi } from '@/services';
-import { Gender, MEDICO_RECORD_STATUS } from '@/enums';
+import { Gender, MEDICO_PAYMENT_STATUS, MEDICO_RECORD_STATUS } from '@/enums';
 import dayjs from 'dayjs';
 import { Form, useForm } from 'react-hook-form';
 import * as yup from 'yup';
@@ -41,6 +41,7 @@ import { PATHS } from '@/config';
 import { CurrencyFormatter, MedicalRecordPrintContext } from '@/components';
 import { useReactToPrint } from 'react-to-print';
 import { IoPrintSharp } from 'react-icons/io5';
+import { FaEye } from 'react-icons/fa';
 
 interface IFormData {
     // firstName?: string;
@@ -321,29 +322,47 @@ const PatientDetail = () => {
                             <Table striped withTableBorder withColumnBorders>
                                 <Table.Thead>
                                     <Table.Tr>
+                                        <Table.Th>Ngày khám</Table.Th>
                                         <Table.Th>Bác sĩ</Table.Th>
                                         <Table.Th>Dịch vụ</Table.Th>
-                                        <Table.Th>Giá dịch vụ</Table.Th>
-                                        <Table.Th>Thuốc</Table.Th>
-                                        <Table.Th>Ngày tạo</Table.Th>
+                                        <Table.Th>Lý do khám</Table.Th>
+                                        <Table.Th>Kết quả khám</Table.Th>
+                                        <Table.Th ta='center'>Thao tác</Table.Th>
                                     </Table.Tr>
                                 </Table.Thead>
                                 <Table.Tbody>
-                                    {medicalRecord && medicalRecord.map((item) => (
-                                        <Table.Tr key={item.id}>
-                                            <Table.Td>{item.doctor.firstName} {item.doctor.lastName}</Table.Td>
-                                            <Table.Td>{item.medicalRecordServices.map((service) => (
-                                                <Text>{service.serviceName}</Text>
-                                            ))}</Table.Td>
-                                            <Table.Td>{item.medicalRecordServices.map((service) => (
-                                                <Text><CurrencyFormatter value={service.amount} /></Text>
-                                            ))}</Table.Td>
-                                            <Table.Td>{item.prescriptionDetail.map((medicine) => (
-                                                <Text>{`${medicine.medicineName} : ${medicine.dosage} ${medicine.unit} (${medicine.duration} - ${medicine.usingTime} - ${medicine.doseInterval})`}</Text>
-                                            ))}</Table.Td>
-                                            <Table.Td>{dayjs(item.dateCreated).format('DD/MM/YYYY')}</Table.Td>
-                                        </Table.Tr>
-                                    ))}
+                                    {medicalRecord &&
+                                        medicalRecord.map((item) => (
+                                            (item.examinationStatus === MEDICO_RECORD_STATUS.DONE &&
+                                                item.paymentStatus === MEDICO_PAYMENT_STATUS.PAID) && (
+                                                <Table.Tr key={item.id}>
+                                                    <Table.Td>{dayjs(item.dateCreated).format('DD/MM/YYYY')}</Table.Td>
+                                                    <Table.Td>{item.doctor.firstName} {item.doctor.lastName}</Table.Td>
+                                                    <Table.Td>
+                                                        {item.medicalRecordServices.map((service) => (
+                                                            <Text>{service.serviceName}</Text>
+                                                        ))}
+                                                    </Table.Td>
+                                                    <Table.Td>{item.note}</Table.Td>
+                                                    <Table.Td>{item.result}</Table.Td>
+                                                    {/* Use CSS class for text centering */}
+                                                    <Table.Td className="text-center">
+                                                        <Tooltip label="Xem chi tiết hồ sơ">
+                                                            <ActionIcon
+                                                                variant="outline"
+                                                                color="blue"
+                                                                radius="sm"
+                                                                component={Link}
+                                                                to={`${PATHS.CLINIC_EXAMINATION}/${item.id}`}
+                                                            >
+                                                                {/* Removed commented-out onClick handler */}
+                                                                <FaEye />
+                                                            </ActionIcon>
+                                                        </Tooltip>
+                                                    </Table.Td>
+                                                </Table.Tr>
+                                            )
+                                        ))}
                                 </Table.Tbody>
                             </Table>
                         </Flex>
