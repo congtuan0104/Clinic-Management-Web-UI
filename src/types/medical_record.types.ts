@@ -170,5 +170,18 @@ export interface IDeclareUsingSuppliesPayload {
   supplies: {
     medicalSupplyId: number;
     quantity: number;
-  }[]
+  }[];
+}
+
+export interface INewMedicalServicePayload {
+  clinicServiceId: number;
+  doctorId: number;
+  amount: number;
+  serviceName: string;
+  serviceResult: string;
+  clinicId: string;
+}
+
+export interface IUpdateServiceResultPayload extends INewMedicalServicePayload {
+  medicalRecordId: number;
 }

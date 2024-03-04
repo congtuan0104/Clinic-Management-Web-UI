@@ -74,6 +74,7 @@ const ExaminationPage = () => {
       {
         header: 'Trạng thái khám',
         id: 'examinationStatus',
+        sortingFn: (rowA, rowB) => rowA.original.examinationStatus - rowB.original.examinationStatus,
         accessorFn: (dataRow) => {
           if (dataRow.examinationStatus === MEDICO_RECORD_STATUS.WAITING) {
             return <Badge color='gray.5'>Chờ khám</Badge>;
@@ -132,9 +133,11 @@ const ExaminationPage = () => {
           enableRowActions
           enableColumnFilters={false}
           enableRowNumbers={true}
-          // state={{
-          //   isLoading: isLoading,
-          // }}
+          enableGlobalFilter={true}
+          state={{
+            // isLoading: isLoading,
+            sorting: [{ id: 'examinationStatus', desc: false }],
+          }}
           mantineSearchTextInputProps={
             {
               placeholder: 'Tìm kiếm bệnh nhân',

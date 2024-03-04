@@ -1,6 +1,6 @@
 import { Calendar, ClinusTable, ModalAddAppointment, ModalAppointmentDetail } from "@/components"
 import { CalendarEvent, IAppointment } from "@/types";
-import { ActionIcon, Avatar, Badge, Button, Flex, Select, Text, Title, Tooltip } from "@mantine/core"
+import { ActionIcon, Avatar, Badge, Button, Flex, Loader, LoadingOverlay, Select, Text, Title, Tooltip } from "@mantine/core"
 import { useEffect, useMemo, useState } from "react"
 import { FaCalendarDays, FaUserDoctor } from "react-icons/fa6";
 import { FaEye, FaRegCalendarPlus, FaRegEdit, FaThList, FaTrash } from "react-icons/fa";
@@ -27,16 +27,25 @@ const AppointmentPage = () => {
   const [openedDetail, { open: openDetail, close: closeDetail }] = useDisclosure(false);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
   const [selectedAppointment, setSelectedAppointment] = useState<IAppointment | undefined>();
-  const [mode, setMode] = useState<'list' | 'calendar'>('list')
+  const [mode, setMode] = useState<'list' | 'calendar'>('calendar')
   const [searchTerm, setSearchTerm] = useState<ISearchTerm>({
     doctor: undefined,
-    date: new Date(),
+    date: undefined,
     status: undefined,
   })
 
+  // useEffect(() => {
+  //   if (mode === 'calendar') {
+  //     setSearchTerm({ ...searchTerm, date: undefined })
+  //   }
+  //   else {
+  //     setSearchTerm({ ...searchTerm, date: new Date() })
+  //   }
+  // }, [mode])
+
   const currentClinic = useAppSelector(currentClinicSelector);
 
-  const { data: appointments, isLoading, refetch } = useQuery(
+  const { data: appointments, isLoading, refetch, isFetching } = useQuery(
     ['appointments', currentClinic?.id, dayjs().format('YYYY-MM-DD')],
     () => appointmentApi.getAppointmentList({
       clinicId: currentClinic?.id,
@@ -121,6 +130,7 @@ const AppointmentPage = () => {
       {
         header: 'Thời gian hẹn',
         id: 'time',
+        enableColumnFilter: false,
         accessorFn: (dataRow) => <div className="bg-primary-300 text-13 p-1 rounded-md text-white flex flex-col items-center">
           <p>{dataRow.startTime} - {dataRow.endTime}</p>
           <p>{dayjs(dataRow.date).format('DD MMM YYYY')}</p>
@@ -128,11 +138,14 @@ const AppointmentPage = () => {
       },
       {
         header: 'Yêu cầu dịch vụ',
+        enableColumnFilter: false,
         accessorKey: 'clinicServices.serviceName',
       },
       {
         header: 'Trạng thái',
+        enableColumnFilter: false,
         id: 'status',
+        sortingFn: (rowA, rowB) => rowA.original.status.localeCompare(rowB.original.status),
         accessorFn: (dataRow) => <Badge
           color={dataRow.status === APPOINTMENT_STATUS.PENDING ? 'yellow.5' :
             dataRow.status === APPOINTMENT_STATUS.CONFIRM ? 'green.5' :
@@ -170,9 +183,9 @@ const AppointmentPage = () => {
 
   const renderCalendarViewMode = () => {
     return (
-      <div className="h-[900px] bg-white p-3 rounded-md">
+      <div className="h-[900px] bg-white p-3 rounded-md relative">
         <Calendar
-          defaultView='week'
+          defaultView='month'
           events={events}
           popup={true}
           // timeslots={4}
@@ -316,21 +329,23 @@ const AppointmentPage = () => {
               value={searchTerm.doctor?.toString()}
               onChange={(value) => value && setSearchTerm({ ...searchTerm, doctor: Number(value) })}
             />
-            <DateInput
-              w={200}
-              placeholder="Ngày hẹn khám"
-              valueFormat="DD-MM-YYYY"
-              leftSection={<FaCalendarDays size={18} />}
-              value={searchTerm.date}
-              onChange={(value) => setSearchTerm({ ...searchTerm, date: value })}
-              allowDeselect
-              clearable
-              styles={{
-                input: {
-                  height: 40,
-                },
-              }}
-            />
+            {mode === 'list' && (
+              <DateInput
+                w={200}
+                placeholder="Ngày hẹn khám"
+                valueFormat="DD-MM-YYYY"
+                leftSection={<FaCalendarDays size={18} />}
+                value={searchTerm.date}
+                onChange={(value) => setSearchTerm({ ...searchTerm, date: value })}
+                allowDeselect
+                clearable
+                styles={{
+                  input: {
+                    height: 40,
+                  },
+                }}
+              />
+            )}
 
             <Select
               w={200}
@@ -367,7 +382,12 @@ const AppointmentPage = () => {
           </Button>
         </div>
 
-        {mode === 'calendar' ? renderCalendarViewMode() : renderListViewMode()}
+        {(isLoading || isFetching) ? <div className="flex justify-center items-center bg-white rounded-xl w-full h-[90vh]">
+          <Loader size='xl' />
+        </div>
+          : mode === 'calendar' ? renderCalendarViewMode() : renderListViewMode()
+        }
+
 
       </div>
 

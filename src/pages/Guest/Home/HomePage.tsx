@@ -15,6 +15,7 @@ import { BiChevronLeftCircle, BiChevronRightCircle } from 'react-icons/bi';
 import { useScrollIntoView } from '@mantine/hooks';
 import { AuthModule } from '@/enums';
 import { PatientOverviewPage } from '@/pages';
+import { notifications } from '@mantine/notifications';
 
 
 
@@ -37,6 +38,11 @@ const HomePage = () => {
   }
 
   const handleBuyPlan = () => {
+    notifications.show({
+      // title: 'Thông báo',
+      message: 'Vui lòng đăng nhập để mua gói dịch vụ',
+      color: 'red.5'
+    })
     navigate(`${PATHS.LOGIN}?callback=${PATHS.PLAN_MANAGEMENT}`)
   }
 
@@ -267,6 +273,11 @@ const HomePage = () => {
         <Stack align='center'>
           <Text size='24px' fw={700} w={'100%'}>Tải ứng dụng trên mobile</Text>
           <Divider size={'md'} color='gray.6' w={'70%'} />
+          <Grid>
+            <Grid.Col span={6}>
+              <Image radius='lg' w={'100%'} h='auto' fit='contain' src='/assets/images/qr-code.png' />
+            </Grid.Col>
+          </Grid>
 
         </Stack>
       </Center>

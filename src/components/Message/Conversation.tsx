@@ -95,6 +95,14 @@ export default function Conversation({ groupChat }: ConversationProps) {
     }
   }
 
+  const endRef = useRef<HTMLDivElement>(null); // Add type annotation to useRef
+
+  useEffect(() => {
+    if (messages.length > 0 && endRef.current) {
+      endRef.current.scrollIntoView({ behavior: "smooth", block: "end" });
+    }
+  }, [messages]);
+
 
   const createVideoCall = () => {
     const groupID = groupChat.id;
@@ -316,6 +324,8 @@ export default function Conversation({ groupChat }: ConversationProps) {
             </Avatar>
           </div>
         )}
+
+        <div ref={endRef} />
       </div>
 
       {/* Input bar */}

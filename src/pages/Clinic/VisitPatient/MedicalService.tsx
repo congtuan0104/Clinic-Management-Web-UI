@@ -1,4 +1,4 @@
-import { ModalMedicalInvoice } from "@/components";
+import { ModalMedicalInvoice, ModalRequestService, ModalUpdateServiceResult } from "@/components";
 import { AuthModule } from "@/enums";
 import { useAppSelector } from "@/hooks";
 import { medicalRecordApi, staffApi } from "@/services";
@@ -18,18 +18,21 @@ interface IProps {
   recordId: number;
   medicalServices: IMedicalService[];
   onUpdateSuccess: () => void;
+  allowUpdate?: boolean;
 }
 
-const MedicalService = ({ recordId, medicalServices, onUpdateSuccess }: IProps) => {
+const MedicalService = ({ recordId, medicalServices, onUpdateSuccess, allowUpdate }: IProps) => {
 
   const staffInfo = useAppSelector(staffInfoSelector);
   const userInfo = useAppSelector(userInfoSelector);
   const currentClinic = useAppSelector(currentClinicSelector);
+  const [selectedService, setSelectedService] = useState<IMedicalService | undefined>();
+  const [isOpen, setIsOpen] = useState(false);
 
-  console.log(recordId, onUpdateSuccess)
+  console.log(recordId, medicalServices)
 
 
-  const { data: staffs, refetch } = useQuery(
+  const { data: staffs } = useQuery(
     ['staffs'],
     () => staffApi.getStaffs({ clinicId: currentClinic?.id }).then(res => res.data),
     {
@@ -61,17 +64,19 @@ const MedicalService = ({ recordId, medicalServices, onUpdateSuccess }: IProps) 
             <Table.Th>Bác sĩ thực hiện</Table.Th>
             <Table.Th>Kết quả dịch vụ</Table.Th>
             <Table.Th w={50} style={{ borderRadius: '0 10px 0 0' }}>
-              <Tooltip label='Yêu cầu thêm dịch vụ'>
-                <ActionIcon
-                  color="primary.3"
-                  radius="xl"
-                  variant='white'
-                // onClick={handleAddService}
-                // disabled={!patientInfo}
-                >
-                  <FaPlus size={18} />
-                </ActionIcon>
-              </Tooltip>
+              {(userInfo?.moduleId === AuthModule.ClinicStaff) && (
+                <Tooltip label='Chỉ định dịch vụ'>
+                  <ActionIcon
+                    color="primary.3"
+                    radius="xl"
+                    variant='white'
+                    onClick={() => setIsOpen(true)}
+                    disabled={!allowUpdate}
+                  >
+                    <FaPlus size={18} />
+                  </ActionIcon>
+                </Tooltip>
+              )}
             </Table.Th>
           </Table.Tr>
         </Table.Thead>
@@ -85,15 +90,16 @@ const MedicalService = ({ recordId, medicalServices, onUpdateSuccess }: IProps) 
             <Table.Tr key={index}>
               <Table.Td>{service.serviceName}</Table.Td>
               <Table.Td>{findStaffName(service.doctorId)}</Table.Td>
-              <Table.Td>{service.serviceResult}</Table.Td>
+              <Table.Td>{service.serviceResult || 'Chưa có kết quả'}</Table.Td>
               <Table.Td>
-                {(userInfo?.moduleId === AuthModule.ClinicOwner || staffInfo?.id === service.doctorId) && (
+                {(staffInfo?.id === service.doctorId) && (
                   <Tooltip label='Cập nhật kết quả dịch vụ'>
                     <ActionIcon
                       color="primary.3"
                       radius="xl"
                       variant='white'
-                    // onClick={() => handleViewServiceDetail(service)}
+                      onClick={() => setSelectedService(service)}
+                      disabled={!allowUpdate}
                     >
                       <FaRegEdit size={18} />
                     </ActionIcon>
@@ -104,6 +110,21 @@ const MedicalService = ({ recordId, medicalServices, onUpdateSuccess }: IProps) 
           ))}
         </Table.Tbody>
       </Table>
+
+      <ModalUpdateServiceResult
+        isOpen={!!selectedService}
+        onClose={() => setSelectedService(undefined)}
+        service={selectedService}
+        updateResult={onUpdateSuccess}
+      />
+
+      <ModalRequestService
+        isOpen={isOpen}
+        onClose={() => setIsOpen(false)}
+        recordId={recordId}
+        medicalServices={medicalServices}
+        onSuccess={onUpdateSuccess}
+      />
     </>
   );
 }

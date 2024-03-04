@@ -18,4 +18,8 @@ export const chatApi = {
   removeMember(groupId: string, userId: string): Promise<IApiResponse<IGroupChat>> {
     return axiosClient.delete(`/chats/${groupId}/user`, { data: { userList: [userId] } });
   },
+
+  deleteGroupChat(groupId: string): Promise<IApiResponse<any>> {
+    return axiosClient.delete(`/chats/${groupId}`);
+  },
 };

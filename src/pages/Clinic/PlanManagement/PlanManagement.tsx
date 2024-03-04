@@ -87,7 +87,7 @@ const ClinicManagePage = () => {
     return (
       <div className='flex flex-col items-end'>
         <Text tt='uppercase'>
-          Gói {plan?.planName}
+          {plan?.planName}
         </Text>
         {(subscription.status !== CLINIC_SUBSCRIPTION_STATUS.NOT_ACTIVE && subscription.status !== CLINIC_SUBSCRIPTION_STATUS.INPAYMENT)
           && <Text>

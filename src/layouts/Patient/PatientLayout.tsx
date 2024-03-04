@@ -4,7 +4,7 @@ import { COOKIE_KEY } from '@/constants';
 import { AuthModule, CLINIC_SUBSCRIPTION_STATUS, PERMISSION } from '@/enums';
 import { useAppDispatch, useAppSelector, useAuth } from '@/hooks';
 import { clinicApi, notificationApi, staffApi } from '@/services';
-import { currentClinicSelector, focusModeSelector, openSidebarClinicSelector, setCurrentClinic, setStaffPermission, setListClinics, toggleSidebarClinic, setStaffInfo } from '@/store';
+import { focusModeSelector, openSidebarClinicSelector } from '@/store';
 import { INotification } from '@/types';
 import { cookies } from '@/utils';
 import { Title, Text, Group } from '@mantine/core';

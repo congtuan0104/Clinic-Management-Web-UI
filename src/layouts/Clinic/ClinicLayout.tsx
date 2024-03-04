@@ -94,6 +94,7 @@ const ClinicLayout = ({ children }: { children: JSX.Element }) => {
       const listActiveClinics = clinics?.filter(
         (clinic) => clinic.subscriptions &&
           clinic.subscriptions[0].status === CLINIC_SUBSCRIPTION_STATUS.ACTIVE
+          && clinic.isActive
       );
       const curClinic = listActiveClinics?.find((clinic) => clinic.id == curClinicId) || listActiveClinics?.[0];
       cookies.set(COOKIE_KEY.CURRENT_CLINIC_ID, curClinic?.id || '');

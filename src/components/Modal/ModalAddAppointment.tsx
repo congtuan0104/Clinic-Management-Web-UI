@@ -58,7 +58,7 @@ const ModalAddAppointment = ({ isOpen, onClose, date, onSuccess }: IProps) => {
   const { control, reset, setValue, formState: { errors }, watch } = useForm<IFormData>({
     resolver: yupResolver(schema),
     defaultValues: {
-      date: date || new Date(),
+      date: date || dayjs().add(1, 'day').toDate(),
       // doctorId: '',
       // patientId: '',
       // startTime: '',
@@ -116,7 +116,7 @@ const ModalAddAppointment = ({ isOpen, onClose, date, onSuccess }: IProps) => {
     if (date) {
       const startTime = dayjs(date).format('HH:mm');
       // thời gian kết thức khám sau thời gian bắt đầu khám 15 phút
-      const endTime = dayjs(date).add(15, 'minute').format('HH:mm');
+      const endTime = dayjs(date,).add(15, 'minute').format('HH:mm');
 
       setValue('date', date);
       setValue('startTime', startTime);
@@ -282,6 +282,8 @@ const ModalAddAppointment = ({ isOpen, onClose, date, onSuccess }: IProps) => {
 
   const handleSubmit = async (data: IFormData) => {
     if (!currentClinic?.id) return;
+    const startTimeObj = dayjs(data.date).set('hour', Number(data.startTime.split(':')[0])).set('minute', Number(data.startTime.split(':')[1]));
+    const endTime = dayjs(startTimeObj).add(15, 'minute').format('HH:mm');
 
     const payload: INewAppointmentPayload = {
       clinicId: currentClinic?.id,
@@ -290,10 +292,12 @@ const ModalAddAppointment = ({ isOpen, onClose, date, onSuccess }: IProps) => {
       serviceId: Number(data.serviceId),
       date: dayjs(data.date).format('YYYY-MM-DD'),
       startTime: data.startTime,
-      endTime: dayjs(data.startTime).add(15, 'minute').format('HH:mm'),
+      endTime: endTime,
       description: data.description,
       status: APPOINTMENT_STATUS.CONFIRM
     }
+
+    console.log(payload);
 
     const res = await appointmentApi.createAppointment(payload);
     if (res.status) {
@@ -321,6 +325,7 @@ const ModalAddAppointment = ({ isOpen, onClose, date, onSuccess }: IProps) => {
         opened={isOpen}
         onClose={onClose}
         size={'xl'}
+        centered
         scrollAreaComponent={ScrollArea.Autosize}>
         <Modal.Overlay blur={7} />
         <Modal.Content radius='lg'>

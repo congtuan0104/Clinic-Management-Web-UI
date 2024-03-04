@@ -193,9 +193,11 @@ const PaymentInvoicePage = () => {
             noRecordsToDisplay: 'Không có hóa đơn nào',
             noResultsFound: 'Không tìm thấy hóa đơn nào thỏa điều kiện tìm kiếm',
           }}
-          // state={{
-          //   isLoading: isLoading,
-          // }}
+          state={{
+            // isLoading: isLoading,
+            sorting: [{ id: 'paymentStatus', desc: false }],
+            // columnFilters: [{ id: 'paymentStatus', value: MEDICO_PAYMENT_STATUS.UNPAID.toString() }],
+          }}
           mantineSearchTextInputProps={
             {
               placeholder: 'Tìm kiếm hóa đơn bệnh nhân',

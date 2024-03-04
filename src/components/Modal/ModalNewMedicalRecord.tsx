@@ -207,7 +207,10 @@ const ModalNewMedicalRecord = ({
             autoComplete="off"
             size="md"
             radius="md"
-            value={patientInfo.birthday && dayjs(patientInfo.birthday).format('DD/MM/YYYY')}
+            value={patientInfo.birthday
+              ? dayjs(patientInfo.birthday).format('DD/MM/YYYY')
+              : 'Chưa có thông tin'
+            }
             readOnly={true}
           />
         </Grid.Col>
@@ -310,7 +313,7 @@ const ModalNewMedicalRecord = ({
             autoComplete="off"
             size="md"
             radius="md"
-            value={patientInfo.anamnesis}
+            value={patientInfo.anamnesis || 'Chưa có thông tin'}
             readOnly={true}
           />
         </Grid.Col>
@@ -386,6 +389,7 @@ const ModalNewMedicalRecord = ({
                   disabled={!patientInfo}
                   control={control}
                   placeholder="Nhập tên bác sĩ để tìm kiếm"
+                  searchable
                   size="md"
                   data={staffs?.map(staff => ({
                     value: staff.id.toString(),

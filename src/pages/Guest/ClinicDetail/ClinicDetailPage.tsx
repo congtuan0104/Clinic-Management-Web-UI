@@ -75,7 +75,10 @@ const ClinicDetailPage = () => {
   }
 
   const filteredDoctors = doctors
-    ?.filter(doctor => doctor?.role?.permissions?.some(p => p?.id === PERMISSION.PERFORM_SERVICE))
+    ?.filter(doctor =>
+      doctor?.role?.permissions?.some(p => p?.id === PERMISSION.PERFORM_SERVICE)
+      && doctor?.role?.name !== 'Admin'
+    )
     ?.slice(0, 4);
 
   if (!isLoading && !clinic) return <Navigate to={PATHS.CLINICS} />

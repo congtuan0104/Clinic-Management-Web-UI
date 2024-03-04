@@ -101,7 +101,7 @@ const PatientOverview = ({ patient }: IProps) => {
           <Grid.Col span={3.5}>
             <MantineTextInput
               label="Nhóm máu"
-              value={patient?.bloodGroup}
+              value={patient?.bloodGroup || 'Chưa có thông tin'}
               readOnly
               variant='filled'
               size='md'

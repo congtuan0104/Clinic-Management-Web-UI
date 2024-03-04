@@ -17,7 +17,7 @@ import { GrMoney } from 'react-icons/gr';
 import { IoCalendarClearOutline } from 'react-icons/io5';
 import classNames from 'classnames';
 
-const DashboardAdmin = () => {
+const DashboardClinic = () => {
   const userInfo = useAppSelector(userInfoSelector);
   const currentClinic = useAppSelector(currentClinicSelector);
   const navigate = useNavigate();
@@ -255,4 +255,4 @@ const DashboardAdmin = () => {
   );
 };
 
-export default DashboardAdmin;
+export default DashboardClinic;

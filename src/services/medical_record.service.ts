@@ -6,8 +6,10 @@ import {
   IMedicalRecord,
   IMedicalRecordQueryParams,
   INewMedicalRecordPayload,
+  INewMedicalServicePayload,
   INewPrescription,
   IUpdateMedicalRecordPayload,
+  IUpdateServiceResultPayload,
 } from '@/types';
 import { axiosClient } from '@/utils';
 
@@ -55,7 +57,25 @@ export const medicalRecordApi = {
     return axiosClient.put(`/medical-records/export-invoice/${invoiceId}`, { status, cashierId });
   },
 
-  declareUsingSupplies: (medicalRecordId: string, data: IDeclareUsingSuppliesPayload): Promise<IApiResponse<any>> => {
+  declareUsingSupplies: (
+    medicalRecordId: string,
+    data: IDeclareUsingSuppliesPayload,
+  ): Promise<IApiResponse<any>> => {
     return axiosClient.post(`/medical-records/${medicalRecordId}/using-supplies`, data);
+  },
+
+  updateService: (
+    medicalRecordId: number,
+    serviceId: number,
+    data: IUpdateServiceResultPayload,
+  ): Promise<IApiResponse<any>> => {
+    return axiosClient.put(`/medical-records/${medicalRecordId}/services/${serviceId}`, data);
+  },
+
+  newService: (
+    medicalRecordId: number,
+    data: INewMedicalServicePayload,
+  ): Promise<IApiResponse<any>> => {
+    return axiosClient.post(`/medical-records/${medicalRecordId}/services`, data);
   },
 };

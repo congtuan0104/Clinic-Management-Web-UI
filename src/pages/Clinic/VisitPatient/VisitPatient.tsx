@@ -245,22 +245,22 @@ const VisitPatientPage = () => {
             {record?.examinationStatus === MEDICO_RECORD_STATUS.DONE && (
               <Group>
                 <Button
-                color='primary.3'
-                leftSection={<GiMedicines size={18} />}
-                type='button'
-                onClick={open}
-              >
-                Sử dụng vật tư
-              </Button>
+                  color='primary.3'
+                  leftSection={<GiMedicines size={18} />}
+                  type='button'
+                  onClick={open}
+                >
+                  Sử dụng vật tư
+                </Button>
                 <Button
-                color='primary.3'
-                leftSection={<IoPrintSharp size={18} />}
-                type='button'
-                onClick={printRecord}
-              >
-                In hồ sơ
-              </Button>
-              </Group>       
+                  color='primary.3'
+                  leftSection={<IoPrintSharp size={18} />}
+                  type='button'
+                  onClick={printRecord}
+                >
+                  In hồ sơ
+                </Button>
+              </Group>
             )}
 
           </Flex>
@@ -357,7 +357,7 @@ const VisitPatientPage = () => {
                 <Grid.Col span={3.5}>
                   <MantineTextInput
                     label="Nhóm máu"
-                    value={patient?.bloodGroup}
+                    value={patient?.bloodGroup || 'Chưa có thông tin'}
                     readOnly
                     variant='filled'
                     size='md'
@@ -457,6 +457,7 @@ const VisitPatientPage = () => {
               recordId={Number(recordId)}
               medicalServices={services || []}
               onUpdateSuccess={() => refetch()}
+              allowUpdate={!isComplete}
             />
           </Paper>
 
@@ -503,16 +504,17 @@ const VisitPatientPage = () => {
               recordId={Number(recordId)}
               prescriptions={prescriptionDetail || []}
               onUpdateSuccess={() => refetch()}
+              allowUpdate={!isComplete}
             />
           </Paper>
         </Flex>
       </Form>
 
       <ModalUsingSupplies
-      isOpen={opened}
-      medicalRecordId={String(recordId)}
-      supplies={record?.usingMedicalSupplies ?? []}
-      onClose={close}
+        isOpen={opened}
+        medicalRecordId={String(recordId)}
+        supplies={record?.usingMedicalSupplies ?? []}
+        onClose={close}
         onSuccess={() => {
           refetch();
         }}

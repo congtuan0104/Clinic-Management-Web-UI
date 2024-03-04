@@ -13,9 +13,10 @@ interface IProps {
   recordId: number;
   prescriptions: IPrescription[];
   onUpdateSuccess: () => void;
+  allowUpdate: boolean;
 }
 
-const MedicalPrescription = ({ recordId, prescriptions, onUpdateSuccess }: IProps) => {
+const MedicalPrescription = ({ recordId, prescriptions, onUpdateSuccess, allowUpdate }: IProps) => {
 
   const [drugs, setDrugs] = useState<INewPrescription[]>(prescriptions);
   const [suggestMedicine, setSuggestMedicine] = useState<string[]>([]);
@@ -113,7 +114,7 @@ const MedicalPrescription = ({ recordId, prescriptions, onUpdateSuccess }: IProp
                   color="primary.3"
                   radius="xl"
                   onClick={handleAddPrescription}
-                // disabled={!patientInfo}
+                  disabled={!allowUpdate}
                 >
                   <FaPlus size={18} />
                 </ActionIcon>
@@ -137,6 +138,7 @@ const MedicalPrescription = ({ recordId, prescriptions, onUpdateSuccess }: IProp
                   placeholder='Tên thuốc'
                   onBlur={() => setSuggestMedicine([])}
                   value={drug.medicineName}
+                  readOnly={!allowUpdate}
                   onChange={(value) => {
                     setDrugs(prev => {
                       const newDrugs = [...prev];
@@ -151,6 +153,7 @@ const MedicalPrescription = ({ recordId, prescriptions, onUpdateSuccess }: IProp
               <Table.Td w={100}>
                 <NumberInput
                   value={drug.dosage}
+                  readOnly={!allowUpdate}
                   min={1}
                   onChange={(value) => {
                     setDrugs(prev => {
@@ -167,6 +170,7 @@ const MedicalPrescription = ({ recordId, prescriptions, onUpdateSuccess }: IProp
                   data={['Viên', 'Gói', 'Chai', 'Ống', 'Vỉ', 'Hộp', 'Bình']}
                   placeholder='Đơn vị'
                   value={drug.unit}
+                  readOnly={!allowUpdate}
                   onChange={(value) => {
                     setDrugs(prev => {
                       const newDrugs = [...prev];
@@ -182,6 +186,7 @@ const MedicalPrescription = ({ recordId, prescriptions, onUpdateSuccess }: IProp
                   data={['Mỗi ngày 1 lần', '2 ngày 1 lần', '3 ngày 1 lần', '1 tuần 1 lần', 'Mỗi ngày 2 lần']}
                   placeholder='Số lần'
                   value={drug.doseInterval}
+                  readOnly={!allowUpdate}
                   onChange={(value) => {
                     setDrugs(prev => {
                       const newDrugs = [...prev];
@@ -197,6 +202,7 @@ const MedicalPrescription = ({ recordId, prescriptions, onUpdateSuccess }: IProp
                   data={['1 ngày', '2 ngày', '3 ngày', '10 ngày', '1 tuần', '21 ngày', '14 ngày']}
                   placeholder='Kéo dài'
                   value={drug.duration}
+                  readOnly={!allowUpdate}
                   onChange={(value) => {
                     setDrugs(prev => {
                       const newDrugs = [...prev];
@@ -212,6 +218,7 @@ const MedicalPrescription = ({ recordId, prescriptions, onUpdateSuccess }: IProp
                   data={['Sáng', 'Trưa', 'Chiều', 'Tối', 'Sáng - Chiều', 'Sáng - Tối', 'Trưa - Tối', 'Sáng - Trưa - Tối']}
                   placeholder='Thời điểm'
                   value={drug.usingTime}
+                  readOnly={!allowUpdate}
                   onChange={(value) => {
                     setDrugs(prev => {
                       const newDrugs = [...prev];
@@ -227,6 +234,7 @@ const MedicalPrescription = ({ recordId, prescriptions, onUpdateSuccess }: IProp
                   data={['Uống trước ăn', 'Uống sau ăn', 'Uống trước khi ngủ', 'Uống sau khi ngủ']}
                   placeholder='Cách dùng'
                   value={drug.note}
+                  readOnly={!allowUpdate}
                   onChange={(value) => {
                     setDrugs(prev => {
                       const newDrugs = [...prev];
@@ -243,6 +251,7 @@ const MedicalPrescription = ({ recordId, prescriptions, onUpdateSuccess }: IProp
                     color="red.5"
                     variant="white"
                     radius="xl"
+                    disabled={!allowUpdate}
                     onClick={handleRemovePrescription(index)}
                   >
                     <IoCloseSharp size={18} />

@@ -184,7 +184,7 @@ const VisitPatientPage = () => {
               <Grid.Col span={3.5}>
                 <TextInput
                   label="Nhóm máu"
-                  value={patient?.bloodGroup}
+                  value={patient?.bloodGroup || 'Chưa có thông tin'}
                   readOnly
                   variant='filled'
                   size='md'
