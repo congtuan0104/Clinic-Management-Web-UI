@@ -31,15 +31,15 @@ const AdminHeader = () => {
       <header className="h-full max-w-screen-xxl mx-auto">
         <Group justify="space-between" h="100%">
           <Box w={userInfo ? undefined : 222}>
-            <Link to={PATHS.ADMIN_DASHBOARD}>
+            <Link to={PATHS.ADMIN_PRICING_PLAN}>
               <Image src={LogoImage} alt='logo' h={51} w={150} fit='contain' />
             </Link>
           </Box>
 
           <Group h="100%" gap={35} visibleFrom="sm">
-            <Link className="hover:text-[#6964ff]" to={PATHS.ADMIN_DASHBOARD}>
+            {/* <Link className="hover:text-[#6964ff]" to={PATHS.ADMIN_DASHBOARD}>
               Dashboard
-            </Link>
+            </Link> */}
             <Link className="hover:text-[#6964ff]" to={PATHS.ADMIN_PRICING_PLAN}>
               Quản lý gói
             </Link>
