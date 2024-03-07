@@ -14,7 +14,7 @@ const PublicRoute = ({ children }: { children: React.ReactNode }) => {
 
   switch (userInfo?.moduleId) {
     case AuthModule.Admin:
-      return <Navigate to={PATHS.ADMIN_DASHBOARD} replace />
+      return <Navigate to={PATHS.ADMIN_PRICING_PLAN} replace />
     case AuthModule.ClinicOwner:
       return <Navigate to={PATHS.CLINIC_DASHBOARD} replace />
     case AuthModule.Patient:
