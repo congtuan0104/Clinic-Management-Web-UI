@@ -21,6 +21,7 @@ import { appointmentApi } from "@/services/appointment.service";
 import { notifications } from "@mantine/notifications";
 import { MdMedicalServices } from "react-icons/md";
 import { dateParser } from "@/utils";
+import classNames from "classnames";
 
 interface IProps {
   isOpen: boolean;
@@ -231,7 +232,21 @@ const ModalAddAppointment = ({ isOpen, onClose, date, onSuccess }: IProps) => {
 
         <Chip.Group name="startTime" control={control}>
           <Text mt={20} mb={5}>Chọn thời gian khám (Lịch hẹn bắt đầu lúc)</Text>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-7 gap-x-3 gap-y-2 mt-1 p-3 border-solid border-[1px] border-gray-300 rounded-lg max-h-[200px] overflow-y-auto">
+          <div
+            className={classNames(
+              "grid grid-cols-2 md:grid-cols-3 lg:grid-cols-7 gap-x-3 gap-y-2 mt-1 p-3 border-solid border-[1px] border-gray-300 rounded-lg max-h-[200px] overflow-y-auto",
+              {
+                hidden: !(
+                  watch('date') && watch('doctorId')
+                )
+              }
+            )}
+          >
+            <Chip.Item icon={<FaRegClock size={14} />} styles={{ label: { width: '100%' } }} size="md" value="08:00">08:00</Chip.Item>
+            <Chip.Item icon={<FaRegClock size={14} />} styles={{ label: { width: '100%' } }} size="md" value="08:15">08:15</Chip.Item>
+            <Chip.Item icon={<FaRegClock size={14} />} styles={{ label: { width: '100%' } }} size="md" value="08:30">08:30</Chip.Item>
+            <Chip.Item icon={<FaRegClock size={14} />} styles={{ label: { width: '100%' } }} size="md" value="08:45">08:45</Chip.Item>
+            <Chip.Item icon={<FaRegClock size={14} />} styles={{ label: { width: '100%' } }} size="md" value="09:00">09:00</Chip.Item>
             <Chip.Item icon={<FaRegClock size={14} />} styles={{ label: { width: '100%' } }} size="md" value="09:15">09:15</Chip.Item>
             <Chip.Item icon={<FaRegClock size={14} />} styles={{ label: { width: '100%' } }} size="md" value="09:30">09:30</Chip.Item>
             <Chip.Item icon={<FaRegClock size={14} />} styles={{ label: { width: '100%' } }} size="md" value="09:45">09:45</Chip.Item>
@@ -240,9 +255,23 @@ const ModalAddAppointment = ({ isOpen, onClose, date, onSuccess }: IProps) => {
             <Chip.Item icon={<FaRegClock size={14} />} styles={{ label: { width: '100%' } }} size="md" value="10:30">10:30</Chip.Item>
             <Chip.Item icon={<FaRegClock size={14} />} styles={{ label: { width: '100%' } }} size="md" value="10:45">10:45</Chip.Item>
             <Chip.Item icon={<FaRegClock size={14} />} styles={{ label: { width: '100%' } }} size="md" value="11:00">11:00</Chip.Item>
-            <Chip.Item icon={<FaRegClock size={14} />} styles={{ label: { width: '100%' } }} size="md" value="11:15">11:15</Chip.Item>
-            <Chip.Item icon={<FaRegClock size={14} />} styles={{ label: { width: '100%' } }} size="md" value="11:30">11:30</Chip.Item>
-
+            <Chip.Item icon={<FaRegClock size={14} />} styles={{ label: { width: '100%' } }} size="md" value="13:00">13:00</Chip.Item>
+            <Chip.Item icon={<FaRegClock size={14} />} styles={{ label: { width: '100%' } }} size="md" value="13:15">13:15</Chip.Item>
+            <Chip.Item icon={<FaRegClock size={14} />} styles={{ label: { width: '100%' } }} size="md" value="13:30">13:30</Chip.Item>
+            <Chip.Item icon={<FaRegClock size={14} />} styles={{ label: { width: '100%' } }} size="md" value="13:45">13:45</Chip.Item>
+            <Chip.Item icon={<FaRegClock size={14} />} styles={{ label: { width: '100%' } }} size="md" value="14:00">14:00</Chip.Item>
+            <Chip.Item icon={<FaRegClock size={14} />} styles={{ label: { width: '100%' } }} size="md" value="14:15">14:15</Chip.Item>
+            <Chip.Item icon={<FaRegClock size={14} />} styles={{ label: { width: '100%' } }} size="md" value="14:30">14:30</Chip.Item>
+            <Chip.Item icon={<FaRegClock size={14} />} styles={{ label: { width: '100%' } }} size="md" value="14:45">14:45</Chip.Item>
+            <Chip.Item icon={<FaRegClock size={14} />} styles={{ label: { width: '100%' } }} size="md" value="15:00">15:00</Chip.Item>
+            <Chip.Item icon={<FaRegClock size={14} />} styles={{ label: { width: '100%' } }} size="md" value="15:15">15:15</Chip.Item>
+            <Chip.Item icon={<FaRegClock size={14} />} styles={{ label: { width: '100%' } }} size="md" value="15:30">15:30</Chip.Item>
+            <Chip.Item icon={<FaRegClock size={14} />} styles={{ label: { width: '100%' } }} size="md" value="15:45">15:45</Chip.Item>
+            <Chip.Item icon={<FaRegClock size={14} />} styles={{ label: { width: '100%' } }} size="md" value="16:00">16:00</Chip.Item>
+            <Chip.Item icon={<FaRegClock size={14} />} styles={{ label: { width: '100%' } }} size="md" value="16:15">16:15</Chip.Item>
+            <Chip.Item icon={<FaRegClock size={14} />} styles={{ label: { width: '100%' } }} size="md" value="16:30">16:30</Chip.Item>
+            <Chip.Item icon={<FaRegClock size={14} />} styles={{ label: { width: '100%' } }} size="md" value="16:45">16:45</Chip.Item>
+            <Chip.Item icon={<FaRegClock size={14} />} styles={{ label: { width: '100%' } }} size="md" value="17:00">17:00</Chip.Item>
           </div>
         </Chip.Group>
 

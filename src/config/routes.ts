@@ -38,6 +38,7 @@ import {
   ClinicReportPage,
   MedicalProfilePage,
   PatientOverviewPage,
+  AdminNotify,
 } from '@/pages';
 import { NewsManagementPage } from '@/pages/Clinic/NewsManagement';
 import { NewsPage } from '@/pages/Guest/News';
@@ -62,6 +63,7 @@ export const PATHS = {
   ACCEPT_INVITE_ACCOUNT: '/invite-account',
   ADMIN_DASHBOARD: '/admin/dashboard',
   ADMIN_PRICING_PLAN: '/admin/bang-gia',
+  ADMIN_NOTIFY: '/admin/gui-thong-bao',
   CLINIC_CHAT: '/clinic/messages',
   PATIENT_CHAT: '/messages',
   CLINIC_DASHBOARD: '/clinic/tong-quan',
@@ -225,6 +227,14 @@ export const ROUTES = [
     title: 'Quản lý bảng giá',
     layout: AdminLayout,
     element: PricingPlanAdminPage,
+    isProtected: true,
+    children: [],
+  },
+  {
+    path: PATHS.ADMIN_NOTIFY,
+    title: 'Quản lý thông báo hệ thống',
+    layout: AdminLayout,
+    element: AdminNotify,
     isProtected: true,
     children: [],
   },
