@@ -38,6 +38,7 @@ import {
   ClinicReportPage,
   MedicalProfilePage,
   PatientOverviewPage,
+  ClinicNotificationPage,
 } from '@/pages';
 import { NewsManagementPage } from '@/pages/Clinic/NewsManagement';
 import { NewsPage } from '@/pages/Guest/News';
@@ -86,6 +87,7 @@ export const PATHS = {
   CLINIC_REPORT: '/clinic/bao-cao',
   CLINIC_CATEGORY: '/clinic/danh-muc',
   CLINIC_SUPPLIES: '/clinic/vat-tu',
+  CLINIC_NOTIFICATION: '/clinic/thong-bao',
   MEDICAL_RECORDS: '/ho-so-kham-benh',
   MEDICAL_RECORD: '/ho-so-kham-benh/:id',
   PATIENT_OVERVIEW: '/patient/tong-quan',
@@ -392,6 +394,14 @@ export const ROUTES = [
     title: 'Thống kê, báo cáo',
     layout: ClinicLayout,
     element: ClinicReportPage,
+    isProtected: true,
+    children: [],
+  },
+  {
+    path: PATHS.CLINIC_NOTIFICATION,
+    title: 'Thông báo',
+    layout: ClinicLayout,
+    element: ClinicNotificationPage,
     isProtected: true,
     children: [],
   },
