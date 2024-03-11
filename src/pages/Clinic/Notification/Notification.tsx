@@ -29,10 +29,11 @@ const NotificationPage = () => {
         })
     }, [userInfo?.id])
     return (
-        <div className="flex flex-col bg-white m-4 p-4 rounded-xl border border-solid border-gray-300">
+        <div className="mt-6 ml-4 mr-4">
             <Group justify='space-between'>
-                <Text fw={700}>Thông báo</Text>
+                <Text fw={700} pb={15} size='20px'>Thông báo</Text>
             </Group>
+            <div className='flex flex-col bg-white p-3 rounded-xl border border-solid border-gray-300'>
             {notify.length === 0 ? <p>Bạn không có thông báo nào</p> : <></>}
             {notify.reverse().map((item) => (
                 <div key={item.id}
@@ -43,6 +44,8 @@ const NotificationPage = () => {
                     </div>
                 </div>
             ))}
+            </div>
+            
         </div>
     )
 };
