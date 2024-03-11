@@ -65,7 +65,7 @@ export interface INewAppointmentPayload {
   userId?: string;
   date: string;
   startTime: string;
-  endTime: string;
+  endTime?: string;
   description?: string;
   status: APPOINTMENT_STATUS;
 }
