@@ -1,6 +1,6 @@
 import { useAppSelector, useAuth } from '@/hooks';
 import { userInfoSelector } from '@/store';
-import { Box, Title, Text, Group, Image, Flex, Stack, Button, Container, Badge, Center, Divider, Grid, TextInput, Paper, GridCol, Anchor, Select, SimpleGrid, Textarea, Chip } from '@mantine/core';
+import { Box, Title, Text, Group, Image, Flex, Stack, Button, ScrollArea, Badge, Center, Divider, Grid, TextInput, Paper, GridCol, Anchor, Select, SimpleGrid, Textarea, Chip } from '@mantine/core';
 import { DateInput, Calendar } from '@mantine/dates';
 import { PATHS } from '@/config';
 import * as yup from 'yup';
@@ -75,7 +75,7 @@ const MakeAppointment = () => {
       refetchOnWindowFocus: false,
     }
   );
-  
+
   // const { data: freeTimes } = useQuery(
   //   ['free_time', selectedDate],
   //   () => staffApi.getFreeAppoinment(selectedStaffId ?? '', dayjs(selectedDate).toISOString().slice(0,10))
@@ -98,7 +98,7 @@ const MakeAppointment = () => {
     const endTimeHours = startTimeObject.getHours().toString().padStart(2, '0');
     const endTimeMinutes = startTimeObject.getMinutes().toString().padStart(2, '0');
     const endTime = `${endTimeHours}:${endTimeMinutes}`;
-  
+
     return endTime;
   }
 
@@ -112,7 +112,7 @@ const MakeAppointment = () => {
         serviceId: Number(selectedServiceId) ?? -1,
         patientId: 2,
         userId: userInfo.id ?? '',
-        date: dayjs(selectedDate).toISOString().slice(0,10) ?? '',
+        date: dayjs(selectedDate).toISOString().slice(0, 10) ?? '',
         startTime: selectedTime ?? '',
         endTime: calculateEndTime(selectedTime ?? ''),
         description: description,
@@ -292,7 +292,7 @@ const MakeAppointment = () => {
             <Center>
               <Calendar
                 getDayProps={(date) => ({
-                  selected: dayjs(selectedDate).isSame(dayjs(date).subtract(-1,'day'), 'day'),
+                  selected: dayjs(selectedDate).isSame(dayjs(date).subtract(-1, 'day'), 'day'),
                   onClick: () => setSelectedDate(dayjs(date).add(1, 'day').toDate()),
                 })}
               />
@@ -318,44 +318,46 @@ const MakeAppointment = () => {
               (!freeTimes || freeTimes.length === 0 && <Text>Không có lịch trống</Text>)
                   }
               </Chip.Group>             */}
-              <Group maw={600}>
-              <Chip.Group multiple={false} value={selectedTime} onChange={setSelectedTime}>
-              <Chip icon={<FaRegClock size={14} />} styles={{ label: { width: '100%' } }} size="md" value="08:00">08:00</Chip>
-              <Chip icon={<FaRegClock size={14} />} styles={{ label: { width: '100%' } }} size="md" value="08:15">08:15</Chip>
-              <Chip icon={<FaRegClock size={14} />} styles={{ label: { width: '100%' } }} size="md" value="08:30">08:30</Chip>
-              <Chip icon={<FaRegClock size={14} />} styles={{ label: { width: '100%' } }} size="md" value="08:45">08:45</Chip>
-            <Chip icon={<FaRegClock size={14} />} styles={{ label: { width: '100%' } }} size="md" value="09:00">09:00</Chip>
-            <Chip icon={<FaRegClock size={14} />} styles={{ label: { width: '100%' } }} size="md" value="09:15">09:15</Chip>
-            <Chip icon={<FaRegClock size={14} />} styles={{ label: { width: '100%' } }} size="md" value="09:30">09:30</Chip>
-            <Chip icon={<FaRegClock size={14} />} styles={{ label: { width: '100%' } }} size="md" value="09:45">09:45</Chip>
-            <Chip icon={<FaRegClock size={14} />} styles={{ label: { width: '100%' } }} size="md" value="10:00">10:00</Chip>
-            <Chip icon={<FaRegClock size={14} />} styles={{ label: { width: '100%' } }} size="md" value="10:15">10:15</Chip>
-            <Chip icon={<FaRegClock size={14} />} styles={{ label: { width: '100%' } }} size="md" value="10:30">10:30</Chip>
-            <Chip icon={<FaRegClock size={14} />} styles={{ label: { width: '100%' } }} size="md" value="10:45">10:45</Chip>
-            <Chip icon={<FaRegClock size={14} />} styles={{ label: { width: '100%' } }} size="md" value="13:00">13:00</Chip>
-            <Chip icon={<FaRegClock size={14} />} styles={{ label: { width: '100%' } }} size="md" value="13:15">13:15</Chip>
-            <Chip icon={<FaRegClock size={14} />} styles={{ label: { width: '100%' } }} size="md" value="13:30">13:30</Chip>
-            <Chip icon={<FaRegClock size={14} />} styles={{ label: { width: '100%' } }} size="md" value="13:45">13:45</Chip>
-            <Chip icon={<FaRegClock size={14} />} styles={{ label: { width: '100%' } }} size="md" value="14:00">14:00</Chip>
-            <Chip icon={<FaRegClock size={14} />} styles={{ label: { width: '100%' } }} size="md" value="14:15">14:15</Chip>
-            <Chip icon={<FaRegClock size={14} />} styles={{ label: { width: '100%' } }} size="md" value="14:30">14:30</Chip>
-            <Chip icon={<FaRegClock size={14} />} styles={{ label: { width: '100%' } }} size="md" value="14:45">14:45</Chip>
-            <Chip icon={<FaRegClock size={14} />} styles={{ label: { width: '100%' } }} size="md" value="15:00">15:00</Chip>
-            <Chip icon={<FaRegClock size={14} />} styles={{ label: { width: '100%' } }} size="md" value="15:15">15:15</Chip>
-            <Chip icon={<FaRegClock size={14} />} styles={{ label: { width: '100%' } }} size="md" value="15:30">15:30</Chip>
-            <Chip icon={<FaRegClock size={14} />} styles={{ label: { width: '100%' } }} size="md" value="15:45">15:45</Chip>
-            <Chip icon={<FaRegClock size={14} />} styles={{ label: { width: '100%' } }} size="md" value="16:00">16:00</Chip>
-            <Chip icon={<FaRegClock size={14} />} styles={{ label: { width: '100%' } }} size="md" value="16:15">16:15</Chip>
-            <Chip icon={<FaRegClock size={14} />} styles={{ label: { width: '100%' } }} size="md" value="16:30">16:30</Chip>
-            <Chip icon={<FaRegClock size={14} />} styles={{ label: { width: '100%' } }} size="md" value="16:45">16:45</Chip>
-            <Chip icon={<FaRegClock size={14} />} styles={{ label: { width: '100%' } }} size="md" value="17:00">17:00</Chip>
-            <Chip icon={<FaRegClock size={14} />} styles={{ label: { width: '100%' } }} size="md" value="17:15">17:15</Chip>
-            <Chip icon={<FaRegClock size={14} />} styles={{ label: { width: '100%' } }} size="md" value="17:30">17:30</Chip>
-            <Chip icon={<FaRegClock size={14} />} styles={{ label: { width: '100%' } }} size="md" value="17:45">17:45</Chip>
+              <ScrollArea h={250} scrollbarSize={6}>
+                <Group maw={600}>
+                  <Chip.Group multiple={false} value={selectedTime} onChange={setSelectedTime}>
+                    <Chip icon={<FaRegClock size={14} />} styles={{ label: { width: '100%' } }} size="md" value="08:00">08:00</Chip>
+                    <Chip icon={<FaRegClock size={14} />} styles={{ label: { width: '100%' } }} size="md" value="08:15">08:15</Chip>
+                    <Chip icon={<FaRegClock size={14} />} styles={{ label: { width: '100%' } }} size="md" value="08:30">08:30</Chip>
+                    <Chip icon={<FaRegClock size={14} />} styles={{ label: { width: '100%' } }} size="md" value="08:45">08:45</Chip>
+                    <Chip icon={<FaRegClock size={14} />} styles={{ label: { width: '100%' } }} size="md" value="09:00">09:00</Chip>
+                    <Chip icon={<FaRegClock size={14} />} styles={{ label: { width: '100%' } }} size="md" value="09:15">09:15</Chip>
+                    <Chip icon={<FaRegClock size={14} />} styles={{ label: { width: '100%' } }} size="md" value="09:30">09:30</Chip>
+                    <Chip icon={<FaRegClock size={14} />} styles={{ label: { width: '100%' } }} size="md" value="09:45">09:45</Chip>
+                    <Chip icon={<FaRegClock size={14} />} styles={{ label: { width: '100%' } }} size="md" value="10:00">10:00</Chip>
+                    <Chip icon={<FaRegClock size={14} />} styles={{ label: { width: '100%' } }} size="md" value="10:15">10:15</Chip>
+                    <Chip icon={<FaRegClock size={14} />} styles={{ label: { width: '100%' } }} size="md" value="10:30">10:30</Chip>
+                    <Chip icon={<FaRegClock size={14} />} styles={{ label: { width: '100%' } }} size="md" value="10:45">10:45</Chip>
+                    <Chip icon={<FaRegClock size={14} />} styles={{ label: { width: '100%' } }} size="md" value="13:00">13:00</Chip>
+                    <Chip icon={<FaRegClock size={14} />} styles={{ label: { width: '100%' } }} size="md" value="13:15">13:15</Chip>
+                    <Chip icon={<FaRegClock size={14} />} styles={{ label: { width: '100%' } }} size="md" value="13:30">13:30</Chip>
+                    <Chip icon={<FaRegClock size={14} />} styles={{ label: { width: '100%' } }} size="md" value="13:45">13:45</Chip>
+                    <Chip icon={<FaRegClock size={14} />} styles={{ label: { width: '100%' } }} size="md" value="14:00">14:00</Chip>
+                    <Chip icon={<FaRegClock size={14} />} styles={{ label: { width: '100%' } }} size="md" value="14:15">14:15</Chip>
+                    <Chip icon={<FaRegClock size={14} />} styles={{ label: { width: '100%' } }} size="md" value="14:30">14:30</Chip>
+                    <Chip icon={<FaRegClock size={14} />} styles={{ label: { width: '100%' } }} size="md" value="14:45">14:45</Chip>
+                    <Chip icon={<FaRegClock size={14} />} styles={{ label: { width: '100%' } }} size="md" value="15:00">15:00</Chip>
+                    <Chip icon={<FaRegClock size={14} />} styles={{ label: { width: '100%' } }} size="md" value="15:15">15:15</Chip>
+                    <Chip icon={<FaRegClock size={14} />} styles={{ label: { width: '100%' } }} size="md" value="15:30">15:30</Chip>
+                    <Chip icon={<FaRegClock size={14} />} styles={{ label: { width: '100%' } }} size="md" value="15:45">15:45</Chip>
+                    <Chip icon={<FaRegClock size={14} />} styles={{ label: { width: '100%' } }} size="md" value="16:00">16:00</Chip>
+                    <Chip icon={<FaRegClock size={14} />} styles={{ label: { width: '100%' } }} size="md" value="16:15">16:15</Chip>
+                    <Chip icon={<FaRegClock size={14} />} styles={{ label: { width: '100%' } }} size="md" value="16:30">16:30</Chip>
+                    <Chip icon={<FaRegClock size={14} />} styles={{ label: { width: '100%' } }} size="md" value="16:45">16:45</Chip>
+                    <Chip icon={<FaRegClock size={14} />} styles={{ label: { width: '100%' } }} size="md" value="17:00">17:00</Chip>
+                    <Chip icon={<FaRegClock size={14} />} styles={{ label: { width: '100%' } }} size="md" value="17:15">17:15</Chip>
+                    <Chip icon={<FaRegClock size={14} />} styles={{ label: { width: '100%' } }} size="md" value="17:30">17:30</Chip>
+                    <Chip icon={<FaRegClock size={14} />} styles={{ label: { width: '100%' } }} size="md" value="17:45">17:45</Chip>
 
-        </Chip.Group>
-              </Group>
-              
+                  </Chip.Group>
+                </Group>
+              </ScrollArea>
+
             </Center>
           </Paper>
         ) : null}
