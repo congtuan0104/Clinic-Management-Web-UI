@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { PATHS } from '@/config';
 import { useAppDispatch, useAppSelector, useAuth } from '@/hooks';
 import { currentClinicSelector, focusModeSelector, listClinicSelector, openSidebarClinicSelector, setCurrentClinic, setUserInfo, toggleSidebarClinic, userInfoSelector } from '@/store';
-import { Text, Group, Button, Image, Divider, Menu, TextInput, Flex, ScrollArea, Indicator, ActionIcon, Badge, Title, Tooltip, Kbd, Select, Avatar, Popover } from '@mantine/core';
+import { Text, Group, Button, Image, Divider, Menu, TextInput, Flex, ScrollArea, Indicator, ActionIcon, Badge, Title, Tooltip, Kbd, Select, Avatar, Popover, Anchor } from '@mantine/core';
 import { useDisclosure, useFullscreen, useNetwork } from '@mantine/hooks';
 import ClinusLogo from '@/assets/images/logo.png';
 import { IClinic, INotification } from '@/types';
@@ -153,6 +153,10 @@ const ClinicHeader = ({ notify }: IHeaderProps) => {
           <Popover.Dropdown styles={{ dropdown: { padding: 8 } }}>
             <ScrollArea mah={500}>
               <div className="flex flex-col">
+                <Group justify='space-between'>
+                  <Text fw={700}>Thông báo</Text>
+                  <Anchor component={Link} to={PATHS.CLINIC_NOTIFICATION}>Xem tất cả</Anchor>
+                </Group>
                 {notify.length === 0 ? <p>Bạn không có thông báo nào</p> : <></>}
                 {notify.reverse().map((item) => (
                   <div key={item.id}

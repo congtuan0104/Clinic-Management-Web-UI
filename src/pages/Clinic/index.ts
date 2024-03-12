@@ -18,3 +18,4 @@ export * from './VisitPatient';
 export * from './PaymentInvoice';
 export * from './PatientDetail';
 export * from './ClinicReport';
+export * from './Notification';
