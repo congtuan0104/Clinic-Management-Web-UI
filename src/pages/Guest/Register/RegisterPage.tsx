@@ -179,7 +179,7 @@ const RegisterPage = () => {
         });
         switch (userInfo.moduleId) {
           case AuthModule.Admin:
-            navigate(PATHS.ADMIN_PRICING_PLAN);
+            navigate(PATHS.ADMIN_DASHBOARD);
             break;
           case AuthModule.ClinicOwner:
             navigate(PATHS.CLINIC_DASHBOARD);

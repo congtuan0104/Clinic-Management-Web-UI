@@ -12,6 +12,25 @@ export interface IStatisticDate {
   revenue: number;
 }
 
+export interface IAdminStatisticDate {
+  summary: {
+    totalRevenue: number;
+    totalClinics: number;
+    startDate: string;
+    endDate: string;
+  }
+  clinics: {
+    clinicId: string;
+    clinicName: string;
+    totalRevenue: number;
+    data: IStatisticDate[];
+  }[]
+  details: {
+    date: string;
+    revenue: number;
+  }[]
+}
+
 export interface IGetStatisticParams {
   clinicId: string;
   date?: string;
@@ -20,6 +39,11 @@ export interface IGetStatisticParams {
 
 export interface IGetStatisticDateParams {
   clinicId: string;
+  startDate: string;
+  endDate: string;
+}
+
+export interface IGetAdminStatisticDateParams {
   startDate: string;
   endDate: string;
 }
