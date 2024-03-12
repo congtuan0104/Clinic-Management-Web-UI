@@ -2,9 +2,9 @@ import React, { useState, MouseEvent, useMemo, useEffect } from 'react';
 import { Text, Flex, Button, Indicator, Divider, Center, Stack, Box, Title, Grid, Group, SimpleGrid, Avatar, Badge, TypographyStylesProvider } from '@mantine/core';
 import { Form, useForm } from 'react-hook-form';
 import { TimeInput } from '@mantine/dates';
-import { TextInput, Select, DateInput } from 'react-hook-form-mantine';
+import { TextInput, Select, DateInput} from 'react-hook-form-mantine';
 import { CgProfile } from 'react-icons/cg';
-import { FaRegCalendar } from 'react-icons/fa';
+import { FaCalendarDay, FaRegCalendar } from 'react-icons/fa';
 import { useParams } from 'react-router-dom';
 import { useAppSelector } from '@/hooks';
 import { currentClinicSelector } from '@/store';
@@ -22,16 +22,16 @@ import TextAlign from '@tiptap/extension-text-align';
 import Superscript from '@tiptap/extension-superscript';
 import SubScript from '@tiptap/extension-subscript';
 import { useEditor } from '@tiptap/react';
+import dayjs from 'dayjs';
 
 interface IStaff {
   id_staff?: string,
   firstName?: string,
   lastName?: string,
   phoneNumber?: string,
-  roleName?: string,
+  role?: number,
   email?: string,
   gender?: number,
-  birthday?: Date,
   address?: string,
   specialize?: string,
   experience?: number,
@@ -44,9 +44,8 @@ const infoschema = yup.object().shape({
   firstName: yup.string(),
   lastName: yup.string(),
   email: yup.string(),
-  roleName: yup.string(),
+  role: yup.number(),
   phoneNumber: yup.string(),
-  birthday: yup.date(),
   gender: yup.number(),
   address: yup.string(),
   specialize: yup.string(),
@@ -62,11 +61,16 @@ const scheduleschema = yup.object().shape({
 
 
 const StaffDetail = () => {
+  const currentClinic = useAppSelector(currentClinicSelector)
   const { id: staffId } = useParams();
   const { data: staff, refetch} = useQuery(['staff', staffId], () => getStaffInfo());
-  const { data: schedules, isLoading: isLoadingClinic } = useQuery(
+  const { data: schedules} = useQuery(
     ['schedules', staff?.id],
     () => staffApi.getSchedule(String(staff?.id)).then(res => res.data)
+  );
+  const { data: roles } = useQuery(
+    ['role', currentClinic],
+    () => clinicApi.getClinicRoles(currentClinic?.id ?? '').then(res => res.data)
   );
 
   const [newschedules, setNewSchedules] = useState<Array<ISchedule>>(() => {
@@ -91,8 +95,6 @@ const StaffDetail = () => {
     { label: 'Thứ 7', value: '7' },
   ];
 
-
-  const currentClinic = useAppSelector(currentClinicSelector);
   const [selectedTab, setSelectedTab] = useState<'info' | 'schedule'>('info');
   const [isUpdateInfo, setIsUpdateInfo] = useState<boolean>(false);
   const [isUpdateSchedule, setIsUpdateSchedule] = useState<boolean>(false);
@@ -105,7 +107,7 @@ const StaffDetail = () => {
         firstName: staff?.users.firstName,
         lastName: staff?.users.lastName,
         phoneNumber: staff?.users.phone,
-        roleName: staff?.role.name,
+        // role: staff?.role.id,
         email: staff?.users.email,
         // gender: staff?.users.gender,
         address: staff?.users.address,
@@ -149,6 +151,7 @@ const StaffDetail = () => {
         specialize: data.specialize,
         experience: data.experience,
         description: data.description,
+        roleId: data.role,
         userInfo: {
           firstName: data.firstName,
           lastName: data.lastName,
@@ -157,10 +160,6 @@ const StaffDetail = () => {
           email: data.email,
           address: data.address,
         }
-      }
-
-      if (data.birthday) {
-        updateInfo.userInfo.birthday = data.birthday;
       }
 
       const res = await staffApi.updateStaffInfo(staffId ?? '', updateInfo);
@@ -223,9 +222,9 @@ const StaffDetail = () => {
     setValue('firstName', staff?.users.firstName);
     setValue('lastName', staff?.users.lastName);
     setValue('phoneNumber', staff?.users.phone);
-    setValue('roleName', staff?.role.name);
+    setValue('role', staff?.role.id);
     setValue('email', staff?.users.email);
-    // setValue('gender', staff?.users.gender);
+    setValue('gender', staff?.users.gender);
     setValue('address', staff?.users.address);
     setValue('specialize', staff?.specialize);
     setValue('experience', staff?.experience);
@@ -350,15 +349,15 @@ const StaffDetail = () => {
                             disabled={!isUpdateInfo}
                             name="birthday"
                             valueFormat="YYYY-MM-DD"
-                            defaultDate={                       
+                            date={                       
                               staff?.users.birthday === null ?
-                                dayjs(staff?.users.birthday, 'YYYY-MM-DD').toDate()
+                                dayjs(staff?.users.birthday).toDate()
                                 : undefined
                             }
                             control={controlInfo}
                             rightSection={<FaCalendarDay size={18} />}
                           />
-                        </Grid.Col> */}
+                        </Grid.Col>  */}
                         <Grid.Col span={6}>
                           <TextInput
                             label="SĐT liên lạc"
@@ -400,10 +399,15 @@ const StaffDetail = () => {
                       <Divider mt={30} mb={10} />
                       <Grid>
                         <Grid.Col span={12}>
-                          <TextInput label="Vai trò"
-                            name='roleName'
+                          <Select label="Vai trò"
+                            name='role'
                             control={controlInfo}
-                            readOnly
+                            readOnly={!isUpdateInfo}
+                            defaultValue={staff?.role.id.toString()}
+                            data={roles ? roles.map((role) => ({
+                              value: role.id.toString(),
+                              label: role.name,
+                            })) : []}
                           />
                         </Grid.Col>
 
