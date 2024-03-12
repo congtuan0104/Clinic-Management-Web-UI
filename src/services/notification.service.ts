@@ -23,4 +23,34 @@ export const notificationApi = {
       },
     });
   },
+
+  pushNotifyToDevice(
+    title: string,
+    body: string,
+    userId: string | null,
+    moduleId: number | null,
+    image?: string,
+  ): Promise<IApiResponse<any>> {
+    return axiosClient.post('/notification/push-notification', {
+      userId: userId || undefined,
+      moduleId: moduleId || undefined,
+      title,
+      body,
+      image,
+    });
+  },
+
+  createRealtimeNotify(
+    title: string,
+    body: string,
+    userId: string | null,
+    moduleId: number | null,
+  ): Promise<IApiResponse<any>> {
+    return axiosClient.post('/notification/create-realtime-notification', {
+      userId: userId || undefined,
+      moduleId: moduleId || undefined,
+      title,
+      content: body,
+    });
+  },
 };

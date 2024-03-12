@@ -1,5 +1,7 @@
 import {
+  IAdminStatisticDate,
   IApiResponse,
+  IGetAdminStatisticDateParams,
   IGetStatisticDateParams,
   IGetStatisticParams,
   IStatistic,
@@ -16,5 +18,11 @@ export const statisticApi = {
     params: IGetStatisticDateParams,
   ): Promise<IApiResponse<IStatisticDate[]>> => {
     return axiosClient.get('/statitics/by-date', { params });
+  },
+
+  getAdminStatisticByDate: (
+    params: IGetAdminStatisticDateParams,
+  ): Promise<IApiResponse<IAdminStatisticDate>> => {
+    return axiosClient.get('/statitics/admin', { params });
   },
 };
