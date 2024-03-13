@@ -113,7 +113,7 @@ const ReceptionPatientPage = () => {
   const { data: patients, refetch, isLoading } = useQuery(
     ['medical_records', currentClinic?.id],
     () => medicalRecordApi.getMedicalRecords({ clinicId: currentClinic?.id })
-      .then(res => res.data),
+      .then(res => res.data?.filter(record => record.examinationStatus === MEDICO_RECORD_STATUS.WAITING)),
     {
       enabled: !!currentClinic?.id,
     }
@@ -123,7 +123,7 @@ const ReceptionPatientPage = () => {
     <>
       <Flex direction="column" gap="md" p="md">
         <Flex align="center" justify="space-between">
-          <Title order={4}>Hồ sơ khám bệnh</Title>
+          <Title order={4}>Yêu cầu khám bệnh</Title>
           <Button
             color='secondary.3'
             onClick={() => setOpenCreateModal(true)}
