@@ -114,7 +114,6 @@ const MakeAppointment = () => {
         clinicId: selectedClinicId ?? '',
         doctorId: Number(selectedStaffId) ?? -1,
         serviceId: Number(selectedServiceId) ?? -1,
-        patientId: 2,
         userId: userInfo.id ?? '',
         date: dayjs(selectedDate).toISOString().slice(0, 10) ?? '',
         startTime: selectedTime ?? '',
