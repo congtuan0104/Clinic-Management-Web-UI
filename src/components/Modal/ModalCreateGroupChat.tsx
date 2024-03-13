@@ -27,7 +27,8 @@ const ModalCreateGroupChat = ({ isOpen, onClose, onSuccess }: IProps) => {
 
   const { data: staffs, isLoading } = useQuery(
     ['staffs', currentClinic?.id],
-    () => staffApi.getStaffs({ clinicId: currentClinic?.id }).then(res => res.data),
+    () => staffApi.getStaffs({ clinicId: currentClinic?.id })
+      .then(res => res.data?.filter(staff => !staff.isDisabled)),
     {
       enabled: !!currentClinic?.id,
     }

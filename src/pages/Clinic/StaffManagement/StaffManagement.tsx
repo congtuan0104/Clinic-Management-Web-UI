@@ -88,7 +88,8 @@ const StaffManagementPage = () => {
 
   const { data, refetch } = useQuery(
     ['staffs', currentClinic?.id],
-    () => staffApi.getStaffs({ clinicId: currentClinic?.id }).then(res => res.data),
+    () => staffApi.getStaffs({ clinicId: currentClinic?.id })
+      .then(res => res.data?.filter(staff => !staff.isDisabled)),
     {
       enabled: !!currentClinic?.id,
     }

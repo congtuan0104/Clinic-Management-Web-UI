@@ -54,3 +54,11 @@ export const cookies = {
     deleteCookie(key, option);
   },
 };
+
+// export function uniqueBy(a: any, key: any) {
+//   var seen = {};
+//   return a.filter(function(item: any) {
+//       var k = key(item);
+//       return seen.hasOwnProperty(k) ? false : (seen[k] = true);
+//   })
+// }
