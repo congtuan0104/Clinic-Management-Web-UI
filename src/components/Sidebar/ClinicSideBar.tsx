@@ -78,7 +78,7 @@ const createMenuItem = (permissions: PERMISSION[]) => {
       href: PATHS.CLINIC_CHAT
     },
     {
-      label: 'Kho thuốc, vật tư',
+      label: 'Vật tư y tế',
       icon: GiMedicines,
       href: PATHS.CLINIC_SUPPLIES,
       hidden: !permissions.includes(PERMISSION.SUPPLIES)
