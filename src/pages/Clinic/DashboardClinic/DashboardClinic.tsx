@@ -110,13 +110,13 @@ const DashboardClinic = () => {
           <ThemeIcon color='yellow.5' variant='light' size={80} radius='md'>
             <GrMoney size={55} />
           </ThemeIcon>
-          <div className='flex flex-col'>
+          <div className='flex flex-col justify-between'>
             <Tooltip label='Doanh thu nhận được trong ngày'>
               <div className='flex items-center text-gray-700 gap-1'>
                 Doanh thu <FaRegQuestionCircle />
               </div>
             </Tooltip>
-            <Text c='yellow.5' fz={40} fw={700}>
+            <Text c='yellow.5' fz={30} fw={700}>
               <CurrencyFormatter value={statistic?.totalRevenue || 0} />
             </Text>
           </div>

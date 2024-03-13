@@ -120,7 +120,6 @@ export const ROUTES = [
     title: 'Chi tiết tin tức',
     layout: DefaultLayout,
     element: NewsDetailPage,
-    isProtected: false,
     children: [],
   },
   {

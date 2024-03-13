@@ -85,13 +85,14 @@ const ClinicManagePage = () => {
     if (!subscription) return null;
     const plan = getPlanInfo(subscription.planId);
     return (
-      <div className='flex flex-col items-end'>
-        <Text tt='uppercase'>
+      <div className='flex flex-col items-end min-w-[250px]'>
+        <Text tt='uppercase' miw={200} ta='right'>
           {plan?.planName}
         </Text>
-        {(subscription.status !== CLINIC_SUBSCRIPTION_STATUS.NOT_ACTIVE && subscription.status !== CLINIC_SUBSCRIPTION_STATUS.INPAYMENT)
-          && <Text>
-            Sử dụng đến {dayjs(subscription.expiredAt).format('DD/MM/YYYY')} (Còn {dayjs(subscription.expiredAt).diff(dayjs(), 'day')} ngày)
+        {(subscription.status === CLINIC_SUBSCRIPTION_STATUS.ACTIVE)
+          && <Text ta='right'>
+            Sử dụng đến {dayjs(subscription.expiredAt).format('DD/MM/YYYY')}<br />
+            (Còn {dayjs(subscription.expiredAt).diff(dayjs(), 'day')} ngày)
           </Text>}
 
         <Badge
@@ -128,7 +129,11 @@ const ClinicManagePage = () => {
       <div
         className='cursor-pointer text-teal-600 hover:text-teal-500'
         onClick={() => {
-          alert('Gia hạn phòng khám')
+          setClinicNeedPayment({
+            clinic: clinic,
+            subscription: subscription,
+          })
+          setIsOpenPaymentModal(true);
         }}
       >
         Gia hạn

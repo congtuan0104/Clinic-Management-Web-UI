@@ -123,8 +123,8 @@ export const useAuth = () => {
     const user = await getUserInfoByProvider(provider);
     if (!user) {
       notifications.show({
-        message: 'Tài khoản không tồn tại',
-        color: 'red',
+        message: 'Liên kết không thành công',
+        color: 'red.5',
       });
       return;
     }

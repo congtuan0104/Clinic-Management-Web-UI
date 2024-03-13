@@ -13,7 +13,7 @@ import { FaCalendarDay, FaRegClock } from 'react-icons/fa';
 import { ISchedule, INewAppointmentPayload } from '@/types';
 import { notifications } from '@mantine/notifications';
 // import { Chip } from 'react-hook-form-mantine';
-import { APPOINTMENT_STATUS } from '@/enums';
+import { APPOINTMENT_STATUS, PERMISSION } from '@/enums';
 
 interface IFormData {
   doctorId: string;
@@ -58,10 +58,14 @@ const MakeAppointment = () => {
     }
   );
 
+
   const { data: staffs } = useQuery(
     ['staffs', selectedServiceId, selectedStaffId],
     () => staffApi.getStaffs({ clinicId: selectedClinicId ?? undefined })
-      .then(res => res.data),
+      .then(
+        res => res.data?.
+          filter(staff => staff.role.permissions.map(p => p.id).includes(PERMISSION.PERFORM_SERVICE))
+      ),
     {
       refetchOnWindowFocus: false,
     }
@@ -265,7 +269,8 @@ const MakeAppointment = () => {
                 allowDeselect
                 data={staffs?.map((staff) => ({
                   value: staff.id.toString(),
-                  label: `${staff?.users?.firstName} ${staff?.users?.lastName}`
+                  label: `${staff?.users?.firstName} ${staff?.users?.lastName}`,
+                  // disabled: selectedServiceId && staff. !selectedService.staffIds.includes(staff.id)
                 })) || []}
                 searchable
                 w={'100%'}

@@ -111,6 +111,7 @@ const UserProfilePage = () => {
         lastName: userInfo?.lastName ?? '',
         phone: userInfo?.phone ?? '',
         address: userInfo?.address ?? '',
+        birthday: userInfo?.birthday ? dayjs(userInfo?.birthday, 'DD/MM/YYYY').toDate() : undefined,
       }
     }, [userInfo]),
   });
@@ -344,37 +345,34 @@ const UserProfilePage = () => {
                   alt="no image here"
                   color={'primary'}
                 /> */}
-                <Stack>
+                <Stack className='flex-1'>
                   <TextInput
                     label={<Text fw={700}>Họ</Text>}
                     name='firstName'
+                    w='100%'
                     control={changeProfileControl}
                   />
                   <TextInput
                     label={<Text fw={700}>Tên</Text>}
                     name='lastName'
+                    w='100%'
                     control={changeProfileControl}
                   />
                 </Stack>
               </Group>
 
-              <div style={{ margin: '1rem 0' }}>
-                <Text fz="lg" fw={700}>
-                  Thông tin cá nhân
-                </Text>
-                <Divider />
-              </div>
-              <Stack gap="sm" h={298}>
+              <Stack gap="sm" h={298} mt={10}>
                 <Group justify="space-between" grow>
                   <DateInput
                     label={<Text fw={700}>Ngày sinh</Text>}
                     name="birthday"
                     valueFormat="DD/MM/YYYY"
-                    defaultDate={
-                      userInfo?.birthday === null ?
-                        dayjs(userInfo?.birthday, 'DD/MM/YYYY').toDate()
-                        : undefined
-                    }
+                    maxDate={dayjs().toDate()}
+                    // defaultDate={
+                    //   userInfo?.birthday === null ?
+                    //     dayjs(userInfo?.birthday, 'DD/MM/YYYY').toDate()
+                    //     : undefined
+                    // }
                     control={changeProfileControl}
                     rightSection={<FaCalendarDay size={18} />}
                   />
@@ -438,32 +436,32 @@ const UserProfilePage = () => {
               <Divider />
             </div>
             <Stack gap="md" h={254}>
-              <Group justify="space-between" grow>
-                <Group>
-                  <BsCake size={25} />
-                  <Text fw={700}>Ngày sinh: </Text>
-                  {dayjs(userInfo?.birthday).format('DD/MM/YYYY')}
-                </Group>
-                <Group>
-                  <PiGenderIntersex size={25} />
-                  <Text fw={700}>Giới tính: </Text>
-                  {userInfo?.gender === 0 ? 'Nữ' : (userInfo?.gender === 1 ? 'Nam' : 'Không xác thực')}
-                </Group>
+
+              <Group>
+                {/* <BsCake size={25} /> */}
+                <Text fw={700}>Ngày sinh: </Text>
+                {userInfo?.birthday ? dayjs(userInfo?.birthday).format('DD/MM/YYYY') : 'Chưa có thông tin'}
+              </Group>
+
+              <Group>
+                {/* <PiGenderIntersex size={25} /> */}
+                <Text fw={700}>Giới tính: </Text>
+                {userInfo?.gender === 0 ? 'Nữ' : (userInfo?.gender === 1 ? 'Nam' : 'Chưa có thông tin')}
               </Group>
               <Group>
-                <MdOutlineMail size={25} />
+                {/* <MdOutlineMail size={25} /> */}
                 <Text fw={700}> Email: </Text>
                 {userInfo?.email}
               </Group>
               <Group>
-                <FiPhone size={25} />
+                {/* <FiPhone size={25} /> */}
                 <Text fw={700}> Số điện thoại: </Text>
-                {userInfo?.phone}
+                {userInfo?.phone || 'Chưa có thông tin'}
               </Group>
               <Group>
-                <GrLocation size={25} />
+                {/* <GrLocation size={25} /> */}
                 <Text fw={700}> Địa chỉ: </Text>
-                {userInfo?.address}
+                {userInfo?.address || 'Chưa có thông tin'}
               </Group>
             </Stack>
             <Stack mt="auto" align="flex-end">
