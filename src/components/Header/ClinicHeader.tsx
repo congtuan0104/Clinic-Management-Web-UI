@@ -158,7 +158,7 @@ const ClinicHeader = ({ notify }: IHeaderProps) => {
                   <Anchor component={Link} to={PATHS.CLINIC_NOTIFICATION}>Xem tất cả</Anchor>
                 </Group>
                 {notify.length === 0 ? <p>Bạn không có thông báo nào</p> : <></>}
-                {notify.reverse().map((item) => (
+                {notify.map((item) => (
                   <div key={item.id}
                     className="flex cursor-pointer p-[6px] rounded-md flex-col group hover:bg-gray-200">
                     <div className='border-solid border-0 border-l-[3px] border-primary-300 pl-2'>
@@ -167,7 +167,7 @@ const ClinicHeader = ({ notify }: IHeaderProps) => {
                       <p className='text-gray-500 text-13'>{renderSendingTime(item.sendingTime)}</p>
                     </div>
                   </div>
-                ))}
+                )).reverse()}
               </div>
             </ScrollArea>
           </Popover.Dropdown>
