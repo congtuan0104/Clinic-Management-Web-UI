@@ -31,7 +31,7 @@ const NotificationPage = () => {
     }, [userInfo?.id])
     return (
         <div className="mt-6 ml-4 mr-4">
-<Group align='center' mb={10}>
+<Group align='center' mb={10} gap={'xl'}>
   <IoMdNotifications size='30px' />
   <Text fw={700} size='20px'>Thông báo</Text>
 </Group>
